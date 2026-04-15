@@ -8,6 +8,13 @@
 **/.turbo/
 **/.cache/
 .cache-f-drive/
+**/.cache-f-drive/
+
+# Large project folders
+.hex/
+**/.hex/
+tools/
+**/tools/
 
 # Test files
 **/__tests__/
@@ -44,9 +51,9 @@ docs/
 !README.md
 
 # Project-specific
-.hex/
 .kiro/
 **/.kiro/
+.husky/
 
 # Large media files only
 *.mp4
