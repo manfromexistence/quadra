@@ -4,7 +4,8 @@ interface ImageLoaderParams {
   quality?: number;
 }
 
-const CDN_URL = "https://midday.ai";
+// Use environment variable for CDN URL, fallback to current domain
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || "";
 
 export default function imageLoader({
   src,
@@ -24,25 +25,24 @@ export default function imageLoader({
     return src;
   }
 
-  // In preview, skip Cloudflare CDN (not available on preview URLs)
-  const isPreview = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
-  const vercelUrl = process.env.NEXT_PUBLIC_VERCEL_URL;
-
-  if (isPreview && vercelUrl) {
-    if (src.startsWith("/")) {
-      return `https://${vercelUrl}${src}`;
-    }
-    return src;
-  }
-
-  // Production: use Cloudflare CDN transformation
-  if (src.startsWith("/_next")) {
-    return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/${CDN_URL}${src}`;
-  }
-
+  // For local images (starting with /), serve from current domain
   if (src.startsWith("/")) {
-    return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/${CDN_URL}${src}`;
+    // If no CDN_URL is set, serve from current domain
+    if (!CDN_URL) {
+      return `${src}?w=${width}&q=${quality}`;
+    }
+    // If CDN is configured, use Cloudflare image optimization
+    return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}${src}`;
   }
 
-  return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/${src}`;
+  // For _next static files
+  if (src.startsWith("/_next")) {
+    if (!CDN_URL) {
+      return src;
+    }
+    return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}${src}`;
+  }
+
+  // For external URLs, pass through
+  return src;
 }

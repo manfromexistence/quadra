@@ -42,12 +42,24 @@ coverage/
 tmp/
 temp/
 
-# Media
+# Large video and archive files only
 *.mp4
 *.mov
 *.avi
-*.zip
 *.tar.gz
 
 # Vercel
 .vercel/
+
+# Explicitly keep all images and assets
+!public/**/*.png
+!public/**/*.jpg
+!public/**/*.jpeg
+!public/**/*.gif
+!public/**/*.svg
+!public/**/*.webp
+!public/**/*.ico
+!public/**/*.woff
+!public/**/*.woff2
+!public/**/*.ttf
+!public/**/*.otf
