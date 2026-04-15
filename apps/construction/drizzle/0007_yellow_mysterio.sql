@@ -1,0 +1,1 @@
+ALTER TABLE "transmittals" ADD COLUMN "images" text;

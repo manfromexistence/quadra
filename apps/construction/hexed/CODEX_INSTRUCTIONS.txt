@@ -1,0 +1,130 @@
+CONSTRUCTION EDMS - DEPLOYMENT & COMPLETION TASK
+
+PROJECT: Electronic Document Management System for Construction Projects
+REPOSITORY: https://github.com/manfromexistence/construction
+VERCEL PROJECT: construction (already connected and logged in)
+
+═══════════════════════════════════════════════════════════════════
+
+YOUR MISSION:
+
+1. Fix the critical dashboard access issue (session refresh in actions/users.ts)
+2. Run type checking and fix any TypeScript errors
+3. Build the project successfully
+4. Deploy to Vercel production
+5. Verify ALL requirements from GOAL.md are working in production
+
+═══════════════════════════════════════════════════════════════════
+
+CRITICAL PRIORITY:
+
+The PRIMARY GOAL is to fulfill EVERY requirement listed in GOAL.md.
+This is a construction document management system that MUST have all 8 core modules working:
+- User Management & Authentication
+- Project Management
+- Document Control
+- Document Workflow
+- Transmittal Module
+- Dashboard
+- Search & Filters
+- Notifications
+
+═══════════════════════════════════════════════════════════════════
+
+IMMEDIATE BLOCKER:
+
+There is a CRITICAL dashboard access issue preventing users from accessing /dashboard.
+The root cause and solution are documented in AGENT.md.
+You MUST fix this FIRST before deploying.
+
+Fix location: actions/users.ts
+Issue: Session doesn't refresh after profile update
+Solution: Implement session refresh (code example in AGENT.md)
+
+═══════════════════════════════════════════════════════════════════
+
+EXECUTION STEPS:
+
+1. Read CODEX_PROMPT.txt for complete instructions
+2. Read AGENT.md for dashboard access issue solution
+3. Read GOAL.md to understand all requirements
+4. Fix dashboard access issue in actions/users.ts
+5. Run: npx tsc --noEmit (fix any errors)
+6. Run: npm run lint (fix any errors)
+7. Run: npm run build (must succeed)
+8. Deploy: vercel --prod
+9. Test all GOAL.md features in production
+10. Update documentation with deployment status
+
+═══════════════════════════════════════════════════════════════════
+
+KEY FILES TO READ:
+
+- CODEX_PROMPT.txt - Complete step-by-step instructions
+- AGENT.md - Dashboard access issue analysis and solution
+- GOAL.md - All project requirements (MUST fulfill 100%)
+- AGENTS.md - Project architecture and guidelines
+- TODO.md - Current development status
+- README.md - Setup and deployment instructions
+
+═══════════════════════════════════════════════════════════════════
+
+ENVIRONMENT VARIABLES REQUIRED IN VERCEL:
+
+- DATABASE_URL (Neon PostgreSQL)
+- BETTER_AUTH_SECRET
+- BETTER_AUTH_URL (production URL)
+- GOOGLE_CLIENT_ID
+- GOOGLE_CLIENT_SECRET
+- GITHUB_CLIENT_ID
+- GITHUB_CLIENT_SECRET
+- BLOB_READ_WRITE_TOKEN (for document uploads)
+- RESEND_API_KEY (for email notifications)
+- RESEND_FROM_EMAIL (verified sender email)
+
+═══════════════════════════════════════════════════════════════════
+
+SUCCESS CRITERIA:
+
+✅ TypeScript: 0 errors
+✅ Build: Success
+✅ Deployment: Success
+✅ Dashboard access: Working
+✅ All 8 GOAL.md modules: Working in production
+✅ Login/Logout: Working
+✅ Profile completion: Working
+✅ Projects: Create, list, detail working
+✅ Documents: Upload, preview, download working
+✅ Workflows: Approve, reject, comment working
+✅ Transmittals: Create, send, acknowledge working
+✅ Notifications: Email + in-app working
+✅ Search: Working across all modules
+
+═══════════════════════════════════════════════════════════════════
+
+IMPORTANT NOTES:
+
+- User is already logged in to Vercel CLI
+- Project is already connected as "construction"
+- Database migrations need to be run on production
+- OAuth redirect URLs need to include production URL
+- Test thoroughly before marking as complete
+
+═══════════════════════════════════════════════════════════════════
+
+EXPECTED OUTCOME:
+
+A fully functional QUADRA deployed to Vercel with:
+- All GOAL.md requirements implemented and tested
+- Dashboard access issue resolved
+- All features working in production
+- Ready for real construction project testing
+
+═══════════════════════════════════════════════════════════════════
+
+START BY READING: CODEX_PROMPT.txt
+
+This file contains the complete execution plan with all details,
+code examples, troubleshooting steps, and verification checklists.
+
+═══════════════════════════════════════════════════════════════════

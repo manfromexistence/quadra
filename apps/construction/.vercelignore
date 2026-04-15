@@ -1,0 +1,10 @@
+.git
+.github
+.kiro
+.next
+node_modules
+integrations
+coverage
+dist
+tmp
+*.log

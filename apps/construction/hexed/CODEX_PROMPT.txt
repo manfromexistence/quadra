@@ -1,0 +1,431 @@
+# CODEX DEPLOYMENT & GOAL COMPLETION PROMPT
+
+## PROJECT: QUADRA (Electronic Document Management System)
+
+---
+
+## IMMEDIATE TASKS (Priority Order)
+
+### TASK 1: Type Check & Build Verification
+1. Run TypeScript type checking: `npx tsc --noEmit`
+2. Fix any TypeScript errors found
+3. Run linting: `npm run lint`
+4. Fix any linting errors
+5. Run production build: `npm run build`
+6. Verify build completes successfully with no errors
+
+### TASK 2: Deploy to Vercel
+1. Project is already connected to Vercel as "construction"
+2. User is already logged in to Vercel CLI
+3. Deploy using: `vercel --prod`
+4. Verify deployment succeeds
+5. Test deployed application URL
+6. Confirm all environment variables are set in Vercel dashboard
+
+### TASK 3: Complete ALL GOAL.md Requirements
+**CRITICAL:** The main objective is to fulfill EVERY requirement listed in GOAL.md. This is the PRIMARY GOAL of the entire project.
+
+---
+
+## GOAL.MD REQUIREMENTS CHECKLIST
+
+### ✅ COMPLETED REQUIREMENTS
+
+#### 1. User Management & Authentication [DONE]
+- ✅ User Registration & Login (Google/GitHub OAuth via Better Auth)
+- ✅ Role-based access control (Admin, Client, PMC, Vendor, Subcontractor, User)
+- ✅ Password reset via email (Better Auth handles this)
+- ✅ Secure authentication (Better Auth with session management)
+
+#### 2. Project Management Module [DONE]
+- ✅ Create and manage multiple projects
+- ✅ Assign users to projects
+- ✅ Define user roles per project
+
+#### 3. Document Control Module [DONE]
+- ✅ Upload documents (PDF, Word, Excel, drawings) - Vercel Blob integration
+- ✅ Version control system
+- ✅ Document numbering system (automatic generation)
+- ✅ Document metadata fields (Title, Number, Revision, Discipline, Status, Upload Date)
+- ✅ Document preview functionality
+- ✅ Download documents
+
+#### 4. Document Workflow Module [DONE]
+- ✅ Submit documents for review
+- ✅ Multi-level review workflow
+- ✅ Approve / Reject / Comment interface
+- ✅ Track document status (Draft, Submitted, Under Review, Approved, Rejected)
+- ✅ Comment history view
+
+#### 5. Transmittal Module [DONE]
+- ✅ Create transmittals
+- ✅ Attach multiple documents
+- ✅ Send to project parties
+- ✅ Track acknowledgement
+
+#### 6. Dashboard [DONE]
+- ✅ Project-wise dashboard
+- ✅ Document status summary
+- ✅ Pending approvals
+- ✅ Activity log
+
+#### 7. Search & Filters [DONE]
+- ✅ Search by document number
+- ✅ Filter by discipline, status, revision
+- ✅ Quick document retrieval
+- ✅ Global search page at /dashboard/search
+
+#### 8. Notifications [DONE]
+- ✅ Email notifications (Resend integration)
+- ✅ In-app notifications
+- ✅ Notification preferences
+- ✅ Notifications for: Document submission, Review request, Approval/Rejection
+
+---
+
+### 🚧 INCOMPLETE/NEEDS VERIFICATION
+
+#### Critical Issues to Fix:
+
+1. **Dashboard Access Issue (CRITICAL)**
+   - Users cannot access /dashboard due to session cache issue
+   - See AGENT.md for complete analysis
+   - **FIX REQUIRED:** Implement session refresh in `actions/users.ts`
+   - Code example provided in AGENT.md under "PERMANENT FIX" section
+
+2. **Environment Variables (Production)**
+   - Verify all required env vars are set in Vercel:
+     - DATABASE_URL (Neon PostgreSQL)
+     - BETTER_AUTH_SECRET
+     - BETTER_AUTH_URL (production URL)
+     - GOOGLE_CLIENT_ID
+     - GOOGLE_CLIENT_SECRET
+     - GITHUB_CLIENT_ID
+     - GITHUB_CLIENT_SECRET
+     - GROQ_API_KEY (optional - for AI features)
+     - POLAR_ACCESS_TOKEN (optional - for subscriptions)
+     - POLAR_WEBHOOK_SECRET (optional)
+     - BLOB_READ_WRITE_TOKEN (for document uploads)
+     - RESEND_API_KEY (for email notifications)
+     - RESEND_FROM_EMAIL (sender email address)
+
+3. **Database Migrations (Production)**
+   - Ensure all migrations are run on production database
+   - Verify schema is up to date
+   - Test database connectivity from Vercel
+
+4. **File Upload Testing**
+   - Test document upload with Vercel Blob in production
+   - Verify fallback to external URL works
+   - Test file download functionality
+
+5. **Email Notifications Testing**
+   - Verify Resend API key is valid
+   - Test email delivery in production
+   - Verify sender email is verified in Resend
+
+---
+
+## TECHNICAL REQUIREMENTS VERIFICATION
+
+### ✅ Frontend: React / Next.js
+- Using Next.js 16.2.1 with App Router
+- React 19.2.4
+- TypeScript 5.x
+
+### ✅ Backend: Node.js
+- Next.js API routes
+- Server actions for business logic
+
+### ✅ Database: PostgreSQL
+- Neon PostgreSQL
+- Drizzle ORM 0.42.0
+
+### ✅ Cloud Ready Architecture
+- Deployed on Vercel
+- Serverless functions
+- Edge-ready
+
+### ✅ REST API Based System
+- API routes in /app/api/
+- Server actions for mutations
+
+### ✅ Clean UI
+- shadcn-ui components
+- Tailwind CSS 4.2.2
+- Modern SaaS dashboard design
+
+### ✅ Secure File Storage
+- Vercel Blob integration
+- Secure upload/download
+
+---
+
+## DELIVERABLES CHECKLIST
+
+### ✅ Completed Deliverables:
+- ✅ Fully functional MVP (95% complete - dashboard access issue pending)
+- ✅ Source code (GitHub repository)
+- ✅ Database structure (Drizzle schema files)
+- ✅ API documentation (in code comments and AGENTS.md)
+- ✅ Deployment instructions (README.md, AGENTS.md)
+- ✅ Basic UI/UX design (shadcn-ui based)
+- ✅ Admin panel (dashboard with role-based access)
+
+### 🚧 Pending Deliverables:
+- ⚠️ Fix dashboard access issue (session refresh)
+- ⚠️ Verify production deployment works end-to-end
+- ⚠️ Test all features in production environment
+
+---
+
+## STEP-BY-STEP EXECUTION PLAN
+
+### Phase 1: Fix Critical Issues (MUST DO FIRST)
+
+**Step 1.1: Fix Dashboard Access Issue**
+```typescript
+// File: actions/users.ts
+// Add session refresh after profile update
+// See AGENT.md "PERMANENT FIX" section for complete code
+```
+
+**Step 1.2: Verify All TypeScript Errors Fixed**
+```bash
+npx tsc --noEmit
+# Should return 0 errors
+```
+
+**Step 1.3: Run Linting**
+```bash
+npm run lint
+# Fix any errors found
+```
+
+### Phase 2: Build & Test Locally
+
+**Step 2.1: Production Build**
+```bash
+npm run build
+# Should complete without errors
+```
+
+**Step 2.2: Test Build Locally**
+```bash
+npm start
+# Test all major features:
+# - Login/Logout
+# - Profile completion
+# - Dashboard access
+# - Project creation
+# - Document upload
+# - Workflow creation
+# - Transmittal creation
+```
+
+### Phase 3: Deploy to Vercel
+
+**Step 3.1: Verify Environment Variables**
+```bash
+vercel env ls
+# Ensure all required vars are set
+```
+
+**Step 3.2: Deploy to Production**
+```bash
+vercel --prod
+# Wait for deployment to complete
+```
+
+**Step 3.3: Run Database Migrations on Production**
+```bash
+# Set DATABASE_URL to production
+npm run db:migrate
+```
+
+**Step 3.4: Test Production Deployment**
+- Visit production URL
+- Test login flow
+- Test profile completion
+- Test dashboard access
+- Test document upload
+- Test workflow
+- Test transmittal
+- Test notifications
+
+### Phase 4: Verify GOAL.md Completion
+
+**Step 4.1: Go through GOAL.md line by line**
+- Check each requirement
+- Test each feature in production
+- Document any gaps
+
+**Step 4.2: Create Completion Report**
+- List all completed features
+- List any remaining issues
+- Provide recommendations for improvements
+
+---
+
+## KNOWN ISSUES & SOLUTIONS
+
+### Issue 1: Dashboard Access (CRITICAL)
+**Problem:** Session doesn't refresh after profile update
+**Solution:** Implement session refresh in actions/users.ts
+**Reference:** AGENT.md "PERMANENT FIX" section
+
+### Issue 2: Vercel Blob Token
+**Problem:** BLOB_READ_WRITE_TOKEN may not be set
+**Solution:** Create token in Vercel dashboard → Storage → Blob
+**Impact:** Document uploads will fail without this
+
+### Issue 3: Resend Email
+**Problem:** RESEND_FROM_EMAIL may not be verified
+**Solution:** Verify sender email in Resend dashboard
+**Impact:** Email notifications will fail without this
+
+### Issue 4: OAuth Redirect URLs
+**Problem:** OAuth callbacks may not include production URL
+**Solution:** Add production URL to Google/GitHub OAuth app settings
+**Impact:** Login will fail in production without this
+
+---
+
+## SUCCESS CRITERIA
+
+### Deployment Success:
+- ✅ Build completes with 0 errors
+- ✅ Vercel deployment succeeds
+- ✅ Production site loads without errors
+- ✅ All environment variables configured
+- ✅ Database migrations applied
+
+### Feature Completeness:
+- ✅ All 8 GOAL.md modules working
+- ✅ User can login and complete profile
+- ✅ User can access dashboard
+- ✅ User can create projects
+- ✅ User can upload documents
+- ✅ User can create workflows
+- ✅ User can create transmittals
+- ✅ User receives notifications
+- ✅ Search works correctly
+
+### Quality Criteria:
+- ✅ No TypeScript errors
+- ✅ No console errors in production
+- ✅ All pages load within 3 seconds
+- ✅ Mobile responsive
+- ✅ Secure (HTTPS, auth working)
+
+---
+
+## POST-DEPLOYMENT TASKS
+
+1. **Test End-to-End User Flow:**
+   - New user signup
+   - Profile completion
+   - Project creation
+   - Document upload
+   - Workflow approval
+   - Transmittal sending
+   - Notification receipt
+
+2. **Performance Check:**
+   - Page load times
+   - API response times
+   - Database query performance
+
+3. **Security Audit:**
+   - Auth working correctly
+   - Role-based access enforced
+   - File uploads secure
+   - No sensitive data exposed
+
+4. **Documentation Update:**
+   - Update README with production URL
+   - Update CHANGELOG with deployment
+   - Update TODO.md with completion status
+
+---
+
+## IMPORTANT NOTES
+
+### DO:
+- ✅ Fix the dashboard access issue FIRST (critical blocker)
+- ✅ Test thoroughly before deploying
+- ✅ Verify all environment variables
+- ✅ Run migrations on production database
+- ✅ Test all GOAL.md features in production
+- ✅ Update documentation after deployment
+
+### DON'T:
+- ❌ Deploy without fixing TypeScript errors
+- ❌ Deploy without testing locally first
+- ❌ Skip environment variable verification
+- ❌ Forget to run database migrations
+- ❌ Deploy without testing OAuth in production
+- ❌ Skip the GOAL.md verification checklist
+
+---
+
+## FINAL CHECKLIST
+
+Before marking as complete, verify:
+
+- [ ] TypeScript: 0 errors (`npx tsc --noEmit`)
+- [ ] Linting: 0 errors (`npm run lint`)
+- [ ] Build: Success (`npm run build`)
+- [ ] Dashboard access: Fixed and working
+- [ ] Vercel deployment: Success
+- [ ] Production URL: Accessible
+- [ ] Login: Working (Google + GitHub)
+- [ ] Profile completion: Working
+- [ ] Dashboard: Accessible after profile completion
+- [ ] Projects: Create, list, detail working
+- [ ] Documents: Upload, list, preview working
+- [ ] Workflows: Create, approve, reject working
+- [ ] Transmittals: Create, send, acknowledge working
+- [ ] Notifications: Email + in-app working
+- [ ] Search: Working across all modules
+- [ ] All GOAL.md requirements: Verified complete
+- [ ] Documentation: Updated with deployment info
+
+---
+
+## CONTACT & SUPPORT
+
+**Project Repository:** https://github.com/manfromexistence/construction
+**Vercel Project:** construction
+**User Email:** ajju40959@gmail.com
+
+**Key Documentation Files:**
+- GOAL.md - Original requirements
+- AGENT.md - Dashboard access issue analysis
+- AGENTS.md - AI agent collaboration guide
+- TODO.md - Development progress
+- CHANGELOG.md - Project history
+- README.md - Setup instructions
+
+---
+
+## EXPECTED OUTCOME
+
+After completing all tasks:
+
+1. **Production site is live and fully functional**
+2. **All GOAL.md requirements are implemented and tested**
+3. **Dashboard access issue is resolved**
+4. **All features work in production environment**
+5. **Documentation is updated with deployment details**
+6. **Project is ready for real construction project testing**
+
+---
+
+**REMEMBER:** The PRIMARY GOAL is to fulfill ALL requirements in GOAL.md. Every feature listed there must be working in production before marking this project as complete.
+
+**PRIORITY:** Fix dashboard access issue FIRST - it's blocking all other testing.
+
+---
+
+END OF PROMPT

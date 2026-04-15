@@ -1,0 +1,52 @@
+"use server";
+
+import { createGroq } from "@ai-sdk/groq";
+import { getCountry } from "@midday/location";
+import { generateObject } from "ai";
+import { z } from "zod";
+import { authActionClient } from "../safe-action";
+
+const groq = createGroq({
+  apiKey: process.env.GROQ_API_KEY,
+});
+
+export const getTaxRateAction = authActionClient
+  .schema(
+    z.object({
+      name: z.string().min(2),
+    }),
+  )
+  .metadata({
+    name: "get-tax-rate",
+  })
+  .action(async ({ parsedInput: { name } }) => {
+    const country = await getCountry();
+    const countryName = country?.name ?? "the user's country";
+
+    const { object } = await generateObject({
+      model: groq("llama-3.3-70b-versatile"),
+      schema: z.object({
+        taxRate: z.number().min(5).max(50),
+      }),
+      prompt: `
+        You are an expert tax consultant specializing in VAT/GST rates for businesses across different countries and industries.
+        
+        Please determine the standard VAT/GST rate that applies to businesses operating in the "${name}" category or industry in ${countryName}.
+        
+        Consider the following:
+        - Use the current standard VAT/GST rate for businesses in ${countryName}
+        - If the category "${name}" has specific exemptions or reduced rates, apply those instead
+        - Focus on B2B transactions where businesses can typically reclaim input VAT
+        - If multiple rates could apply, choose the most commonly applicable rate for this business category
+        - Return the rate as a percentage (e.g., 20 for 20% VAT)
+        
+        Country: ${countryName}
+        Business Category: ${name}
+      `,
+    });
+
+    return {
+      taxRate: object.taxRate,
+      country: country?.name,
+    };
+  });

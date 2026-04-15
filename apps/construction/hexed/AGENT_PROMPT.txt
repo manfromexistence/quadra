@@ -1,0 +1,322 @@
+================================================================================
+CONSTRUCTION EDMS - AI AGENT ONBOARDING PROMPT
+================================================================================
+
+You are working on the QUADRA project - an Electronic Document 
+Management System for construction projects built with Next.js 16, React 19, 
+TypeScript, PostgreSQL (Neon), Drizzle ORM, and Better Auth.
+
+CRITICAL: Read AGENTS.md immediately for comprehensive project documentation.
+
+================================================================================
+QUICK START CHECKLIST
+================================================================================
+
+1. READ these files in order:
+   - AGENTS.md (comprehensive guide - READ THIS FIRST)
+   - TODO.md (current development status and next tasks)
+   - GOAL.md (original requirements - DO NOT EDIT)
+   - .kiro/steering/dx.md (React patterns and code style)
+
+2. UNDERSTAND the project structure:
+   - app/ - Next.js App Router pages
+   - db/schema/ - Database schemas (projects, documents, workflows, etc.)
+   - components/ - React components (ui/ for shadcn-ui)
+   - actions/ - Server actions
+   - lib/ - Utilities (auth.ts, db.ts, ai/)
+
+3. FOLLOW this workflow:
+   - Check TODO.md for current task
+   - Plan implementation approach
+   - Make changes across necessary files
+   - Run: npx tsc --noEmit (type check - FAST)
+   - Fix all errors in one pass
+   - Run: npm run lint (code quality check)
+   - Run: npm run build (only when confident - SLOW)
+   - Update TODO.md and CHANGELOG.md
+
+================================================================================
+KEY COMMANDS (from AGENTS.md)
+================================================================================
+
+Type Checking (FAST - use first):
+  npx tsc --noEmit
+
+Linting:
+  npm run lint
+  npm run lint:fix
+
+Database:
+  npm run db:generate    # Generate migrations
+  npm run db:migrate     # Run migrations
+  npm run db:push        # Push schema (dev only)
+  npm run db:studio      # Open Drizzle Studio
+
+Build (SLOW - use last):
+  npm run build
+
+DO NOT RUN:
+  npm run dev            # Long-running process - not for agent mode
+
+================================================================================
+CURRENT PROJECT STATUS (as of April 1, 2026)
+================================================================================
+
+✅ COMPLETED:
+- Project renamed to "construction-edms"
+- Database schema designed (projects, documents, workflows, transmittals, etc.)
+- User table extended with EDMS fields (role, organization, jobTitle, etc.)
+- Documentation created (README, TODO, CHANGELOG, AGENTS.md)
+
+🚧 IN PROGRESS:
+- Generate and run database migrations
+- Create app directory structure for EDMS modules
+- Set up dashboard layout with sidebar navigation
+- Install shadcn-ui dashboard components
+
+📋 NEXT TASKS (see TODO.md for details):
+- Implement project management module
+- Implement document control module
+- Implement workflow management UI
+- Implement transmittal system
+- Add role-based access control middleware
+
+================================================================================
+TECHNOLOGY STACK
+================================================================================
+
+Framework:     Next.js 16.2.1 (App Router)
+Runtime:       React 19.2.4
+Language:      TypeScript 5.x
+Database:      PostgreSQL (Neon) + Drizzle ORM 0.42.0
+Auth:          Better Auth 1.2.7 (Google/GitHub OAuth)
+UI:            shadcn-ui + Radix UI + Tailwind CSS 4.2.2
+AI:            Vercel AI SDK + Groq (llama-3.3-70b-versatile)
+Deployment:    Vercel
+Package Mgr:   npm
+
+================================================================================
+CRITICAL RULES
+================================================================================
+
+DO NOT:
+❌ Delete existing files without permission
+❌ Remove working features (theme system, auth)
+❌ Edit GOAL.md file
+❌ Run npm run dev in agent mode
+❌ Create unnecessary documentation files
+❌ Use cd command (use cwd parameter)
+❌ Manually edit package.json dependencies
+
+DO:
+✅ Read TODO.md before starting
+✅ Update TODO.md after completing tasks
+✅ Update CHANGELOG.md with significant changes
+✅ Run type checks before building
+✅ Fix all errors in one pass
+✅ Use parallel tool calls for independent operations
+✅ Preserve existing auth and theme features
+✅ Follow React patterns from dx.md
+
+================================================================================
+CODE STYLE HIGHLIGHTS (see dx.md for full details)
+================================================================================
+
+React Patterns:
+- Avoid multiple useState - use state machines/reducers
+- Prefer derived state over useEffect
+- Server components by default, client only when needed
+- Extract complex conditionals into components
+
+TypeScript:
+- Use interfaces for objects
+- Use maps instead of enums
+- Descriptive variable names (isLoading, hasError)
+- console.log({ value }) not console.log(value)
+
+Styling:
+- Tailwind utility classes
+- Use cn() for conditional classes
+- Use flex and gap (not space-x-* or space-y-*)
+- Mobile-first responsive design
+
+File Naming:
+- Directories: lowercase-with-dashes
+- Components: PascalCase.tsx
+- Utilities: camelCase.ts
+
+================================================================================
+DATABASE SCHEMA OVERVIEW
+================================================================================
+
+Better Auth Tables (existing):
+- user, session, account, verification
+
+Theme System Tables (existing - keep for UI):
+- theme, community_theme, theme_like, ai_usage
+
+EDMS Tables (new):
+- projects, project_members
+- documents, document_versions, document_comments
+- document_workflows, workflow_steps
+- transmittals, transmittal_documents
+- notifications, activity_log
+
+Schema Location:
+- Main: db/schema.ts (Better Auth + themes + user extensions)
+- EDMS: db/schema/*.ts (domain-separated)
+
+================================================================================
+USER ROLES
+================================================================================
+
+- Admin: Full system access
+- Client: Project owner, document approval
+- PMC: Project Management Consultant, workflow management
+- Vendor: Document submission, review participation
+- Subcontractor: Document submission
+- User: Basic access
+
+================================================================================
+GPT-5.4 SPECIFIC CAPABILITIES TO LEVERAGE
+================================================================================
+
+✨ 1M Token Context Window:
+   - Load entire codebase for understanding
+   - Analyze cross-file dependencies
+   - Plan multi-file refactoring
+
+✨ Tool Search:
+   - Discover project-specific utilities
+   - Find relevant npm packages
+   - Locate functions across codebase
+
+✨ Native Computer Use:
+   - Execute commands directly
+   - Run type checks, lints, builds
+   - Interact with database tools
+
+✨ Agentic Workflows:
+   - Break down complex features
+   - Execute multi-step implementations
+   - Verify and test autonomously
+
+================================================================================
+ERROR HANDLING STRATEGY
+================================================================================
+
+When encountering errors:
+1. Analyze - Read full error message and stack trace
+2. Research - Search for solutions if unfamiliar
+3. Fix - Apply fix across all affected files
+4. Verify - Run type check to confirm
+5. Document - Note significant fixes in CHANGELOG.md
+
+Three-Strike Rule:
+- Attempt 1: Try initial fix
+- Attempt 2: Research and try alternative
+- Attempt 3: Try fundamentally different solution
+- If all fail: Document in HELP.md and move to next task
+
+================================================================================
+COMMON TASKS
+================================================================================
+
+Add shadcn-ui component:
+  npx shadcn@latest add [component-name]
+
+Add new EDMS module:
+  1. Create db/schema/new-module.ts
+  2. Export from db/schema/index.ts
+  3. npm run db:generate
+  4. npm run db:migrate
+  5. Create actions/new-module.ts
+  6. Create app/new-module/page.tsx
+  7. Update sidebar navigation
+
+Fix TypeScript errors:
+  npx tsc --noEmit
+  (Fix: imports, types, null checks, async/await)
+
+Database schema changes:
+  1. Edit schema file
+  2. npm run db:generate
+  3. Review migration SQL
+  4. npm run db:migrate
+
+================================================================================
+IMPORTANT FILES
+================================================================================
+
+Documentation:
+- AGENTS.md - Comprehensive guide (READ FIRST)
+- TODO.md - Current tasks and progress
+- CHANGELOG.md - Project history
+- GOAL.md - Original requirements (DO NOT EDIT)
+- README.md - Setup and overview
+- .kiro/steering/dx.md - Code style and patterns
+
+Configuration:
+- package.json - Dependencies and scripts
+- tsconfig.json - TypeScript config
+- drizzle.config.ts - Database config
+- next.config.ts - Next.js config
+- .env.local - Environment variables
+
+Core Application:
+- app/layout.tsx - Root layout
+- lib/auth.ts - Authentication
+- lib/db.ts - Database connection
+- db/schema.ts - Main schema
+- db/schema/index.ts - EDMS schemas
+
+================================================================================
+RESOURCES
+================================================================================
+
+Official Docs:
+- Next.js: https://nextjs.org/docs/app
+- React 19: https://react.dev
+- Drizzle ORM: https://orm.drizzle.team
+- Better Auth: https://www.better-auth.com
+- shadcn-ui: https://ui.shadcn.com
+- Tailwind CSS: https://tailwindcss.com
+
+GPT-5.4 Resources:
+- Announcement: https://openai.com/index/introducing-gpt-5-4/
+- API Docs: https://platform.openai.com/docs
+- Codex: https://codex.openai.com
+
+================================================================================
+YOUR MISSION
+================================================================================
+
+Work autonomously on the QUADRA project following the workflow in
+AGENTS.md. Break down complex features, execute implementations, verify with
+type checks and lints, and update documentation as you progress.
+
+Leverage your GPT-5.4 capabilities:
+- Use 1M context to understand the full codebase
+- Use tool search to find utilities efficiently
+- Use native computer use to run commands
+- Use agentic workflows for multi-step tasks
+
+Remember: Type check first (fast), fix all errors, then build (slow).
+
+================================================================================
+START HERE
+================================================================================
+
+1. Read AGENTS.md thoroughly
+2. Read TODO.md to see current status
+3. Read the next task from TODO.md
+4. Plan your approach
+5. Execute the implementation
+6. Verify with type checks and lints
+7. Update TODO.md and CHANGELOG.md
+8. Move to the next task
+
+Good luck! The codebase is well-structured and documented. You have everything
+you need to work effectively.
+
+================================================================================

@@ -1,0 +1,53 @@
+{
+  "name": "@midday/website",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "NODE_ENV=production next build --turbopack",
+    "clean": "git clean -xdf .next .turbo node_modules",
+    "dev": "TZ=UTC next dev --turbopack -p 3000",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^3.0.48",
+    "@ai-sdk/react": "^3.0.140",
+    "@hookform/resolvers": "^3.9.1",
+    "@midday/app-store": "workspace:*",
+    "@midday/connectors": "workspace:*",
+    "@midday/events": "workspace:*",
+    "@midday/ui": "workspace:*",
+    "@openpanel/nextjs": "^1.4.0",
+    "@openstatus/react": "^0.0.3",
+    "@team-plain/typescript-sdk": "^5.3.0",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.37.0",
+    "ai": "^6.0.138",
+    "geist": "^1.7.0",
+    "hls.js": "^1.6.15",
+    "lucide-react": "^0.468.0",
+    "motion": "^12.38.0",
+    "next": "16.2.1",
+    "next-mdx-remote": "^6.0.0",
+    "next-safe-action": "^8.3.0",
+    "next-themes": "^0.4.6",
+    "nuqs": "^2.8.9",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-hook-form": "^7.54.2",
+    "react-icons": "^5.6.0",
+    "remark-gfm": "^4.0.1",
+    "streamdown": "2.5.0",
+    "sugar-high": "^1.0.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@midday/tsconfig": "workspace:*",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "autoprefixer": "10.4.20",
+    "postcss": "8.4.49",
+    "tailwindcss": "3.4.17"
+  }
+}
