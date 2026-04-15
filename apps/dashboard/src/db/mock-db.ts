@@ -284,25 +284,18 @@ class MockDatabase {
     return {
       from: (table: unknown) => {
         const tableName = this.getTableName(table);
+        const data = this.getMockDataForTable(tableName);
+        
         return {
           where: (condition: unknown) => {
-            // Extract the filter from the condition
-            const data = this.getMockDataForTable(tableName);
             // For now, return all data - proper filtering would require parsing the condition
-            return {
-              limit: (count: number) => data.slice(0, count),
-              then: (resolve: (value: unknown[]) => void) => {
-                resolve(data);
-                return Promise.resolve(data);
-              },
-            };
+            return Promise.resolve(data);
           },
           limit: (count: number) => {
-            const data = this.getMockDataForTable(tableName);
-            return data.slice(0, count);
+            const limitedData = data.slice(0, count);
+            return Promise.resolve(limitedData);
           },
           then: (resolve: (value: unknown[]) => void) => {
-            const data = this.getMockDataForTable(tableName);
             resolve(data);
             return Promise.resolve(data);
           },

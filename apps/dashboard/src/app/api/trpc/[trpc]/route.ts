@@ -2,7 +2,6 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { type NextRequest } from "next/server";
 import { appRouter } from "./router";
 import { createContext } from "./context";
-import superjson from "superjson";
 
 const handler = (req: NextRequest) => {
   console.log(`[tRPC API] ${req.method} ${req.url}`);
@@ -12,7 +11,6 @@ const handler = (req: NextRequest) => {
     req,
     router: appRouter,
     createContext,
-    transformer: superjson,
     onError: ({ path, error }) => {
       console.error(`❌ tRPC ERROR on ${path ?? "<no-path>"}:`);
       console.error(`   Message: ${error.message}`);

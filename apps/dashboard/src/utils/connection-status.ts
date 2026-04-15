@@ -146,8 +146,9 @@ export function buildConnectionIssues(
 
   const issues: ConnectionIssue[] = [];
 
-  // Process bank connections
-  for (const connection of data.bankConnections) {
+  // Process bank connections - ensure it's an array
+  const bankConnections = Array.isArray(data.bankConnections) ? data.bankConnections : [];
+  for (const connection of bankConnections) {
     const baseIssue = {
       type: "bank" as const,
       logoUrl: connection.logoUrl,
@@ -202,8 +203,9 @@ export function buildConnectionIssues(
     }
   }
 
-  // Process inbox accounts
-  for (const account of data.inboxAccounts) {
+  // Process inbox accounts - ensure it's an array
+  const inboxAccounts = Array.isArray(data.inboxAccounts) ? data.inboxAccounts : [];
+  for (const account of inboxAccounts) {
     if (account.status === "disconnected") {
       issues.push({
         type: "inbox",

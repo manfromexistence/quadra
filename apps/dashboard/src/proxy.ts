@@ -9,11 +9,17 @@ const I18nMiddleware = createI18nMiddleware({
   urlMappingStrategy: "rewrite",
 });
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const origin = request.nextUrl.origin;
 
-  // Skip middleware for static assets completely
+  // Skip proxy for static assets completely
   if (request.nextUrl.pathname.startsWith("/_next/")) {
+    return NextResponse.next();
+  }
+
+  // CRITICAL: Skip i18n rewriting for API routes (tRPC, auth, etc.)
+  // Without this, API calls get rewritten through the i18n system and return HTML
+  if (request.nextUrl.pathname.startsWith("/api/")) {
     return NextResponse.next();
   }
 

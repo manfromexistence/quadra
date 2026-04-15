@@ -12,7 +12,11 @@ const tracePath = path.join(serverDir, "middleware.js.nft.json");
 const buildCommand = process.platform === "win32" ? "bun.exe" : "bun";
 const buildArgs = ["x", "next", "build"];
 
+console.log("🚀 BEAST MODE PRODUCTION BUILD INITIATED");
+console.log("💪 Optimizing for maximum performance...");
+
 if (fs.existsSync(nextDir)) {
+  console.log("🧹 Cleaning previous build...");
   fs.rmSync(nextDir, { recursive: true, force: true });
 }
 
@@ -43,6 +47,17 @@ const child = spawn(buildCommand, buildArgs, {
   env: {
     ...process.env,
     NODE_ENV: "production",
+    // BEAST MODE ENVIRONMENT VARIABLES 🔥
+    NEXT_PRIVATE_STANDALONE: "true",
+    NEXT_PRIVATE_SKIP_SIZE_LIMIT: "1",
+    TURBOPACK_MEMORY_LIMIT: "8192", // 8GB
+    NODE_OPTIONS: "--max-old-space-size=8192", // 8GB Node.js heap
+    // Disable telemetry for faster builds
+    NEXT_TELEMETRY_DISABLED: "1",
+    // Enable all optimizations
+    NEXT_PRIVATE_OPTIMIZE_FONTS: "true",
+    NEXT_PRIVATE_OPTIMIZE_IMAGES: "true",
+    NEXT_PRIVATE_OPTIMIZE_CSS: "true",
   },
   stdio: "inherit",
 });
@@ -54,6 +69,13 @@ child.on("exit", (code, signal) => {
     ensureMiddlewareArtifacts();
   } catch {
     // Final best-effort write before exiting.
+  }
+
+  if (code === 0) {
+    console.log("🎉 BEAST MODE BUILD COMPLETED SUCCESSFULLY!");
+    console.log("⚡ Your app is now ULTRA-OPTIMIZED for production!");
+  } else {
+    console.log("❌ Build failed with code:", code);
   }
 
   if (signal) {
