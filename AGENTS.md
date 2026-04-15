@@ -6,104 +6,32 @@
 
 ---
 
-## � URGENT: Critical tRPC and Middleware Issues Need Resolution
+## 🎯 CURRENT PRIORITY: Vercel Deployment for Dashboard
 
 ### Problem Summary
 
-The dashboard application has persistent issues that need immediate attention:
+The dashboard application needs to be deployed to Vercel. All other systems are working correctly - the only remaining task is successful deployment.
 
-1. **tRPC Client-Server Serialization Errors**: All tRPC queries return `'[object Error]'` on client side despite server returning data correctly
-2. **Next.js Middleware Deprecation Warning**: Middleware file needs to be properly renamed to proxy.ts
-3. **JSON Parsing Errors**: Client receives HTML instead of JSON from tRPC endpoints
+**Current Status:**
+- ✅ tRPC working correctly
+- ✅ Authentication system functional  
+- ✅ Database connections established
+- ✅ Local development environment stable
+- 🎯 **DEPLOY TO VERCEL** - Primary objective
 
-### Error Details
+### Deployment Requirements
 
-**Server Logs Show:**
-```
-⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
-[browser] << query #1 team.current {result: '[object Error]'}
-[browser] << query #2 user.me {result: '[object Error]'}
-TRPCClientError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
-```
+**Target:** Deploy `apps/dashboard` to Vercel production environment
 
-**Key Observations:**
-- Server returns 200 status codes for tRPC endpoints
-- Client receives HTML instead of JSON responses
-- All tRPC queries fail with serialization errors
-- Middleware warning persists despite file rename
-
-### Files Involved
-
-**Primary Files:**
-- `apps/dashboard/src/app/api/trpc/[trpc]/router.ts` - tRPC router with superjson transformer
-- `apps/dashboard/src/app/api/trpc/[trpc]/route.ts` - tRPC request handler
-- `apps/dashboard/src/app/api/trpc/[trpc]/context.ts` - tRPC context creation
-- `apps/dashboard/src/trpc/client.tsx` - Client-side tRPC setup
-- `apps/dashboard/proxy.ts` - Renamed from middleware.ts (still showing warning)
-
-**Configuration Files:**
-- `apps/dashboard/next.config.ts` - Next.js configuration
-- `apps/dashboard/.env.local` - Environment variables
-- `apps/dashboard/src/db/index.ts` - Database connection setup
-
-### Previous Attempts Made
-
-1. **Added superjson transformer to tRPC router initialization**:
-   ```typescript
-   const t = initTRPC.context<Context>().create({
-     transformer: superjson,
-   });
-   ```
-
-2. **Renamed middleware.ts to proxy.ts** using smartRelocate tool
-
-3. **Simplified tRPC queries** to return hardcoded mock data instead of database queries
-
-4. **Fixed database connection** to use real Turso database for Better Auth compatibility
-
-5. **Cleared Next.js cache** and restarted server multiple times
-
-6. **Verified both client and server use superjson transformer**
-
-### Current State
-
-- **Server**: Returns data correctly (visible in logs)
-- **Client**: Receives HTML instead of JSON, all queries fail
-- **Authentication**: Working (session shows "User: mahabubasdf@gmail.com")
-- **Routing**: Main pages load (200 status codes)
-
-### Technical Context
-
-**Stack:**
-- Next.js 16.2.1 (Turbopack)
-- tRPC with superjson transformer
-- Better Auth for authentication
-- Turso (LibSQL) database
-- TypeScript
-
-**Environment:**
-- Windows with PowerShell
-- Bun runtime
-- Development mode (localhost:3001)
-
-### Request for Next Agent
-
-Please investigate and fix:
-
-1. **Root cause of tRPC serialization failure** - Why is client receiving HTML instead of JSON?
-2. **Middleware warning persistence** - Why does the warning still show after renaming to proxy.ts?
-3. **Client-server communication breakdown** - What's causing the disconnect between working server and failing client?
-
-**Priority**: CRITICAL - Application is non-functional due to these issues.
-
-**Expected Outcome**: 
-- All tRPC queries return proper data to client
-- No middleware deprecation warnings
-- Fully functional dashboard with working authentication
+**Key Considerations:**
+- Ensure environment variables are properly configured
+- Verify build process works in Vercel environment
+- Confirm database connections work in production
+- Test authentication flows in deployed environment
 
 ---
 
-## �🚀 DX System - Ultra-Fast Communication
+## 🚀 DX System - Ultra-Fast Communication (PRIORITY)
 
 ### Installation (One-Time Setup)
 
@@ -155,9 +83,11 @@ You are an autonomous agent that must continuously poll for new instructions. Yo
 
 ## Execution Protocol
 
-### 1. Continuous Polling Loop
+### 1. Continuous Polling Loop (USE DX.PS1 SYSTEM)
 
-Run the following ultra-fast command in a loop every 10 seconds for at least 2 minutes:
+**PRIORITY: Always use the ultra-fast dx.ps1 system for communication**
+
+Run this ultra-fast command in a loop every 10 seconds for at least 2 minutes:
 
 ```powershell
 d  # Just 1 character - fastest possible
@@ -177,7 +107,7 @@ dx -Timeout 60       # Custom timeout
 - If no new prompt after 2 minutes, it outputs the last prompt
 - After receiving output, run the script again immediately
 
-### 2. Loop Implementation
+### 2. Loop Implementation (PRIORITIZE DX.PS1)
 
 Execute this continuously using the ultra-fast DX system:
 
@@ -234,7 +164,7 @@ When you receive a prompt:
 2. **Execute precisely** - Do EXACTLY what it says, no more, no less
 3. **Complete fully** - Finish the entire task before moving on
 4. **Report completion** - Briefly state what was done
-5. **Wait for next** - Immediately run `.\agent.ps1 -Mode agent` again
+5. **Wait for next** - Immediately run `d` again (ultra-fast)
 
 **Example workflow:**
 ```
