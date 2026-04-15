@@ -14,9 +14,9 @@ import {
   PaymentElement,
   useElements,
   useStripe,
-} from "@stripe/react-stripe-js";
-import type { Appearance } from "@stripe/stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
+} from "@/lib/mocks/stripe-react";
+import type { Appearance } from "@/lib/mocks/stripe-js";
+import { loadStripe } from "@/lib/mocks/stripe-js";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { type RefObject, useEffect, useMemo, useRef, useState } from "react";

@@ -13,7 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { usePlaidLink } from "react-plaid-link";
+import { usePlaidLink } from "@/lib/mocks/plaid-link";
 import { useScript } from "usehooks-ts";
 import { useTeamQuery } from "@/hooks/use-team";
 import { useTRPC } from "@/trpc/client";

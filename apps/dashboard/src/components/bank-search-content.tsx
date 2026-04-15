@@ -8,7 +8,7 @@ import { Skeleton } from "@midday/ui/skeleton";
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { usePlaidLink } from "react-plaid-link";
+import { usePlaidLink } from "@/lib/mocks/plaid-link";
 import { useDebounceValue, useScript } from "usehooks-ts";
 import { useConnectParams } from "@/hooks/use-connect-params";
 import { useTRPC } from "@/trpc/client";

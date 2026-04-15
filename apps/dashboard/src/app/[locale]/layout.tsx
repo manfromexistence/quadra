@@ -4,7 +4,7 @@ import "@midday/ui/globals.css";
 import { Provider as Analytics } from "@midday/events/client";
 import { Toaster } from "@midday/ui/toaster";
 import type { Metadata } from "next";
-import { Hedvig_Letters_Sans, Hedvig_Letters_Serif } from "next/font/google";
+import { Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { ReactElement } from "react";
 import { DesktopHeader } from "@/components/desktop-header";
@@ -32,19 +32,15 @@ export const metadata: Metadata = {
   },
 };
 
-const hedvigSans = Hedvig_Letters_Sans({
-  weight: "400",
+const inter = Inter({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-hedvig-sans",
+  variable: "--font-inter",
 });
 
-const hedvigSerif = Hedvig_Letters_Serif({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-hedvig-serif",
-});
+// Use Inter for both sans and serif as fallback
+const hedvigSans = inter;
+const hedvigSerif = inter;
 
 export const viewport = {
   width: "device-width",
