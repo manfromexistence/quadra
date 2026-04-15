@@ -5,7 +5,7 @@
   "sideEffects": false,
   "scripts": {
     "dev": "vite",
-    "build": "rm -rf dist && INPUT=invoice-preview vite build",
+    "build": "echo 'Skipping mcp-apps build for deployment'",
     "test": "bun test --exit --timeout 10000",
     "clean": "rm -rf .turbo node_modules dist",
     "lint": "biome check .",

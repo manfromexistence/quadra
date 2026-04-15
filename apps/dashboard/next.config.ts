@@ -30,9 +30,6 @@ const config = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   devIndicators: false,
   async headers() {
     return [

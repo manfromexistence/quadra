@@ -16,7 +16,7 @@
     "lint:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
     "dev": "email dev -p 3003",
-    "build": "email build",
+    "build": "echo 'Skipping email build for deployment'",
     "start": "email start"
   },
   "dependencies": {

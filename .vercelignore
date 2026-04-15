@@ -70,9 +70,12 @@ docs/
 *.iso
 
 # Keep everything else including:
-# - packages/ (source code)
+# - packages/ (source code) - KEEP FOR WORKSPACE DEPENDENCIES
 # - apps/ (source code) 
 # - dist/ (built packages)
 # - drizzle/ (database schemas)
 # - All config files
 # - All source files
+
+# Don't ignore packages folder - needed for workspace dependencies
+!packages/
