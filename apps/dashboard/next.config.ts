@@ -1,7 +1,19 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const workspaceRoot = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../..",
+);
+
 /** @type {import("next").NextConfig} */
 const config = {
   poweredByHeader: false,
   reactStrictMode: true,
+  outputFileTracingRoot: workspaceRoot,
+  turbopack: {
+    root: workspaceRoot,
+  },
   experimental: {
     // Use maximum workers for cloud build
     cpus: 0, // Use all available CPUs

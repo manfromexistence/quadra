@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createI18nMiddleware } from "next-international/middleware";
 
-const ORIGIN = process.env.NEXT_PUBLIC_URL || "http://localhost:3001";
+const SUPPORTED_LOCALES = new Set(["en"]);
 
 const I18nMiddleware = createI18nMiddleware({
   locales: ["en"],
@@ -9,31 +9,33 @@ const I18nMiddleware = createI18nMiddleware({
   urlMappingStrategy: "rewrite",
 });
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+  const origin = request.nextUrl.origin;
+
   // Skip middleware for static assets completely
-  if (request.nextUrl.pathname.startsWith('/_next/')) {
+  if (request.nextUrl.pathname.startsWith("/_next/")) {
     return NextResponse.next();
   }
-  
+
   const response = I18nMiddleware(request);
-  
+
   // Check if user is authenticated by checking for session cookie
   const sessionCookie = request.cookies.get("better-auth.session_token");
   const isAuthenticated = !!sessionCookie;
 
   const nextUrl = request.nextUrl;
-
-  const pathnameLocale = nextUrl.pathname.split("/", 2)?.[1];
-
-  const pathnameWithoutLocale = pathnameLocale
-    ? nextUrl.pathname.slice(pathnameLocale.length + 1)
+  const pathnameSegments = nextUrl.pathname.split("/").filter(Boolean);
+  const pathnameLocale = pathnameSegments[0];
+  const hasLocalePrefix = pathnameLocale ? SUPPORTED_LOCALES.has(pathnameLocale) : false;
+  const pathnameWithoutLocale = hasLocalePrefix
+    ? `/${pathnameSegments.slice(1).join("/")}` || "/"
     : nextUrl.pathname;
 
-  const newUrl = new URL(pathnameWithoutLocale || "/", ORIGIN);
+  const newUrl = new URL(pathnameWithoutLocale || "/", origin);
 
-  const encodedSearchParams = `${newUrl?.pathname?.substring(1)}${
-    newUrl.search
-  }`;
+  const encodedPathname =
+    newUrl.pathname === "/" ? "" : newUrl.pathname.substring(1);
+  const encodedSearchParams = `${encodedPathname}${nextUrl.search}`;
 
   // Public routes that don't require authentication
   const publicRoutes = [
@@ -51,12 +53,13 @@ export async function proxy(request: NextRequest) {
   ];
 
   const isPublicRoute = publicRoutes.some((route) =>
-    newUrl.pathname.includes(route)
+    newUrl.pathname.includes(route),
   );
 
   // Redirect unauthenticated users to login
   if (!isAuthenticated && !isPublicRoute && newUrl.pathname !== "/login") {
-    const loginUrl = new URL("/login", ORIGIN);
+    const loginPath = hasLocalePrefix ? `/${pathnameLocale}/login` : "/en/login";
+    const loginUrl = new URL(loginPath, origin);
 
     if (encodedSearchParams) {
       loginUrl.searchParams.append("return_to", encodedSearchParams);
@@ -70,7 +73,7 @@ export async function proxy(request: NextRequest) {
       const inviteCodeMatch = newUrl.pathname.startsWith("/teams/invite/");
 
       if (inviteCodeMatch) {
-        return NextResponse.redirect(`${ORIGIN}${request.nextUrl.pathname}`);
+        return NextResponse.redirect(`${origin}${request.nextUrl.pathname}`);
       }
     }
   }

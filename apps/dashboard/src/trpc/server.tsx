@@ -9,6 +9,7 @@ import {
 } from "@trpc/tanstack-react-query";
 import { cache } from "react";
 import superjson from "superjson";
+import { getServerAppUrl } from "@/utils/app-url";
 import { makeQueryClient } from "./query-client";
 
 // IMPORTANT: Create a stable getter for the query client that
@@ -26,7 +27,7 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
       }),
       httpBatchLink({
         transformer: superjson,
-        url: `${process.env.NEXT_PUBLIC_URL || "http://localhost:3001"}/api/trpc`,
+        url: `${getServerAppUrl()}/api/trpc`,
         headers() {
           return {
             "x-trpc-source": "server",

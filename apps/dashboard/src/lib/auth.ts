@@ -3,12 +3,12 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { Resend } from "resend";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
+import { getServerAppUrl, getTrustedOrigins } from "@/utils/app-url";
 
 export const auth = betterAuth({
   appName: "QUADRA",
-  baseURL:
-    process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_URL ?? "http://localhost:3001",
-  trustedOrigins: ["http://localhost:3001", "http://10.2.0.2:3001"],
+  baseURL: getServerAppUrl(),
+  trustedOrigins: getTrustedOrigins(),
   database: drizzleAdapter(db, {
     provider: "sqlite",
     schema,

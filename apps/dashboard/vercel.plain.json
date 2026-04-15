@@ -7,11 +7,5 @@
   "buildCommand": "bun run build && node ./scripts/sync-vercel-next-output.mjs",
   "installCommand": "bun install",
   "framework": "nextjs",
-  "bunVersion": "1.x",
-  "experimentalServices": {
-    "web": {
-      "routePrefix": "/",
-      "framework": "nextjs"
-    }
-  }
+  "bunVersion": "1.x"
 }

@@ -11,6 +11,7 @@ import {
 import { createTRPCContext } from "@trpc/tanstack-react-query";
 import { useState } from "react";
 import superjson from "superjson";
+import { getServerAppUrl } from "@/utils/app-url";
 import { makeQueryClient } from "./query-client";
 
 export const { TRPCProvider, useTRPC } = createTRPCContext<AppRouter>();
@@ -29,7 +30,7 @@ function getQueryClient() {
 
 function getBaseUrl() {
   if (typeof window !== "undefined") return "";
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003";
+  return getServerAppUrl();
 }
 
 export function TRPCReactProvider(

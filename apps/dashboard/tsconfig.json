@@ -4,7 +4,11 @@
     "paths": {
       "@/*": ["./src/*"],
       "@api/*": ["../api/src/*"],
-      "@jobs/*": ["../../packages/jobs/src/*"]
+      "@jobs/*": ["../../packages/jobs/src/*"],
+      "@midday/supabase/cached-queries": ["./src/lib/supabase/cached-queries.ts"],
+      "@midday/supabase/client": ["./src/lib/supabase/client.ts"],
+      "@midday/supabase/mutations": ["./src/lib/supabase/mutations.ts"],
+      "@midday/supabase/server": ["./src/lib/supabase/server.ts"]
     },
     "strict": true
   },
