@@ -14,6 +14,13 @@ export {
   getFiscalYearToDate,
 } from "./fiscal-year";
 export {
+  CHAT_MODEL_OPTIONS,
+  coerceChatModelId,
+  DEFAULT_CHAT_MODEL,
+  isChatModelId,
+} from "./chat-models";
+export type { ChatModelId } from "./chat-models";
+export {
   ensureFileExtension,
   getExtensionFromMimeType,
 } from "./mime-to-extension";

@@ -17,6 +17,7 @@ import {
   processInboxUpload,
 } from "@midday/bot";
 import { logger } from "@midday/logger";
+import { coerceChatModelId } from "@midday/utils/chat-models";
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -56,6 +57,9 @@ app.post("/", async (c) => {
 
     const body = await c.req.json();
     const uiMessages = body.messages as any[];
+    const modelId = coerceChatModelId(
+      typeof body.model === "string" ? body.model : null,
+    );
     const latestUserMessage = [...uiMessages]
       .reverse()
       .find((message) => message?.role === "user");
@@ -157,6 +161,7 @@ app.post("/", async (c) => {
           mcpCtx,
           systemPrompt,
           modelMessages,
+          modelId,
         });
 
         writer.merge(result.toUIMessageStream({ sendSources: true }));

@@ -10,6 +10,7 @@ const workspaceRoot = path.join(
 const config = {
   poweredByHeader: false,
   reactStrictMode: true,
+  reactCompiler: process.env.NODE_ENV === "production",
   outputFileTracingRoot: workspaceRoot,
   turbopack: {
     root: workspaceRoot,
@@ -43,11 +44,6 @@ const config = {
       optimizeCss: true,
       optimizeServerReact: true,
       serverMinification: true,
-      swcMinify: true,
-      // Aggressive bundling
-      bundlePagesRouterDependencies: true,
-      // Enable React Compiler for maximum performance
-      reactCompiler: true,
     }),
   },
   images: {
@@ -77,7 +73,7 @@ const config = {
   async headers() {
     const headers = [
       {
-        source: "/((?!api/proxy).*)",
+        source: "/:path*",
         headers: [
           {
             key: "X-Frame-Options", 
@@ -92,7 +88,7 @@ const config = {
       headers.push(
         // Static assets - cache for 1 year
         {
-          source: "/_next/static/(.*)",
+          source: "/_next/static/:path*",
           headers: [
             {
               key: "Cache-Control",
@@ -106,7 +102,7 @@ const config = {
         },
         // Images - cache for 1 month
         {
-          source: "/(.*\\.(png|jpg|jpeg|gif|webp|avif|ico|svg))",
+          source: "/:path*\\.:ext(png|jpg|jpeg|gif|webp|avif|ico|svg)",
           headers: [
             {
               key: "Cache-Control", 
@@ -116,7 +112,7 @@ const config = {
         },
         // API routes - no cache but security headers
         {
-          source: "/api/(.*)",
+          source: "/api/:path*",
           headers: [
             {
               key: "X-Content-Type-Options",
@@ -134,7 +130,7 @@ const config = {
         },
         // All pages - security headers
         {
-          source: "/(.*)",
+          source: "/:path*",
           headers: [
             {
               key: "Strict-Transport-Security",

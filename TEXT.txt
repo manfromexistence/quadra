@@ -1,0 +1,62 @@
+Workflow Setup
+Start
+  ↓
+Document Controller
+(Upload + Metadata)
+  ↓
+Civil Engineer
+(Technical Check)
+  ↓
+Civil Lead
+(Discipline Approval)
+  ↓
+QA/QC Engineer
+(Quality Compliance)
+  ↓
+PMC Civil Engineer
+(Consultant Review)
+  ↓
+Client Civil Engineer
+(Final Approval)
+  ↓
+Decision
+ ├── Approved → IFC / Shared for Construction
+ ├── Approved with Comments → Revise & Resubmit
+ └── Rejected → Revise & Resubmit
+  ↓
+Document Controller
+(Issue Controlled Copy)
+  ↓
+End
+(Same appliable to all disciplines)
+Comments Resolution Sheet (CSR), option required for Client
+CSR will be an Excel Template where Client will list comments and provide columns for contractor to provide clarifications
+(Client Engineer need to use this external template and attach along with documents reviewed to return to Contractor)
+I think you dont need to configure it to a FULL system now, that we can do as second phase after getting an investor.
+WHAT WE NEED NOW IS ONLY TO TEST A PROJECT CONFIGURATION AND BASIC WORKFLOW EFFICIENCY , FINAL DOCUMENTATION INCLUDING DATA BOOK COMPILATION
+Workflow:
+Engineering Team will bulk upload documents into Quadra 
+DC will cross check and submit docs to Client
+Client must be able to login and review documents and provide comments with CSR
+DC gets notification from Client as REVIEWED and the same process repeats until approved.
+APPROVAL CODES for Client
+Code-1 – Approved
+Code-2 – Approved with Comments
+Code-3 – Rejected
+Code-4 – For Information only (No Review Required)
+
+----------------------------------------------------------------------------------------------------------------------
+
+I want to test the software crating a dummy project, this is required for presentations:
+Users 
+1.  Quadra Admin
+2.  Contractor DC
+3.  Client Engineer
+•  Quadra Admin must be able to setup new project and assign users with permission levels
+•  Contractor DC uploads a document and creates workflow.
+•  AS per workflow, DC sends document via Transmittal
+•  Client logging in and notices an alert of new document submission for review
+Client reviews and returns the document with comments and stamping approval code
+•  Contractor DC logging in and notices new msg alert to find client reviewed document and acknowledges transmittal.
+
+d now in our apps/dashboard project please make sure that auth, and all edms features works - use imgbb, catbox, my turso cli use wsl inline comamnds as its instatted there and also use better-auth drizzle and make sure that in our apps/dashboard from starting from login page to all edms related dashboard pages works correctly now - you create a use script files to make sure and test everything works instead of guessing things and then deploy it vercel correctly

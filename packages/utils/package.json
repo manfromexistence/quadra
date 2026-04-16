@@ -15,6 +15,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
+    "./chat-models": "./src/chat-models.ts",
     "./envs": "./src/envs.ts",
     "./format": "./src/format.ts",
     "./sanitize-redirect": "./src/sanitize-redirect.ts",

@@ -28,6 +28,9 @@ export interface TransmittalDetailData {
       reviewStatus: string | null;
       comments: string | null;
       approvalCode: string | null;
+      attachmentUrl: string | null;
+      attachmentFileName: string | null;
+      attachmentFileSize: number | null;
       reviewedAt: string | null;
       reviewedBy: string | null;
     } | null;
@@ -201,6 +204,9 @@ function parseReviewNotes(value: string | null) {
       reviewStatus?: string | null;
       comments?: string | null;
       approvalCode?: string | null;
+      attachmentUrl?: string | null;
+      attachmentFileName?: string | null;
+      attachmentFileSize?: number | null;
       reviewedAt?: string | null;
       reviewedBy?: string | null;
     };
@@ -209,6 +215,9 @@ function parseReviewNotes(value: string | null) {
       reviewStatus: parsed.reviewStatus ?? null,
       comments: parsed.comments ?? null,
       approvalCode: parsed.approvalCode ?? null,
+      attachmentUrl: parsed.attachmentUrl ?? null,
+      attachmentFileName: parsed.attachmentFileName ?? null,
+      attachmentFileSize: parsed.attachmentFileSize ?? null,
       reviewedAt: parsed.reviewedAt ?? null,
       reviewedBy: parsed.reviewedBy ?? null,
     };

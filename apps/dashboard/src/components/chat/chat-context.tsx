@@ -2,6 +2,11 @@
 
 import { useChat } from "@ai-sdk/react";
 import { LogEvents } from "@midday/events/events";
+import {
+  type ChatModelId,
+  DEFAULT_CHAT_MODEL,
+  isChatModelId,
+} from "@midday/utils/chat-models";
 import { useOpenPanel } from "@openpanel/nextjs";
 import { DefaultChatTransport } from "ai";
 import type { ReactNode } from "react";
@@ -9,6 +14,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -23,9 +29,13 @@ export type ConnectedApp = {
   logo: string | null;
 };
 
+const CHAT_MODEL_STORAGE_KEY = "midday.chat.selected-model";
+
 export type ChatState = ReturnType<typeof useChat> & {
   inputValue: string;
   setInputValue: (v: string) => void;
+  selectedModel: ChatModelId;
+  setSelectedModel: (model: ChatModelId) => void;
   chatTitle: string | null;
   setChatTitle: (v: string | null) => void;
   rateLimit: RateLimitInfo | null;
@@ -48,6 +58,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const { track } = useOpenPanel();
 
   const [inputValue, setInputValue] = useState("");
+  const [selectedModel, setSelectedModelState] =
+    useState<ChatModelId>(DEFAULT_CHAT_MODEL);
   const [chatTitle, setChatTitle] = useState<string | null>(null);
   const [rateLimit, setRateLimit] = useState<RateLimitInfo | null>(null);
   const [rateLimitExceeded, setRateLimitExceeded] = useState(false);
@@ -55,6 +67,24 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const mentionedAppsRef = useRef(mentionedApps);
   mentionedAppsRef.current = mentionedApps;
+  const selectedModelRef = useRef(selectedModel);
+  selectedModelRef.current = selectedModel;
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const storedModel = window.localStorage.getItem(CHAT_MODEL_STORAGE_KEY);
+
+    if (isChatModelId(storedModel)) {
+      setSelectedModelState(storedModel);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    window.localStorage.setItem(CHAT_MODEL_STORAGE_KEY, selectedModel);
+  }, [selectedModel]);
 
   const addMentionedApp = useCallback((app: ConnectedApp) => {
     setMentionedApps((prev) => {
@@ -71,6 +101,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setMentionedApps([]);
   }, []);
 
+  const setSelectedModel = useCallback((model: ChatModelId) => {
+    setSelectedModelState(model);
+  }, []);
+
   const chatTransport = useMemo(
     () =>
       new DefaultChatTransport({
@@ -85,6 +119,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           } as Record<string, string>;
         },
         body: () => ({
+          model: selectedModelRef.current,
           mentionedApps: mentionedAppsRef.current.map((a) => ({
             slug: a.slug,
             name: a.name,
@@ -131,6 +166,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         sendMessage: trackedSendMessage,
         inputValue,
         setInputValue,
+        selectedModel,
+        setSelectedModel,
         chatTitle,
         setChatTitle,
         rateLimit,

@@ -21,7 +21,7 @@ param(
     
     [Parameter(ParameterSetName='Default')]
     [ValidateRange(1, 3600)]
-    [int]$Timeout = 120,
+    [int]$Timeout = 600,
     
     [Parameter(ParameterSetName='Default')]
     [switch]$Force,
@@ -34,7 +34,7 @@ param(
 )
 
 # Constants
-$DX_VERSION = "1.0.3"
+$DX_VERSION = "1.0.4"
 $DX_BUILD = "2026.04.16"
 $ErrorActionPreference = "Stop"
 

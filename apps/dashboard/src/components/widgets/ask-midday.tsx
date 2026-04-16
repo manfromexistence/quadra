@@ -19,6 +19,8 @@ export function AskMidday({ onChatOpen }: { onChatOpen: () => void }) {
     stop,
     inputValue,
     setInputValue,
+    selectedModel,
+    setSelectedModel,
     setChatTitle,
     mentionedApps,
     addMentionedApp,
@@ -87,6 +89,8 @@ export function AskMidday({ onChatOpen }: { onChatOpen: () => void }) {
           onSubmit={handleSubmit}
           onStop={stop}
           onSuggestion={handleSuggestion}
+          selectedModel={selectedModel}
+          onModelChange={setSelectedModel}
           connectedApps={connectedApps}
           mentionedApps={mentionedApps}
           onMentionApp={addMentionedApp}

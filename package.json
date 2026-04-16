@@ -16,6 +16,7 @@
     "dev:api": "turbo dev --filter=@midday/api",
     "dev:dashboard": "turbo dev --filter=@midday/dashboard",
     "build:dashboard": "turbo build --filter=@midday/dashboard",
+    "deploy:dashboard:vercel": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-dashboard-vercel.ps1",
     "dev:website": "turbo dev --filter=@midday/website ",
     "dev:desktop": "turbo dev --filter=@midday/desktop",
     "cli": "bun run packages/cli/bin/midday.ts",

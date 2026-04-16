@@ -11,6 +11,10 @@ import {
 import { LogEvents } from "@midday/events/events";
 import { cn } from "@midday/ui/cn";
 import { Icons } from "@midday/ui/icons";
+import {
+  CHAT_MODEL_OPTIONS,
+  type ChatModelId,
+} from "@midday/utils/chat-models";
 import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
 import { useOpenPanel } from "@openpanel/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
@@ -90,6 +94,8 @@ export type ChatInputProps = {
   onEscape?: () => void;
   onSuggestion?: (text: string) => void;
   menuPosition?: "above" | "below";
+  selectedModel: ChatModelId;
+  onModelChange: (model: ChatModelId) => void;
   connectedApps?: ConnectedApp[];
   mentionedApps?: ConnectedApp[];
   onMentionApp?: (app: ConnectedApp) => void;
@@ -258,6 +264,8 @@ export function ChatInput({
   onEscape,
   onSuggestion,
   menuPosition = "below",
+  selectedModel,
+  onModelChange,
   connectedApps,
   mentionedApps,
   onMentionApp,
@@ -274,6 +282,7 @@ export function ChatInput({
   }, []);
   const [suggestions] = useState(pickSuggestions);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [modelOpen, setModelOpen] = useState(false);
   const [mcpOpen, setMcpOpen] = useState(false);
   const [showAppsPanel, setShowAppsPanel] = useState(false);
   const [mentionQuery, setMentionQuery] = useState<string | null>(null);
@@ -284,6 +293,9 @@ export function ChatInput({
   const { track } = useOpenPanel();
 
   const mentionedSlugs = new Set(mentionedApps?.map((a) => a.slug));
+  const selectedModelOption =
+    CHAT_MODEL_OPTIONS.find((option) => option.id === selectedModel) ??
+    CHAT_MODEL_OPTIONS[0];
   const availableApps = connectedApps?.filter(
     (a) => !mentionedSlugs.has(a.slug),
   );
@@ -559,6 +571,10 @@ export function ChatInput({
         setShowSuggestions(false);
         return;
       }
+      if (modelOpen) {
+        setModelOpen(false);
+        return;
+      }
       if (mcpOpen) {
         setMcpOpen(false);
         return;
@@ -713,6 +729,7 @@ export function ChatInput({
             data-suggestions-toggle
             onClick={() => {
               setShowSuggestions(!showSuggestions);
+              setModelOpen(false);
               setMcpOpen(false);
               closeMentionPanel();
             }}
@@ -731,8 +748,8 @@ export function ChatInput({
 
           <button
             type="button"
-            data-apps-toggle
             onClick={() => {
+              setModelOpen(false);
               const next = !showAppsPanel;
               setShowAppsPanel(next);
               if (next) {
@@ -753,12 +770,97 @@ export function ChatInput({
           </button>
 
           <Popover
+            open={modelOpen}
+            onOpenChange={(open) => {
+              setModelOpen(open);
+              if (open) {
+                setShowSuggestions(false);
+                closeMentionPanel();
+                setMcpOpen(false);
+              }
+            }}
+          >
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                aria-label="Select AI model"
+                className="flex items-center gap-1 h-6 cursor-pointer"
+              >
+                <Icons.AIOutline
+                  size={15}
+                  className={cn(
+                    "transition-colors",
+                    modelOpen
+                      ? "text-foreground"
+                      : "text-[#878787]/60 hover:text-foreground",
+                  )}
+                />
+                <span
+                  className={cn(
+                    "text-[11px] transition-colors",
+                    modelOpen
+                      ? "text-foreground"
+                      : "text-[#878787]/60 hover:text-foreground",
+                  )}
+                >
+                  {selectedModelOption.shortLabel}
+                </span>
+                <Icons.ChevronDown
+                  size={14}
+                  className={cn(
+                    "transition-colors",
+                    modelOpen
+                      ? "text-foreground"
+                      : "text-[#878787]/60 hover:text-foreground",
+                  )}
+                />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent
+              side={menuPosition === "above" ? "top" : "bottom"}
+              align="start"
+              sideOffset={12}
+              className="w-[220px] p-1 bg-[rgba(247,247,247,0.96)] dark:bg-[rgba(19,19,19,0.98)] backdrop-blur-lg border-border shadow-sm"
+            >
+              <p className="px-2 py-1 text-[10px] text-[#878787]">Model</p>
+              {CHAT_MODEL_OPTIONS.map((option) => {
+                const isSelected = option.id === selectedModel;
+
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    className="flex items-center gap-2 w-full px-2 py-1.5 text-xs text-[#666] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                    onClick={() => {
+                      track("Assistant Model Selected", { model: option.id });
+                      onModelChange(option.id);
+                      setModelOpen(false);
+                    }}
+                  >
+                    <div className="flex-1 min-w-0 text-left">
+                      <div className="text-foreground">{option.label}</div>
+                      <div className="text-[10px] text-[#878787]">
+                        {option.description}
+                      </div>
+                    </div>
+                    <Icons.Check
+                      size={12}
+                      className={isSelected ? "text-foreground" : "opacity-0"}
+                    />
+                  </button>
+                );
+              })}
+            </PopoverContent>
+          </Popover>
+
+          <Popover
             open={mcpOpen}
             onOpenChange={(open) => {
               setMcpOpen(open);
               if (open) {
                 setShowSuggestions(false);
                 closeMentionPanel();
+                setModelOpen(false);
               }
             }}
           >

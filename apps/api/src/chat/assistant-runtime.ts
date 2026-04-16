@@ -10,6 +10,10 @@ import { getComposioTools } from "@api/composio/client";
 import type { McpContext } from "@api/mcp/types";
 import { logger } from "@midday/logger";
 import {
+  type ChatModelId,
+  DEFAULT_CHAT_MODEL,
+} from "@midday/utils/chat-models";
+import {
   type ModelMessage,
   smoothStream,
   stepCountIs,
@@ -20,8 +24,14 @@ export async function streamMiddayAssistant(params: {
   mcpCtx: McpContext;
   systemPrompt: string;
   modelMessages: Array<ModelMessage>;
+  modelId?: ChatModelId;
 }) {
-  const { mcpCtx, systemPrompt, modelMessages } = params;
+  const {
+    mcpCtx,
+    systemPrompt,
+    modelMessages,
+    modelId = DEFAULT_CHAT_MODEL,
+  } = params;
 
   await ensureToolIndex(mcpCtx);
 
@@ -48,7 +58,7 @@ export async function streamMiddayAssistant(params: {
     }
 
     const agent = new ToolLoopAgent({
-      model: openai("gpt-4.1-mini"),
+      model: openai(modelId),
       instructions: systemPrompt,
       tools: {
         ...mcpTools,

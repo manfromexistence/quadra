@@ -8,6 +8,11 @@ import { notifications } from "@/db/schema/notifications";
 import { transmittalDocuments, transmittals } from "@/db/schema/transmittals";
 import { documentWorkflows, workflowSteps } from "@/db/schema/workflows";
 import { canAccessProject } from "@/lib/edms/access";
+import {
+  getClientApprovalOptionByStatus,
+  normalizeClientApprovalCode,
+  type ClientReviewStatus,
+} from "@/lib/edms/client-approval-codes";
 import { logEdmsActivity, notifyUsers } from "@/lib/edms/notifications";
 import {
   actionFromError,
@@ -35,9 +40,12 @@ interface CreateTransmittalInput {
 
 interface ReviewTransmittalInput {
   transmittalId: string;
-  reviewStatus: "approved" | "approved_with_comments" | "rejected";
+  reviewStatus: ClientReviewStatus;
   comments?: string;
   approvalCode?: string;
+  attachmentUrl?: string;
+  attachmentFileName?: string;
+  attachmentFileSize?: number;
 }
 
 export async function createTransmittal(input: CreateTransmittalInput) {
@@ -194,13 +202,21 @@ export async function reviewTransmittal(input: ReviewTransmittalInput) {
 
     const now = new Date();
     const normalizedComments = input.comments?.trim() || null;
-    const approvalCode = input.approvalCode?.trim() || null;
+    const approvalCode =
+      normalizeClientApprovalCode(input.approvalCode) ??
+      getClientApprovalOptionByStatus(input.reviewStatus)?.approvalCode ??
+      null;
+    const attachmentUrl = normalizeOptionalString(input.attachmentUrl);
+    const attachmentFileName = normalizeOptionalString(input.attachmentFileName);
+    const attachmentFileSize = input.attachmentFileSize ?? null;
     const mappedDecision =
       input.reviewStatus === "approved"
         ? "approve"
         : input.reviewStatus === "approved_with_comments"
           ? "approve_with_comments"
-          : "reject";
+          : input.reviewStatus === "rejected"
+            ? "reject"
+            : "for_information";
 
     if (normalizedComments && activeSteps.length > 0) {
       await db.insert(documentComments).values(
@@ -224,6 +240,9 @@ export async function reviewTransmittal(input: ReviewTransmittalInput) {
           action: mappedDecision,
           comments: normalizedComments,
           approvalCode: mapDecisionToApprovalCode(mappedDecision),
+          attachmentUrl,
+          attachmentFileName,
+          attachmentFileSize,
           completedAt: now,
           startedAt: now,
         })
@@ -286,6 +305,9 @@ export async function reviewTransmittal(input: ReviewTransmittalInput) {
               action: mappedDecision,
               comments: normalizedComments,
               approvalCode: mapDecisionToApprovalCode(mappedDecision),
+              attachmentUrl,
+              attachmentFileName,
+              attachmentFileSize,
               completedAt: now,
               startedAt: now,
             })
@@ -322,6 +344,9 @@ export async function reviewTransmittal(input: ReviewTransmittalInput) {
           reviewStatus: input.reviewStatus,
           comments: normalizedComments,
           approvalCode,
+          attachmentUrl,
+          attachmentFileName,
+          attachmentFileSize,
           reviewedAt: now.toISOString(),
           reviewedBy: sessionUser.id,
         }),

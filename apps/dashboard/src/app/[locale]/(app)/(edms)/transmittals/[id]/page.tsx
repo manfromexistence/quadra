@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ReviewTransmittalForm } from "@/components/edms/review-transmittal-form";
 import { TransmittalAcknowledgeButton } from "@/components/edms/transmittal-acknowledge-button";
-import { EdmsStatusBadge, formatEdmsLabel } from "@/components/edms/status-badge";
+import { EdmsStatusBadge } from "@/components/edms/status-badge";
+import { getClientApprovalOptionByCode } from "@/lib/edms/client-approval-codes";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { getTransmittalDetailData } from "@/lib/edms/transmittal-detail";
 import { expandStorageUrl } from "@/lib/storage-utils";
@@ -21,6 +22,8 @@ export default async function TransmittalDetailPage({
   if (!data) {
     notFound();
   }
+
+  const reviewApprovalOption = getClientApprovalOptionByCode(data.transmittal.review?.approvalCode);
 
   return (
     <div className="space-y-6">
@@ -76,7 +79,11 @@ export default async function TransmittalDetailPage({
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                   {document.discipline ? <span>{document.discipline}</span> : null}
                   {document.revision ? <span>Rev {document.revision}</span> : null}
-                  <Link href={expandStorageUrl(document.fileUrl)} target="_blank" className="text-primary hover:underline">
+                  <Link
+                    href={expandStorageUrl(document.fileUrl)}
+                    target="_blank"
+                    className="text-primary hover:underline"
+                  >
                     View file
                   </Link>
                 </div>
@@ -104,8 +111,20 @@ export default async function TransmittalDetailPage({
                     <p>
                       Approval code:{" "}
                       <span className="font-mono text-foreground">
-                        {data.transmittal.review.approvalCode}
+                        {reviewApprovalOption?.label ?? data.transmittal.review.approvalCode}
                       </span>
+                    </p>
+                  ) : null}
+                  {data.transmittal.review.attachmentUrl ? (
+                    <p>
+                      CSR attachment:{" "}
+                      <Link
+                        href={expandStorageUrl(data.transmittal.review.attachmentUrl)}
+                        target="_blank"
+                        className="text-primary hover:underline"
+                      >
+                        {data.transmittal.review.attachmentFileName ?? "Open attachment"}
+                      </Link>
                     </p>
                   ) : null}
                 </div>
@@ -113,7 +132,10 @@ export default async function TransmittalDetailPage({
             ) : null}
 
             {data.isRecipient && data.activeWorkflowStep?.isActionable && data.transmittal.status === "sent" ? (
-              <ReviewTransmittalForm transmittalId={data.transmittal.id} />
+              <ReviewTransmittalForm
+                transmittalId={data.transmittal.id}
+                projectId={data.transmittal.projectId}
+              />
             ) : null}
 
             {data.isSender && data.transmittal.status === "reviewed" ? (
