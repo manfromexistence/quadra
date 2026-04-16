@@ -60,3 +60,7 @@ Client reviews and returns the document with comments and stamping approval code
 •  Contractor DC logging in and notices new msg alert to find client reviewed document and acknowledges transmittal.
 
 d now in our apps/dashboard project please make sure that auth, and all edms features works - use imgbb, catbox, my turso cli use wsl inline comamnds as its instatted there and also use better-auth drizzle and make sure that in our apps/dashboard from starting from login page to all edms related dashboard pages works correctly now - you create a use script files to make sure and test everything works instead of guessing things and then deploy it vercel correctly
+
+Failed to load resource: the server responded with a status of 401 ()
+/api/auth/sign-in/email:1  Failed to load resource: the server responded with a status of 500 ()
+/api/auth/sign-up/email:1  Failed to load resource: the server responded with a status of 500 ()

@@ -34,8 +34,8 @@ param(
 )
 
 # Constants
-$DX_VERSION = "1.0.4"
-$DX_BUILD = "2026.04.16"
+$DX_VERSION = "1.0.6"
+$DX_BUILD = "2026.04.17"
 $ErrorActionPreference = "Stop"
 
 # Fixed storage location (not script directory)
@@ -206,10 +206,11 @@ function Read-AgentPrompt {
             $currentTimestamp = Read-SafeFile $TimestampFile
             
             # If there's a NEW prompt (not yet read), return it immediately
-            if ($currentTimestamp -and $currentTimestamp -ne $lastReadTimestamp) {
+            # Compare timestamps: if current is different from last read, it's new
+            if ($currentTimestamp -and ($null -eq $lastReadTimestamp -or $currentTimestamp -ne $lastReadTimestamp)) {
                 $content = Read-SafeFile $StorageFile
                 if ($content) {
-                    # Mark this prompt as read
+                    # Mark this prompt as read BEFORE returning
                     Write-SafeFile $LastReadFile $currentTimestamp
                     Write-Output $content
                     exit 0
@@ -220,7 +221,7 @@ function Read-AgentPrompt {
         }
     }
     
-    # No unread prompt - enter polling mode (wait up to 2 minutes)
+    # No unread prompt - enter polling mode (wait up to 10 minutes)
     $startTime = Get-Date
     $lastTimestamp = $lastReadTimestamp
     
@@ -228,7 +229,7 @@ function Read-AgentPrompt {
     while ($true) {
         $elapsed = ((Get-Date) - $startTime).TotalSeconds
         
-        # Timeout check (2 minutes)
+        # Timeout check (10 minutes)
         if ($elapsed -ge $Timeout) {
             Write-Error "Timeout: No new prompt received in $Timeout seconds"
             exit 1
@@ -243,7 +244,7 @@ function Read-AgentPrompt {
                 if ($currentTimestamp -and $currentTimestamp -ne $lastTimestamp) {
                     $content = Read-SafeFile $StorageFile
                     if ($content) {
-                        # Mark as read
+                        # Mark as read BEFORE returning
                         Write-SafeFile $LastReadFile $currentTimestamp
                         Write-Output $content
                         exit 0
