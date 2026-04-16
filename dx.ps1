@@ -34,7 +34,7 @@ param(
 )
 
 # Constants
-$DX_VERSION = "1.0.2"
+$DX_VERSION = "1.0.3"
 $DX_BUILD = "2026.04.16"
 $ErrorActionPreference = "Stop"
 
@@ -153,19 +153,27 @@ function Write-HumanPrompt {
             if (-not $Silent) {
                 Write-Host "> " -NoNewline
             }
+            # Read raw input to preserve all special characters
             $line = [System.Console]::In.ReadLine()
         }
         
-        # Validate input
-        if ([string]::IsNullOrWhiteSpace($line)) {
+        # Validate input (allow empty for special cases, but trim whitespace-only)
+        if ($null -eq $line) {
             exit 1
         }
         
-        # Process input
+        # Process input - preserve ALL characters including quotes, arrows, special symbols
+        # Only trim leading/trailing whitespace, keep everything else
         $content = $line.Trim()
+        
+        # Allow any content including special characters: ', ", ↓, →, etc.
+        if ([string]::IsNullOrWhiteSpace($content)) {
+            exit 1
+        }
+        
         $timestamp = Get-SafeTimestamp
         
-        # Save operations
+        # Save operations with UTF-8 encoding to preserve special characters
         Write-SafeFile $StorageFile $content
         Write-SafeFile $TimestampFile $timestamp
         
