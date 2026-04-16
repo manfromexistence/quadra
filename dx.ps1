@@ -34,7 +34,7 @@ param(
 )
 
 # Constants
-$DX_VERSION = "1.0.1"
+$DX_VERSION = "1.0.2"
 $DX_BUILD = "2026.04.16"
 $ErrorActionPreference = "Stop"
 
@@ -42,6 +42,7 @@ $ErrorActionPreference = "Stop"
 $StorageDir = Join-Path $env:USERPROFILE ".dx"
 $StorageFile = Join-Path $StorageDir "dx-prompt.txt"
 $TimestampFile = Join-Path $StorageDir "dx-timestamp.txt"
+$LastReadFile = Join-Path $StorageDir "dx-lastread.txt"
 $LockFile = Join-Path $StorageDir "dx.lock"
 
 # Ensure storage directory exists
@@ -181,59 +182,61 @@ function Write-HumanPrompt {
 }
 
 function Read-AgentPrompt {
-    # Quick check for existing prompt
-    if (Test-Path $StorageFile) {
+    # Get baseline timestamp (last read)
+    $lastReadTimestamp = $null
+    try {
+        if (Test-Path $LastReadFile) {
+            $lastReadTimestamp = Read-SafeFile $LastReadFile
+        }
+    } catch {
+        # Ignore initial read errors
+    }
+    
+    # Check for UNREAD prompt (present prompt)
+    if (Test-Path $TimestampFile) {
         try {
-            $content = Read-SafeFile $StorageFile
-            if ($content) {
-                Write-Output $content
-                exit 0
+            $currentTimestamp = Read-SafeFile $TimestampFile
+            
+            # If there's a NEW prompt (not yet read), return it immediately
+            if ($currentTimestamp -and $currentTimestamp -ne $lastReadTimestamp) {
+                $content = Read-SafeFile $StorageFile
+                if ($content) {
+                    # Mark this prompt as read
+                    Write-SafeFile $LastReadFile $currentTimestamp
+                    Write-Output $content
+                    exit 0
+                }
             }
         } catch {
             # Continue to polling if read fails
         }
     }
     
-    # Polling setup
+    # No unread prompt - enter polling mode (wait up to 2 minutes)
     $startTime = Get-Date
-    $lastTimestamp = $null
+    $lastTimestamp = $lastReadTimestamp
     
-    # Get baseline timestamp
-    try {
-        $lastTimestamp = Read-SafeFile $TimestampFile
-    } catch {
-        # Ignore initial read errors
-    }
-    
-    # Polling loop
+    # Polling loop - waits for NEW prompt
     while ($true) {
         $elapsed = ((Get-Date) - $startTime).TotalSeconds
         
-        # Timeout check
+        # Timeout check (2 minutes)
         if ($elapsed -ge $Timeout) {
-            # Last attempt to read existing prompt
-            try {
-                $content = Read-SafeFile $StorageFile
-                if ($content) {
-                    Write-Output $content
-                    exit 0
-                }
-            } catch {
-                # Ignore final read errors
-            }
-            
-            Write-Error "Timeout: No prompt received in $Timeout seconds"
+            Write-Error "Timeout: No new prompt received in $Timeout seconds"
             exit 1
         }
         
-        # Check for new prompt
+        # Check for NEW prompt
         try {
             if (Test-Path $TimestampFile) {
                 $currentTimestamp = Read-SafeFile $TimestampFile
                 
+                # NEW prompt detected!
                 if ($currentTimestamp -and $currentTimestamp -ne $lastTimestamp) {
                     $content = Read-SafeFile $StorageFile
                     if ($content) {
+                        # Mark as read
+                        Write-SafeFile $LastReadFile $currentTimestamp
                         Write-Output $content
                         exit 0
                     }

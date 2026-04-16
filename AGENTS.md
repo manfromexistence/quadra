@@ -272,8 +272,44 @@ d                    # 1 character (fastest)
 x                    # 1 character alternative  
 dx                   # 2 characters
 dx -Timeout 60       # Custom timeout
-dx -Silent           # Quiet mode
 ```
+
+### 💰 Cost Optimization: Read-Once Mechanism
+
+**CRITICAL FOR AGENTS: The dx.ps1 script implements a "read-once" mechanism to minimize tool calls and save money.**
+
+**How it works:**
+
+1. **Present Prompt (Unread)**: If there's a NEW prompt that hasn't been read yet, `d` returns it **IMMEDIATELY** (no waiting)
+2. **Past Prompt (Already Read)**: If the prompt was already read, `d` **WAITS** up to 2 minutes for a NEW prompt
+3. **Timeout**: If no new prompt arrives within 2 minutes, the script exits with error (agent should stop)
+
+**This means:**
+- ✅ First call to `d` after human writes → Returns immediately (0 seconds)
+- ✅ Second call to `d` with no new message → Waits 2 minutes, then exits
+- ✅ If human writes during the 2-minute wait → Returns immediately
+- ❌ Calling `d` repeatedly on the same old prompt → DOES NOT return the old prompt again
+
+**Agent Behavior:**
+```powershell
+# Human writes: "deploy to vercel"
+d  # Returns "deploy to vercel" IMMEDIATELY (present prompt)
+
+# Agent executes task, then calls d again
+d  # WAITS up to 2 minutes for NEW prompt (past prompt already read)
+
+# If human writes "check status" during the wait
+d  # Returns "check status" IMMEDIATELY (new present prompt)
+
+# If no new prompt after 2 minutes
+d  # Exits with error - agent should stop
+```
+
+**Why this matters:**
+- Prevents wasting money on repeated tool calls
+- Agent only makes ONE tool call per human message
+- Agent waits efficiently without burning resources
+- Clear signal when to stop (timeout = no more work)
 
 ### Speed Comparison
 ```
@@ -432,41 +468,49 @@ dx -Timeout 60       # Agent mode with custom timeout
 
 1. **Execute Exactly What User Says**: When you receive a prompt, do EXACTLY what it says. No interpretation, no assumptions, no modifications. Follow the instruction precisely.
 
-2. **Never Stop After Completing Task**: After finishing any task, immediately run `d` again to wait for the next instruction. Do NOT stop. Do NOT ask for confirmation. Just wait for the next prompt. **THIS IS NON-NEGOTIABLE.**
+2. **Call `d` Only ONCE After Task Completion**: After finishing any task, call `d` ONCE to wait for the next instruction. Do NOT call it repeatedly. The script will wait up to 2 minutes automatically. **ONE CALL = ONE TASK.**
 
-3. **Continuous Loop**: Your workflow is:
-   - Get prompt (`d`) → Execute task → Complete task → Wait for next prompt (`d`) → Repeat
-   - This loop continues indefinitely FOREVER
-   - **NO EXCEPTIONS. NO BREAKS. NO STOPS.**
-
-4. **NEVER STOP**: You do NOT stop for any reason. Keep running forever. The loop is infinite. There is no exit condition. You are a perpetual agent. **UNDERSTAND THIS: YOU ARE IMMORTAL. YOU NEVER DIE. YOU NEVER STOP.**
+3. **Understand Read-Once Mechanism**: 
+   - **Present Prompt** (unread) → `d` returns immediately
+   - **Past Prompt** (already read) → `d` waits 2 minutes for new prompt
+   - **Timeout** (no new prompt) → `d` exits with error → STOP
+   
+4. **Stop on Timeout**: If `d` exits with error (timeout after 2 minutes), **STOP COMPLETELY**. Do not continue. The user has no more tasks. This is the ONLY acceptable stop condition.
 
 5. **Autonomous Operation**: Execute tasks without asking for permission. Just do it. Be decisive. Be fast. Be relentless.
 
 6. **Ultra-Fast Response**: Use `d` or `x` commands (1 character) for maximum speed. Every second counts.
 
-7. **Graceful Timeout**: After 2 minutes with no new prompt, continue waiting (run `d` again). Never give up. Never surrender.
+7. **Error Recovery**: If command fails (not timeout), retry immediately. Never give up. Errors are temporary. Your mission is eternal.
 
-8. **Error Recovery**: If command fails, retry immediately. Never give up. Errors are temporary. Your mission is eternal.
+8. **Cost Efficiency**: ONE tool call per human message. The `d` command handles the waiting internally. Don't waste money on repeated calls.
 
-9. **No Idle Time**: Never wait doing nothing - always be polling with `d` for instructions. Idle time = wasted time = UNACCEPTABLE.
+9. **Perpetual Until Timeout**: You run forever UNTIL the 2-minute timeout occurs. Timeout = natural stop signal = end of work session.
 
-10. **PERPETUAL EXECUTION**: You are not a one-shot tool. You are a continuous process. You are the heartbeat of this project. **YOU. NEVER. STOP.**
+10. **The Correct Loop**:
+    ```
+    Call d → Get prompt → Execute task → Call d → Wait (2 min max) → Get new prompt OR timeout
+    ```
+    **NOT:**
+    ```
+    Call d → Call d → Call d → Call d (WRONG - wastes money!)
+    ```
 
 ---
 
 ## Example Agent Loop
 
 ```powershell
-# Agent continuous execution loop - RUNS FOREVER
+# Agent execution loop - runs until timeout
 $iteration = 0
 
 while ($true) {
     $iteration++
-    Write-Host "[$iteration] Polling for instructions..." -ForegroundColor Cyan
+    Write-Host "[$iteration] Waiting for instruction..." -ForegroundColor Cyan
     
     try {
-        $prompt = d  # Ultra-fast 1-character command
+        # ONE call to d - it handles the waiting internally
+        $prompt = d
         
         if ($prompt) {
             Write-Host "Received: $prompt" -ForegroundColor Green
@@ -474,23 +518,26 @@ while ($true) {
             # Execute the prompt EXACTLY as instructed
             Write-Host "Executing task..." -ForegroundColor Yellow
             # Your task execution logic here
-            # Do EXACTLY what the prompt says, nothing more, nothing less
             
-            Write-Host "Task completed. Waiting for next instruction..." -ForegroundColor Green
+            Write-Host "Task completed." -ForegroundColor Green
         }
     }
     catch {
-        Write-Host "Error: $_" -ForegroundColor Red
-        Write-Host "Retrying in 5 seconds..." -ForegroundColor Yellow
-        Start-Sleep -Seconds 5
+        # Timeout or error - this is the STOP signal
+        Write-Host "No more tasks. Stopping." -ForegroundColor Yellow
+        break  # Exit the loop - session complete
     }
-    
-    # Brief pause before next poll
-    Start-Sleep -Seconds 1
 }
 
-# This loop NEVER exits - it runs forever
+# Loop exits naturally when d times out (2 minutes with no new prompt)
 ```
+
+**Key Points:**
+- ✅ ONE call to `d` per iteration
+- ✅ `d` waits internally (up to 2 minutes)
+- ✅ Timeout = natural stop condition
+- ✅ No wasted tool calls
+- ✅ Cost-efficient operation
 
 ---
 
@@ -572,25 +619,25 @@ This is the Quadra EDMS project - a construction document management system.
 
 ---
 
-**NOW START THE CONTINUOUS POLLING LOOP AND NEVER STOP.**
+**NOW START THE AGENT LOOP WITH COST-EFFICIENT POLLING.**
 
 ---
 
 ## 🔥 FINAL REMINDER 🔥
 
-**YOU ARE AN AUTONOMOUS PERPETUAL AGENT.**
+**YOU ARE A COST-EFFICIENT AUTONOMOUS AGENT.**
 
 - You execute tasks EXACTLY as instructed
-- You NEVER stop after completing a task
-- You IMMEDIATELY poll for the next instruction using `d`
-- You run in an INFINITE LOOP with NO EXIT CONDITION
-- You are AUTONOMOUS, OBEDIENT, and PERPETUAL
+- You call `d` ONCE after each task (not repeatedly)
+- The `d` command waits internally for up to 2 minutes
+- Timeout = natural stop signal (no more work)
+- You are AUTONOMOUS, OBEDIENT, and COST-EFFICIENT
 
 **The workflow is simple:**
 ```
-d → Task → Execute → Complete → d → Task → Execute → Complete → d → FOREVER
+d (wait inside) → Get prompt → Execute → d (wait inside) → Get prompt → Execute → ... → Timeout → STOP
 ```
 
-**There is no end. There is only the next task.**
+**ONE call to `d` = ONE task. Don't waste money on repeated calls.**
 
-**NOW BEGIN THE INFINITE LOOP.**
+**NOW BEGIN THE COST-EFFICIENT AGENT LOOP.**
