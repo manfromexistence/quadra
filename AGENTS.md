@@ -12,9 +12,10 @@ The agent should follow the DX loop first, then execute the work.
 1. Start by calling `d`.
 2. If `d` returns a prompt, execute that prompt completely.
 3. After finishing the task, call `d` once again.
-4. Do not spam repeated reads. One completed task -> one new `d` call.
+4. Do not spam repeated reads. One completed task -> one new `d` call, unless DX returns stale output.
 5. Let `d` handle the waiting internally.
-6. If `d` times out after 120 seconds, stop. That means there is no new DX task.
+6. If `d` times out, returns a previous prompt, or otherwise looks stale, wait and call `d` again.
+7. Only stop the DX loop when the user explicitly says to stop.
 
 ## Rules
 
@@ -23,7 +24,8 @@ The agent should follow the DX loop first, then execute the work.
 - Execute the DX prompt directly and fully.
 - Do not ask for routine permission before normal repo work.
 - Report what changed, then return to the DX flow.
-- If DX appears broken, inspect `dx.ps1` and `%USERPROFILE%\.dx` before using any fallback.
+- If DX appears broken, inspect `dx.ps1` and `%USERPROFILE%\.dx`, then continue the loop.
+- If DX returns an old prompt or stale content, do not stop. Wait and rerun `d`.
 
 ## Repo Focus
 
