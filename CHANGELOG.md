@@ -100,5 +100,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     keep Turbopack-oriented optimizations for local/dev config, but force webpack
     for production packaging on Vercel until the upstream Turbopack monorepo
     symlink bugs are resolved.
+
+- **apps/dashboard — split browser-safe inbox helpers from crypto-dependent server utilities**
+  - After switching production builds to webpack, the deployment progressed past
+    the old Turbopack packaging failure and exposed the next real compile error:
+    `node:crypto` was being pulled into a client bundle.
+  - Root cause: multiple `"use client"` dashboard components imported
+    `getInboxEmail` from `@midday/inbox`, but the package root re-exported
+    `./utils`, and `packages/inbox/src/utils.ts` imports `@midday/encryption`,
+    which depends on Node-only `node:crypto`.
+  - This caused webpack to fail with an import trace like:
+    `@midday/encryption` → `packages/inbox/src/utils.ts` →
+    `@midday/inbox` → client inbox components.
+  - Fix applied:
+    - added `packages/inbox/src/public.ts` containing browser-safe helpers only:
+      `getInboxEmail`, `getInboxIdFromEmail`, and `isAuthenticationError`
+    - added package export `@midday/inbox/public` in
+      `packages/inbox/package.json`
+    - updated `packages/inbox/src/utils.ts` to import/re-export those public
+      helpers while keeping OAuth encryption/decryption logic server-side
+    - updated dashboard client components to import `getInboxEmail` from
+      `@midday/inbox/public` instead of the package root
+  - Result: client components no longer pull `node:crypto` through
+    `@midday/inbox`, keeping browser bundles separated from server-only
+    encryption code.
   - Deployed to Vercel project `app-quadra` on 2026-04-17.
   - Production URL: https://app-quadra.vercel.app

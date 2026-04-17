@@ -1,6 +1,6 @@
 "use client";
 
-import { getInboxEmail } from "@midday/inbox";
+import { getInboxEmail } from "@midday/inbox/public";
 import { Card, CardDescription, CardHeader, CardTitle } from "@midday/ui/card";
 import { CopyInput } from "@/components/copy-input";
 import { useUserQuery } from "@/hooks/use-user";

@@ -7,6 +7,7 @@
     ".": "./src/index.ts",
     "./connector": "./src/connector.ts",
     "./errors": "./src/errors.ts",
+    "./public": "./src/public.ts",
     "./utils": "./src/utils.ts"
   },
   "scripts": {

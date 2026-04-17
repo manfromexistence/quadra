@@ -1,6 +1,6 @@
 "use client";
 
-import { getInboxEmail } from "@midday/inbox";
+import { getInboxEmail } from "@midday/inbox/public";
 import {
   Accordion,
   AccordionContent,
