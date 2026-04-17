@@ -21,6 +21,11 @@ const config = {
   },
   outputFileTracingExcludes: {
     "/*": [
+      // Workspace packages — fully bundled into JS chunks by Next.js/Turbopack.
+      // bun symlinks these under node_modules/@midday/* which causes Vercel to
+      // reject the serverless function package ("files in symlinked directories").
+      "../../packages/**/*",
+      "../../node_modules/@midday/**/*",
       // Build-tool compilers — never needed at runtime
       "../../node_modules/@swc/core-linux-x64-gnu/**/*",
       "../../node_modules/@swc/core-linux-x64-musl/**/*",
