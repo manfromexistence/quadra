@@ -718,7 +718,7 @@ export function UnifiedAppComponent({ app }: UnifiedAppProps) {
                 </p>
 
                 <a
-                  href="mailto:support@midday.dev"
+                  href="mailto:ajju40959@gmail.com"
                   className="text-[10px] text-red-500"
                 >
                   Report app
