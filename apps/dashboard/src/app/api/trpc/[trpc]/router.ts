@@ -23,7 +23,7 @@ export const appRouter = t.router({
     summary: t.procedure.query(async ({ ctx }) => {
       console.log("[tRPC] overview.summary: Starting query");
       
-      // Always return mock data for now to test serialization
+      // Return mock data with EDMS metrics
       const mockData = {
         openInvoices: {
           count: 3,
@@ -48,6 +48,29 @@ export const appRouter = t.router({
           accountCount: 2,
         },
         runway: 6, // months
+        // EDMS metrics with actual values from fallback data
+        edmsMetrics: {
+          projects: {
+            value: "7",
+            description: "Active projects",
+          },
+          documents: {
+            value: "184",
+            description: "Controlled documents",
+          },
+          workflows: {
+            value: "12",
+            description: "Pending reviews",
+          },
+          transmittals: {
+            value: "5",
+            description: "Open transmittals",
+          },
+          notifications: {
+            value: "9",
+            description: "Unread alerts",
+          },
+        },
       };
       
       console.log("[tRPC] overview.summary: Returning data:", JSON.stringify(mockData));

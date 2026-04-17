@@ -4,7 +4,6 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useUserQuery } from "@/hooks/use-user";
 import { useTRPC } from "@/trpc/client";
-import { formatAmount, secondsToHoursAndMinutes } from "@/utils/format";
 
 interface WidgetCardProps {
   label: string;
@@ -17,7 +16,7 @@ function WidgetCard({ label, href, value, detail }: WidgetCardProps) {
   return (
     <Link
       href={href}
-      className="h-full border border-border p-5 flex flex-col justify-between transition-all duration-300 bg-card hover:bg-muted/50 hover:shadow-sm cursor-pointer group min-h-[110px]"
+      className="h-full border border-border p-5 flex flex-col justify-between transition-all duration-300 bg-card hover:bg-accent hover:shadow-sm cursor-pointer group min-h-[110px]"
     >
       <span className="text-xs text-muted-foreground">{label}</span>
       <div className="mt-3">
@@ -33,69 +32,22 @@ function WidgetCard({ label, href, value, detail }: WidgetCardProps) {
 export function WidgetCards() {
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(trpc.overview.summary.queryOptions());
-  const { data: user } = useUserQuery();
-  const locale = user?.locale;
 
-  const cashValue =
-    formatAmount({
-      amount: data.cashBalance.totalBalance,
-      currency: data.cashBalance.currency,
-      maximumFractionDigits: 0,
-      locale,
-    }) ?? "$0";
+  // Use the actual EDMS metrics from the dashboard data
+  const projectsValue = data.edmsMetrics?.projects?.value ?? "0";
+  const projectsDetail = data.edmsMetrics?.projects?.description ?? "Active projects";
 
-  const cashDetail =
-    data.cashBalance.accountCount > 0
-      ? `across ${data.cashBalance.accountCount} ${data.cashBalance.accountCount === 1 ? "account" : "accounts"}`
-      : undefined;
+  const documentsValue = data.edmsMetrics?.documents?.value ?? "0";
+  const documentsDetail = data.edmsMetrics?.documents?.description ?? "Controlled documents";
 
-  const openValue = String(data.openInvoices.count);
-  const openAmount = formatAmount({
-    amount: data.openInvoices.totalAmount,
-    currency: data.openInvoices.currency,
-    maximumFractionDigits: 0,
-    locale,
-  });
-  const openDetail =
-    data.openInvoices.count > 0 ? `${openAmount} outstanding` : "All paid";
+  const workflowsValue = data.edmsMetrics?.workflows?.value ?? "0";
+  const workflowsDetail = data.edmsMetrics?.workflows?.description ?? "Pending reviews";
 
-  const hasUnbilledAmount = data.unbilledTime.totalAmount > 0;
-  const unbilledTimeStr = secondsToHoursAndMinutes(
-    data.unbilledTime.totalDuration,
-  );
-  const unbilledValue = hasUnbilledAmount
-    ? (formatAmount({
-        amount: data.unbilledTime.totalAmount,
-        currency: data.unbilledTime.currency,
-        maximumFractionDigits: 0,
-        locale,
-      }) ?? unbilledTimeStr)
-    : unbilledTimeStr;
+  const transmittalsValue = data.edmsMetrics?.transmittals?.value ?? "0";
+  const transmittalsDetail = data.edmsMetrics?.transmittals?.description ?? "Open transmittals";
 
-  const unbilledDetail = hasUnbilledAmount
-    ? [
-        unbilledTimeStr,
-        data.unbilledTime.projectCount > 0
-          ? `across ${data.unbilledTime.projectCount} ${data.unbilledTime.projectCount === 1 ? "project" : "projects"}`
-          : null,
-      ]
-        .filter(Boolean)
-        .join(" ")
-    : data.unbilledTime.projectCount > 0
-      ? `across ${data.unbilledTime.projectCount} ${data.unbilledTime.projectCount === 1 ? "project" : "projects"}`
-      : undefined;
-
-  const runwayValue =
-    data.runway > 0
-      ? `${data.runway} ${data.runway === 1 ? "mo" : "mos"}`
-      : "-";
-  const runwayDetail = data.runway > 0 ? "at current burn rate" : "No data yet";
-
-  const reviewValue = String(data.transactionsToReview.count);
-  const reviewDetail =
-    data.transactionsToReview.count === 0
-      ? "All up to date"
-      : "Ready to export";
+  const notificationsValue = data.edmsMetrics?.notifications?.value ?? "0";
+  const notificationsDetail = data.edmsMetrics?.notifications?.description ?? "Unread alerts";
 
   const inboxValue = String(data.inboxPending.count);
   const inboxDetail =
@@ -104,34 +56,34 @@ export function WidgetCards() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full">
       <WidgetCard
-        label="Cash Balance"
-        href="/reports?scrollTo=cash-balance"
-        value={cashValue}
-        detail={cashDetail}
+        label="Projects"
+        href="/projects"
+        value={projectsValue}
+        detail={projectsDetail}
       />
       <WidgetCard
-        label="Open Invoices"
-        href="/invoices?statuses=draft,scheduled,unpaid"
-        value={openValue}
-        detail={openDetail}
+        label="Documents"
+        href="/documents"
+        value={documentsValue}
+        detail={documentsDetail}
       />
       <WidgetCard
-        label="Unbilled Time"
-        href="/tracker?status=in_progress"
-        value={unbilledValue}
-        detail={unbilledDetail}
+        label="Workflows"
+        href="/workflows"
+        value={workflowsValue}
+        detail={workflowsDetail}
       />
       <WidgetCard
-        label="Transactions"
-        href="/transactions?tab=review"
-        value={reviewValue}
-        detail={reviewDetail}
+        label="Transmittals"
+        href="/transmittals"
+        value={transmittalsValue}
+        detail={transmittalsDetail}
       />
       <WidgetCard
-        label="Runway"
-        href="/reports?scrollTo=runway"
-        value={runwayValue}
-        detail={runwayDetail}
+        label="Notifications"
+        href="/notifications"
+        value={notificationsValue}
+        detail={notificationsDetail}
       />
       <WidgetCard
         label="Inbox"

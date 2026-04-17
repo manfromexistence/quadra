@@ -3,3 +3,36 @@ In this project at the home page of our dashboard there is an AI chat and in tha
 Now here is very critical stuff. For EDMAs and our authentication we are using a real database with Tutsu CLI and Tutsu database with beta dot and result, right? Keep using that. For the mock data, where we are using the mock data, it is facing it again and again. Can't we use React query to keep it in the cache so that it doesn't face it again and again and waste time? And make sure we do as few API calls for the mock data as possible and in the browser console please don't show any kind of debugging logs or any kind of warnings at all!!!
 
 Now how much pages our dashboard has related to edms - cause amoung them only projects and document is working so please start fixing and adding edms pages to our dashboard and in one go please fix on edms page fully with all the stuffs that we did for projects and dsashboard dashbaord pages!!!
+
+Now don't do anything or change anything. Just see the local code base and tell me, without our EDM related project pages, how many pages are there in the admin dashboard? 
+
+Now, these pages total 11 pages - using mock data but they the mock data ia not correct for most of the time so please use right mock data correctly:
+Reports (/reports) - Financial reports and analytics
+Transactions (/transactions) - Transaction management with sub-pages:
+Categories
+Connect bank
+Import
+Create new
+Inbox (/inbox) - Inbox management with sub-pages:
+Settings
+Invoices (/invoices) - Invoice management with sub-pages:
+Products
+Create new
+Tracker (/tracker) - Time tracking with sub-pages:
+Create new
+Customers (/customers) - Customer management with sub-pages:
+Create new
+Vault (/vault) - Document vault/storage
+Apps (/apps) - App integrations with sub-pages:
+All
+Installed
+Additional Pages (3 pages):
+Settings (/settings) - Settings with sub-pages:
+General
+Billing
+Bank Connections
+Members
+Notifications
+Developer
+Account (/account) - User account page (exists in folder structure)
+Upgrade (/upgrade) - Upgrade/billing page (exists in folder structure)
