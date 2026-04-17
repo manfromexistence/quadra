@@ -79,5 +79,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     `bun run build && node ./scripts/fix-nft-symlinks.mjs && node ./scripts/sync-vercel-next-output.mjs`
   - This approach is robust regardless of `outputFileTracingExcludes` path format
     issues — it directly fixes the manifests Vercel reads when packaging functions.
+
+- **apps/dashboard — webpack fallback for Turbopack symlink packaging failures on Vercel**
+  - Current 2026 Next.js / Vercel monorepo issues still show Turbopack instability
+    around symlinked workspace dependencies, output packaging, and traced server
+    artifacts in monorepos, while `next build --webpack` is the documented
+    practical fallback that succeeds in the same class of setups.
+  - Root cause: production builds were still using Turbopack by default through
+    `next build`, so even after reducing traced files and rewriting `.nft.json`
+    manifests, Vercel could still fail during Serverless Function packaging with:
+    `The framework produced an invalid deployment package for a Serverless Function`.
+  - Fix applied in `apps/dashboard/scripts/run-next-build.mjs`:
+    - changed build invocation from `next build` to `next build --webpack`
+    - updated build log messaging to state webpack is being used intentionally
+      for Vercel production deploys to avoid Turbopack monorepo symlink bugs
+  - Additional cleanup in `apps/dashboard/next.config.ts`:
+    - removed invalid experimental key `bundlePagesRouterDependencies`, which
+      Next.js 16.2.3 warned about during builds and did not recognize
+  - This is the strongest evidence-based fix for the remaining deployment blocker:
+    keep Turbopack-oriented optimizations for local/dev config, but force webpack
+    for production packaging on Vercel until the upstream Turbopack monorepo
+    symlink bugs are resolved.
   - Deployed to Vercel project `app-quadra` on 2026-04-17.
   - Production URL: https://app-quadra.vercel.app

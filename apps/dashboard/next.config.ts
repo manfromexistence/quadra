@@ -111,8 +111,6 @@ const config = {
       optimizeCss: true,
       optimizeServerReact: true,
       serverMinification: true,
-      // Reduce function bundle sizes
-      bundlePagesRouterDependencies: true,
     }),
   },
   images: {

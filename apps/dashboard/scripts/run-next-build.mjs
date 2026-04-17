@@ -10,10 +10,10 @@ const serverDir = path.join(projectRoot, ".next", "server");
 const middlewarePath = path.join(serverDir, "middleware.js");
 const tracePath = path.join(serverDir, "middleware.js.nft.json");
 const buildCommand = process.platform === "win32" ? "bun.exe" : "bun";
-const buildArgs = ["x", "next", "build"];
+const buildArgs = ["x", "next", "build", "--webpack"];
 
 console.log("🚀 BEAST MODE PRODUCTION BUILD INITIATED");
-console.log("💪 Optimizing for maximum performance...");
+console.log("🛠 Using webpack for production build to avoid Turbopack monorepo symlink packaging bugs on Vercel...");
 
 if (fs.existsSync(nextDir)) {
   console.log("🧹 Cleaning previous build...");
