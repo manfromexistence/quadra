@@ -22,19 +22,23 @@ export function useUpload() {
     setLoading(true);
 
     try {
-      // TODO: Implement file upload to your storage solution
-      // Options:
-      // 1. Upload to Turso blob storage (if available)
-      // 2. Use a service like Cloudflare R2, AWS S3, or Vercel Blob
-      // 3. Store files locally or on a CDN
-      
-      console.log(`[Upload Mock] Would upload ${file.name} to ${bucket}/${path.join('/')}`);
-      
-      // Mock URL for now
-      const mockUrl = `https://storage.example.com/${bucket}/${path.join('/')}/${file.name}`;
+      const formData = new FormData();
+      formData.append("file", file);
 
+      const response = await fetch("/api/upload/avatar", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Upload failed");
+      }
+
+      const data = await response.json();
+      
       return {
-        url: mockUrl,
+        url: data.url,
         path,
       };
     } finally {

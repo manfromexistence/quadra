@@ -3,7 +3,6 @@ import { auth } from "@/lib/auth";
 import { uploadEdmsFile } from "@/lib/edms/storage-catbox";
 import { canStoreEdmsFileInTurso, uploadEdmsFileToTurso } from "@/lib/edms/storage-turso";
 import { isImgBBConfigured, uploadImageToImgBB } from "@/lib/storage-imgbb";
-import { isTelegramConfigured, uploadToTelegram } from "@/lib/storage-telegram";
 
 const MAX_FILE_SIZE = 200 * 1024 * 1024;
 const BANNED_EXTENSIONS = [".exe", ".scr", ".cpl", ".jar"];
@@ -97,6 +96,7 @@ async function uploadWithFreeProvider(
 ) {
   const isImage = file.type.startsWith("image/");
 
+  // Use ImgBB for images
   if (isImage && isImgBBConfigured()) {
     try {
       const uploaded = await uploadImageToImgBB({
@@ -111,31 +111,13 @@ async function uploadWithFreeProvider(
         fileSize: uploaded.fileSize,
         provider: "imgbb" as const,
       };
-    } catch {
-      // Fall through to the remaining free providers.
+    } catch (error) {
+      console.error("ImgBB upload failed:", error);
+      // Fall through to Catbox for images if ImgBB fails
     }
   }
 
-  if (!isImage && file.size <= 50 * 1024 * 1024 && isTelegramConfigured()) {
-    try {
-      const uploaded = await uploadToTelegram(
-        file,
-        file.name,
-        "QUADRA EDMS upload",
-      );
-
-      return {
-        fileName: file.name,
-        fileType: file.type || getExtensionFromFileName(file.name),
-        fileUrl: uploaded.url,
-        fileSize: file.size,
-        provider: "telegram" as const,
-      };
-    } catch {
-      // Fall back to Catbox.
-    }
-  }
-
+  // Use Catbox for non-images or as fallback
   const uploaded = await uploadEdmsFile({
     file,
     projectId,

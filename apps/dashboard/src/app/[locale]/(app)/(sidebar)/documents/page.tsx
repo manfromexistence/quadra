@@ -51,9 +51,8 @@ export default async function DocumentsPage({
               Document control
             </h1>
             <p className="text-sm leading-6 text-muted-foreground md:text-base">
-              Keep controlled revisions, workflow readiness, and free-tier
-              storage in one operating surface without touching the legacy paid
-              stack.
+              Centralized document management with controlled revisions and 
+              workflow tracking for all project documentation.
             </p>
           </div>
         </div>
@@ -94,9 +93,8 @@ export default async function DocumentsPage({
           <div className="space-y-1">
             <CardTitle>Document register</CardTitle>
             <p className="text-sm leading-6 text-muted-foreground">
-              Search by number, title, discipline, or revision. Results
-              automatically fall back to seeded sample data until the EDMS
-              tables are migrated.
+              Search by number, title, discipline, or revision to find 
+              project documents and track their status.
             </p>
           </div>
 
@@ -164,8 +162,7 @@ export default async function DocumentsPage({
                   <TableHead>Project</TableHead>
                   <TableHead>Discipline</TableHead>
                   <TableHead>Revision</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="px-6">Storage</TableHead>
+                  <TableHead className="px-6">Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -189,11 +186,8 @@ export default async function DocumentsPage({
                     <TableCell>{document.projectName}</TableCell>
                     <TableCell>{document.discipline ?? "General"}</TableCell>
                     <TableCell>{document.revision ?? "-"}</TableCell>
-                    <TableCell>
+                    <TableCell className="px-6">
                       <EdmsStatusBadge status={document.status} />
-                    </TableCell>
-                    <TableCell className="px-6 text-xs text-muted-foreground">
-                      {getStorageLabel(document.fileUrl)}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -266,24 +260,4 @@ export default async function DocumentsPage({
       </section>
     </div>
   );
-}
-
-function getStorageLabel(fileUrl: string) {
-  if (fileUrl.includes("i.ibb.co")) {
-    return "ImgBB";
-  }
-
-  if (fileUrl.includes("api.telegram.org")) {
-    return "Telegram";
-  }
-
-  if (fileUrl.includes("catbox.moe")) {
-    return "Catbox";
-  }
-
-  if (fileUrl.includes("/api/edms/assets/")) {
-    return "Turso";
-  }
-
-  return "External";
 }

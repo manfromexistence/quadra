@@ -28,9 +28,8 @@ export default async function ProjectsPage() {
               Project workspace
             </h1>
             <p className="text-sm leading-6 text-muted-foreground md:text-base">
-              Portfolio-level oversight for active construction jobs, seeded
-              with live Turso reads when available and safe fallback data when
-              the EDMS tables are not ready yet.
+              Portfolio-level oversight for active construction jobs with 
+              comprehensive project management and workflow tracking.
             </p>
           </div>
         </div>
