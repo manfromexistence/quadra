@@ -17,11 +17,5 @@
       "maxDuration": 60,
       "memory": 1024
     }
-  },
-  "experimentalServices": {
-    "web": {
-      "routePrefix": "/",
-      "framework": "nextjs"
-    }
   }
 }
