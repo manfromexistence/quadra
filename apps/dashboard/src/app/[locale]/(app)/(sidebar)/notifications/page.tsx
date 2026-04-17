@@ -1,4 +1,3 @@
-import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import Link from "next/link";
 import { MarkAllNotificationsReadButton, MarkNotificationReadButton } from "@/components/edms/notification-actions";
@@ -14,9 +13,6 @@ export default async function NotificationsPage() {
     <div className="space-y-6 pt-6">
       <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="max-w-3xl space-y-3">
-          <p className="text-[11px] font-semibold tracking-[0.24em] uppercase text-muted-foreground">
-            Alert center
-          </p>
           <div className="space-y-2">
             <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
               Notifications
@@ -38,11 +34,11 @@ export default async function NotificationsPage() {
             <p className="text-sm text-muted-foreground">No notifications available.</p>
           ) : (
             notifications.map((notification) => (
-              <div key={notification.id} className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+              <div key={notification.id} className="group cursor-pointer border border-border bg-card p-4 transition-all hover:bg-accent hover:shadow-md">
                 <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-medium">{notification.title}</p>
+                      <p className="font-medium group-hover:text-primary">{notification.title}</p>
                       {!notification.isRead ? <EdmsStatusBadge status="unread" /> : null}
                     </div>
                     <p className="text-sm leading-6 text-muted-foreground">{notification.message}</p>

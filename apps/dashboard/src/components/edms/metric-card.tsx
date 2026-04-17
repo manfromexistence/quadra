@@ -38,10 +38,10 @@ export function EdmsMetricCard({ metric }: { metric: DashboardMetric }) {
   const Icon = ICONS[metric.icon];
 
   return (
-    <Card className={cn("relative overflow-hidden shadow-sm", SURFACE_STYLES[metric.tone])}>
+    <Card className={cn("relative overflow-hidden shadow-sm h-full flex flex-col", SURFACE_STYLES[metric.tone])}>
       <CardHeader className="gap-4">
         <div className="flex items-start justify-between gap-4">
-          <div className="space-y-3">
+          <div className="space-y-3 flex-1">
             <CardDescription className="text-[11px] font-semibold tracking-[0.22em] uppercase">
               {metric.label}
             </CardDescription>
@@ -49,7 +49,7 @@ export function EdmsMetricCard({ metric }: { metric: DashboardMetric }) {
           </div>
           <div
             className={cn(
-              "flex size-11 items-center justify-center rounded-2xl border",
+              "flex size-11 shrink-0 items-center justify-center border",
               ICON_SURFACES[metric.tone]
             )}
           >
@@ -57,7 +57,7 @@ export function EdmsMetricCard({ metric }: { metric: DashboardMetric }) {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="pt-0">
+      <CardContent className="pt-0 flex-1 flex items-start">
         <p className="text-sm leading-6 text-muted-foreground">{metric.description}</p>
       </CardContent>
     </Card>

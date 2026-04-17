@@ -14,8 +14,6 @@ import { EdmsDataState } from "@/components/edms/data-state";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
 import { TransmittalCreateSheet } from "@/components/edms/transmittal-create-sheet";
-import { TransmittalPreviewPopover } from "@/components/edms/transmittal-preview-popover";
-import { WorkflowPreviewPopover } from "@/components/edms/workflow-preview-popover";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { getTransmittalManagementData } from "@/lib/edms/transmittals";
@@ -31,9 +29,6 @@ export default async function TransmittalsPage() {
     <div className="space-y-6 pt-6">
       <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="max-w-3xl space-y-3">
-          <p className="text-[11px] font-semibold tracking-[0.24em] uppercase text-muted-foreground">
-            Formal issue control
-          </p>
           <div className="space-y-2">
             <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
               Transmittals
@@ -71,10 +66,17 @@ export default async function TransmittalsPage() {
         message={data.statusMessage}
       />
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {data.metrics.map((metric) => (
-          <EdmsMetricCard key={metric.label} metric={metric} />
-        ))}
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 auto-rows-fr">
+        {data.metrics.map((metric, index) => {
+          const links = ["/transmittals", "/documents", "/workflows", "/notifications"];
+          return (
+            <Link key={metric.label} href={links[index] || "/transmittals"} className="block h-full">
+              <div className="group cursor-pointer transition-all hover:scale-[1.02] h-full">
+                <EdmsMetricCard metric={metric} />
+              </div>
+            </Link>
+          );
+        })}
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
@@ -101,37 +103,27 @@ export default async function TransmittalsPage() {
                 </TableHeader>
                 <TableBody>
                   {data.transmittals.map((item) => (
-                    <TransmittalPreviewPopover
-                      key={item.id}
-                      transmittal={{
-                        id: item.id,
-                        subject: item.subject,
-                        transmittalNumber: item.transmittalNumber,
-                        projectName: item.projectName,
-                        status: item.status,
-                        sentLabel: item.sentLabel,
-                      }}
-                    >
-                      <TableRow className="cursor-pointer hover:bg-muted/50">
-                        <TableCell className="px-6">
+                    <TableRow key={item.id} className="group cursor-pointer transition-colors hover:bg-accent">
+                      <TableCell className="px-6">
+                        <Link href={`/transmittals/${item.id}`} className="block">
                           <div className="space-y-1">
-                            <p className="font-medium hover:text-primary">{item.subject}</p>
+                            <p className="font-medium group-hover:text-primary">{item.subject}</p>
                             <p className="font-mono text-xs text-muted-foreground">
                               {item.transmittalNumber}
                             </p>
                           </div>
-                        </TableCell>
-                        <TableCell>{item.projectName}</TableCell>
-                        <TableCell>
-                          <EdmsStatusBadge status={item.status} />
-                        </TableCell>
-                        <TableCell>{item.recipientName}</TableCell>
-                        <TableCell>{item.documentCount}</TableCell>
-                        <TableCell className="px-6 text-sm text-muted-foreground">
-                          {item.sentLabel}
-                        </TableCell>
-                      </TableRow>
-                    </TransmittalPreviewPopover>
+                        </Link>
+                      </TableCell>
+                      <TableCell>{item.projectName}</TableCell>
+                      <TableCell>
+                        <EdmsStatusBadge status={item.status} />
+                      </TableCell>
+                      <TableCell>{item.recipientName}</TableCell>
+                      <TableCell>{item.documentCount}</TableCell>
+                      <TableCell className="px-6 text-sm text-muted-foreground">
+                        {item.sentLabel}
+                      </TableCell>
+                    </TableRow>
                   ))}
                 </TableBody>
               </Table>
@@ -145,23 +137,11 @@ export default async function TransmittalsPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             {summaryData.workflowQueue.map((item) => (
-              <WorkflowPreviewPopover
-                key={item.id}
-                workflow={{
-                  id: item.id,
-                  stepName: item.stepName,
-                  title: item.title,
-                  documentNumber: item.documentNumber,
-                  projectName: item.projectName,
-                  status: item.status,
-                  dueLabel: item.dueLabel,
-                  assignedRole: item.assignedRole,
-                }}
-              >
-                <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+              <Link key={item.id} href={`/workflows/${item.id}`} className="block">
+                <div className="group cursor-pointer border border-border bg-card p-4 transition-all hover:bg-accent hover:shadow-md">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="font-medium">{item.stepName}</p>
+                      <p className="font-medium group-hover:text-primary">{item.stepName}</p>
                       <p className="text-sm text-muted-foreground">
                         {item.projectName}
                       </p>
@@ -175,7 +155,7 @@ export default async function TransmittalsPage() {
                     {item.dueLabel}
                   </p>
                 </div>
-              </WorkflowPreviewPopover>
+              </Link>
             ))}
           </CardContent>
         </Card>

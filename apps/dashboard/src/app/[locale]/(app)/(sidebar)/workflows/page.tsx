@@ -18,7 +18,6 @@ import {
 } from "@/components/edms/status-badge";
 import { WorkflowActionSheet } from "@/components/edms/workflow-action-sheet";
 import { WorkflowCreateSheet } from "@/components/edms/workflow-create-sheet";
-import { WorkflowPreviewPopover } from "@/components/edms/workflow-preview-popover";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { getWorkflowManagementData } from "@/lib/edms/workflows";
@@ -34,9 +33,6 @@ export default async function WorkflowsPage() {
     <div className="space-y-6 pt-6">
       <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="max-w-3xl space-y-3">
-          <p className="text-[11px] font-semibold tracking-[0.24em] uppercase text-muted-foreground">
-            Review routing
-          </p>
           <div className="space-y-2">
             <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
               Workflow queue
@@ -70,10 +66,17 @@ export default async function WorkflowsPage() {
         message={data.statusMessage}
       />
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {data.metrics.map((metric) => (
-          <EdmsMetricCard key={metric.label} metric={metric} />
-        ))}
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 auto-rows-fr">
+        {data.metrics.map((metric, index) => {
+          const links = ["/workflows", "/documents", "/transmittals", "/notifications"];
+          return (
+            <Link key={metric.label} href={links[index] || "/workflows"} className="block h-full">
+              <div className="group cursor-pointer transition-all hover:scale-[1.02] h-full">
+                <EdmsMetricCard metric={metric} />
+              </div>
+            </Link>
+          );
+        })}
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
@@ -100,62 +103,50 @@ export default async function WorkflowsPage() {
                 </TableHeader>
                 <TableBody>
                   {data.steps.map((step) => (
-                    <WorkflowPreviewPopover
-                      key={step.id}
-                      workflow={{
-                        id: step.workflowId,
-                        stepName: step.stepName,
-                        title: step.title,
-                        documentNumber: step.documentNumber,
-                        projectName: step.projectName,
-                        status: step.status,
-                        dueLabel: step.dueLabel,
-                        assignedRole: step.assignedRole,
-                      }}
-                    >
-                      <TableRow className="cursor-pointer hover:bg-muted/50">
-                        <TableCell className="px-6">
+                    <TableRow key={step.id} className="group cursor-pointer transition-colors hover:bg-accent">
+                      <TableCell className="px-6">
+                        <Link href={`/workflows/${step.workflowId}`} className="block">
                           <div className="space-y-1">
-                            <p className="font-medium hover:text-primary">{step.stepName}</p>
+                            <p className="font-medium group-hover:text-primary">{step.stepName}</p>
                             <p className="text-xs text-muted-foreground">
                               {step.workflowName} · Step {step.stepNumber} of{" "}
                               {step.totalSteps}
                             </p>
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="space-y-1">
-                            <p>{step.title}</p>
-                            <p className="font-mono text-xs text-muted-foreground">
-                              {step.documentNumber}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>{step.projectName}</TableCell>
-                        <TableCell>
-                          <EdmsStatusBadge status={step.status} />
-                        </TableCell>
-                        <TableCell>
-                          <div className="space-y-1">
-                            <p>{step.assignedToName}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {formatEdmsLabel(step.assignedRole)}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell className="px-6">
-                          <div className="flex items-center justify-between gap-3">
-                            <span className="text-sm text-muted-foreground">{step.dueLabel}</span>
-                            <WorkflowActionSheet
-                              stepId={step.id}
-                              title={`${step.documentNumber} - ${step.title}`}
-                              isActionable={step.isActionable}
-                              projectId={step.projectId}
-                            />
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    </WorkflowPreviewPopover>
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1">
+                          <p>{step.title}</p>
+                          <p className="font-mono text-xs text-muted-foreground">
+                            {step.documentNumber}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>{step.projectName}</TableCell>
+                      <TableCell>
+                        <EdmsStatusBadge status={step.status} />
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1">
+                          <p>{step.assignedToName}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {formatEdmsLabel(step.assignedRole)}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-6">
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-sm text-muted-foreground">{step.dueLabel}</span>
+                          <WorkflowActionSheet
+                            stepId={step.id}
+                            title={`${step.documentNumber} - ${step.title}`}
+                            isActionable={step.isActionable}
+                            projectId={step.projectId}
+                          />
+                        </div>
+                      </TableCell>
+                    </TableRow>
                   ))}
                 </TableBody>
               </Table>
@@ -168,28 +159,34 @@ export default async function WorkflowsPage() {
             <CardTitle>Alert stream</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {summaryData.notifications.map((item) => (
-              <Link
-                key={item.id}
-                href={item.actionUrl || "/notifications"}
-                className="block cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-medium">{item.title}</p>
-                    <p className="mt-1 text-sm leading-6 text-muted-foreground line-clamp-2">
-                      {item.message}
-                    </p>
+            {summaryData.notifications.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No notifications available.</p>
+            ) : (
+              summaryData.notifications.map((item) => (
+                <Link
+                  key={item.id}
+                  href={item.actionUrl || "/notifications"}
+                  className="block"
+                >
+                  <div className="group cursor-pointer border border-border bg-card p-4 transition-all hover:bg-accent hover:shadow-md">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-medium group-hover:text-primary">{item.title}</p>
+                        <p className="mt-1 text-sm leading-6 text-muted-foreground line-clamp-2">
+                          {item.message}
+                        </p>
+                      </div>
+                      {!item.isRead ? <EdmsStatusBadge status="unread" /> : null}
+                    </div>
+                    <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      <span>{formatEdmsLabel(item.type)}</span>
+                      {item.projectName ? <span>{item.projectName}</span> : null}
+                      <span>{item.createdLabel}</span>
+                    </div>
                   </div>
-                  {!item.isRead ? <EdmsStatusBadge status="unread" /> : null}
-                </div>
-                <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  <span>{formatEdmsLabel(item.type)}</span>
-                  {item.projectName ? <span>{item.projectName}</span> : null}
-                  <span>{item.createdLabel}</span>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))
+            )}
           </CardContent>
         </Card>
       </section>

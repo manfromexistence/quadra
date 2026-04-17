@@ -15,12 +15,9 @@ import Link from "next/link";
 import { EdmsDataState } from "@/components/edms/data-state";
 import { DocumentBulkUploadSheet } from "@/components/edms/document-bulk-upload-sheet";
 import { DocumentCreateSheet } from "@/components/edms/document-create-sheet";
-import { DocumentPreviewPopover } from "@/components/edms/document-preview-popover";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
 import { EdmsQuickUpload } from "@/components/edms/quick-upload";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
-import { TransmittalPreviewPopover } from "@/components/edms/transmittal-preview-popover";
-import { WorkflowPreviewPopover } from "@/components/edms/workflow-preview-popover";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { getDocumentControlData } from "@/lib/edms/documents";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
@@ -47,9 +44,6 @@ export default async function DocumentsPage({
     <div className="space-y-6 pt-6">
       <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="max-w-3xl space-y-3">
-          <p className="text-[11px] font-semibold tracking-[0.24em] uppercase text-muted-foreground">
-            Quadra EDMS
-          </p>
           <div className="space-y-2">
             <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
               Document control
@@ -84,15 +78,22 @@ export default async function DocumentsPage({
         message={data.statusMessage}
       />
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {data.metrics.map((metric) => (
-          <EdmsMetricCard key={metric.label} metric={metric} />
-        ))}
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 auto-rows-fr">
+        {data.metrics.map((metric, index) => {
+          const links = ["/documents", "/workflows", "/transmittals", "/notifications"];
+          return (
+            <Link key={metric.label} href={links[index] || "/documents"} className="block h-full">
+              <div className="group cursor-pointer transition-all hover:scale-[1.02] h-full">
+                <EdmsMetricCard metric={metric} />
+              </div>
+            </Link>
+          );
+        })}
       </section>
 
       <EdmsQuickUpload projects={data.projects} />
 
-      <Card className="border-border bg-background/90 shadow-sm">
+      <Card className="border-border bg-card shadow-sm">
         <CardHeader className="space-y-4">
           <div className="space-y-1">
             <CardTitle>Document register</CardTitle>
@@ -172,27 +173,26 @@ export default async function DocumentsPage({
               <TableBody>
                 {data.documents.map((document) => {
                   const documentImages = expandImageArray(document.images);
+                  const firstImage = documentImages[0];
                   return (
-                  <TableRow key={document.id}>
+                  <TableRow key={document.id} className="group cursor-pointer transition-colors hover:bg-accent">
                     <TableCell className="px-6">
-                      <div className="flex items-center gap-3">
-                        {documentImages.length > 0 && (
+                      <Link href={`/documents/${document.id}`} className="flex items-center gap-3">
+                        {firstImage && (
                           <div className="relative size-12 shrink-0 overflow-hidden rounded border border-border bg-muted">
                             <Image
-                              src={documentImages[0]}
+                              src={firstImage}
                               alt={document.title}
                               fill
-                              className="object-cover"
+                              className="object-cover transition-transform group-hover:scale-105"
                               sizes="48px"
                             />
                           </div>
                         )}
                         <div className="space-y-1">
-                          <DocumentPreviewPopover document={document}>
-                            <Link href={`/documents/${document.id}`} className="font-medium hover:underline">
-                              {document.title}
-                            </Link>
-                          </DocumentPreviewPopover>
+                          <p className="font-medium group-hover:text-primary">
+                            {document.title}
+                          </p>
                           <p className="font-mono text-xs text-muted-foreground">
                             {document.documentNumber}
                           </p>
@@ -200,7 +200,7 @@ export default async function DocumentsPage({
                             {document.uploadedLabel}
                           </p>
                         </div>
-                      </div>
+                      </Link>
                     </TableCell>
                     <TableCell>{document.projectName}</TableCell>
                     <TableCell>{document.discipline ?? "General"}</TableCell>
@@ -218,29 +218,17 @@ export default async function DocumentsPage({
       </Card>
 
       <section className="grid gap-4 xl:grid-cols-2">
-        <Card className="border-border bg-background/90 shadow-sm">
+        <Card className="border-border bg-card shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg">Workflow watchlist</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {summaryData.workflowQueue.map((item) => (
-              <WorkflowPreviewPopover
-                key={item.id}
-                workflow={{
-                  id: item.id,
-                  stepName: item.stepName,
-                  title: item.title,
-                  documentNumber: item.documentNumber,
-                  projectName: item.projectName,
-                  status: item.status,
-                  dueLabel: item.dueLabel,
-                  assignedRole: item.assignedRole,
-                }}
-              >
-                <div className="cursor-pointer rounded-lg border border-border bg-muted/30 p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+              <Link key={item.id} href={`/workflows/${item.id}`} className="block">
+                <div className="group cursor-pointer border border-border bg-card p-4 transition-all hover:bg-accent hover:shadow-md">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="font-medium">{item.stepName}</p>
+                      <p className="font-medium group-hover:text-primary">{item.stepName}</p>
                       <p className="text-sm text-muted-foreground">
                         {item.projectName}
                       </p>
@@ -254,32 +242,22 @@ export default async function DocumentsPage({
                     {item.dueLabel}
                   </p>
                 </div>
-              </WorkflowPreviewPopover>
+              </Link>
             ))}
           </CardContent>
         </Card>
 
-        <Card className="border-border bg-background/90 shadow-sm">
+        <Card className="border-border bg-card shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg">Recent transmittals</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {summaryData.transmittals.map((item) => (
-              <TransmittalPreviewPopover
-                key={item.id}
-                transmittal={{
-                  id: item.id,
-                  subject: item.subject,
-                  transmittalNumber: item.transmittalNumber,
-                  projectName: item.projectName,
-                  status: item.status,
-                  sentLabel: item.sentLabel,
-                }}
-              >
-                <div className="cursor-pointer rounded-lg border border-border bg-muted/30 p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+              <Link key={item.id} href={`/transmittals/${item.id}`} className="block">
+                <div className="group cursor-pointer border border-border bg-card p-4 transition-all hover:bg-accent hover:shadow-md">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="font-medium">{item.subject}</p>
+                      <p className="font-medium group-hover:text-primary">{item.subject}</p>
                       <p className="text-sm text-muted-foreground">
                         {item.projectName}
                       </p>
@@ -293,7 +271,7 @@ export default async function DocumentsPage({
                     {item.sentLabel}
                   </p>
                 </div>
-              </TransmittalPreviewPopover>
+              </Link>
             ))}
           </CardContent>
         </Card>

@@ -31,9 +31,6 @@ export default async function ProjectsPage() {
     <div className="space-y-6 pt-6">
       <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="max-w-3xl space-y-3">
-          <p className="text-[11px] font-semibold tracking-[0.24em] uppercase text-muted-foreground">
-            Portfolio
-          </p>
           <div className="space-y-2">
             <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
               Project workspace
@@ -67,10 +64,28 @@ export default async function ProjectsPage() {
         message={data.statusMessage}
       />
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {data.metrics.slice(0, 3).map((metric) => (
-          <EdmsMetricCard key={metric.label} metric={metric} />
-        ))}
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 auto-rows-fr">
+        {data.metrics[0] && (
+          <Link href="/projects" className="block h-full">
+            <div className="group cursor-pointer transition-all hover:scale-[1.02] h-full">
+              <EdmsMetricCard metric={data.metrics[0]} />
+            </div>
+          </Link>
+        )}
+        {data.metrics[1] && (
+          <Link href="/documents" className="block h-full">
+            <div className="group cursor-pointer transition-all hover:scale-[1.02] h-full">
+              <EdmsMetricCard metric={data.metrics[1]} />
+            </div>
+          </Link>
+        )}
+        {data.metrics[2] && (
+          <Link href="/workflows" className="block h-full">
+            <div className="group cursor-pointer transition-all hover:scale-[1.02] h-full">
+              <EdmsMetricCard metric={data.metrics[2]} />
+            </div>
+          </Link>
+        )}
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
@@ -82,73 +97,73 @@ export default async function ProjectsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="all" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="all">
-                  All ({allProjects.length})
-                </TabsTrigger>
-                <TabsTrigger value="active">
-                  Active ({activeProjects.length})
-                </TabsTrigger>
-                <TabsTrigger value="on-hold">
-                  On Hold ({onHoldProjects.length})
-                </TabsTrigger>
-                <TabsTrigger value="completed">
-                  Completed ({completedProjects.length})
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="all" className="mt-6 space-y-4">
-                {allProjects.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-12 text-center">
-                    <Building2 className="size-12 text-muted-foreground/50" />
-                    <h3 className="mt-4 text-lg font-semibold">No projects yet</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Get started by creating your first project
-                    </p>
-                    {sessionUser.role === "admin" && (
-                      <div className="mt-4">
-                        <ProjectCreateSheet />
-                      </div>
-                    )}
+            {data.projects.length === 0 ? (
+              <div className="flex flex-col items-center justify-center border border-dashed border-border bg-muted/30 p-12 text-center">
+                <Building2 className="size-12 text-muted-foreground/50" />
+                <h3 className="mt-4 text-lg font-semibold">No projects yet</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Get started by creating your first project
+                </p>
+                {sessionUser.role === "admin" && (
+                  <div className="mt-4">
+                    <ProjectCreateSheet />
                   </div>
-                ) : (
-                  allProjects.map((project) => (
-                    <ProjectCard key={project.id} project={project} />
-                  ))
                 )}
-              </TabsContent>
+              </div>
+            ) : (
+              <Tabs defaultValue="all" className="w-full">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="all">
+                    All ({allProjects.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="active">
+                    Active ({activeProjects.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="on-hold">
+                    On Hold ({onHoldProjects.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="completed">
+                    Completed ({completedProjects.length})
+                  </TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="active" className="mt-6 space-y-4">
-                {activeProjects.length === 0 ? (
-                  <EmptyState status="active" />
-                ) : (
-                  activeProjects.map((project) => (
+                <TabsContent value="all" className="mt-6 space-y-4">
+                  {allProjects.map((project) => (
                     <ProjectCard key={project.id} project={project} />
-                  ))
-                )}
-              </TabsContent>
+                  ))}
+                </TabsContent>
 
-              <TabsContent value="on-hold" className="mt-6 space-y-4">
-                {onHoldProjects.length === 0 ? (
-                  <EmptyState status="on-hold" />
-                ) : (
-                  onHoldProjects.map((project) => (
-                    <ProjectCard key={project.id} project={project} />
-                  ))
-                )}
-              </TabsContent>
+                <TabsContent value="active" className="mt-6 space-y-4">
+                  {activeProjects.length === 0 ? (
+                    <EmptyState status="active" />
+                  ) : (
+                    activeProjects.map((project) => (
+                      <ProjectCard key={project.id} project={project} />
+                    ))
+                  )}
+                </TabsContent>
 
-              <TabsContent value="completed" className="mt-6 space-y-4">
-                {completedProjects.length === 0 ? (
-                  <EmptyState status="completed" />
-                ) : (
-                  completedProjects.map((project) => (
-                    <ProjectCard key={project.id} project={project} />
-                  ))
-                )}
-              </TabsContent>
-            </Tabs>
+                <TabsContent value="on-hold" className="mt-6 space-y-4">
+                  {onHoldProjects.length === 0 ? (
+                    <EmptyState status="on-hold" />
+                  ) : (
+                    onHoldProjects.map((project) => (
+                      <ProjectCard key={project.id} project={project} />
+                    ))
+                  )}
+                </TabsContent>
+
+                <TabsContent value="completed" className="mt-6 space-y-4">
+                  {completedProjects.length === 0 ? (
+                    <EmptyState status="completed" />
+                  ) : (
+                    completedProjects.map((project) => (
+                      <ProjectCard key={project.id} project={project} />
+                    ))
+                  )}
+                </TabsContent>
+              </Tabs>
+            )}
           </CardContent>
         </Card>
 
@@ -159,7 +174,7 @@ export default async function ProjectsPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             {data.activity.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center">
+              <div className="flex flex-col items-center justify-center border border-dashed border-border bg-muted/30 p-8 text-center">
                 <FileText className="size-8 text-muted-foreground/50" />
                 <p className="mt-2 text-sm text-muted-foreground">No recent activity</p>
               </div>
@@ -171,17 +186,17 @@ export default async function ProjectsPage() {
                     id: entry.id,
                     actorName: entry.actorName,
                     action: entry.action,
-                    entityName: entry.entityName,
-                    description: entry.description,
+                    entityName: entry.entityName || undefined,
+                    description: entry.description || undefined,
                     createdLabel: entry.createdLabel,
                     entityType: entry.entityType,
-                    projectName: entry.projectName,
+                    projectName: entry.projectName || undefined,
                   }}
                 >
-                  <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+                  <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-accent hover:shadow-md">
                     <div className="flex gap-3">
-                      <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-muted/40">
-                        <Building2 className="size-4" />
+                      <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center border border-border bg-muted">
+                        <Building2 className="size-4 text-muted-foreground" />
                       </div>
                       <div className="min-w-0 flex-1 space-y-1">
                         <p className="text-sm leading-6">
@@ -220,16 +235,17 @@ export default async function ProjectsPage() {
 
 function ProjectCard({ project }: { project: any }) {
   const projectImages = expandImageArray(project.images);
+  const firstImage = projectImages[0];
 
   return (
     <Link href={`/projects/${project.id}`} className="block">
-      <div className="group cursor-pointer rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:bg-muted/50 hover:shadow-md">
+      <div className="group cursor-pointer border border-border bg-card p-5 transition-all hover:bg-accent hover:shadow-md">
         <div className="flex gap-4">
           {/* Project Image */}
-          {projectImages.length > 0 ? (
-            <div className="relative size-24 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
+          {firstImage ? (
+            <div className="relative size-24 shrink-0 overflow-hidden border border-border bg-muted">
               <Image
-                src={projectImages[0]}
+                src={firstImage}
                 alt={project.name}
                 fill
                 className="object-cover transition-transform group-hover:scale-105"
@@ -237,7 +253,7 @@ function ProjectCard({ project }: { project: any }) {
               />
             </div>
           ) : (
-            <div className="flex size-24 shrink-0 items-center justify-center rounded-lg border border-border bg-muted">
+            <div className="flex size-24 shrink-0 items-center justify-center border border-border bg-muted">
               <Building2 className="size-8 text-muted-foreground/50" />
             </div>
           )}
@@ -295,7 +311,7 @@ function EmptyState({ status }: { status: string }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center">
+    <div className="flex flex-col items-center justify-center border border-dashed border-border bg-muted/30 p-8 text-center">
       <Building2 className="size-8 text-muted-foreground/50" />
       <p className="mt-2 text-sm text-muted-foreground">
         {messages[status as keyof typeof messages] || "No projects"}
