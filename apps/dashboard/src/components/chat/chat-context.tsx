@@ -2,11 +2,6 @@
 
 import { useChat } from "@ai-sdk/react";
 import { LogEvents } from "@midday/events/events";
-import {
-  type ChatModelId,
-  DEFAULT_CHAT_MODEL,
-  isChatModelId,
-} from "@midday/utils/chat-models";
 import { useOpenPanel } from "@openpanel/nextjs";
 import { DefaultChatTransport } from "ai";
 import type { ReactNode } from "react";
@@ -14,7 +9,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -29,13 +23,9 @@ export type ConnectedApp = {
   logo: string | null;
 };
 
-const CHAT_MODEL_STORAGE_KEY = "midday.chat.selected-model";
-
 export type ChatState = ReturnType<typeof useChat> & {
   inputValue: string;
   setInputValue: (v: string) => void;
-  selectedModel: ChatModelId;
-  setSelectedModel: (model: ChatModelId) => void;
   chatTitle: string | null;
   setChatTitle: (v: string | null) => void;
   rateLimit: RateLimitInfo | null;
@@ -58,8 +48,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const { track } = useOpenPanel();
 
   const [inputValue, setInputValue] = useState("");
-  const [selectedModel, setSelectedModelState] =
-    useState<ChatModelId>(DEFAULT_CHAT_MODEL);
   const [chatTitle, setChatTitle] = useState<string | null>(null);
   const [rateLimit, setRateLimit] = useState<RateLimitInfo | null>(null);
   const [rateLimitExceeded, setRateLimitExceeded] = useState(false);
@@ -67,24 +55,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const mentionedAppsRef = useRef(mentionedApps);
   mentionedAppsRef.current = mentionedApps;
-  const selectedModelRef = useRef(selectedModel);
-  selectedModelRef.current = selectedModel;
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const storedModel = window.localStorage.getItem(CHAT_MODEL_STORAGE_KEY);
-
-    if (isChatModelId(storedModel)) {
-      setSelectedModelState(storedModel);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    window.localStorage.setItem(CHAT_MODEL_STORAGE_KEY, selectedModel);
-  }, [selectedModel]);
 
   const addMentionedApp = useCallback((app: ConnectedApp) => {
     setMentionedApps((prev) => {
@@ -101,14 +71,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setMentionedApps([]);
   }, []);
 
-  const setSelectedModel = useCallback((model: ChatModelId) => {
-    setSelectedModelState(model);
-  }, []);
-
   const chatTransport = useMemo(
     () =>
       new DefaultChatTransport({
-        api: `${process.env.NEXT_PUBLIC_API_URL}/chat`,
+        api: "/api/chat",
         headers: async () => {
           const token = await getAccessToken();
           const timezone =
@@ -119,7 +85,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           } as Record<string, string>;
         },
         body: () => ({
-          model: selectedModelRef.current,
           mentionedApps: mentionedAppsRef.current.map((a) => ({
             slug: a.slug,
             name: a.name,
@@ -134,6 +99,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const chat = useChat({
     transport: chatTransport,
     onData: (part: any) => {
+      console.log('Chat onData received:', part);
       if (part.type === "data-title" && part.data?.title) {
         setChatTitle(part.data.title);
       }
@@ -143,20 +109,26 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       }
     },
     onError: (err) => {
+      console.error('Chat onError:', err);
       if (err.message?.includes("RATE_LIMIT_EXCEEDED")) {
         setRateLimitExceeded(true);
         return;
       }
       console.error("Chat error:", err);
     },
+    onFinish: (message) => {
+      console.log('Chat onFinish:', message);
+    },
   });
 
   const trackedSendMessage: typeof chat.sendMessage = useCallback(
     (...args) => {
-      track(LogEvents.AssistantMessageSent.name);
+      console.log('Sending message:', args);
+      // Temporarily disable tracking to avoid 401 errors
+      // track(LogEvents.AssistantMessageSent.name);
       return chat.sendMessage(...args);
     },
-    [chat.sendMessage, track],
+    [chat.sendMessage],
   );
 
   return (
@@ -166,8 +138,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         sendMessage: trackedSendMessage,
         inputValue,
         setInputValue,
-        selectedModel,
-        setSelectedModel,
         chatTitle,
         setChatTitle,
         rateLimit,

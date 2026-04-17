@@ -5,7 +5,6 @@ import { useOpenPanel } from "@openpanel/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import type React from "react";
-import type { ChatModelId } from "@midday/utils/chat-models";
 import { useCallback, useEffect } from "react";
 import type { ConnectedApp } from "@/components/chat/chat-context";
 import { useChatState } from "@/components/chat/chat-context";
@@ -33,8 +32,6 @@ export function InputBar({
   onEscape,
   onSuggestion,
   menuPosition,
-  selectedModel,
-  onModelChange,
   connectedApps,
   mentionedApps,
   onMentionApp,
@@ -50,8 +47,6 @@ export function InputBar({
   onEscape?: () => void;
   onSuggestion?: (text: string) => void;
   menuPosition?: "above" | "below";
-  selectedModel: ChatModelId;
-  onModelChange: (model: ChatModelId) => void;
   connectedApps?: ConnectedApp[];
   mentionedApps?: ConnectedApp[];
   onMentionApp?: (app: ConnectedApp) => void;
@@ -70,8 +65,6 @@ export function InputBar({
         onEscape={onEscape}
         onSuggestion={onSuggestion}
         menuPosition={menuPosition}
-        selectedModel={selectedModel}
-        onModelChange={onModelChange}
         connectedApps={connectedApps}
         mentionedApps={mentionedApps}
         onMentionApp={onMentionApp}
@@ -90,8 +83,6 @@ export function ChatView({ header }: { header?: React.ReactNode }) {
     error,
     inputValue,
     setInputValue,
-    selectedModel,
-    setSelectedModel,
     rateLimit,
     rateLimitExceeded,
     mentionedApps,
@@ -216,17 +207,16 @@ export function ChatView({ header }: { header?: React.ReactNode }) {
             onChange={setInputValue}
             onSubmit={handleSubmit}
             onStop={stop}
-            selectedModel={selectedModel}
-            onModelChange={setSelectedModel}
             menuPosition="above"
             connectedApps={connectedApps}
             mentionedApps={mentionedApps}
             onMentionApp={addMentionedApp}
             onRemoveMention={removeMentionedApp}
             onSuggestion={(text) => {
-              track(LogEvents.AssistantSuggestionUsed.name, {
-                suggestion: text,
-              });
+              // Temporarily disable tracking to avoid 401 errors
+              // track(LogEvents.AssistantSuggestionUsed.name, {
+              //   suggestion: text,
+              // });
               sendMessage({ text });
             }}
           />

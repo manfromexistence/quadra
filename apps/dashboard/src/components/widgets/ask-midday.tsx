@@ -19,8 +19,6 @@ export function AskMidday({ onChatOpen }: { onChatOpen: () => void }) {
     stop,
     inputValue,
     setInputValue,
-    selectedModel,
-    setSelectedModel,
     setChatTitle,
     mentionedApps,
     addMentionedApp,
@@ -68,7 +66,8 @@ export function AskMidday({ onChatOpen }: { onChatOpen: () => void }) {
 
   const handleSuggestion = useCallback(
     (suggestion: string) => {
-      track(LogEvents.AssistantSuggestionUsed.name, { suggestion });
+      // Temporarily disable tracking to avoid 401 errors
+      // track(LogEvents.AssistantSuggestionUsed.name, { suggestion });
       flushSync(() => {
         setMessages([]);
         setChatTitle(null);
@@ -76,7 +75,7 @@ export function AskMidday({ onChatOpen }: { onChatOpen: () => void }) {
       sendMessage({ text: suggestion });
       onChatOpen();
     },
-    [sendMessage, setMessages, setChatTitle, onChatOpen, track],
+    [sendMessage, setMessages, setChatTitle, onChatOpen],
   );
 
   return (
@@ -89,8 +88,6 @@ export function AskMidday({ onChatOpen }: { onChatOpen: () => void }) {
           onSubmit={handleSubmit}
           onStop={stop}
           onSuggestion={handleSuggestion}
-          selectedModel={selectedModel}
-          onModelChange={setSelectedModel}
           connectedApps={connectedApps}
           mentionedApps={mentionedApps}
           onMentionApp={addMentionedApp}

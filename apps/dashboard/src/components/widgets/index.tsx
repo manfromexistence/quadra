@@ -26,9 +26,10 @@ export function OverviewView() {
   const isChat = assistant === true;
 
   const openChat = useCallback(() => {
-    track(LogEvents.AssistantOpened.name);
+    // Temporarily disable tracking to avoid 401 errors
+    // track(LogEvents.AssistantOpened.name);
     setAssistant(true);
-  }, [track, setAssistant]);
+  }, [setAssistant]);
 
   const goBack = useCallback(() => {
     setInvoiceParams(null);
