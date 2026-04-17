@@ -24,7 +24,7 @@ export function WidgetCardsSkeleton() {
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={`card-${i}`}
-          className="border border-border p-5 min-h-[110px] flex flex-col justify-between"
+          className="border border-border p-5 min-h-[110px] flex flex-col justify-between bg-card"
         >
           <Skeleton className="h-[14px] w-[80px]" />
           <Skeleton className="h-[28px] w-[100px] mt-3" />

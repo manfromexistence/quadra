@@ -5,6 +5,7 @@ import Link from "next/link";
 import { EdmsDataState } from "@/components/edms/data-state";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
 import { ProjectCreateSheet } from "@/components/edms/project-create-sheet";
+import { ProjectPreviewPopover } from "@/components/edms/project-preview-popover";
 import {
   EdmsStatusBadge,
   formatEdmsLabel,
@@ -69,43 +70,55 @@ export default async function ProjectsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {data.projects.map((project) => (
-              <div
+              <ProjectPreviewPopover
                 key={project.id}
-                className="rounded-3xl border border-border bg-muted/30 p-5"
+                project={{
+                  id: project.id,
+                  name: project.name,
+                  projectNumber: project.projectNumber,
+                  location: project.location,
+                  status: project.status,
+                  description: project.description,
+                  startDate: project.startDate,
+                  endDate: project.endDate,
+                  images: project.images,
+                }}
               >
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                  <div className="space-y-3">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-lg font-medium">{project.name}</p>
-                      <EdmsStatusBadge status={project.status} />
-                    </div>
+                <div className="cursor-pointer rounded-lg border border-border bg-muted/30 p-5 transition-all hover:bg-muted/50 hover:shadow-sm">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                    <div className="space-y-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-lg font-medium">{project.name}</p>
+                        <EdmsStatusBadge status={project.status} />
+                      </div>
 
-                    <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                      {project.projectNumber ? (
-                        <span className="rounded-full bg-background px-2 py-1 font-mono text-xs">
-                          {project.projectNumber}
+                      <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                        {project.projectNumber ? (
+                          <span className="rounded-full bg-background px-2 py-1 font-mono text-xs">
+                            {project.projectNumber}
+                          </span>
+                        ) : null}
+                        <span className="inline-flex items-center gap-1">
+                          <MapPin className="size-3.5" />
+                          {project.location ?? "Location pending"}
                         </span>
-                      ) : null}
-                      <span className="inline-flex items-center gap-1">
-                        <MapPin className="size-3.5" />
-                        {project.location ?? "Location pending"}
-                      </span>
+                      </div>
                     </div>
-                  </div>
 
-                  <p className="text-sm text-muted-foreground">
-                    {project.schedule}
-                  </p>
+                    <p className="text-sm text-muted-foreground">
+                      {project.schedule}
+                    </p>
+                  </div>
+                  <div className="mt-4 flex justify-end">
+                    <Button size="sm" variant="outline" asChild>
+                      <Link href={`/projects/${project.id}`}>
+                        Open project
+                        <ArrowRight className="size-4" />
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
-                <div className="mt-4 flex justify-end">
-                  <Button size="sm" variant="outline" asChild>
-                    <Link href={`/projects/${project.id}`}>
-                      Open project
-                      <ArrowRight className="size-4" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
+              </ProjectPreviewPopover>
             ))}
           </CardContent>
         </Card>

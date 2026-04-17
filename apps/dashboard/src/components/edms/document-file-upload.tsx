@@ -78,7 +78,7 @@ export function DocumentFileUpload({
   };
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-4">
+    <div className="border border-border bg-card p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="space-y-1">
           <p className="text-sm font-medium">Direct file upload</p>

@@ -2,8 +2,11 @@ import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { CommentPopover } from "@/components/edms/comment-popover";
 import { DocumentVersionSheet } from "@/components/edms/document-version-sheet";
 import { EdmsStatusBadge, formatEdmsLabel } from "@/components/edms/status-badge";
+import { VersionHistoryPopover } from "@/components/edms/version-history-popover";
+import { WorkflowPreviewPopover } from "@/components/edms/workflow-preview-popover";
 import { getDocumentDetailData } from "@/lib/edms/document-detail";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { expandStorageUrl } from "@/lib/storage-utils";
@@ -92,24 +95,38 @@ export default async function DocumentDetailPage({
                     Step {data.workflow.currentStep} of {data.workflow.totalSteps}
                   </span>
                 </div>
-                {data.workflow.steps.map((step) => (
-                  <div key={step.id} className="border border-border bg-background p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="font-medium">{step.stepName}</p>
-                        <p className="text-sm text-muted-foreground">{step.assignedToName}</p>
-                      </div>
-                      <EdmsStatusBadge status={step.status} />
+            {data.workflow.steps.map((step) => (
+              <WorkflowPreviewPopover
+                key={step.id}
+                workflow={{
+                  id: step.id,
+                  stepName: step.stepName,
+                  title: data.document.title,
+                  documentNumber: data.document.documentNumber,
+                  projectName: data.document.projectName,
+                  status: step.status,
+                  dueLabel: step.completedLabel,
+                  assignedRole: step.assignedRole,
+                }}
+              >
+                <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-medium">{step.stepName}</p>
+                      <p className="text-sm text-muted-foreground">{step.assignedToName}</p>
                     </div>
-                    <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                      {step.assignedRole ? <span>{formatEdmsLabel(step.assignedRole)}</span> : null}
-                      <span>{step.completedLabel}</span>
-                    </div>
-                    {step.comments ? (
-                      <p className="mt-3 text-sm text-muted-foreground">{step.comments}</p>
-                    ) : null}
+                    <EdmsStatusBadge status={step.status} />
                   </div>
-                ))}
+                  <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                    {step.assignedRole ? <span>{formatEdmsLabel(step.assignedRole)}</span> : null}
+                    <span>{step.completedLabel}</span>
+                  </div>
+                  {step.comments ? (
+                    <p className="mt-3 text-sm text-muted-foreground line-clamp-2">{step.comments}</p>
+                  ) : null}
+                </div>
+              </WorkflowPreviewPopover>
+            ))}
               </>
             ) : (
               <p className="text-sm text-muted-foreground">No workflow is linked to this document yet.</p>
@@ -125,25 +142,38 @@ export default async function DocumentDetailPage({
           </CardHeader>
           <CardContent className="space-y-3">
             {data.versions.map((version) => (
-              <div key={version.id} className="border border-border bg-background p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-medium">Version {version.version}</p>
-                    <p className="text-sm text-muted-foreground">{version.fileName}</p>
+              <VersionHistoryPopover
+                key={version.id}
+                version={{
+                  id: version.id,
+                  version: version.version,
+                  fileName: version.fileName,
+                  fileUrl: version.fileUrl,
+                  changeDescription: version.changeDescription,
+                  uploadedByName: version.uploadedByName,
+                  uploadedLabel: version.uploadedLabel,
+                }}
+              >
+                <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-medium">Version {version.version}</p>
+                      <p className="text-sm text-muted-foreground">{version.fileName}</p>
+                    </div>
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href={expandStorageUrl(version.fileUrl)} target="_blank">
+                        Open
+                      </Link>
+                    </Button>
                   </div>
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link href={expandStorageUrl(version.fileUrl)} target="_blank">
-                      Open
-                    </Link>
-                  </Button>
+                  <p className="mt-3 text-sm text-muted-foreground line-clamp-2">
+                    {version.changeDescription || "No change description provided."}
+                  </p>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {version.uploadedByName} · {version.uploadedLabel}
+                  </p>
                 </div>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {version.changeDescription || "No change description provided."}
-                </p>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {version.uploadedByName} · {version.uploadedLabel}
-                </p>
-              </div>
+              </VersionHistoryPopover>
             ))}
           </CardContent>
         </Card>
@@ -157,16 +187,27 @@ export default async function DocumentDetailPage({
               <p className="text-sm text-muted-foreground">No review comments yet.</p>
             ) : (
               data.comments.map((comment) => (
-                <div key={comment.id} className="border border-border bg-background p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-medium">{comment.authorName}</p>
-                      <p className="text-xs text-muted-foreground">{formatEdmsLabel(comment.commentType)}</p>
+                <CommentPopover
+                  key={comment.id}
+                  comment={{
+                    id: comment.id,
+                    authorName: comment.authorName,
+                    commentType: comment.commentType,
+                    comment: comment.comment,
+                    createdLabel: comment.createdLabel,
+                  }}
+                >
+                  <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-medium">{comment.authorName}</p>
+                        <p className="text-xs text-muted-foreground">{formatEdmsLabel(comment.commentType)}</p>
+                      </div>
+                      <span className="text-xs text-muted-foreground">{comment.createdLabel}</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">{comment.createdLabel}</span>
+                    <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{comment.comment}</p>
                   </div>
-                  <p className="mt-3 text-sm text-muted-foreground">{comment.comment}</p>
-                </div>
+                </CommentPopover>
               ))
             )}
           </CardContent>
@@ -178,7 +219,7 @@ export default async function DocumentDetailPage({
 
 function MetadataRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-3 border border-border bg-background px-4 py-3">
+    <div className="flex items-start justify-between gap-3 border border-border bg-card px-4 py-3">
       <span className="text-muted-foreground">{label}</span>
       <span className="text-right font-medium">{value}</span>
     </div>

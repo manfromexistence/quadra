@@ -18,6 +18,8 @@ import { DocumentPreviewPopover } from "@/components/edms/document-preview-popov
 import { EdmsMetricCard } from "@/components/edms/metric-card";
 import { EdmsQuickUpload } from "@/components/edms/quick-upload";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
+import { TransmittalPreviewPopover } from "@/components/edms/transmittal-preview-popover";
+import { WorkflowPreviewPopover } from "@/components/edms/workflow-preview-popover";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { getDocumentControlData } from "@/lib/edms/documents";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
@@ -204,26 +206,37 @@ export default async function DocumentsPage({
           </CardHeader>
           <CardContent className="space-y-3">
             {summaryData.workflowQueue.map((item) => (
-              <div
+              <WorkflowPreviewPopover
                 key={item.id}
-                className="rounded-2xl border border-border bg-muted/30 p-4"
+                workflow={{
+                  id: item.id,
+                  stepName: item.stepName,
+                  title: item.title,
+                  documentNumber: item.documentNumber,
+                  projectName: item.projectName,
+                  status: item.status,
+                  dueLabel: item.dueLabel,
+                  assignedRole: item.assignedRole,
+                }}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-medium">{item.stepName}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {item.projectName}
-                    </p>
+                <div className="cursor-pointer rounded-lg border border-border bg-muted/30 p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-medium">{item.stepName}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {item.projectName}
+                      </p>
+                    </div>
+                    <EdmsStatusBadge status={item.status} />
                   </div>
-                  <EdmsStatusBadge status={item.status} />
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    {item.documentNumber} · {item.title}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {item.dueLabel}
+                  </p>
                 </div>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {item.documentNumber} · {item.title}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {item.dueLabel}
-                </p>
-              </div>
+              </WorkflowPreviewPopover>
             ))}
           </CardContent>
         </Card>
@@ -234,26 +247,35 @@ export default async function DocumentsPage({
           </CardHeader>
           <CardContent className="space-y-3">
             {summaryData.transmittals.map((item) => (
-              <div
+              <TransmittalPreviewPopover
                 key={item.id}
-                className="rounded-2xl border border-border bg-muted/30 p-4"
+                transmittal={{
+                  id: item.id,
+                  subject: item.subject,
+                  transmittalNumber: item.transmittalNumber,
+                  projectName: item.projectName,
+                  status: item.status,
+                  sentLabel: item.sentLabel,
+                }}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-medium">{item.subject}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {item.projectName}
-                    </p>
+                <div className="cursor-pointer rounded-lg border border-border bg-muted/30 p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-medium">{item.subject}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {item.projectName}
+                      </p>
+                    </div>
+                    <EdmsStatusBadge status={item.status} />
                   </div>
-                  <EdmsStatusBadge status={item.status} />
+                  <p className="mt-3 font-mono text-xs text-muted-foreground">
+                    {item.transmittalNumber}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {item.sentLabel}
+                  </p>
                 </div>
-                <p className="mt-3 font-mono text-xs text-muted-foreground">
-                  {item.transmittalNumber}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {item.sentLabel}
-                </p>
-              </div>
+              </TransmittalPreviewPopover>
             ))}
           </CardContent>
         </Card>
