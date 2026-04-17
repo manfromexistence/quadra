@@ -1,0 +1,49 @@
+# Development files
+*.log
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+__tests__
+__mocks__
+coverage
+
+# Documentation
+*.md
+!README.md
+docs/
+examples/
+
+# Build artifacts
+.turbo
+.cache
+.tmp
+*.tsbuildinfo
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large assets that should be in CDN
+public/videos/
+public/large-assets/
+
+# Development scripts
+scripts/dev-*.ps1
+scripts/test-*.ps1
+scripts/smoke-*.ts
+scripts/curl-*.ps1
+
+# Hex folder
+.hex/
+hexed/
+hexxed/
+
+# Analysis files
+bundle-analysis.log

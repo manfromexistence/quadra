@@ -8,6 +8,16 @@
   "installCommand": "bun install",
   "framework": "nextjs",
   "bunVersion": "1.x",
+  "functions": {
+    "**": {
+      "maxDuration": 30,
+      "memory": 1024
+    },
+    "api/**": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
+  },
   "experimentalServices": {
     "web": {
       "routePrefix": "/",

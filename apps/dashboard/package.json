@@ -5,6 +5,7 @@
   "scripts": {
     "build": "node ./scripts/run-next-build.mjs",
     "build:analyze": "ANALYZE=true bun run build",
+    "build:analyze-bundle": "powershell -ExecutionPolicy Bypass -File ./scripts/analyze-bundle.ps1",
     "build:beast": "NODE_ENV=production NODE_OPTIONS='--max-old-space-size=8192' bun run build",
     "clean": "git clean -xdf .next .turbo node_modules",
     "dev": "TZ=UTC next dev -p 3001 --turbo",
