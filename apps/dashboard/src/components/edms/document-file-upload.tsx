@@ -92,7 +92,7 @@ export function DocumentFileUpload({
             id={inputId}
             type="file"
             className="hidden"
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.dxf,.jpg,.jpeg,.png,.txt"
+            accept="*/*"
             onChange={handleFileSelection}
           />
           <Button type="button" variant="outline" asChild disabled={isUploading}>

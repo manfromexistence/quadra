@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@midday/ui/table";
 import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { EdmsDataState } from "@/components/edms/data-state";
 import { DocumentBulkUploadSheet } from "@/components/edms/document-bulk-upload-sheet";
@@ -23,6 +24,7 @@ import { WorkflowPreviewPopover } from "@/components/edms/workflow-preview-popov
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { getDocumentControlData } from "@/lib/edms/documents";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
+import { expandImageArray } from "@/lib/storage-utils";
 
 export default async function DocumentsPage({
   searchParams,
@@ -168,21 +170,36 @@ export default async function DocumentsPage({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.documents.map((document) => (
+                {data.documents.map((document) => {
+                  const documentImages = expandImageArray(document.images);
+                  return (
                   <TableRow key={document.id}>
                     <TableCell className="px-6">
-                      <div className="space-y-1">
-                        <DocumentPreviewPopover document={document}>
-                          <Link href={`/documents/${document.id}`} className="font-medium hover:underline">
-                            {document.title}
-                          </Link>
-                        </DocumentPreviewPopover>
-                        <p className="font-mono text-xs text-muted-foreground">
-                          {document.documentNumber}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {document.uploadedLabel}
-                        </p>
+                      <div className="flex items-center gap-3">
+                        {documentImages.length > 0 && (
+                          <div className="relative size-12 shrink-0 overflow-hidden rounded border border-border bg-muted">
+                            <Image
+                              src={documentImages[0]}
+                              alt={document.title}
+                              fill
+                              className="object-cover"
+                              sizes="48px"
+                            />
+                          </div>
+                        )}
+                        <div className="space-y-1">
+                          <DocumentPreviewPopover document={document}>
+                            <Link href={`/documents/${document.id}`} className="font-medium hover:underline">
+                              {document.title}
+                            </Link>
+                          </DocumentPreviewPopover>
+                          <p className="font-mono text-xs text-muted-foreground">
+                            {document.documentNumber}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {document.uploadedLabel}
+                          </p>
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>{document.projectName}</TableCell>
@@ -192,7 +209,8 @@ export default async function DocumentsPage({
                       <EdmsStatusBadge status={document.status} />
                     </TableCell>
                   </TableRow>
-                ))}
+                  );
+                })}
               </TableBody>
             </Table>
           )}

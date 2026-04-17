@@ -1,5 +1,6 @@
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ActivityEntryPopover } from "@/components/edms/activity-entry-popover";
@@ -10,6 +11,7 @@ import { TeamMemberPopover } from "@/components/edms/team-member-popover";
 import { WorkflowPreviewPopover } from "@/components/edms/workflow-preview-popover";
 import { getProjectDetailData } from "@/lib/edms/projects";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
+import { expandImageArray } from "@/lib/storage-utils";
 
 export default async function ProjectDetailPage({
   params,
@@ -23,6 +25,8 @@ export default async function ProjectDetailPage({
   if (!data) {
     notFound();
   }
+
+  const projectImages = expandImageArray(data.project.images);
 
   return (
     <div className="space-y-6 pt-6">
@@ -54,6 +58,39 @@ export default async function ProjectDetailPage({
           </Button>
         </div>
       </section>
+
+      {projectImages.length > 0 && (
+        <section>
+          <Card className="border-border bg-card shadow-sm">
+            <CardHeader>
+              <CardTitle>Project images</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {projectImages.map((imageUrl, index) => (
+                  <div key={index} className="group relative aspect-video overflow-hidden rounded-lg border border-border bg-muted">
+                    <Image
+                      src={imageUrl}
+                      alt={`${data.project.name} - Image ${index + 1}`}
+                      fill
+                      className="object-cover transition-transform group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                    <a
+                      href={imageUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/50 group-hover:opacity-100"
+                    >
+                      <span className="text-sm font-medium text-white">View full size</span>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+      )}
 
       <section className="grid gap-4 md:grid-cols-3">
         {data.project.metrics.map((metric) => (

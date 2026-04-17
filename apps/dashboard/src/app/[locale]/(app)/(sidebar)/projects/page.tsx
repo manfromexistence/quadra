@@ -1,6 +1,7 @@
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import { ArrowRight, Building2, MapPin } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { EdmsDataState } from "@/components/edms/data-state";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
@@ -12,6 +13,7 @@ import {
 } from "@/components/edms/status-badge";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
+import { expandImageArray } from "@/lib/storage-utils";
 
 export default async function ProjectsPage() {
   const sessionUser = await getRequiredDashboardSessionUser();
@@ -69,7 +71,9 @@ export default async function ProjectsPage() {
             <CardTitle>Project watchlist</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {data.projects.map((project) => (
+            {data.projects.map((project) => {
+              const projectImages = expandImageArray(project.images);
+              return (
               <ProjectPreviewPopover
                 key={project.id}
                 project={{
@@ -85,6 +89,17 @@ export default async function ProjectsPage() {
                 }}
               >
                 <div className="cursor-pointer rounded-lg border border-border bg-muted/30 p-5 transition-all hover:bg-muted/50 hover:shadow-sm">
+                  {projectImages.length > 0 && (
+                    <div className="relative mb-4 aspect-video overflow-hidden rounded-lg border border-border bg-muted">
+                      <Image
+                        src={projectImages[0]}
+                        alt={project.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    </div>
+                  )}
                   <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div className="space-y-3">
                       <div className="flex flex-wrap items-center gap-2">
@@ -119,7 +134,8 @@ export default async function ProjectsPage() {
                   </div>
                 </div>
               </ProjectPreviewPopover>
-            ))}
+              );
+            })}
           </CardContent>
         </Card>
 

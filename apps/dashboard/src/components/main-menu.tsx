@@ -2,7 +2,7 @@
 
 import { cn } from "@midday/ui/cn";
 import { Icons } from "@midday/ui/icons";
-import { FileStack, FolderKanban, Send, Workflow } from "lucide-react";
+import { Bell, FileStack, FolderKanban, Send, Workflow } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -22,6 +22,7 @@ const icons = {
   "/documents": () => <FileStack size={20} />,
   "/workflows": () => <Workflow size={20} />,
   "/transmittals": () => <Send size={20} />,
+  "/notifications": () => <Bell size={20} />,
 } as const;
 
 const items = [
@@ -48,6 +49,10 @@ const items = [
   {
     path: "/transmittals",
     name: "Transmittals",
+  },
+  {
+    path: "/notifications",
+    name: "Notifications",
   },
   {
     path: "/transactions",
