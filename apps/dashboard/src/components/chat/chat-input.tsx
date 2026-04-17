@@ -8,11 +8,9 @@ import {
   ManusMcpLogo,
   PerplexityMcpLogo,
 } from "@midday/app-store/logos";
-import { LogEvents } from "@midday/events/events";
 import { cn } from "@midday/ui/cn";
 import { Icons } from "@midday/ui/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
-import { useOpenPanel } from "@openpanel/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { parseAsString, useQueryStates } from "nuqs";
@@ -281,7 +279,6 @@ export function ChatInput({
   const [connectorsModalOpen, setConnectorsModalOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [, setParams] = useQueryStates({ "mcp-app": parseAsString });
-  const { track } = useOpenPanel();
 
   const mentionedSlugs = new Set(mentionedApps?.map((a) => a.slug));
   const availableApps = connectedApps?.filter(
@@ -359,9 +356,8 @@ export function ChatInput({
       const valid = incoming.filter((f) => f.size <= MAX_FILE_SIZE);
       if (!valid.length) return;
       setFiles((prev) => [...prev, ...valid]);
-      track(LogEvents.AssistantFileAttached.name, { count: valid.length });
     },
-    [track],
+    [],
   );
 
   const removeFile = useCallback((index: number) => {
@@ -792,8 +788,6 @@ export function ChatInput({
                 <button
                   key={id}
                   type="button"
-                  data-track="MCP App Selected"
-                  data-app={name}
                   className="flex items-center gap-2 w-full px-2 py-1.5 text-xs text-[#666] hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                   onClick={() => {
                     setMcpOpen(false);
@@ -814,9 +808,6 @@ export function ChatInput({
           type="button"
           onClick={handleSubmit}
           disabled={!isStreaming && !value.trim() && !files.length}
-          {...(isStreaming
-            ? { "data-track": LogEvents.AssistantStopped.name }
-            : {})}
           className="size-7 flex items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
         >
           {isStreaming ? (

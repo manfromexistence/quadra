@@ -1,8 +1,6 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { LogEvents } from "@midday/events/events";
-import { useOpenPanel } from "@openpanel/nextjs";
 import { DefaultChatTransport } from "ai";
 import type { ReactNode } from "react";
 import {
@@ -45,8 +43,6 @@ export function useChatState() {
 }
 
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const { track } = useOpenPanel();
-
   const [inputValue, setInputValue] = useState("");
   const [chatTitle, setChatTitle] = useState<string | null>(null);
   const [rateLimit, setRateLimit] = useState<RateLimitInfo | null>(null);
@@ -99,7 +95,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const chat = useChat({
     transport: chatTransport,
     onData: (part: any) => {
-      console.log('Chat onData received:', part);
       if (part.type === "data-title" && part.data?.title) {
         setChatTitle(part.data.title);
       }
@@ -109,23 +104,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       }
     },
     onError: (err) => {
-      console.error('Chat onError:', err);
       if (err.message?.includes("RATE_LIMIT_EXCEEDED")) {
         setRateLimitExceeded(true);
         return;
       }
       console.error("Chat error:", err);
     },
-    onFinish: (message) => {
-      console.log('Chat onFinish:', message);
-    },
   });
 
   const trackedSendMessage: typeof chat.sendMessage = useCallback(
     (...args) => {
-      console.log('Sending message:', args);
-      // Temporarily disable tracking to avoid 401 errors
-      // track(LogEvents.AssistantMessageSent.name);
       return chat.sendMessage(...args);
     },
     [chat.sendMessage],

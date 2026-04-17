@@ -43,9 +43,7 @@ export async function POST(req: Request) {
       };
     });
 
-    console.log('Transformed messages:', JSON.stringify(transformedMessages, null, 2));
-
-    // Use streamText and return the proper streaming response
+    // Use streamText with Groq
     const result = streamText({
       model,
       messages: transformedMessages,
@@ -64,42 +62,10 @@ You help users with:
 Be concise, helpful, and professional in your responses.`,
     });
 
-    console.log('StreamText result created, using manual streaming...');
-
-    // Manual streaming with proper AI SDK format
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      async start(controller) {
-        try {
-          let fullText = '';
-          for await (const chunk of result.textStream) {
-            console.log('Streaming chunk:', chunk);
-            fullText += chunk;
-            // Send each chunk in the format the frontend expects
-            controller.enqueue(encoder.encode(`0:${JSON.stringify(chunk)}\n`));
-          }
-          console.log('Full text streamed:', fullText);
-          // Send finish message
-          controller.enqueue(encoder.encode('d:{"finishReason":"stop"}\n'));
-          controller.close();
-        } catch (error) {
-          console.error('Streaming error:', error);
-          controller.error(error);
-        }
-      },
-    });
-
-    return new Response(stream, {
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'X-Vercel-AI-Data-Stream': 'v1',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-      },
-    });
+    // Use toUIMessageStreamResponse() which is the correct method for useChat
+    return result.toUIMessageStreamResponse();
   } catch (error) {
     console.error("Chat API error:", error);
-    console.error("Error details:", error.message, error.stack);
     return new Response(JSON.stringify({ 
       error: "Internal Server Error",
       details: error.message 

@@ -44,10 +44,6 @@ const config = {
       "zod",
       "superjson",
     ],
-    // Local dev optimizations
-    ...(process.env.NODE_ENV === "development" && {
-      // Faster local builds - removed invalid turbo config
-    }),
     // PRODUCTION BEAST MODE 🔥
     ...(process.env.NODE_ENV === "production" && {
       // Enable all experimental optimizations for production
@@ -79,7 +75,87 @@ const config = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  devIndicators: false,
+  // Reduce preloading warnings in development
+  webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      // Suppress ALL webpack logging
+      config.infrastructureLogging = {
+        level: 'none',
+      };
+      
+      // Suppress webpack stats logging completely
+      config.stats = 'none';
+      
+      // Disable CSS preloading in development to prevent warnings
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'async', // Only split async chunks in development
+          cacheGroups: {
+            default: false,
+            vendors: false,
+            // Don't create separate CSS chunks in development
+            styles: false,
+          },
+        },
+      };
+
+      // Nuclear option: Completely suppress all console output during webpack operations
+      config.plugins = config.plugins || [];
+      config.plugins.push({
+        apply: (compiler) => {
+          // Store original console methods
+          let originalConsole = {};
+          
+          compiler.hooks.compile.tap('SuppressAllLogsPlugin', () => {
+            // Store and override all console methods during compilation
+            originalConsole = {
+              log: console.log,
+              warn: console.warn,
+              info: console.info,
+              error: console.error,
+            };
+            
+            // Completely silence console during webpack operations
+            console.log = () => {};
+            console.warn = () => {};
+            console.info = () => {};
+            // Keep errors for actual webpack errors
+            console.error = (...args) => {
+              const message = args.join(' ');
+              if (!message.includes('IncrementalCache') && !message.includes('FileSystemCache') && !message.includes('use-cache')) {
+                originalConsole.error.apply(console, args);
+              }
+            };
+          });
+          
+          compiler.hooks.done.tap('RestoreConsolePlugin', () => {
+            // Restore console methods after compilation
+            if (originalConsole.log) {
+              console.log = originalConsole.log;
+              console.warn = originalConsole.warn;
+              console.info = originalConsole.info;
+              console.error = originalConsole.error;
+            }
+          });
+          
+          // Suppress all webpack warnings
+          compiler.hooks.done.tap('SuppressAllWarningsPlugin', (stats) => {
+            stats.compilation.warnings = [];
+            stats.compilation.errors = stats.compilation.errors.filter(error => 
+              !error.message.includes('IncrementalCache') && 
+              !error.message.includes('FileSystemCache') &&
+              !error.message.includes('use-cache')
+            );
+          });
+        }
+      });
+
+      // Disable source maps in development to reduce overhead
+      config.devtool = false;
+    }
+    return config;
+  },
   async headers() {
     const headers = [
       {

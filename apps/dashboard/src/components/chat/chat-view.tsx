@@ -1,7 +1,5 @@
 "use client";
 
-import { LogEvents } from "@midday/events/events";
-import { useOpenPanel } from "@openpanel/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import type React from "react";
@@ -90,7 +88,6 @@ export function ChatView({ header }: { header?: React.ReactNode }) {
     removeMentionedApp,
     clearMentionedApps,
   } = useChatState();
-  const { track } = useOpenPanel();
 
   const trpc = useTRPC();
   const { data: connectedApps } = useQuery(
@@ -213,10 +210,6 @@ export function ChatView({ header }: { header?: React.ReactNode }) {
             onMentionApp={addMentionedApp}
             onRemoveMention={removeMentionedApp}
             onSuggestion={(text) => {
-              // Temporarily disable tracking to avoid 401 errors
-              // track(LogEvents.AssistantSuggestionUsed.name, {
-              //   suggestion: text,
-              // });
               sendMessage({ text });
             }}
           />

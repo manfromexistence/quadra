@@ -1,9 +1,7 @@
 "use client";
 
-import { LogEvents } from "@midday/events/events";
 import { Button } from "@midday/ui/button";
 import { Icons } from "@midday/ui/icons";
-import { useOpenPanel } from "@openpanel/nextjs";
 import { parseAsBoolean, useQueryState } from "nuqs";
 import { Suspense, useCallback } from "react";
 import { ChatProvider } from "@/components/chat/chat-context";
@@ -20,14 +18,11 @@ import { WidgetCards } from "./widget-cards";
 
 export function OverviewView() {
   const [assistant, setAssistant] = useQueryState("assistant", parseAsBoolean);
-  const { track } = useOpenPanel();
   const { setParams: setInvoiceParams } = useInvoiceParams();
 
   const isChat = assistant === true;
 
   const openChat = useCallback(() => {
-    // Temporarily disable tracking to avoid 401 errors
-    // track(LogEvents.AssistantOpened.name);
     setAssistant(true);
   }, [setAssistant]);
 
