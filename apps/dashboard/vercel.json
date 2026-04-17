@@ -4,7 +4,7 @@
   "regions": [
     "bom1"
   ],
-  "buildCommand": "bun run build && node ./scripts/sync-vercel-next-output.mjs",
+  "buildCommand": "bun run build && node ./scripts/fix-nft-symlinks.mjs && node ./scripts/sync-vercel-next-output.mjs",
   "installCommand": "bun install",
   "framework": "nextjs",
   "bunVersion": "1.x"
