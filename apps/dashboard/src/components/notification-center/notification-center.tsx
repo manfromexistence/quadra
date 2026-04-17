@@ -41,7 +41,7 @@ export function NotificationCenter() {
         <Button
           variant="outline"
           size="icon"
-          className="rounded-full w-8 h-8 flex items-center relative"
+          className="rounded-full w-8 h-8 flex items-center relative bg-background"
         >
           {hasUnseenNotifications && (
             <div className="w-1.5 h-1.5 bg-[#FFD02B] rounded-full absolute top-0 right-0" />
