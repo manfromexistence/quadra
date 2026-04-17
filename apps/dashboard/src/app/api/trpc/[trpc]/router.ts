@@ -984,6 +984,105 @@ export const appRouter = t.router({
         return [];
       }),
   }),
+
+  // Billing
+  billing: t.router({
+    orders: t.procedure
+      .input(z.object({
+        pageSize: z.number().optional(),
+        direction: z.string().optional(),
+      }).optional())
+      .query(({ input }) => {
+        console.log("[tRPC] billing.orders: Returning mock billing orders with input:", input);
+        
+        // Mock billing orders based on the plans
+        const orders = [
+          {
+            id: "order_1",
+            planId: "plan_pro",
+            planName: "Pro",
+            amount: {
+              amount: 2900, // Amount in cents
+              currency: "USD",
+            },
+            status: "paid",
+            createdAt: new Date("2026-04-01T00:00:00.000Z"),
+            periodStart: new Date("2026-04-01T00:00:00.000Z"),
+            periodEnd: new Date("2026-05-01T00:00:00.000Z"),
+            invoiceUrl: "#",
+            product: {
+              id: "plan_pro",
+              name: "Pro Plan",
+            },
+          },
+          {
+            id: "order_2",
+            planId: "plan_pro",
+            planName: "Pro",
+            amount: {
+              amount: 2900,
+              currency: "USD",
+            },
+            status: "paid",
+            createdAt: new Date("2026-03-01T00:00:00.000Z"),
+            periodStart: new Date("2026-03-01T00:00:00.000Z"),
+            periodEnd: new Date("2026-04-01T00:00:00.000Z"),
+            invoiceUrl: "#",
+            product: {
+              id: "plan_pro",
+              name: "Pro Plan",
+            },
+          },
+          {
+            id: "order_3",
+            planId: "plan_pro",
+            planName: "Pro",
+            amount: {
+              amount: 2900,
+              currency: "USD",
+            },
+            status: "paid",
+            createdAt: new Date("2026-02-01T00:00:00.000Z"),
+            periodStart: new Date("2026-02-01T00:00:00.000Z"),
+            periodEnd: new Date("2026-03-01T00:00:00.000Z"),
+            invoiceUrl: "#",
+            product: {
+              id: "plan_pro",
+              name: "Pro Plan",
+            },
+          },
+        ];
+        
+        return {
+          data: orders,
+          meta: { cursor: null, hasMore: false }
+        };
+      }),
+    getActiveSubscription: t.procedure.query(() => {
+      console.log("[tRPC] billing.getActiveSubscription: Returning active subscription");
+      
+      // Return the current Pro plan subscription
+      const activePlan = mockData.mockPlans.find(p => p.isCurrent);
+      
+      if (!activePlan) {
+        return null;
+      }
+      
+      return {
+        id: "sub_1",
+        planId: activePlan.id,
+        planName: activePlan.name,
+        amount: activePlan.price,
+        currency: activePlan.currency,
+        interval: activePlan.interval,
+        status: "active",
+        currentPeriodStart: "2026-04-01T00:00:00.000Z",
+        currentPeriodEnd: activePlan.currentPeriodEnd || "2026-05-01T00:00:00.000Z",
+        cancelAtPeriodEnd: false,
+        createdAt: "2025-01-01T00:00:00.000Z",
+      };
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
