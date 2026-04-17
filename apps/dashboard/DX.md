@@ -45,3 +45,14 @@ Workflows
 Transmittals
 Activities
 Pages use custom brand UI components instead of the other pages, like invoices, testimonials, and things like that. In these pages please use other pages' components correctly. 
+
+Except these pages:
+Overview
+Projects
+Documents
+Workflows
+Transmittals
+Activities
+on all other pages like reports and other please mention that those pages are still in active development and will be available soon - use midday toast and show the toast correctly!!!
+
+In our admin dashboard side header, please understand the UI first and then please make the side header fixed on the top. Now previously you already tried again and again but you messed up many times. Sometimes you mess up with the side bar border or mess up with the scrolling that scrolls past the sidebar even though you put fixed on the header. Please do this right correctly and make the side header fixed on the top and make sure that the side bar right border still shows correctly there too.

@@ -1,3 +1,6 @@
+import type { Metadata } from "next";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import { Suspense } from "react";
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import {
@@ -10,17 +13,25 @@ import {
 } from "@midday/ui/table";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { CollapsibleSummary } from "@/components/collapsible-summary";
 import { EdmsDataState } from "@/components/edms/data-state";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
 import {
   EdmsStatusBadge,
   formatEdmsLabel,
 } from "@/components/edms/status-badge";
+import { ErrorFallback } from "@/components/error-fallback";
+import { ScrollableContent } from "@/components/scrollable-content";
 import { WorkflowActionSheet } from "@/components/edms/workflow-action-sheet";
 import { WorkflowCreateSheet } from "@/components/edms/workflow-create-sheet";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { getWorkflowManagementData } from "@/lib/edms/workflows";
+import { HydrateClient } from "@/trpc/server";
+
+export const metadata: Metadata = {
+  title: "Workflows | Quadra EDMS",
+};
 
 export default async function WorkflowsPage() {
   const sessionUser = await getRequiredDashboardSessionUser();
@@ -30,56 +41,62 @@ export default async function WorkflowsPage() {
   ]);
 
   return (
-    <div className="space-y-6 pt-6">
-      <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="max-w-3xl space-y-3">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-              Workflow queue
-            </h1>
-            <p className="text-sm leading-6 text-muted-foreground md:text-base">
-              Multi-step review visibility for PMC, client, and vendor actions with 
-              comprehensive workflow tracking and management.
-            </p>
-          </div>
-        </div>
+    <HydrateClient>
+      <ScrollableContent>
+        <div className="flex flex-col gap-6">
+          <CollapsibleSummary>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-6">
+              {data.metrics.map((metric, index) => {
+                const links = ["/workflows", "/documents", "/transmittals", "/notifications"];
+                return (
+                  <Link key={metric.label} href={links[index] || "/workflows"} className="block h-full">
+                    <div className="group cursor-pointer transition-all hover:scale-[1.02] h-full">
+                      <EdmsMetricCard metric={metric} />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </CollapsibleSummary>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <WorkflowCreateSheet documents={data.documents} assignees={data.assignees} />
-          <Button variant="outline" asChild>
-            <Link href="/documents">
-              Source documents
-              <ArrowRight className="size-4" />
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href="/transmittals">
-              Transmittals
-              <ArrowRight className="size-4" />
-            </Link>
-          </Button>
-        </div>
-      </section>
-
-      <EdmsDataState
-        isUsingFallbackData={data.isUsingFallbackData}
-        message={data.statusMessage}
-      />
-
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 auto-rows-fr">
-        {data.metrics.map((metric, index) => {
-          const links = ["/workflows", "/documents", "/transmittals", "/notifications"];
-          return (
-            <Link key={metric.label} href={links[index] || "/workflows"} className="block h-full">
-              <div className="group cursor-pointer transition-all hover:scale-[1.02] h-full">
-                <EdmsMetricCard metric={metric} />
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-3xl space-y-3">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+                  Workflow queue
+                </h1>
+                <p className="text-sm leading-6 text-muted-foreground md:text-base">
+                  Multi-step review visibility for PMC, client, and vendor actions with 
+                  comprehensive workflow tracking and management.
+                </p>
               </div>
-            </Link>
-          );
-        })}
-      </section>
+            </div>
 
-      <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+            <div className="flex flex-wrap items-center gap-2">
+              <WorkflowCreateSheet documents={data.documents} assignees={data.assignees} />
+              <Button variant="outline" asChild>
+                <Link href="/documents">
+                  Source documents
+                  <ArrowRight className="size-4" />
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/transmittals">
+                  Transmittals
+                  <ArrowRight className="size-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+
+          <EdmsDataState
+            isUsingFallbackData={data.isUsingFallbackData}
+            message={data.statusMessage}
+          />
+
+          <ErrorBoundary errorComponent={ErrorFallback}>
+            <Suspense fallback={<div className="text-sm text-muted-foreground">Loading workflows...</div>}>
+              <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <Card className="border-border bg-card shadow-sm">
           <CardHeader>
             <CardTitle>Workflow steps</CardTitle>
@@ -188,8 +205,12 @@ export default async function WorkflowsPage() {
               ))
             )}
           </CardContent>
-        </Card>
-      </section>
-    </div>
+                </Card>
+              </section>
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      </ScrollableContent>
+    </HydrateClient>
   );
 }
