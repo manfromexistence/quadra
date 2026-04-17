@@ -14,6 +14,8 @@ import { EdmsDataState } from "@/components/edms/data-state";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
 import { TransmittalCreateSheet } from "@/components/edms/transmittal-create-sheet";
+import { TransmittalPreviewPopover } from "@/components/edms/transmittal-preview-popover";
+import { WorkflowPreviewPopover } from "@/components/edms/workflow-preview-popover";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { getTransmittalManagementData } from "@/lib/edms/transmittals";
@@ -37,9 +39,8 @@ export default async function TransmittalsPage() {
               Transmittals
             </h1>
             <p className="text-sm leading-6 text-muted-foreground md:text-base">
-              Delivery-package tracking for outbound submissions and
-              acknowledgements, with the same fallback strategy so the workspace
-              stays usable before the database is fully migrated.
+              Delivery-package tracking for outbound submissions and acknowledgements 
+              with comprehensive transmittal management and review workflow.
             </p>
           </div>
         </div>
@@ -77,7 +78,7 @@ export default async function TransmittalsPage() {
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
-        <Card className="border-border bg-background/90 shadow-sm">
+        <Card className="border-border bg-card shadow-sm">
           <CardHeader>
             <CardTitle>Issued packages</CardTitle>
           </CardHeader>
@@ -100,27 +101,37 @@ export default async function TransmittalsPage() {
                 </TableHeader>
                 <TableBody>
                   {data.transmittals.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="px-6">
-                        <div className="space-y-1">
-                          <Link href={`/transmittals/${item.id}`} className="font-medium hover:underline">
-                            {item.subject}
-                          </Link>
-                          <p className="font-mono text-xs text-muted-foreground">
-                            {item.transmittalNumber}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>{item.projectName}</TableCell>
-                      <TableCell>
-                        <EdmsStatusBadge status={item.status} />
-                      </TableCell>
-                      <TableCell>{item.recipientName}</TableCell>
-                      <TableCell>{item.documentCount}</TableCell>
-                      <TableCell className="px-6 text-sm text-muted-foreground">
-                        {item.sentLabel}
-                      </TableCell>
-                    </TableRow>
+                    <TransmittalPreviewPopover
+                      key={item.id}
+                      transmittal={{
+                        id: item.id,
+                        subject: item.subject,
+                        transmittalNumber: item.transmittalNumber,
+                        projectName: item.projectName,
+                        status: item.status,
+                        sentLabel: item.sentLabel,
+                      }}
+                    >
+                      <TableRow className="cursor-pointer hover:bg-muted/50">
+                        <TableCell className="px-6">
+                          <div className="space-y-1">
+                            <p className="font-medium hover:text-primary">{item.subject}</p>
+                            <p className="font-mono text-xs text-muted-foreground">
+                              {item.transmittalNumber}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>{item.projectName}</TableCell>
+                        <TableCell>
+                          <EdmsStatusBadge status={item.status} />
+                        </TableCell>
+                        <TableCell>{item.recipientName}</TableCell>
+                        <TableCell>{item.documentCount}</TableCell>
+                        <TableCell className="px-6 text-sm text-muted-foreground">
+                          {item.sentLabel}
+                        </TableCell>
+                      </TableRow>
+                    </TransmittalPreviewPopover>
                   ))}
                 </TableBody>
               </Table>
@@ -128,32 +139,43 @@ export default async function TransmittalsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-border bg-background/90 shadow-sm">
+        <Card className="border-border bg-card shadow-sm">
           <CardHeader>
             <CardTitle>Workflow spillover</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {summaryData.workflowQueue.map((item) => (
-              <div
+              <WorkflowPreviewPopover
                 key={item.id}
-                className="rounded-2xl border border-border bg-muted/30 p-4"
+                workflow={{
+                  id: item.id,
+                  stepName: item.stepName,
+                  title: item.title,
+                  documentNumber: item.documentNumber,
+                  projectName: item.projectName,
+                  status: item.status,
+                  dueLabel: item.dueLabel,
+                  assignedRole: item.assignedRole,
+                }}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-medium">{item.stepName}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {item.projectName}
-                    </p>
+                <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-medium">{item.stepName}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {item.projectName}
+                      </p>
+                    </div>
+                    <EdmsStatusBadge status={item.status} />
                   </div>
-                  <EdmsStatusBadge status={item.status} />
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    {item.documentNumber} · {item.title}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {item.dueLabel}
+                  </p>
                 </div>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {item.documentNumber} · {item.title}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {item.dueLabel}
-                </p>
-              </div>
+              </WorkflowPreviewPopover>
             ))}
           </CardContent>
         </Card>

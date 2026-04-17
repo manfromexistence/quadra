@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { WorkflowActionSheet } from "@/components/edms/workflow-action-sheet";
 import { EdmsStatusBadge, formatEdmsLabel } from "@/components/edms/status-badge";
+import { TeamMemberPopover } from "@/components/edms/team-member-popover";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { getWorkflowDetailData } from "@/lib/edms/workflow-detail";
 
@@ -55,34 +56,46 @@ export default async function WorkflowDetailPage({
         </CardHeader>
         <CardContent className="space-y-3">
           {data.steps.map((step) => (
-            <div key={step.id} className="rounded-2xl border border-border bg-card p-4">
-              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                <div className="space-y-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-medium">
-                      Step {step.stepNumber}: {step.stepName}
-                    </p>
-                    <EdmsStatusBadge status={step.status} />
+            <TeamMemberPopover
+              key={step.id}
+              member={{
+                id: step.id,
+                name: step.assignedToName,
+                email: `${step.assignedToName.toLowerCase().replace(' ', '.')}@company.com`,
+                role: step.assignedRole || "reviewer",
+                organization: null,
+                assignedLabel: step.dueLabel,
+              }}
+            >
+              <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-medium">
+                        Step {step.stepNumber}: {step.stepName}
+                      </p>
+                      <EdmsStatusBadge status={step.status} />
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                      <span>{step.assignedToName}</span>
+                      {step.assignedRole ? <span>{formatEdmsLabel(step.assignedRole)}</span> : null}
+                      <span>{step.dueLabel}</span>
+                      <span>{step.completedLabel}</span>
+                    </div>
+                    {step.comments ? (
+                      <p className="text-sm text-muted-foreground line-clamp-2">{step.comments}</p>
+                    ) : null}
                   </div>
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                    <span>{step.assignedToName}</span>
-                    {step.assignedRole ? <span>{formatEdmsLabel(step.assignedRole)}</span> : null}
-                    <span>{step.dueLabel}</span>
-                    <span>{step.completedLabel}</span>
-                  </div>
-                  {step.comments ? (
-                    <p className="text-sm text-muted-foreground">{step.comments}</p>
-                  ) : null}
-                </div>
 
-                <WorkflowActionSheet
-                  stepId={step.id}
-                  title={`${data.workflow.documentNumber} - ${step.stepName}`}
-                  isActionable={step.isActionable}
-                  projectId={data.workflow.projectId}
-                />
+                  <WorkflowActionSheet
+                    stepId={step.id}
+                    title={`${data.workflow.documentNumber} - ${step.stepName}`}
+                    isActionable={step.isActionable}
+                    projectId={data.workflow.projectId}
+                  />
+                </div>
               </div>
-            </div>
+            </TeamMemberPopover>
           ))}
         </CardContent>
       </Card>

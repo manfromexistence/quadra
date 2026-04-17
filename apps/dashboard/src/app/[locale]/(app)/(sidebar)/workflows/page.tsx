@@ -18,6 +18,7 @@ import {
 } from "@/components/edms/status-badge";
 import { WorkflowActionSheet } from "@/components/edms/workflow-action-sheet";
 import { WorkflowCreateSheet } from "@/components/edms/workflow-create-sheet";
+import { WorkflowPreviewPopover } from "@/components/edms/workflow-preview-popover";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { getWorkflowManagementData } from "@/lib/edms/workflows";
@@ -41,9 +42,8 @@ export default async function WorkflowsPage() {
               Workflow queue
             </h1>
             <p className="text-sm leading-6 text-muted-foreground md:text-base">
-              Multi-step review visibility for PMC, client, and vendor actions,
-              with safe sample data fallback until the live EDMS workflow tables
-              are present.
+              Multi-step review visibility for PMC, client, and vendor actions with 
+              comprehensive workflow tracking and management.
             </p>
           </div>
         </div>
@@ -77,7 +77,7 @@ export default async function WorkflowsPage() {
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
-        <Card className="border-border bg-background/90 shadow-sm">
+        <Card className="border-border bg-card shadow-sm">
           <CardHeader>
             <CardTitle>Workflow steps</CardTitle>
           </CardHeader>
@@ -100,50 +100,62 @@ export default async function WorkflowsPage() {
                 </TableHeader>
                 <TableBody>
                   {data.steps.map((step) => (
-                    <TableRow key={step.id}>
-                      <TableCell className="px-6">
-                        <div className="space-y-1">
-                          <Link href={`/workflows/${step.workflowId}`} className="font-medium hover:underline">
-                            {step.stepName}
-                          </Link>
-                          <p className="text-xs text-muted-foreground">
-                            {step.workflowName} · Step {step.stepNumber} of{" "}
-                            {step.totalSteps}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <p>{step.title}</p>
-                          <p className="font-mono text-xs text-muted-foreground">
-                            {step.documentNumber}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>{step.projectName}</TableCell>
-                      <TableCell>
-                        <EdmsStatusBadge status={step.status} />
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <p>{step.assignedToName}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {formatEdmsLabel(step.assignedRole)}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell className="px-6">
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="text-sm text-muted-foreground">{step.dueLabel}</span>
-                          <WorkflowActionSheet
-                            stepId={step.id}
-                            title={`${step.documentNumber} - ${step.title}`}
-                            isActionable={step.isActionable}
-                            projectId={step.projectId}
-                          />
-                        </div>
-                      </TableCell>
-                    </TableRow>
+                    <WorkflowPreviewPopover
+                      key={step.id}
+                      workflow={{
+                        id: step.workflowId,
+                        stepName: step.stepName,
+                        title: step.title,
+                        documentNumber: step.documentNumber,
+                        projectName: step.projectName,
+                        status: step.status,
+                        dueLabel: step.dueLabel,
+                        assignedRole: step.assignedRole,
+                      }}
+                    >
+                      <TableRow className="cursor-pointer hover:bg-muted/50">
+                        <TableCell className="px-6">
+                          <div className="space-y-1">
+                            <p className="font-medium hover:text-primary">{step.stepName}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {step.workflowName} · Step {step.stepNumber} of{" "}
+                              {step.totalSteps}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="space-y-1">
+                            <p>{step.title}</p>
+                            <p className="font-mono text-xs text-muted-foreground">
+                              {step.documentNumber}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>{step.projectName}</TableCell>
+                        <TableCell>
+                          <EdmsStatusBadge status={step.status} />
+                        </TableCell>
+                        <TableCell>
+                          <div className="space-y-1">
+                            <p>{step.assignedToName}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {formatEdmsLabel(step.assignedRole)}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell className="px-6">
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="text-sm text-muted-foreground">{step.dueLabel}</span>
+                            <WorkflowActionSheet
+                              stepId={step.id}
+                              title={`${step.documentNumber} - ${step.title}`}
+                              isActionable={step.isActionable}
+                              projectId={step.projectId}
+                            />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    </WorkflowPreviewPopover>
                   ))}
                 </TableBody>
               </Table>
@@ -151,20 +163,21 @@ export default async function WorkflowsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-border bg-background/90 shadow-sm">
+        <Card className="border-border bg-card shadow-sm">
           <CardHeader>
             <CardTitle>Alert stream</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {summaryData.notifications.map((item) => (
-              <div
+              <Link
                 key={item.id}
-                className="rounded-2xl border border-border bg-muted/30 p-4"
+                href={item.actionUrl || "/notifications"}
+                className="block cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="font-medium">{item.title}</p>
-                    <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                    <p className="mt-1 text-sm leading-6 text-muted-foreground line-clamp-2">
                       {item.message}
                     </p>
                   </div>
@@ -175,7 +188,7 @@ export default async function WorkflowsPage() {
                   {item.projectName ? <span>{item.projectName}</span> : null}
                   <span>{item.createdLabel}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </CardContent>
         </Card>

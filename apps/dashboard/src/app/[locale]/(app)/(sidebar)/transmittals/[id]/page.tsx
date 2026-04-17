@@ -2,6 +2,7 @@ import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { DocumentPreviewPopover } from "@/components/edms/document-preview-popover";
 import { ReviewTransmittalForm } from "@/components/edms/review-transmittal-form";
 import { TransmittalAcknowledgeButton } from "@/components/edms/transmittal-acknowledge-button";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
@@ -66,28 +67,42 @@ export default async function TransmittalDetailPage({
           </CardHeader>
           <CardContent className="space-y-3">
             {data.documents.map((document) => (
-              <div key={document.id} className="border border-border bg-background p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <Link href={`/documents/${document.id}`} className="font-medium hover:underline">
-                      {document.title}
-                    </Link>
-                    <p className="font-mono text-xs text-muted-foreground">{document.documentNumber}</p>
+              <DocumentPreviewPopover
+                key={document.id}
+                document={{
+                  id: document.id,
+                  documentNumber: document.documentNumber,
+                  title: document.title,
+                  projectName: data.transmittal.projectName,
+                  discipline: document.discipline,
+                  revision: document.revision,
+                  status: document.status,
+                  fileUrl: document.fileUrl || "",
+                  fileType: document.fileType,
+                  images: null,
+                }}
+              >
+                <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-medium hover:text-primary">{document.title}</p>
+                      <p className="font-mono text-xs text-muted-foreground">{document.documentNumber}</p>
+                    </div>
+                    <EdmsStatusBadge status={document.status} />
                   </div>
-                  <EdmsStatusBadge status={document.status} />
+                  <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                    {document.discipline ? <span>{document.discipline}</span> : null}
+                    {document.revision ? <span>Rev {document.revision}</span> : null}
+                    <Link
+                      href={expandStorageUrl(document.fileUrl)}
+                      target="_blank"
+                      className="text-primary hover:underline"
+                    >
+                      View file
+                    </Link>
+                  </div>
                 </div>
-                <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                  {document.discipline ? <span>{document.discipline}</span> : null}
-                  {document.revision ? <span>Rev {document.revision}</span> : null}
-                  <Link
-                    href={expandStorageUrl(document.fileUrl)}
-                    target="_blank"
-                    className="text-primary hover:underline"
-                  >
-                    View file
-                  </Link>
-                </div>
-              </div>
+              </DocumentPreviewPopover>
             ))}
           </CardContent>
         </Card>
@@ -98,7 +113,7 @@ export default async function TransmittalDetailPage({
           </CardHeader>
           <CardContent className="space-y-4">
             {data.transmittal.review ? (
-              <div className="border border-border bg-background p-4">
+              <div className="border border-border bg-card p-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm font-medium">Review status</span>
                   <EdmsStatusBadge status={data.transmittal.review.reviewStatus || "reviewed"} />
