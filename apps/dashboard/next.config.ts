@@ -133,18 +133,7 @@ const config = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  modularizeImports: {
-    "lucide-react": {
-      transform: "lucide-react/dist/esm/icons/{{kebabCase member}}",
-      skipDefaultConversion: true,
-    },
-    "react-icons": {
-      transform: "react-icons/{{member}}",
-    },
-    "@radix-ui/react-icons": {
-      transform: "@radix-ui/react-icons/dist/{{member}}",
-    },
-  },
+
   // Reduce preloading warnings in development
   webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {
