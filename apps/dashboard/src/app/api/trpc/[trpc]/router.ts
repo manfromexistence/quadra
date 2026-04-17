@@ -349,6 +349,32 @@ export const appRouter = t.router({
         console.log("[tRPC] invoice.getInvoiceByToken: Starting query for token:", input.token);
         return null;
       }),
+    mostActiveClient: t.procedure.query(() => {
+      console.log("[tRPC] invoice.mostActiveClient: Returning most active client");
+      return {
+        customerName: "Acme Corp",
+        invoiceCount: 2,
+        totalTrackerTime: 14400, // 4 hours in seconds
+        currency: "USD",
+      };
+    }),
+    inactiveClientsCount: t.procedure.query(() => {
+      console.log("[tRPC] invoice.inactiveClientsCount: Returning inactive clients count");
+      return 0;
+    }),
+    topRevenueClient: t.procedure.query(() => {
+      console.log("[tRPC] invoice.topRevenueClient: Returning top revenue client");
+      return {
+        customerName: "Acme Corp",
+        totalRevenue: 25000,
+        currency: "USD",
+        invoiceCount: 2,
+      };
+    }),
+    newCustomersCount: t.procedure.query(() => {
+      console.log("[tRPC] invoice.newCustomersCount: Returning new customers count");
+      return 1;
+    }),
   }),
 
   // Customers
@@ -414,6 +440,7 @@ export const appRouter = t.router({
       .input(z.object({
         date: z.string(),
         view: z.string().optional(),
+        weekStartsOnMonday: z.boolean().optional(),
       }))
       .query(({ input }) => {
         console.log("[tRPC] trackerEntries.getBillableHours: Starting query with input:", input);
@@ -421,13 +448,17 @@ export const appRouter = t.router({
       }),
     byRange: t.procedure
       .input(z.object({
-        start: z.string(),
-        end: z.string(),
+        from: z.string().optional(),
+        to: z.string().optional(),
+        start: z.string().optional(),
+        end: z.string().optional(),
       }))
       .query(({ input }) => {
         console.log("[tRPC] trackerEntries.byRange: Returning entries for range:", input);
-        const startDate = new Date(input.start);
-        const endDate = new Date(input.end);
+        
+        // Support both from/to and start/end parameter names
+        const startDate = new Date(input.start || input.from || "2026-04-01");
+        const endDate = new Date(input.end || input.to || "2026-04-30");
         
         if (mockData.mockTrackerEntries.result) {
           const filtered = mockData.mockTrackerEntries.result.filter(entry => {
@@ -449,9 +480,14 @@ export const appRouter = t.router({
     }),
     get: t.procedure
       .input(z.object({
-        sort: z.array(z.object({ id: z.string(), desc: z.boolean() })).optional(),
-        status: z.array(z.string()).optional(),
-        q: z.string().optional(),
+        sort: z.array(z.object({ id: z.string(), desc: z.boolean() })).nullable().optional(),
+        status: z.array(z.string()).nullable().optional(),
+        q: z.string().nullable().optional(),
+        customers: z.array(z.string()).nullable().optional(),
+        tags: z.array(z.string()).nullable().optional(),
+        start: z.string().nullable().optional(),
+        end: z.string().nullable().optional(),
+        direction: z.string().nullable().optional(),
       }).optional())
       .query(({ input }) => {
         console.log("[tRPC] trackerProjects.get: Returning mock projects with input:", input);
@@ -736,11 +772,14 @@ export const appRouter = t.router({
     }),
     get: t.procedure
       .input(z.object({
-        sort: z.array(z.object({ id: z.string(), desc: z.boolean() })).optional(),
-        folders: z.array(z.string()).optional(),
-        tags: z.array(z.string()).optional(),
-        q: z.string().optional(),
-        pageSize: z.number().optional(),
+        sort: z.array(z.object({ id: z.string(), desc: z.boolean() })).nullable().optional(),
+        folders: z.array(z.string()).nullable().optional(),
+        tags: z.array(z.string()).nullable().optional(),
+        q: z.string().nullable().optional(),
+        pageSize: z.number().nullable().optional(),
+        start: z.string().nullable().optional(),
+        end: z.string().nullable().optional(),
+        direction: z.string().nullable().optional(),
       }).optional())
       .query(({ input }) => {
         console.log("[tRPC] documents.get: Returning mock vault files with input:", input);
@@ -928,6 +967,10 @@ export const appRouter = t.router({
   oauthApplications: t.router({
     authorized: t.procedure.query(() => {
       console.log("[tRPC] oauthApplications.authorized: Returning authorized apps");
+      return [];
+    }),
+    list: t.procedure.query(() => {
+      console.log("[tRPC] oauthApplications.list: Returning OAuth applications list");
       return [];
     }),
   }),

@@ -528,7 +528,9 @@ export const mockApps = [
   {
     id: "app_stripe",
     name: "Stripe",
+    slug: "stripe",
     description: "Accept payments and sync payout data.",
+    logo: "stripe",
     icon: "stripe",
     connected: true,
     lastSync: "2026-04-17T09:00:00.000Z",
@@ -537,7 +539,9 @@ export const mockApps = [
   {
     id: "app_gusto",
     name: "Gusto",
+    slug: "gusto",
     description: "Sync payroll data and team information.",
+    logo: "gusto",
     icon: "gusto",
     connected: true,
     lastSync: "2026-03-31T23:59:00.000Z",
@@ -546,7 +550,9 @@ export const mockApps = [
   {
     id: "app_slack",
     name: "Slack",
+    slug: "slack",
     description: "Receive notifications in your Slack workspace.",
+    logo: "slack",
     icon: "slack",
     connected: false,
     lastSync: null,
