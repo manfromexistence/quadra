@@ -55,7 +55,7 @@ export default async function WorkflowDetailPage({
         </CardHeader>
         <CardContent className="space-y-3">
           {data.steps.map((step) => (
-            <div key={step.id} className="rounded-2xl border border-border/70 bg-muted/20 p-4">
+            <div key={step.id} className="rounded-2xl border border-border bg-card p-4">
               <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-2">

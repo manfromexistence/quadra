@@ -97,7 +97,7 @@ export default function ResetPasswordPage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
-        <Card className="border-border/70 shadow-sm">
+        <Card className="border-border shadow-sm">
           <CardHeader className="space-y-2">
             <CardTitle className="text-center text-2xl font-semibold">
               Choose a new password

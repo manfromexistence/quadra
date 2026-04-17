@@ -154,7 +154,7 @@ export function SearchToolbar({ initialFilters, projects, uploaders }: SearchToo
   };
 
   return (
-    <Card className="border-border/70 bg-card/95 shadow-sm">
+    <Card className="border-border bg-card/95 shadow-sm">
       <CardHeader className="space-y-1">
         <CardTitle>Search workspace</CardTitle>
         <CardDescription>
@@ -383,7 +383,7 @@ function PresetPanel({
   emptyMessage: string;
 }) {
   return (
-    <div className="rounded-2xl border border-border/70 bg-muted/20 p-4">
+    <div className="rounded-2xl border border-border bg-card p-4">
       <div className="flex items-center gap-2 text-sm font-medium">
         {icon}
         {title}

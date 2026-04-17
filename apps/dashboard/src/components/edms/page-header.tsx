@@ -27,7 +27,7 @@ export function EdmsPageHeader({
   actions?: React.ReactNode;
 }) {
   return (
-    <header className="border-b border-border/70 bg-background/95 px-4 py-5 backdrop-blur md:px-6 lg:px-8">
+    <header className="border-b border-border bg-background/95 px-4 py-5 backdrop-blur md:px-6 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4">
         <div className="flex items-center gap-3">
           <SidebarTrigger className="md:hidden" />

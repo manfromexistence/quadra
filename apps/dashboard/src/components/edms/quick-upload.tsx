@@ -90,7 +90,7 @@ export function EdmsQuickUpload({
   };
 
   return (
-    <Card className="border-border/70 bg-background/90 shadow-sm">
+    <Card className="border-border bg-background/90 shadow-sm">
       <CardHeader className="space-y-2">
         <CardTitle className="text-lg">Free-storage intake</CardTitle>
         <p className="text-sm leading-6 text-muted-foreground">
@@ -155,7 +155,7 @@ export function EdmsQuickUpload({
         </div>
 
         {lastUpload ? (
-          <div className="rounded-2xl border border-border/70 bg-muted/30 p-4">
+          <div className="rounded-2xl border border-border bg-muted/30 p-4">
             <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted-foreground">
               <span>{lastUpload.provider}</span>
               <span>{selectedProjectLabel}</span>

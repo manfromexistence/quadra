@@ -311,7 +311,7 @@ export function TransmittalCreateSheet({
               render={() => (
                 <FormItem>
                   <FormLabel>Attached documents</FormLabel>
-                  <div className="grid gap-3 rounded-2xl border border-border/70 bg-muted/20 p-4">
+                  <div className="grid gap-3 rounded-2xl border border-border bg-card p-4">
                     {projectDocuments.length === 0 ? (
                       <p className="text-sm text-muted-foreground">
                         No documents are available for the selected project yet.

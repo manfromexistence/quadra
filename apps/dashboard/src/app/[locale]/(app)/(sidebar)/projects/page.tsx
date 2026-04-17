@@ -64,7 +64,7 @@ export default async function ProjectsPage() {
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
-        <Card className="border-border/70 bg-background/90 shadow-sm">
+        <Card className="border-border bg-background/90 shadow-sm">
           <CardHeader>
             <CardTitle>Project watchlist</CardTitle>
           </CardHeader>
@@ -72,7 +72,7 @@ export default async function ProjectsPage() {
             {data.projects.map((project) => (
               <div
                 key={project.id}
-                className="rounded-3xl border border-border/70 bg-muted/30 p-5"
+                className="rounded-3xl border border-border bg-muted/30 p-5"
               >
                 <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                   <div className="space-y-3">
@@ -111,14 +111,14 @@ export default async function ProjectsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-border/70 bg-background/90 shadow-sm">
+        <Card className="border-border bg-background/90 shadow-sm">
           <CardHeader>
             <CardTitle>Activity log</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {data.activity.map((entry) => (
               <div key={entry.id} className="flex gap-3">
-                <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full border border-border/70 bg-muted/40">
+                <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-muted/40">
                   <Building2 className="size-4" />
                 </div>
                 <div className="space-y-1">

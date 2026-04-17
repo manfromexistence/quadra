@@ -34,7 +34,7 @@ export function DocumentPreviewPopover({ document, children }: DocumentPreviewPo
       <PopoverContent className="w-96 p-0" align="start" side="right">
         <div className="flex flex-col">
           {/* Header */}
-          <div className="border-b border-border/70 bg-muted/30 p-4">
+          <div className="border-b border-border bg-muted/30 p-4">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 space-y-1">
                 <h4 className="font-semibold leading-tight">{document.title}</h4>
@@ -49,7 +49,7 @@ export function DocumentPreviewPopover({ document, children }: DocumentPreviewPo
             {images.length > 0 ? (
               <div className="space-y-3">
                 {/* Main Image */}
-                <div className="relative aspect-video overflow-hidden rounded-lg border border-border/70 bg-muted">
+                <div className="relative aspect-video overflow-hidden rounded-lg border border-border bg-muted">
                   <Image
                     src={images[0]}
                     alt={document.title}
@@ -68,7 +68,7 @@ export function DocumentPreviewPopover({ document, children }: DocumentPreviewPo
                         href={imageUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group relative aspect-square overflow-hidden rounded-md border border-border/70 bg-muted transition-all hover:shadow-md"
+                        className="group relative aspect-square overflow-hidden rounded-md border border-border bg-muted transition-all hover:shadow-md"
                       >
                         <Image
                           src={imageUrl}
@@ -90,14 +90,14 @@ export function DocumentPreviewPopover({ document, children }: DocumentPreviewPo
                 </div>
               </div>
             ) : isPdf ? (
-              <div className="flex aspect-video items-center justify-center rounded-lg border border-dashed border-border/70 bg-muted/20">
+              <div className="flex aspect-video items-center justify-center rounded-lg border border-dashed border-border bg-card">
                 <div className="flex flex-col items-center gap-2 text-center">
                   <FileText className="size-8 text-muted-foreground/50" />
                   <p className="text-xs text-muted-foreground">PDF Document</p>
                 </div>
               </div>
             ) : (
-              <div className="flex aspect-video items-center justify-center rounded-lg border border-dashed border-border/70 bg-muted/20">
+              <div className="flex aspect-video items-center justify-center rounded-lg border border-dashed border-border bg-card">
                 <div className="flex flex-col items-center gap-2 text-center">
                   <FileText className="size-8 text-muted-foreground/50" />
                   <p className="text-xs text-muted-foreground">No preview available</p>
@@ -107,7 +107,7 @@ export function DocumentPreviewPopover({ document, children }: DocumentPreviewPo
           </div>
 
           {/* Metadata */}
-          <div className="border-t border-border/70 bg-muted/20 p-4">
+          <div className="border-t border-border bg-card p-4">
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
                 <p className="text-xs text-muted-foreground">Project</p>
@@ -131,7 +131,7 @@ export function DocumentPreviewPopover({ document, children }: DocumentPreviewPo
           </div>
 
           {/* Actions */}
-          <div className="flex gap-2 border-t border-border/70 p-4">
+          <div className="flex gap-2 border-t border-border p-4">
             <Button size="sm" variant="outline" className="flex-1" asChild>
               <Link href={`/documents/${document.id}`}>View Details</Link>
             </Button>

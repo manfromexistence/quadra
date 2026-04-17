@@ -135,7 +135,7 @@ export function ProjectDataBookDialog({ projectId, projectName }: ProjectDataBoo
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between rounded-lg border border-border/70 bg-muted/20 p-4">
+          <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
             <div>
               <p className="font-medium">{projectName}</p>
               <p className="text-sm text-muted-foreground">
@@ -157,19 +157,19 @@ export function ProjectDataBookDialog({ projectId, projectName }: ProjectDataBoo
               <Loader2 className="size-8 animate-spin text-muted-foreground" />
             </div>
           ) : documents.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-border/70 bg-muted/10 p-8 text-center">
+            <div className="rounded-lg border border-dashed border-border bg-muted/10 p-8 text-center">
               <p className="text-muted-foreground">
                 No documents found for this project. Upload and approve documents to generate a
                 Project Data Book.
               </p>
             </div>
           ) : (
-            <ScrollArea className="h-[400px] rounded-lg border border-border/70">
+            <ScrollArea className="h-[400px] rounded-lg border border-border">
               <div className="space-y-2 p-4">
                 {documents.map((doc) => (
                   <div
                     key={doc.id}
-                    className="flex items-start gap-3 rounded-lg border border-border/70 bg-card/50 p-3 transition-colors hover:bg-muted/30"
+                    className="flex items-start gap-3 rounded-lg border border-border bg-card/50 p-3 transition-colors hover:bg-muted/30"
                   >
                     <Checkbox
                       checked={selectedDocs.has(doc.id)}
@@ -200,7 +200,7 @@ export function ProjectDataBookDialog({ projectId, projectName }: ProjectDataBoo
             </ScrollArea>
           )}
 
-          <div className="flex items-center justify-between rounded-lg border border-border/70 bg-muted/20 p-4">
+          <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
             <div>
               <p className="font-medium">Selected: {selectedDocs.size} document(s)</p>
               <p className="text-sm text-muted-foreground">

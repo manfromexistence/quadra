@@ -71,7 +71,7 @@ export function EdmsShell({
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(221,196,154,0.24),_transparent_30%),linear-gradient(180deg,_rgba(250,248,242,1),_rgba(245,241,233,1))] text-foreground dark:bg-background">
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <div className="lg:hidden sticky top-0 z-40 border-b border-border/70 bg-background/90 px-4 py-3 backdrop-blur">
+        <div className="lg:hidden sticky top-0 z-40 border-b border-border bg-background/90 px-4 py-3 backdrop-blur">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <Icons.LogoSmall className="size-6" />
@@ -104,7 +104,7 @@ export function EdmsShell({
         </SheetContent>
       </Sheet>
 
-      <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-border/70 bg-background/80 p-4 backdrop-blur lg:block">
+      <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-border bg-background/80 p-4 backdrop-blur lg:block">
         <SidebarContent
           pathname={pathname}
           user={user}
@@ -113,7 +113,7 @@ export function EdmsShell({
       </aside>
 
       <main className="lg:pl-72">
-        <div className="sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur">
+        <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
           <div className="mx-auto flex max-w-7xl items-center justify-end gap-3 px-4 py-3 md:px-6 lg:px-8">
             <div className="hidden items-center gap-2 text-xs text-muted-foreground md:flex">
               <BellRing className="size-3.5" />
@@ -147,7 +147,7 @@ function SidebarContent({
 }) {
   return (
     <div className="flex h-full flex-col gap-4">
-      <Card className="border-border/70 bg-background/95 p-4 shadow-sm">
+      <Card className="border-border bg-background/95 p-4 shadow-sm">
         <Link href="/projects" className="flex items-center gap-3">
           <Icons.LogoSmall className="size-7" />
           <div>
@@ -168,7 +168,7 @@ function SidebarContent({
         />
       </nav>
 
-      <Card className="mt-auto border-border/70 bg-background/95 p-4 shadow-sm">
+      <Card className="mt-auto border-border bg-background/95 p-4 shadow-sm">
         <div className="flex items-center gap-3">
           <Avatar className="size-11 overflow-hidden">
             <AvatarImageNext
@@ -225,7 +225,7 @@ function NavSection({
   }[];
 }) {
   return (
-    <Card className="border-border/70 bg-background/95 p-3 shadow-sm">
+    <Card className="border-border bg-background/95 p-3 shadow-sm">
       <p className="px-2 pb-2 text-[11px] font-semibold tracking-[0.2em] uppercase text-muted-foreground">
         {label}
       </p>

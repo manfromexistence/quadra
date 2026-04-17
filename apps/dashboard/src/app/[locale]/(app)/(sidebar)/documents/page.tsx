@@ -89,7 +89,7 @@ export default async function DocumentsPage({
 
       <EdmsQuickUpload projects={data.projects} />
 
-      <Card className="border-border/70 bg-background/90 shadow-sm">
+      <Card className="border-border bg-background/90 shadow-sm">
         <CardHeader className="space-y-4">
           <div className="space-y-1">
             <CardTitle>Document register</CardTitle>
@@ -204,7 +204,7 @@ export default async function DocumentsPage({
       </Card>
 
       <section className="grid gap-4 xl:grid-cols-2">
-        <Card className="border-border/70 bg-background/90 shadow-sm">
+        <Card className="border-border bg-background/90 shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg">Workflow watchlist</CardTitle>
           </CardHeader>
@@ -212,7 +212,7 @@ export default async function DocumentsPage({
             {summaryData.workflowQueue.map((item) => (
               <div
                 key={item.id}
-                className="rounded-2xl border border-border/70 bg-muted/30 p-4"
+                className="rounded-2xl border border-border bg-muted/30 p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -234,7 +234,7 @@ export default async function DocumentsPage({
           </CardContent>
         </Card>
 
-        <Card className="border-border/70 bg-background/90 shadow-sm">
+        <Card className="border-border bg-background/90 shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg">Recent transmittals</CardTitle>
           </CardHeader>
@@ -242,7 +242,7 @@ export default async function DocumentsPage({
             {summaryData.transmittals.map((item) => (
               <div
                 key={item.id}
-                className="rounded-2xl border border-border/70 bg-muted/30 p-4"
+                className="rounded-2xl border border-border bg-muted/30 p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>

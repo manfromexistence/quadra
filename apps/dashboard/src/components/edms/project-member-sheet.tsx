@@ -123,7 +123,7 @@ export function ProjectMemberSheet({ projectId, users }: ProjectMemberSheetProps
         </SheetHeader>
 
         {users.length === 0 ? (
-          <div className="mt-8 rounded-2xl border border-dashed border-border/70 bg-muted/20 p-5">
+          <div className="mt-8 rounded-2xl border border-dashed border-border bg-card p-5">
             <p className="text-sm text-muted-foreground">
               All available users are already assigned to this project.
             </p>

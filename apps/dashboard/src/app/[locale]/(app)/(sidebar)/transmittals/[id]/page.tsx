@@ -66,7 +66,7 @@ export default async function TransmittalDetailPage({
           </CardHeader>
           <CardContent className="space-y-3">
             {data.documents.map((document) => (
-              <div key={document.id} className="rounded-2xl border border-border/70 bg-muted/20 p-4">
+              <div key={document.id} className="border border-border bg-background p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <Link href={`/documents/${document.id}`} className="font-medium hover:underline">
@@ -98,7 +98,7 @@ export default async function TransmittalDetailPage({
           </CardHeader>
           <CardContent className="space-y-4">
             {data.transmittal.review ? (
-              <div className="rounded-2xl border border-border/70 bg-muted/20 p-4">
+              <div className="border border-border bg-background p-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm font-medium">Review status</span>
                   <EdmsStatusBadge status={data.transmittal.review.reviewStatus || "reviewed"} />
@@ -139,7 +139,7 @@ export default async function TransmittalDetailPage({
             ) : null}
 
             {data.isSender && data.transmittal.status === "reviewed" ? (
-              <div className="rounded-2xl border border-dashed border-border/70 bg-muted/10 p-4 text-sm text-muted-foreground">
+              <div className="border border-dashed border-border bg-muted/10 p-4 text-sm text-muted-foreground">
                 Review has been returned. Acknowledge the package to close this cycle and continue
                 with the next revision.
               </div>

@@ -242,7 +242,7 @@ export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetP
         </SheetHeader>
 
         <div className="space-y-6 px-6 pb-6 pt-8">
-          <Card className="gap-4 border-dashed bg-muted/20 py-4">
+          <Card className="gap-4 border-dashed bg-card py-4">
             <CardContent className="grid gap-4 px-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
               <div className="space-y-2">
                 <div>
@@ -390,7 +390,7 @@ export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetP
                   control={form.control}
                   name="isActive"
                   render={({ field }) => (
-                    <FormItem className="rounded-xl border bg-muted/20 p-4">
+                    <FormItem className="rounded-xl border bg-card p-4">
                       <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1">
                           <FormLabel>Active access</FormLabel>
@@ -492,7 +492,7 @@ export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetP
 
 function SummaryMetric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-lg border bg-muted/20 p-2">
+    <div className="rounded-lg border bg-card p-2">
       <p className="text-[11px] uppercase tracking-[0.14em]">{label}</p>
       <p className="mt-1 text-base font-semibold text-foreground">{value}</p>
     </div>

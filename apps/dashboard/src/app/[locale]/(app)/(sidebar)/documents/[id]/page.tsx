@@ -93,7 +93,7 @@ export default async function DocumentDetailPage({
                   </span>
                 </div>
                 {data.workflow.steps.map((step) => (
-                  <div key={step.id} className="rounded-2xl border border-border/70 bg-muted/20 p-4">
+                  <div key={step.id} className="border border-border bg-background p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-medium">{step.stepName}</p>
@@ -125,7 +125,7 @@ export default async function DocumentDetailPage({
           </CardHeader>
           <CardContent className="space-y-3">
             {data.versions.map((version) => (
-              <div key={version.id} className="rounded-2xl border border-border/70 bg-muted/20 p-4">
+              <div key={version.id} className="border border-border bg-background p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="font-medium">Version {version.version}</p>
@@ -157,7 +157,7 @@ export default async function DocumentDetailPage({
               <p className="text-sm text-muted-foreground">No review comments yet.</p>
             ) : (
               data.comments.map((comment) => (
-                <div key={comment.id} className="rounded-2xl border border-border/70 bg-muted/20 p-4">
+                <div key={comment.id} className="border border-border bg-background p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-medium">{comment.authorName}</p>
@@ -178,7 +178,7 @@ export default async function DocumentDetailPage({
 
 function MetadataRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-3 rounded-2xl border border-border/70 bg-muted/20 px-4 py-3">
+    <div className="flex items-start justify-between gap-3 border border-border bg-background px-4 py-3">
       <span className="text-muted-foreground">{label}</span>
       <span className="text-right font-medium">{value}</span>
     </div>

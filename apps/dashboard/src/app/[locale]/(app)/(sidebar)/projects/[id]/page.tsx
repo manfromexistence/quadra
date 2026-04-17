@@ -73,7 +73,7 @@ export default async function ProjectDetailPage({
           </CardHeader>
           <CardContent className="space-y-3">
             {data.members.map((member) => (
-              <div key={member.id} className="rounded-2xl border border-border/70 bg-muted/20 p-4">
+              <div key={member.id} className="border border-border bg-background p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="font-medium">{member.name}</p>
@@ -96,7 +96,7 @@ export default async function ProjectDetailPage({
           </CardHeader>
           <CardContent className="space-y-3">
             {data.activity.map((entry) => (
-              <div key={entry.id} className="rounded-2xl border border-border/70 bg-muted/20 p-4">
+              <div key={entry.id} className="border border-border bg-background p-4">
                 <p className="text-sm">
                   <span className="font-medium">{entry.actorName}</span>{" "}
                   <span className="text-muted-foreground">{formatEdmsLabel(entry.action)}</span>
@@ -119,7 +119,7 @@ export default async function ProjectDetailPage({
           </CardHeader>
           <CardContent className="space-y-3">
             {data.documents.map((document) => (
-              <div key={document.id} className="rounded-2xl border border-border/70 bg-muted/20 p-4">
+              <div key={document.id} className="border border-border bg-background p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <Link href={`/documents/${document.id}`} className="font-medium hover:underline">
@@ -141,7 +141,7 @@ export default async function ProjectDetailPage({
           </CardHeader>
           <CardContent className="space-y-3">
             {data.workflows.map((workflow) => (
-              <div key={workflow.id} className="rounded-2xl border border-border/70 bg-muted/20 p-4">
+              <div key={workflow.id} className="border border-border bg-background p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="font-medium">{workflow.stepName}</p>

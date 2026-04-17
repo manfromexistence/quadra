@@ -241,7 +241,7 @@ export function AuthPanel({
   };
 
   const cardClassName =
-    variant === "dialog" ? "border-0 bg-transparent shadow-none" : "border-border/70 shadow-sm";
+    variant === "dialog" ? "border-0 bg-transparent shadow-none" : "border-border shadow-sm";
 
   return (
     <Card className={cardClassName}>
