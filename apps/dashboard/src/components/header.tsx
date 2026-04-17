@@ -25,7 +25,7 @@ export function Header() {
       <OpenSearchButton />
 
       <div className="flex space-x-2 ml-auto">
-        <ConnectionStatus />
+        {/* <ConnectionStatus /> */}
         <NotificationCenter />
         <Suspense fallback={<UserMenuSkeleton />}>
           <UserMenu />

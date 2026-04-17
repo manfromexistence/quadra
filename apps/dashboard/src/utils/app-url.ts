@@ -1,4 +1,5 @@
 const LOCAL_APP_URL = "http://localhost:3001";
+const PRODUCTION_APP_URL = "https://app-quadra.vercel.app";
 
 function normalizeUrl(value: string | null | undefined) {
   if (!value) {
@@ -27,6 +28,10 @@ function getRailwayUrl() {
 }
 
 export function getServerAppUrl() {
+  if (process.env.VERCEL_ENV === "production") {
+    return normalizeUrl(process.env.VERCEL_PROJECT_PRODUCTION_URL) ?? PRODUCTION_APP_URL;
+  }
+
   return (
     normalizeUrl(process.env.NEXT_PUBLIC_APP_URL) ??
     normalizeUrl(process.env.BETTER_AUTH_URL) ??
@@ -53,6 +58,8 @@ export function getTrustedOrigins() {
       [
         LOCAL_APP_URL,
         "http://10.2.0.2:3001",
+        PRODUCTION_APP_URL,
+        normalizeUrl(process.env.VERCEL_PROJECT_PRODUCTION_URL),
         normalizeUrl(process.env.NEXT_PUBLIC_APP_URL),
         normalizeUrl(process.env.BETTER_AUTH_URL),
         normalizeUrl(process.env.NEXT_PUBLIC_URL),

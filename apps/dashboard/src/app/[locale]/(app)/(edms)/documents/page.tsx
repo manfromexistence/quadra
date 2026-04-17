@@ -281,5 +281,9 @@ function getStorageLabel(fileUrl: string) {
     return "Catbox";
   }
 
+  if (fileUrl.includes("/api/edms/assets/")) {
+    return "Turso";
+  }
+
   return "External";
 }

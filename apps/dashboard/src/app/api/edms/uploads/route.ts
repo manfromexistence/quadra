@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { uploadEdmsFile } from "@/lib/edms/storage-catbox";
+import { canStoreEdmsFileInTurso, uploadEdmsFileToTurso } from "@/lib/edms/storage-turso";
 import { isImgBBConfigured, uploadImageToImgBB } from "@/lib/storage-imgbb";
 import { isTelegramConfigured, uploadToTelegram } from "@/lib/storage-telegram";
 
@@ -139,7 +140,24 @@ async function uploadWithFreeProvider(
     file,
     projectId,
     folder,
+  }).catch(async (error) => {
+    if (!canStoreEdmsFileInTurso(file)) {
+      throw error;
+    }
+
+    return {
+      ...(await uploadEdmsFileToTurso({
+        file,
+        projectId,
+        folder,
+      })),
+      provider: "turso" as const,
+    };
   });
+
+  if ("provider" in uploaded) {
+    return uploaded;
+  }
 
   return {
     ...uploaded,

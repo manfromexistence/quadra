@@ -9,7 +9,6 @@ export interface UploadedEdmsFile {
 }
 
 export function isCatboxConfigured() {
-  // Catbox doesn't require API key for anonymous uploads
   return true;
 }
 
@@ -24,6 +23,12 @@ export async function uploadEdmsFile(input: {
   // Prepare form data
   const formData = new FormData();
   formData.append("reqtype", "fileupload");
+
+  const userhash = process.env.CATBOX_USERHASH?.trim();
+  if (userhash) {
+    formData.append("userhash", userhash);
+  }
+
   formData.append("fileToUpload", input.file);
 
   // Upload to Catbox
@@ -38,9 +43,15 @@ export async function uploadEdmsFile(input: {
   }
 
   // Catbox returns the direct URL as plain text
-  const fileUrl = await response.text();
+  const fileUrl = (await response.text()).trim();
 
   if (!fileUrl || !fileUrl.startsWith("https://files.catbox.moe/")) {
+    if (!userhash) {
+      throw new Error(
+        "Catbox rejected the upload. Anonymous Catbox uploads are unreliable right now; configure CATBOX_USERHASH or another storage provider.",
+      );
+    }
+
     throw new Error("Invalid response from Catbox");
   }
 

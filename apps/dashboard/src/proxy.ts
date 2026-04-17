@@ -26,8 +26,10 @@ export async function proxy(request: NextRequest) {
   const response = I18nMiddleware(request);
 
   // Check if user is authenticated by checking for session cookie
-  const sessionCookie = request.cookies.get("better-auth.session_token");
-  const isAuthenticated = !!sessionCookie;
+  const sessionCookie =
+    request.cookies.get("__Secure-better-auth.session_token") ??
+    request.cookies.get("better-auth.session_token");
+  const isAuthenticated = !!sessionCookie?.value;
 
   const nextUrl = request.nextUrl;
   const pathnameSegments = nextUrl.pathname.split("/").filter(Boolean);

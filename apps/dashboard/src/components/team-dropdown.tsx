@@ -174,7 +174,7 @@ export function TeamDropdown({ isExpanded = false }: Props) {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Avatar
-                            className="w-[32px] h-[32px] rounded-none border border-[#DCDAD2] dark:border-[#2C2C2C] cursor-pointer"
+                            className="w-[32px] h-[32px] rounded-none border border-[#DCDAD2] dark:border-[#2C2C2C] cursor-pointer overflow-hidden"
                             onClick={() => {
                               if (index === 0) {
                                 toggleActive();
@@ -184,10 +184,10 @@ export function TeamDropdown({ isExpanded = false }: Props) {
                             }}
                           >
                             <AvatarImageNext
-                              src={team?.logoUrl ?? ""}
+                              src={team?.logoUrl || "https://github.com/evilrabbit.png"}
                               alt={team?.name ?? ""}
-                              width={20}
-                              height={20}
+                              width={32}
+                              height={32}
                               quality={100}
                             />
                             <AvatarFallback className="rounded-none w-[32px] h-[32px]">
@@ -208,7 +208,7 @@ export function TeamDropdown({ isExpanded = false }: Props) {
                       </Tooltip>
                     ) : (
                       <Avatar
-                        className="w-[32px] h-[32px] rounded-none border border-[#DCDAD2] dark:border-[#2C2C2C] cursor-pointer"
+                        className="w-[32px] h-[32px] rounded-none border border-[#DCDAD2] dark:border-[#2C2C2C] cursor-pointer overflow-hidden"
                         onClick={() => {
                           if (index === 0) {
                             toggleActive();
@@ -218,10 +218,10 @@ export function TeamDropdown({ isExpanded = false }: Props) {
                         }}
                       >
                         <AvatarImageNext
-                          src={team?.logoUrl ?? ""}
+                          src={team?.logoUrl || "https://github.com/evilrabbit.png"}
                           alt={team?.name ?? ""}
-                          width={20}
-                          height={20}
+                          width={32}
+                          height={32}
                           quality={100}
                         />
                         <AvatarFallback className="rounded-none w-[32px] h-[32px]">

@@ -33,6 +33,18 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
             "x-trpc-source": "server",
           };
         },
+        fetch(url, options) {
+          console.log("[tRPC Server] Fetching:", url);
+          return fetch(url, {
+            ...options,
+            next: { revalidate: 0 },
+          }).then((res) => {
+            if (!res.ok) {
+              console.error("[tRPC Server] HTTP Error:", res.status, res.statusText);
+            }
+            return res;
+          });
+        },
       }),
     ],
   }),
@@ -95,11 +107,19 @@ export function batchPrefetch<T extends ReturnType<TRPCQueryOptions<any>>>(
 export async function getTRPCClient(options?: { forcePrimary?: boolean }) {
   return createTRPCClient<AppRouter>({
     links: [
-      directDbLink() as any,
       loggerLink({
         enabled: (opts) =>
           process.env.NODE_ENV === "development" ||
           (opts.direction === "down" && opts.result instanceof Error),
+      }),
+      httpBatchLink({
+        transformer: superjson,
+        url: `${getServerAppUrl()}/api/trpc`,
+        headers() {
+          return {
+            "x-trpc-source": "server-client",
+          };
+        },
       }),
     ],
   });

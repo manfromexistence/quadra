@@ -258,6 +258,7 @@ export const oauthToken = sqliteTable("oauth_token", {
 });
 
 export * from "./schema/documents";
+export * from "./schema/edms-file-assets";
 export * from "./schema/notifications";
 export * from "./schema/projects";
 export * from "./schema/transmittals";

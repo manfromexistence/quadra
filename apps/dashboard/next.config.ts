@@ -12,6 +12,16 @@ const config = {
   reactStrictMode: true,
   reactCompiler: process.env.NODE_ENV === "production",
   outputFileTracingRoot: workspaceRoot,
+  outputFileTracingIncludes: {
+    "/*": [
+      "../../node_modules/@libsql/**/*",
+      "../../node_modules/node-fetch/**/*",
+      "../../node_modules/ws/**/*",
+      "../../node_modules/.bun/@libsql+*/**/*",
+      "../../node_modules/.bun/node-fetch@*/**/*",
+      "../../node_modules/.bun/ws@*/**/*",
+    ],
+  },
   turbopack: {
     root: workspaceRoot,
   },

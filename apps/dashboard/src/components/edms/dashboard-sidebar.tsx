@@ -253,8 +253,8 @@ export function EdmsDashboardSidebar({ user }: { user: DashboardUser }) {
         <SidebarFooter className="border-t border-sidebar-border/80 p-3">
           <div className="rounded-2xl border border-sidebar-border/80 bg-sidebar-accent/40 p-3">
             <div className="flex items-center gap-3">
-              <Avatar className="size-10 border border-sidebar-border/80">
-                <AvatarImage src={user.image ?? ""} alt={user.name} />
+              <Avatar className="size-10 border border-sidebar-border/80 overflow-hidden">
+                <AvatarImage src={user.image || "https://github.com/shadcn.png"} alt={user.name} />
                 <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
               </Avatar>
               <div className="min-w-0">

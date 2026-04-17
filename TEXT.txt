@@ -64,3 +64,5 @@ when doing auth on sign-ui or in - getting these issue - so please use wsl inlin
 Failed to load resource: the server responded with a status of 401 ()
 /api/auth/sign-in/email:1  Failed to load resource: the server responded with a status of 500 ()
 /api/auth/sign-up/email:1  Failed to load resource: the server responded with a status of 500 ()
+
+Today is 17 April 2026 so please do research about the latest next days' version and update our app dashboard next days' version to the latest one. For avatars with no emails please use this npm package "boringavatars" do a web search about it and in our dashboard top right user avatar and sidebar bottom organization avater with no image please use this package for using a random colored avatar using this npm package

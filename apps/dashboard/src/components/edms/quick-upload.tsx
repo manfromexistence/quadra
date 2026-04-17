@@ -13,7 +13,7 @@ interface UploadedFilePayload {
   fileType: string;
   fileUrl: string;
   fileSize: number;
-  provider: "catbox" | "imgbb" | "telegram";
+  provider: "catbox" | "imgbb" | "telegram" | "turso";
 }
 
 export function EdmsQuickUpload({

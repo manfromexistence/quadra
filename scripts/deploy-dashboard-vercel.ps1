@@ -1,9 +1,9 @@
-$ErrorActionPreference = "Stop"
-Set-StrictMode -Version Latest
-
 param(
   [switch]$SkipBuild
 )
+
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 

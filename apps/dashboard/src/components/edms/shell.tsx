@@ -170,9 +170,9 @@ function SidebarContent({
 
       <Card className="mt-auto border-border/70 bg-background/95 p-4 shadow-sm">
         <div className="flex items-center gap-3">
-          <Avatar className="size-11">
+          <Avatar className="size-11 overflow-hidden">
             <AvatarImageNext
-              src={user.image}
+              src={user.image || "https://github.com/evilrabbit.png"}
               alt={user.name}
               width={44}
               height={44}

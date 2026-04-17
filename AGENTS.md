@@ -27,6 +27,36 @@ The agent should follow the DX loop first, then execute the work.
 - If DX appears broken, inspect `dx.ps1` and `%USERPROFILE%\.dx`, then continue the loop.
 - If DX returns an old prompt or stale content, do not stop. Wait and rerun `d`.
 
+## Task Management
+
+### TODO.md Protocol
+
+- At project start or when receiving multi-step tasks, create/update `TODO.md` in the root
+- Break user requests into concrete, actionable tasks
+- Work top-down: always work on the first "In Progress" item
+- Move only one task to "In Progress" at a time
+- Mark completed tasks with `[x]`, ~~strikethrough~~, ✅, and timestamp
+- Advance automatically to the next pending task without waiting for permission
+- Never delete tasks, only mark them completed or blocked
+- Update `TODO.md` after every action to reflect current reality
+
+### CHANGELOG.md Protocol
+
+- Maintain `CHANGELOG.md` in the root to track all completed work
+- Follow semantic versioning and Keep a Changelog format
+- Add entries under `## [Unreleased]` as work completes
+- Include: Added, Changed, Fixed, Removed sections as needed
+- Be specific about what changed, not just "updated file X"
+- Update after completing each significant task or feature
+- When releasing, move Unreleased items to a versioned section
+
+### Failure Recovery
+
+- **Three-Strike Rule**: Try 3 different approaches before escalating
+- On third failure, create/append to `HELP.md` with full diagnostic info
+- Move blocked tasks to "Blocked / Failed" section in `TODO.md`
+- Continue with next unblocked task automatically
+
 ## Repo Focus
 
 - Primary app: `apps/dashboard`
@@ -35,8 +65,7 @@ The agent should follow the DX loop first, then execute the work.
 
 ## File Policy
 
-- Keep this file short.
-- Keep this file focused on agent behavior.
-- Do not store secrets here.
-- Do not dump environment variables here.
-- Do not mix project notes, long tutorials, or redundant examples into this file.
+- Keep this file short and focused on agent behavior
+- Do not store secrets, environment variables, or redundant examples here
+- Use `TODO.md` for task tracking, `CHANGELOG.md` for work history
+- Use `HELP.md` only when tasks fail after 3 attempts
