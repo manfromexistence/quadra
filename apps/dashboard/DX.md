@@ -39,3 +39,9 @@ Account (/account) - User account page (exists in folder structure)
 Upgrade (/upgrade) - Upgrade/billing page (exists in folder structure)
 
 Now here is the thing: we have these pages:
+Projects
+Documents
+Workflows
+Transmittals
+Activities
+Pages use custom brand UI components instead of the other pages, like invoices, testimonials, and things like that. In these pages please use other pages' components correctly. 
