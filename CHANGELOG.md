@@ -124,5 +124,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Result: client components no longer pull `node:crypto` through
     `@midday/inbox`, keeping browser bundles separated from server-only
     encryption code.
+
+- **apps/dashboard — production auth fix by switching Vercel function runtime from Bun to Node**
+  - Production auth requests (`/api/auth/sign-in/email` and `/api/auth/sign-up/email`)
+    were returning `500` while local development continued to work.
+  - Runtime inspection showed the deployed Vercel functions were running on
+    `bun1.x`, and production logs only reported `ResolveMessage {}` during auth
+    handling — a strong indicator of a Bun runtime crash rather than a normal
+    Better Auth validation error.
+  - Verified the production Turso database directly using the deployed
+    environment configuration:
+    - connection succeeded with `DATABASE_URL` and `DATABASE_AUTH_TOKEN`
+    - auth-related tables are present, including `user`, `session`,
+      `verification`, `oauth_token`, `oauth_authorization_code`, and
+      `oauth_app`
+  - Conclusion: this was not a missing-table or unreachable-database problem in
+    Turso/Drizzle; the failing layer was the Bun runtime used by deployed
+    serverless functions.
+  - Fix applied in `apps/dashboard/vercel.json`:
+    - removed `bunVersion: "1.x"` so Vercel functions fall back to the stable
+      Node runtime
+    - kept `bun install` and the existing Bun-based build command so dependency
+      install/build behavior stays unchanged while runtime execution moves off Bun
+  - This change specifically targets Better Auth + Drizzle + libsql/Turso
+    production stability on Vercel, where Node is the stable runtime and Bun was
+    crashing during auth/database execution.
   - Deployed to Vercel project `app-quadra` on 2026-04-17.
   - Production URL: https://app-quadra.vercel.app
