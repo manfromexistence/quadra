@@ -2,7 +2,7 @@
 
 import { cn } from "@midday/ui/cn";
 import { Icons } from "@midday/ui/icons";
-import { Bell, FileStack, FolderKanban, Send, Workflow } from "lucide-react";
+import { Bell, FileStack, FolderKanban, Send, Workflow, Cog } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,7 +15,7 @@ const icons = {
   "/tracker": () => <Icons.Tracker size={20} />,
   "/customers": () => <Icons.Customers size={20} />,
   "/vault": () => <Icons.Vault size={20} />,
-  "/settings": () => <Icons.Settings size={20} />,
+  "/settings": () => <Cog size={20} />,
   "/apps": () => <Icons.Apps size={20} />,
   "/inbox": () => <Icons.Inbox2 size={20} />,
   "/projects": () => <FolderKanban size={20} />,
@@ -50,9 +50,13 @@ const items = [
     path: "/notifications",
     name: "EDMS Notifications",
   },
-    {
+  {
     path: "/reports",
     name: "Reports",
+  },
+  {
+    path: "/vault",
+    name: "Vault",
   },
   {
     path: "/transactions",
@@ -95,10 +99,6 @@ const items = [
     path: "/customers",
     name: "Customers",
     children: [{ path: "/customers?createCustomer=true", name: "Create new" }],
-  },
-  {
-    path: "/vault",
-    name: "Vault",
   },
   {
     path: "/apps",
@@ -227,7 +227,7 @@ const Item = ({
             className={cn(
               "border border-transparent h-[40px] transition-all duration-200 ease-&lsqb;cubic-bezier(0.4,0,0.2,1)&rsqb; ml-[15px] mr-[15px]",
               isActive &&
-                "bg-[#f7f7f7] dark:bg-[#131313] border-[#e6e6e6] dark:border-[#1d1d1d]",
+              "bg-[#f7f7f7] dark:bg-[#131313] border-[#e6e6e6] dark:border-[#1d1d1d]",
               isExpanded ? "w-[calc(100%-30px)]" : "w-[40px]",
             )}
           />

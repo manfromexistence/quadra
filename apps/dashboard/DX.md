@@ -37,3 +37,5 @@ Notifications
 Developer
 Account (/account) - User account page (exists in folder structure)
 Upgrade (/upgrade) - Upgrade/billing page (exists in folder structure)
+
+Now here is the thing: we have these pages:

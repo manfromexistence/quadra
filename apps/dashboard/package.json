@@ -57,6 +57,7 @@
     "@midday/utils": "workspace:*",
     "@number-flow/react": "^0.6.0",
     "@polar-sh/checkout": "^0.2.0",
+    "@radix-ui/react-visually-hidden": "^1.2.4",
     "@react-google-maps/api": "^2.20.8",
     "@react-pdf/renderer": "catalog:",
     "@sentry/nextjs": "^10",

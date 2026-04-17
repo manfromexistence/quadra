@@ -978,9 +978,9 @@ export const appRouter = t.router({
   // Search
   search: t.router({
     global: t.procedure
-      .input(z.object({ query: z.string() }).optional())
+      .input(z.object({ query: z.string().nullable().optional() }).optional())
       .query(() => {
-        console.log("[tRPC] search.global: Returning empty array");
+        console.log("[tRPC] search.global: Returning empty search results");
         return [];
       }),
   }),
