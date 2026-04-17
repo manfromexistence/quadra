@@ -49,5 +49,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `optimizePackageImports` (already configured) handles tree-shaking for all these packages correctly.
     Having both `optimizePackageImports` and `modularizeImports` for the same packages was redundant and broken.
   - Removed the entire `modularizeImports` block from `next.config.ts`.
+
+- **apps/dashboard — "invalid deployment package" / files in symlinked directories**
+  - Vercel rejected the serverless function package because bun symlinks all
+    workspace packages (`@midday/ui`, `@midday/api`, etc.) into
+    `node_modules/@midday/*`. Next.js output file tracing was including those
+    symlinked paths in `.nft.json` files, and Vercel's packager cannot bundle
+    files that live inside symlinked directories.
+  - Root cause: `outputFileTracingExcludes` had no entry for workspace packages,
+    so the tracer followed the bun symlinks into `packages/*` source trees and
+    emitted those symlinked paths into every function's trace manifest.
+  - Fix: added `../../packages/**/*` and `../../node_modules/@midday/**/*` to
+    `outputFileTracingExcludes` in `apps/dashboard/next.config.ts`. These
+    packages are fully bundled into JS chunks by Turbopack at build time and do
+    not need to appear as external traced files in the serverless bundle.
+  - Also confirmed `apps/dashboard/vercel.json` `buildCommand` paths are correct
+    relative to `apps/dashboard` (Vercel rootDirectory), not the repo root.
   - Deployed to Vercel project `app-quadra` on 2026-04-17.
   - Production URL: https://app-quadra.vercel.app
