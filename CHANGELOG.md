@@ -42,5 +42,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     patterns. Route-level settings (e.g. `maxDuration`) must be exported directly from
     route segment files (`export const maxDuration = 60`).
   - Removed the entire `functions` block from `vercel.json`. Vercel plan defaults apply.
+- **apps/dashboard — 314 Turbopack build errors: `Module not found` for icon packages**
+  - `modularizeImports` in `next.config.ts` was transforming imports to paths that don't exist:
+    - `@radix-ui/react-icons/dist/ArchiveIcon` — package has no per-icon files at that path
+    - `lucide-react/dist/esm/icons/arrow-down-icon` — lucide v1 files use `arrow-down` (no `-icon` suffix)
+  - `optimizePackageImports` (already configured) handles tree-shaking for all these packages correctly.
+    Having both `optimizePackageImports` and `modularizeImports` for the same packages was redundant and broken.
+  - Removed the entire `modularizeImports` block from `next.config.ts`.
   - Deployed to Vercel project `app-quadra` on 2026-04-17.
   - Production URL: https://app-quadra.vercel.app
