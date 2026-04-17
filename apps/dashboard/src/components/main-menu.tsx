@@ -31,10 +31,6 @@ const items = [
     name: "Overview",
   },
   {
-    path: "/reports",
-    name: "Reports",
-  },
-  {
     path: "/projects",
     name: "Projects",
   },
@@ -52,7 +48,11 @@ const items = [
   },
   {
     path: "/notifications",
-    name: "Notifications",
+    name: "EDMS Notifications",
+  },
+    {
+    path: "/reports",
+    name: "Reports",
   },
   {
     path: "/transactions",
