@@ -41,7 +41,7 @@ export default async function Page(props: Props) {
 
   // Check if user is logged in; redirect to login with return path if not.
   // This is critical for the MCP OAuth flow where ChatGPT/Claude redirect
-  // the user's browser here before they've authenticated with Midday.
+  // the user's browser here before they've authenticated with Quadra.
   const user = await queryClient
     .fetchQuery(trpc.user.me.queryOptions())
     .catch(() => null);

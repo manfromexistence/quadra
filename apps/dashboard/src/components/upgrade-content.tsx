@@ -41,7 +41,7 @@ export function UpgradeContent() {
       <div className="w-full max-w-[960px] p-8">
         <div className="mb-8 md:mt-8 text-center">
           <h1 className="font-serif text-2xl text-foreground mb-2">
-            Continue with Midday
+            Continue with Quadra
           </h1>
           <p className="font-sans text-base text-muted-foreground leading-normal max-w-lg mx-auto">
             Your trial has ended — subscribe to pick up where you left off.

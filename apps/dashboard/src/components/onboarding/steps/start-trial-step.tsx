@@ -227,7 +227,7 @@ export function StartTrialStep() {
           transition={{ duration: 0.4, delay: 0.2 }}
           className="text-sm text-muted-foreground leading-relaxed"
         >
-          Try Midday free for 14 days. You won't be charged until your trial
+          Try Quadra free for 14 days. You won't be charged until your trial
           ends and you can{" "}
           <span className="underline underline-offset-4">cancel anytime</span>.
         </motion.p>

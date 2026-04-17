@@ -17,7 +17,7 @@ The beautiful dashboard for managing construction projects, documents, workflows
 - **Auth**: Better Auth
 - **Database**: Turso (SQLite)
 - **ORM**: Drizzle
-- **UI**: Midday UI components (rebranded for Quadra)
+- **UI**: Quadra UI components (rebranded for Quadra)
 - **Styling**: Tailwind CSS
 
 ### Getting Started
