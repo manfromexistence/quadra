@@ -27,22 +27,36 @@ export function Sidebar() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <aside
-      className={cn(
-        "h-screen flex-shrink-0 flex-col desktop:overflow-hidden desktop:rounded-tl-[10px] desktop:rounded-bl-[10px] justify-between fixed top-0 pb-4 items-center hidden md:flex z-50 transition-all duration-200 ease-&lsqb;cubic-bezier(0.4,0,0.2,1)&rsqb;",
-        "bg-background border-r border-border",
-        isExpanded ? "w-[240px]" : "w-[70px]",
-      )}
-      onMouseEnter={() => setIsExpanded(true)}
-      onMouseLeave={() => setIsExpanded(false)}
-    >
+    <>
+      {/* Sidebar Body */}
+      <aside
+        className={cn(
+          "h-screen flex-shrink-0 flex-col desktop:overflow-hidden desktop:rounded-bl-[10px] justify-between fixed top-0 pb-4 items-center hidden md:flex z-50 transition-all duration-200 ease-&lsqb;cubic-bezier(0.4,0,0.2,1)&rsqb;",
+          "bg-background border-r border-border",
+          isExpanded ? "w-[240px]" : "w-[70px]",
+        )}
+        onMouseEnter={() => setIsExpanded(true)}
+        onMouseLeave={() => setIsExpanded(false)}
+      >
+        <div className="flex flex-col w-full pt-[70px] flex-1 border-b border-border mb-3">
+          <MainMenu isExpanded={isExpanded} />
+        </div>
+
+        <Suspense fallback={<TeamDropdownSkeleton isExpanded={isExpanded} />}>
+          <TeamDropdown isExpanded={isExpanded} />
+        </Suspense>
+      </aside>
+
+      {/* Fixed Sidebar Header - Must be after sidebar body to be on top */}
       <div
         className={cn(
-          "absolute top-0 left-0 h-[70px] flex items-center bg-background border-b border-border transition-all duration-200 ease-&lsqb;cubic-bezier(0.4,0,0.2,1)&rsqb;",
-          isExpanded ? "w-full" : "w-[69px]",
+          "fixed top-0 left-0 h-[70px] flex items-center bg-background border-b border-r border-border desktop:rounded-tl-[10px] z-[70] transition-all duration-200 ease-&lsqb;cubic-bezier(0.4,0,0.2,1)&rsqb; hidden md:flex",
+          isExpanded ? "w-[240px]" : "w-[70px]",
         )}
+        onMouseEnter={() => setIsExpanded(true)}
+        onMouseLeave={() => setIsExpanded(false)}
       >
-        <Link href="/" className="absolute left-[22px] transition-none flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3 pl-[22px]">
           <Icons.LogoSmall />
           {isExpanded && (
             <span className="text-xl font-semibold tracking-tight transition-opacity duration-200">
@@ -51,14 +65,6 @@ export function Sidebar() {
           )}
         </Link>
       </div>
-
-      <div className="flex flex-col w-full pt-[70px] flex-1 border-b border-border mb-3">
-        <MainMenu isExpanded={isExpanded} />
-      </div>
-
-      <Suspense fallback={<TeamDropdownSkeleton isExpanded={isExpanded} />}>
-        <TeamDropdown isExpanded={isExpanded} />
-      </Suspense>
-    </aside>
+    </>
   );
 }

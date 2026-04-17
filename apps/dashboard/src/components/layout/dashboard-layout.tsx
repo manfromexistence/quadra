@@ -59,7 +59,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     <div className="relative">
       <Sidebar />
 
-      <div className="md:ml-[70px] pb-4">
+      <div className="md:ml-[70px] pt-[70px] pb-4">
         <Header />
         <TrialGuard plan="pro" createdAt={new Date().toISOString()}>
           <div className="px-4 md:px-8">{children}</div>
