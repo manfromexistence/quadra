@@ -65,5 +65,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     not need to appear as external traced files in the serverless bundle.
   - Also confirmed `apps/dashboard/vercel.json` `buildCommand` paths are correct
     relative to `apps/dashboard` (Vercel rootDirectory), not the repo root.
+
+- **apps/dashboard — symlinked directories error persisted; added fix-nft-symlinks.mjs**
+  - `outputFileTracingExcludes` patterns use `../../` prefix (relative to
+    `apps/dashboard`) but traced paths in `.nft.json` are relative to
+    `outputFileTracingRoot` (the repo root), so the exclude patterns never matched.
+  - Added `apps/dashboard/scripts/fix-nft-symlinks.mjs`: a post-build script that
+    walks every `.next/**/*.nft.json` file, calls `fs.realpathSync` on each traced
+    path, and rewrites any entry that resolves through a symlink to its real
+    (symlink-free) path. Duplicate entries are deduplicated after rewriting.
+  - Updated `apps/dashboard/vercel.json` `buildCommand` to run the script after
+    the Next.js build and before `sync-vercel-next-output.mjs`:
+    `bun run build && node ./scripts/fix-nft-symlinks.mjs && node ./scripts/sync-vercel-next-output.mjs`
+  - This approach is robust regardless of `outputFileTracingExcludes` path format
+    issues — it directly fixes the manifests Vercel reads when packaging functions.
   - Deployed to Vercel project `app-quadra` on 2026-04-17.
   - Production URL: https://app-quadra.vercel.app
