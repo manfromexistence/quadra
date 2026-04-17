@@ -17,7 +17,7 @@ export default async function ProjectsPage() {
   const data = await getEdmsDashboardData(sessionUser);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-6">
       <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="max-w-3xl space-y-3">
           <p className="text-[11px] font-semibold tracking-[0.24em] uppercase text-muted-foreground">

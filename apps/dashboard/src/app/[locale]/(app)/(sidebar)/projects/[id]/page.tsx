@@ -21,7 +21,7 @@ export default async function ProjectDetailPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-6">
       <section className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">

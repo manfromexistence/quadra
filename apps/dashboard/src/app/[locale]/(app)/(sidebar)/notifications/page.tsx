@@ -10,7 +10,7 @@ export default async function NotificationsPage() {
   const notifications = await getEdmsNotificationFeed(sessionUser, 50);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-6">
       <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="space-y-2">
           <p className="text-[11px] font-semibold tracking-[0.24em] uppercase text-muted-foreground">
