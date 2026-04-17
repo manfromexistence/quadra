@@ -6,7 +6,8 @@ Now how much pages our dashboard has related to edms - cause amoung them only pr
 
 Now don't do anything or change anything. Just see the local code base and tell me, without our EDM related project pages, how many pages are there in the admin dashboard? 
 
-Now, these pages total 11 pages - using mock data but they the mock data ia not correct for most of the time so please use right mock data correctly:
+Now here is the thing: if there's a way that you can know what the Moog data should be, then you can try to update the Moog data, but if you have no idea about the Moog data, then just create an AI help.mrground file and ask a better AI to create Moog data for all these 11 pages. Make sure that for the time being, I really don't wanna deal with these pages, so they will just be dummy Moog data. All the features should be available; that's the thing. They will not throw any kind of data errors. Because I really don't wanna deal with these pages, and all EDMAs and authentications are already using real data, but for the time being it's really complicated to use or use real data for this. Now just see the local files and tell me: is it easy to use Moog data or use real data? Cause for now I'm still planning what to do about these 11 pages. 
+Now, these pages total 11 pages - using mock data but they the mock data ia not correct for most of the time so please use right mock data correctly: 
 Reports (/reports) - Financial reports and analytics
 Transactions (/transactions) - Transaction management with sub-pages:
 Categories
