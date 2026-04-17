@@ -9,12 +9,26 @@ import {
 } from "@trpc/tanstack-react-query";
 import { cache } from "react";
 import superjson from "superjson";
-import { getServerAppUrl } from "@/utils/app-url";
 import { makeQueryClient } from "./query-client";
 
 // IMPORTANT: Create a stable getter for the query client that
 //            will return the same client during the same request.
 export const getQueryClient = cache(makeQueryClient);
+
+// Get the base URL for server-side tRPC calls
+// In development, use localhost. In production, use the actual URL.
+function getServerBaseUrl() {
+  // Check if we're in development mode
+  if (process.env.NODE_ENV === "development") {
+    // Use localhost with the port from environment or default to 3001
+    const port = process.env.PORT || "3001";
+    return `http://localhost:${port}`;
+  }
+  
+  // In production, use relative URL for same-origin requests
+  // This is more efficient and avoids external HTTP calls
+  return "";
+}
 
 export const trpc = createTRPCOptionsProxy<AppRouter>({
   queryClient: getQueryClient,
@@ -27,7 +41,7 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
       }),
       httpBatchLink({
         transformer: superjson,
-        url: `${getServerAppUrl()}/api/trpc`,
+        url: `${getServerBaseUrl()}/api/trpc`,
         headers() {
           return {
             "x-trpc-source": "server",
@@ -114,7 +128,7 @@ export async function getTRPCClient(options?: { forcePrimary?: boolean }) {
       }),
       httpBatchLink({
         transformer: superjson,
-        url: `${getServerAppUrl()}/api/trpc`,
+        url: `${getServerBaseUrl()}/api/trpc`,
         headers() {
           return {
             "x-trpc-source": "server-client",

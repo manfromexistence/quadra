@@ -165,7 +165,7 @@ export const mockTransactions = [
     name: "Stripe Payout",
     amount: 15400.00,
     currency: "USD",
-    date: new Date("2026-04-15"),
+    date: "2026-04-15",
     status: "posted",
     category: { id: "cat_1", name: "Revenue", slug: "revenue" },
     method: "transfer",
@@ -173,7 +173,7 @@ export const mockTransactions = [
     assigned: null,
     attachments: [],
     tags: [{ id: "tag_1", name: "income" }],
-    createdAt: new Date("2026-04-15"),
+    createdAt: "2026-04-15T00:00:00.000Z",
     description: "Stripe Transfer STRIPE Payout",
     internal: false,
     recurring: false,
@@ -186,7 +186,7 @@ export const mockTransactions = [
     name: "AWS Web Services",
     amount: -1250.45,
     currency: "USD",
-    date: new Date("2026-04-12"),
+    date: "2026-04-12",
     status: "posted",
     category: { id: "cat_2", name: "Software", slug: "software" },
     method: "card",
@@ -194,7 +194,7 @@ export const mockTransactions = [
     assigned: { id: "usr_1", name: "John Doe", avatarUrl: "" },
     attachments: [{ id: "att_1", name: "aws_invoice_apr.pdf", url: "#" }],
     tags: [{ id: "tag_2", name: "infrastructure" }],
-    createdAt: new Date("2026-04-12"),
+    createdAt: "2026-04-12T00:00:00.000Z",
     description: "Amazon Web Services AWS.COM",
     internal: false,
     recurring: true,
@@ -208,7 +208,7 @@ export const mockTransactions = [
     name: "Office Supplies - Staples",
     amount: -245.50,
     currency: "USD",
-    date: new Date("2026-04-10"),
+    date: "2026-04-10",
     status: "posted",
     category: { id: "cat_3", name: "Office", slug: "office" },
     method: "card",
@@ -216,7 +216,7 @@ export const mockTransactions = [
     assigned: null,
     attachments: [],
     tags: [],
-    createdAt: new Date("2026-04-10"),
+    createdAt: "2026-04-10T00:00:00.000Z",
     description: "STAPLES INC STORE 1029",
     internal: false,
     recurring: false,
@@ -229,7 +229,7 @@ export const mockTransactions = [
     name: "Gusto Payroll",
     amount: -18450.00,
     currency: "USD",
-    date: new Date("2026-04-01"),
+    date: "2026-04-01",
     status: "posted",
     category: { id: "cat_4", name: "Payroll", slug: "payroll" },
     method: "transfer",
@@ -237,7 +237,7 @@ export const mockTransactions = [
     assigned: null,
     attachments: [],
     tags: [{ id: "tag_3", name: "hr" }],
-    createdAt: new Date("2026-04-01"),
+    createdAt: "2026-04-01T00:00:00.000Z",
     description: "GUSTO PAYROLL ACH",
     internal: false,
     recurring: true,
@@ -269,9 +269,9 @@ export const mockInvoices = [
     amount: 12500.00,
     currency: "USD",
     status: "paid",
-    issueDate: new Date("2026-03-01"),
-    dueDate: new Date("2026-03-31"),
-    paidAt: new Date("2026-03-28"),
+    issueDate: "2026-03-01T00:00:00.000Z",
+    dueDate: "2026-03-31T00:00:00.000Z",
+    paidAt: "2026-03-28T00:00:00.000Z",
     items: [
       { id: "item_1", description: "Q1 Consulting Retainer", quantity: 1, price: 12500.00 }
     ],
@@ -286,8 +286,8 @@ export const mockInvoices = [
     amount: 8400.00,
     currency: "USD",
     status: "overdue",
-    issueDate: new Date("2026-03-15"),
-    dueDate: new Date("2026-04-14"),
+    issueDate: "2026-03-15T00:00:00.000Z",
+    dueDate: "2026-04-14T00:00:00.000Z",
     paidAt: null,
     items: [
       { id: "item_2", description: "Backend Development (March)", quantity: 120, price: 70.00 }
@@ -303,8 +303,8 @@ export const mockInvoices = [
     amount: 12500.00,
     currency: "USD",
     status: "unpaid",
-    issueDate: new Date("2026-04-01"),
-    dueDate: new Date("2026-04-30"),
+    issueDate: "2026-04-01T00:00:00.000Z",
+    dueDate: "2026-04-30T00:00:00.000Z",
     paidAt: null,
     items: [
       { id: "item_3", description: "Q2 Consulting Retainer", quantity: 1, price: 12500.00 }
@@ -320,8 +320,8 @@ export const mockInvoices = [
     amount: 4500.00,
     currency: "USD",
     status: "draft",
-    issueDate: new Date("2026-04-15"),
-    dueDate: new Date("2026-05-15"),
+    issueDate: "2026-04-15T00:00:00.000Z",
+    dueDate: "2026-05-15T00:00:00.000Z",
     paidAt: null,
     items: [
       { id: "item_4", description: "System Audit", quantity: 1, price: 4500.00 }
@@ -353,7 +353,7 @@ export const mockCustomers = [
     website: "https://acme.corp",
     address: "123 Innovation Way, Tech City, CA 94016",
     status: "active",
-    createdAt: new Date("2025-01-10"),
+    createdAt: "2025-01-10T00:00:00.000Z",
     totalBilled: 150000,
     currency: "USD"
   },
@@ -365,7 +365,7 @@ export const mockCustomers = [
     website: "https://techstart.io",
     address: "456 Startup Blvd, Suite 200, Austin, TX 78701",
     status: "active",
-    createdAt: new Date("2025-06-22"),
+    createdAt: "2025-06-22T00:00:00.000Z",
     totalBilled: 42000,
     currency: "USD"
   },
@@ -377,7 +377,7 @@ export const mockCustomers = [
     website: "https://globallogistics.com",
     address: "789 Freight Rd, Chicago, IL 60601",
     status: "active",
-    createdAt: new Date("2026-02-05"),
+    createdAt: "2026-02-05T00:00:00.000Z",
     totalBilled: 0,
     currency: "USD"
   }
@@ -454,8 +454,8 @@ export const mockVaultDocuments = [
     folderId: "fold_1",
     tags: [{ id: "tag_4", name: "contract" }],
     uploadedBy: { id: "usr_1", name: "John Doe" },
-    createdAt: new Date("2026-03-25"),
-    updatedAt: new Date("2026-03-25")
+    createdAt: "2026-03-25T00:00:00.000Z",
+    updatedAt: "2026-03-25T00:00:00.000Z"
   },
   {
     id: "doc_2",
@@ -466,8 +466,8 @@ export const mockVaultDocuments = [
     folderId: "fold_2",
     tags: [{ id: "tag_5", name: "specifications" }],
     uploadedBy: { id: "usr_2", name: "Jane Smith" },
-    createdAt: new Date("2026-04-02"),
-    updatedAt: new Date("2026-04-05")
+    createdAt: "2026-04-02T00:00:00.000Z",
+    updatedAt: "2026-04-05T00:00:00.000Z"
   },
   {
     id: "doc_3",
@@ -478,8 +478,8 @@ export const mockVaultDocuments = [
     folderId: "fold_3",
     tags: [{ id: "tag_6", name: "finance" }, { id: "tag_7", name: "report" }],
     uploadedBy: { id: "usr_1", name: "John Doe" },
-    createdAt: new Date("2026-04-10"),
-    updatedAt: new Date("2026-04-10")
+    createdAt: "2026-04-10T00:00:00.000Z",
+    updatedAt: "2026-04-10T00:00:00.000Z"
   }
 ];
 
@@ -494,7 +494,7 @@ export const mockInboxMessages = [
     sender: { name: "Quadra System", email: "ajju40959@gmail.com" },
     preview: "Your Gusto connection has expired and requires re-authentication.",
     isRead: false,
-    date: new Date("2026-04-17T08:30:00Z"),
+    date: "2026-04-17T08:30:00.000Z",
     type: "system_alert",
     actionUrl: "/apps/gusto"
   },
@@ -504,7 +504,7 @@ export const mockInboxMessages = [
     sender: { name: "Acme Corp", email: "billing@acme.corp" },
     preview: "Payment of $12,500.00 has been received for invoice INV-2026-001.",
     isRead: true,
-    date: new Date("2026-03-28T14:15:00Z"),
+    date: "2026-03-28T14:15:00.000Z",
     type: "invoice_paid",
     actionUrl: "/invoices/inv_1"
   },
@@ -514,7 +514,7 @@ export const mockInboxMessages = [
     sender: { name: "Jane Smith", email: "jane@example.com" },
     preview: "Jane Smith has uploaded a new document to the Vault.",
     isRead: true,
-    date: new Date("2026-04-02T10:05:00Z"),
+    date: "2026-04-02T10:05:00.000Z",
     type: "vault_upload",
     actionUrl: "/vault/doc_2"
   }
@@ -531,7 +531,7 @@ export const mockApps = [
     description: "Accept payments and sync payout data.",
     icon: "stripe",
     connected: true,
-    lastSync: new Date("2026-04-17T09:00:00Z"),
+    lastSync: "2026-04-17T09:00:00.000Z",
     status: "active"
   },
   {
@@ -540,7 +540,7 @@ export const mockApps = [
     description: "Sync payroll data and team information.",
     icon: "gusto",
     connected: true,
-    lastSync: new Date("2026-03-31T23:59:00Z"),
+    lastSync: "2026-03-31T23:59:00.000Z",
     status: "needs_auth"
   },
   {
@@ -590,7 +590,7 @@ export const mockAccount = {
   email: "john@example.com",
   avatarUrl: "https://github.com/shadcn.png",
   role: "admin",
-  createdAt: new Date("2025-01-01"),
+  createdAt: "2025-01-01T00:00:00.000Z",
   preferences: {
     theme: "system",
     language: "en-US",
@@ -631,7 +631,7 @@ export const mockPlans = [
       "Custom invoice branding"
     ],
     isCurrent: true,
-    currentPeriodEnd: new Date("2026-05-01")
+    currentPeriodEnd: "2026-05-01T00:00:00.000Z"
   },
   {
     id: "plan_business",

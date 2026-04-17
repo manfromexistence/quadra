@@ -29,8 +29,13 @@ function getQueryClient() {
 }
 
 function getBaseUrl() {
+  // Always use relative URLs to ensure requests go to the current origin
+  // This works for both development (localhost) and production
   if (typeof window !== "undefined") return "";
-  return getServerAppUrl();
+  
+  // On server side, also use relative URL for same-origin requests
+  // This prevents the server from making external HTTP calls to itself
+  return "";
 }
 
 export function TRPCReactProvider(

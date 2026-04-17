@@ -90,7 +90,7 @@ export const appRouter = t.router({
       }))
       .mutation(async ({ input, ctx }) => {
         console.log("[tRPC] user.update: Starting mutation with input:", JSON.stringify(input));
-        return { ...mockData.mockAccount, ...input, updatedAt: new Date() };
+        return { ...mockData.mockAccount, ...input, updatedAt: new Date().toISOString() };
       }),
   }),
 
@@ -144,14 +144,14 @@ export const appRouter = t.router({
             name: "Chase Business Checking",
             status: "connected" as const,
             logoUrl: null,
-            expiresAt: new Date("2026-12-01"),
+            expiresAt: "2026-12-01T00:00:00.000Z",
           },
           {
             id: "bank_2",
             name: "Wells Fargo Savings",
             status: "connected" as const,
             logoUrl: null,
-            expiresAt: new Date("2026-11-15"),
+            expiresAt: "2026-11-15T00:00:00.000Z",
           }
         ],
         inboxAccounts: [
@@ -163,7 +163,7 @@ export const appRouter = t.router({
           }
         ],
         isConnected: true,
-        lastSync: new Date(),
+        lastSync: new Date().toISOString(),
         provider: "mock",
       };
     }),
@@ -188,8 +188,8 @@ export const appRouter = t.router({
             accountId: "12345",
             enabled: true,
             manual: input?.manual || false,
-            createdAt: new Date("2024-01-01"),
-            updatedAt: new Date("2024-01-01"),
+            createdAt: "2024-01-01T00:00:00.000Z",
+            updatedAt: "2024-01-01T00:00:00.000Z",
           },
           {
             id: "acc_2",
@@ -201,8 +201,8 @@ export const appRouter = t.router({
             accountId: "67890",
             enabled: true,
             manual: input?.manual || false,
-            createdAt: new Date("2024-01-01"),
-            updatedAt: new Date("2024-01-01"),
+            createdAt: "2024-01-01T00:00:00.000Z",
+            updatedAt: "2024-01-01T00:00:00.000Z",
           }
         ];
       }),
@@ -226,11 +226,11 @@ export const appRouter = t.router({
           provider: "plaid",
           status: "connected" as const,
           logoUrl: null,
-          expiresAt: new Date("2026-12-01"),
+          expiresAt: "2026-12-01T00:00:00.000Z",
           institutionId: "chase",
           accessToken: "mock_token_1",
-          createdAt: new Date("2024-01-01"),
-          updatedAt: new Date("2024-01-01"),
+          createdAt: "2024-01-01T00:00:00.000Z",
+          updatedAt: "2024-01-01T00:00:00.000Z",
           bankAccounts: [
             {
               id: "acc_1",
@@ -250,11 +250,11 @@ export const appRouter = t.router({
           provider: "plaid",
           status: "connected" as const,
           logoUrl: null,
-          expiresAt: new Date("2026-11-15"),
+          expiresAt: "2026-11-15T00:00:00.000Z",
           institutionId: "wells_fargo",
           accessToken: "mock_token_2",
-          createdAt: new Date("2024-01-01"),
-          updatedAt: new Date("2024-01-01"),
+          createdAt: "2024-01-01T00:00:00.000Z",
+          updatedAt: "2024-01-01T00:00:00.000Z",
           bankAccounts: [
             {
               id: "acc_2",
@@ -288,12 +288,16 @@ export const appRouter = t.router({
     }),
     get: t.procedure
       .input(z.object({
-        sort: z.array(z.object({ id: z.string(), desc: z.boolean() })).optional(),
-        statuses: z.array(z.string()).optional(),
-        customers: z.array(z.string()).optional(),
-        start: z.string().optional(),
-        end: z.string().optional(),
-        q: z.string().optional(),
+        sort: z.array(z.object({ id: z.string(), desc: z.boolean() })).nullable().optional(),
+        statuses: z.array(z.string()).nullable().optional(),
+        customers: z.array(z.string()).nullable().optional(),
+        start: z.string().nullable().optional(),
+        end: z.string().nullable().optional(),
+        q: z.string().nullable().optional(),
+        ids: z.array(z.string()).nullable().optional(),
+        recurringIds: z.array(z.string()).nullable().optional(),
+        recurring: z.boolean().nullable().optional(),
+        direction: z.string().nullable().optional(),
       }).optional())
       .query(({ input }) => {
         console.log("[tRPC] invoice.get: Returning mock invoices with input:", input);
@@ -315,11 +319,19 @@ export const appRouter = t.router({
       .query(({ input }) => {
         console.log("[tRPC] invoice.invoiceSummary: Calculating for statuses:", input.statuses);
         const filtered = mockData.mockInvoices.filter(inv => input.statuses.includes(inv.status));
-        const total = filtered.reduce((sum, inv) => sum + inv.amount, 0);
+        const totalAmount = filtered.reduce((sum, inv) => sum + inv.amount, 0);
         return {
-          count: filtered.length,
-          total,
+          invoiceCount: filtered.length,
+          totalAmount,
           currency: "USD",
+          breakdown: [
+            {
+              currency: "USD",
+              count: filtered.length,
+              originalAmount: totalAmount,
+              convertedAmount: totalAmount,
+            }
+          ]
         };
       }),
     paymentStatus: t.procedure.query(() => {
@@ -328,6 +340,7 @@ export const appRouter = t.router({
         score: 85,
         trend: "up",
         averageDays: 12,
+        paymentStatus: "good",
       };
     }),
     getInvoiceByToken: t.procedure
@@ -344,6 +357,21 @@ export const appRouter = t.router({
       console.log("[tRPC] customers.list: Returning mock customers");
       return mockData.mockCustomers;
     }),
+    get: t.procedure
+      .input(z.object({
+        sort: z.array(z.object({ id: z.string(), desc: z.boolean() })).nullable().optional(),
+        statuses: z.array(z.string()).nullable().optional(),
+        q: z.string().nullable().optional(),
+        pageSize: z.number().nullable().optional(),
+        direction: z.string().nullable().optional(),
+      }).optional())
+      .query(({ input }) => {
+        console.log("[tRPC] customers.get: Returning mock customers with input:", input);
+        return {
+          data: mockData.mockCustomers,
+          meta: { cursor: null, hasMore: false }
+        };
+      }),
     getByPortalId: t.procedure
       .input(z.object({ portalId: z.string() }))
       .query(({ input }) => {
@@ -442,22 +470,41 @@ export const appRouter = t.router({
     }),
     get: t.procedure
       .input(z.object({
-        sort: z.array(z.object({ id: z.string(), desc: z.boolean() })).optional(),
-        amountRange: z.tuple([z.number(), z.number()]).optional(),
-        categories: z.array(z.string()).optional(),
-        accounts: z.array(z.string()).optional(),
-        statuses: z.array(z.string()).optional(),
-        start: z.string().optional(),
-        end: z.string().optional(),
-        q: z.string().optional(),
-        pageSize: z.number().optional(),
+        sort: z.array(z.object({ id: z.string(), desc: z.boolean() })).nullable().optional(),
+        amountRange: z.tuple([z.number(), z.number()]).nullable().optional(),
+        categories: z.array(z.string()).nullable().optional(),
+        accounts: z.array(z.string()).nullable().optional(),
+        statuses: z.array(z.string()).nullable().optional(),
+        start: z.string().nullable().optional(),
+        end: z.string().nullable().optional(),
+        q: z.string().nullable().optional(),
+        pageSize: z.number().nullable().optional(),
+        direction: z.string().nullable().optional(),
+        tags: z.array(z.string()).nullable().optional(),
+        assignees: z.array(z.string()).nullable().optional(),
+        attachments: z.boolean().nullable().optional(),
+        amount: z.number().nullable().optional(),
+        amount_range: z.tuple([z.number(), z.number()]).nullable().optional(),
+        recurring: z.boolean().nullable().optional(),
+        manual: z.boolean().nullable().optional(),
+        type: z.string().nullable().optional(),
+        fulfilled: z.boolean().nullable().optional(),
+        exported: z.boolean().nullable().optional(),
       }).optional())
       .query(({ input }) => {
         console.log("[tRPC] transactions.get: Returning mock data with input:", input);
-        return {
+        const response = {
           data: mockData.mockTransactions,
-          meta: { cursor: null, hasMore: false }
+          meta: { 
+            cursor: null, 
+            hasMore: false 
+          }
         };
+        console.log("[tRPC] transactions.get: Response structure:", JSON.stringify({
+          dataLength: response.data.length,
+          meta: response.meta
+        }));
+        return response;
       }),
     getById: t.procedure
       .input(z.object({ id: z.string() }))
@@ -859,7 +906,7 @@ export const appRouter = t.router({
           email: "invoices@quadra.com",
           provider: "gmail",
           status: "connected",
-          createdAt: new Date("2025-08-01"),
+          createdAt: "2025-08-01T00:00:00.000Z",
         }
       ];
     }),
