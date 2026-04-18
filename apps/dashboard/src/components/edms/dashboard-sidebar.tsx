@@ -1,10 +1,15 @@
 "use client";
 
 import {
+  BarChart3,
   BellRing,
+  BookOpen,
   Building2,
+  CalendarDays,
   FileStack,
   FolderKanban,
+  Grid3X3,
+  History,
   LayoutDashboard,
   LogOut,
   Search,
@@ -45,6 +50,17 @@ const PRIMARY_NAVIGATION = [
   { title: "Workflows", href: "/dashboard/workflows", icon: Workflow },
   { title: "Transmittals", href: "/dashboard/transmittals", icon: Send },
   { title: "Notifications", href: "/dashboard/notifications", icon: BellRing },
+] as const;
+
+const PLANNING_NAVIGATION = [
+  { title: "Schedule & Progress", href: "/dashboard/schedule", icon: CalendarDays },
+  { title: "Data Book", href: "/dashboard/databook", icon: BookOpen },
+  { title: "Reports", href: "/dashboard/reports", icon: BarChart3 },
+] as const;
+
+const CONFIG_NAVIGATION = [
+  { title: "Distribution Matrix", href: "/dashboard/matrix", icon: Grid3X3 },
+  { title: "Audit Trail", href: "/dashboard/audit", icon: History },
 ] as const;
 
 const ADMIN_NAVIGATION = [
@@ -186,6 +202,50 @@ export function EdmsDashboardSidebar({ user }: { user: DashboardUser }) {
             <SidebarGroupContent>
               <SidebarMenu>
                 {PRIMARY_NAVIGATION.map((item) => (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isNavItemActive(pathname, item.href)}
+                      tooltip={item.title}
+                    >
+                      <Link href={item.href}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          <SidebarGroup>
+            <SidebarGroupLabel>Planning & Delivery</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {PLANNING_NAVIGATION.map((item) => (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isNavItemActive(pathname, item.href)}
+                      tooltip={item.title}
+                    >
+                      <Link href={item.href}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          <SidebarGroup>
+            <SidebarGroupLabel>Configuration</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {CONFIG_NAVIGATION.map((item) => (
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       asChild

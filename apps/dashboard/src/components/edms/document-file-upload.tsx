@@ -29,13 +29,15 @@ export function DocumentFileUpload({
   const [isUploading, startTransition] = useTransition();
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 
-  const handleFileSelection = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-    event.target.value = "";
-
-    if (!selectedFile) {
+  const handleFileSelection = async (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) {
       return;
     }
+    
+    // Convert to array and clear input
+    const selectedFiles = Array.from(files);
+    event.target.value = "";
 
     if (!projectId) {
       toast({
@@ -47,33 +49,52 @@ export function DocumentFileUpload({
     }
 
     startTransition(async () => {
-      const formData = new FormData();
-      formData.set("file", selectedFile);
-      formData.set("projectId", projectId);
-      formData.set("folder", folder);
+      let successCount = 0;
+      let failCount = 0;
+      
+      for (const selectedFile of selectedFiles) {
+        const formData = new FormData();
+        formData.set("file", selectedFile);
+        formData.set("projectId", projectId);
+        formData.set("folder", folder);
 
-      const response = await fetch("/api/edms/uploads", {
-        method: "POST",
-        body: formData,
-      });
+        try {
+          const response = await fetch("/api/edms/uploads", {
+            method: "POST",
+            body: formData,
+          });
 
-      const payload = (await response.json()) as UploadedDocumentFile & { error?: string };
+          const payload = (await response.json()) as UploadedDocumentFile & { error?: string };
 
-      if (!response.ok) {
-        toast({
-          title: "Upload failed",
-          description: payload.error ?? "Unable to upload the selected file.",
-          variant: "destructive",
-        });
-        return;
+          if (!response.ok) {
+            failCount++;
+            toast({
+              title: "Upload failed",
+              description: payload.error ?? `Unable to upload ${selectedFile.name}.`,
+              variant: "destructive",
+            });
+            continue;
+          }
+
+          onUploaded(payload);
+          setUploadedFileName(payload.fileName);
+          successCount++;
+        } catch (e) {
+          failCount++;
+          toast({
+            title: "Upload failed",
+            description: `Network error uploading ${selectedFile.name}.`,
+            variant: "destructive",
+          });
+        }
       }
 
-      onUploaded(payload);
-      setUploadedFileName(payload.fileName);
-      toast({
-        title: "File uploaded",
-        description: "The document file is now stored and linked to this EDMS record.",
-      });
+      if (successCount > 0) {
+        toast({
+          title: "Files uploaded",
+          description: `Successfully uploaded ${successCount} file(s)${failCount > 0 ? `, ${failCount} failed` : ""}.`,
+        });
+      }
     });
   };
 
@@ -93,6 +114,7 @@ export function DocumentFileUpload({
             type="file"
             className="hidden"
             accept="*/*"
+            multiple
             onChange={handleFileSelection}
           />
           <Button type="button" variant="outline" asChild disabled={isUploading}>
@@ -100,12 +122,12 @@ export function DocumentFileUpload({
               {isUploading ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
-                  Uploading
+                  Uploading...
                 </>
               ) : (
                 <>
                   <UploadCloud className="size-4" />
-                  Upload file
+                  Upload file(s)
                 </>
               )}
             </label>

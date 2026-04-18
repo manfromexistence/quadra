@@ -1,5 +1,9 @@
 import { createGroq } from "@ai-sdk/groq";
 import { streamText } from "ai";
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
+import { projects } from "@/db/schema/projects";
+import { userProjectAccess } from "@/db/schema/access";
 import { auth } from "@/lib/auth";
 
 const groq = createGroq({
@@ -43,6 +47,29 @@ export async function POST(req: Request) {
       };
     });
 
+    // Fetch user's EDMS projects to provide context to the AI
+    let projectsContext = "No active projects found for this user.";
+    try {
+      const userProjects = await db
+        .select({
+          name: projects.name,
+          number: projects.projectNumber,
+          description: projects.description,
+          status: projects.status,
+        })
+        .from(projects)
+        .innerJoin(userProjectAccess, eq(projects.id, userProjectAccess.projectId))
+        .where(eq(userProjectAccess.userId, session.user.id));
+
+      if (userProjects.length > 0) {
+        projectsContext = userProjects
+          .map((p) => `- ${p.number || "No number"}: ${p.name} (${p.status}) - ${p.description || "No description"}`)
+          .join("\n");
+      }
+    } catch (e) {
+      console.error("Failed to fetch projects context", e);
+    }
+
     // Use streamText with Groq
     const result = streamText({
       model,
@@ -53,11 +80,14 @@ Current context:
 - User timezone: ${timezone || "UTC"}
 - Local time: ${localTime || new Date().toISOString()}
 
+User's EDMS Projects:
+${projectsContext}
+
 You help users with:
 - Understanding their business data and metrics
 - Analyzing transactions and financial information
 - Managing documents and projects
-- Answering questions about their dashboard
+- Answering questions about their dashboard and projects
 
 Be concise, helpful, and professional in your responses.`,
     });

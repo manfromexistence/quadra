@@ -1,0 +1,16 @@
+now in the edms@contextScopeItemMention file there pdf generation and printable so please make usre that in our apps/dashboard page you create it correctly - and now in our apps dashboard - and do these:
+
+1. bulk upload button is not working - fix it and ad also fix other with these types if not working functionalities
+
+2. please connect our dashboard header searchbar to search to edms related project, document - like connect them correctly
+
+3. please make ai and feed it the details about the user's edms related project short title and descriptioin it connects with them correctly
+
+4. currently 11+ dashboard pages is using mock data so please use wsl with inline turso cli (already logged in) and use those to create real pages connect them with edms related dashboad pages correctly togather
+
+5. in our apps/construction folder there is theme editor - now please make sure that our current apps/dashbaord theme is the default theme - as the name of theme is quadra and also in construction theme editor the themes may use oklch but in our apps/dashbarod use hsl so please convert our to oklch - merge the two projects packages - and then use a lowend device bun test that may take long time but will even work on our lowend device and use that verify things
+
+You know what its your day - if you can then please finish all task until the theme editor one as its a big one so please complete all others tasks and then run test that can be ran by our low-end device and complete things
+
+About this(our apps/construction folder there is theme editor - now please make sure that our current apps/dashbaord theme is the default theme - as the name of theme is quadra and also in construction theme editor the themes may use oklch but in our apps/dashbarod use hsl so please convert our to oklch - merge the two projects packages - and then use a lowend device bun test that may take long time but will even work on our lowend device and use that verify things)
+Please continue where you left and finish this correctly and then editor task is not that easy - as you can have to copy all files to from apps/constuction to midday-ui and then merge the package and then it will create a wiered situation where it will not have any dark them background color will not change for reason and the ui will break with light theme and theme editor random theme as default with color so pelase fix all these features - so that why I recommen to step back relax after doing all the four task and then after proper planning and then evulution to copy the whole theme editor from apps/construction to our apps/dashboard - do this correctly  
