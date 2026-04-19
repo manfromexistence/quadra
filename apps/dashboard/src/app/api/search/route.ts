@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
-import { ilike, or } from "drizzle-orm";
-import { db } from "@/db";
-import { documents } from "@/db/schema/documents";
-import { projects } from "@/db/schema/projects";
 import { auth } from "@/lib/auth";
+import { searchEdms } from "@/lib/edms/global-search";
 
 export async function GET(req: Request) {
   try {
@@ -22,47 +19,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ results: [] });
     }
 
-    const searchPattern = `%${q}%`;
-
-    const [foundProjects, foundDocuments] = await Promise.all([
-      db.select({
-        id: projects.id,
-        name: projects.name,
-        number: projects.projectNumber,
-      })
-      .from(projects)
-      .where(or(ilike(projects.name, searchPattern), ilike(projects.projectNumber, searchPattern)))
-      .limit(5),
-      
-      db.select({
-        id: documents.id,
-        title: documents.title,
-        number: documents.documentNumber,
-        discipline: documents.discipline,
-      })
-      .from(documents)
-      .where(or(ilike(documents.title, searchPattern), ilike(documents.documentNumber, searchPattern)))
-      .limit(5)
-    ]);
-
-    const results = [
-      ...foundProjects.map((p) => ({
-        id: p.id,
-        title: p.name,
-        subtitle: p.number || "No project number",
-        category: "project",
-        href: `/projects/${p.id}`,
-        meta: "Project",
-      })),
-      ...foundDocuments.map((d) => ({
-        id: d.id,
-        title: d.title,
-        subtitle: d.number,
-        category: "document",
-        href: `/documents/${d.id}`,
-        meta: d.discipline || "General",
-      }))
-    ];
+    const results = await searchEdms(session.user.id, q, 6);
 
     return NextResponse.json({ results });
   } catch (error) {

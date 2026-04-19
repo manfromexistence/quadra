@@ -2,6 +2,7 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
+import { user as userTable } from "@/db/schema";
 import { projectMembers, projects } from "@/db/schema/projects";
 import { normalizeEdmsRole } from "./rbac";
 import type { DashboardSessionUser } from "./session";
@@ -14,7 +15,26 @@ export interface ProjectAccessScope {
 export async function getProjectAccessScope(
   sessionUser: DashboardSessionUser
 ): Promise<ProjectAccessScope> {
-  if (normalizeEdmsRole(sessionUser.role) === "admin") {
+  return getProjectAccessScopeByUserId(sessionUser.id, sessionUser.role);
+}
+
+export async function getProjectAccessScopeByUserId(
+  userId: string,
+  knownRole?: string | null
+): Promise<ProjectAccessScope> {
+  let role = knownRole ?? null;
+
+  if (!role) {
+    const [user] = await db
+      .select({ role: userTable.role })
+      .from(userTable)
+      .where(eq(userTable.id, userId))
+      .limit(1);
+
+    role = user?.role ?? null;
+  }
+
+  if (normalizeEdmsRole(role) === "admin") {
     return {
       isAdmin: true,
       projectIds: [],
@@ -25,15 +45,15 @@ export async function getProjectAccessScope(
     db
       .select({ projectId: projectMembers.projectId })
       .from(projectMembers)
-      .where(eq(projectMembers.userId, sessionUser.id)),
+      .where(eq(projectMembers.userId, userId)),
     db
       .select({ projectId: projects.id })
       .from(projects)
-      .where(eq(projects.createdBy, sessionUser.id)),
+      .where(eq(projects.createdBy, userId)),
     db
       .select({ projectId: projects.id })
       .from(projects)
-      .where(eq(projects.clientId, sessionUser.id)),
+      .where(eq(projects.clientId, userId)),
   ]);
 
   const projectIds = Array.from(

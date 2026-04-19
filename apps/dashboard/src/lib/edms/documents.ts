@@ -6,7 +6,12 @@ import { documents } from "@/db/schema/documents";
 import { projects } from "@/db/schema/projects";
 import { expandStorageUrl } from "@/lib/storage-utils";
 import { getProjectAccessScope } from "./access";
-import { type DashboardDocument, type DashboardMetric, getEdmsDashboardData } from "./dashboard";
+import {
+  type DashboardDocument,
+  type DashboardMetric,
+  getEdmsDashboardData,
+} from "./dashboard";
+import { formatStoredAbsoluteDate } from "./dates";
 import type { DashboardSessionUser } from "./session";
 
 export interface DocumentFilters {
@@ -32,7 +37,7 @@ export interface DocumentControlData {
 
 export async function getDocumentControlData(
   sessionUser: DashboardSessionUser,
-  filters: DocumentFilters
+  filters: DocumentFilters,
 ): Promise<DocumentControlData> {
   try {
     const accessScope = await getProjectAccessScope(sessionUser);
@@ -53,11 +58,13 @@ export async function getDocumentControlData(
         ? or(
             ilike(documents.documentNumber, `%${filters.query}%`),
             ilike(documents.title, `%${filters.query}%`),
-            ilike(projects.name, `%${filters.query}%`)
+            ilike(projects.name, `%${filters.query}%`),
           )
         : undefined,
       filters.status ? eq(documents.status, filters.status) : undefined,
-      filters.discipline ? eq(documents.discipline, filters.discipline) : undefined,
+      filters.discipline
+        ? eq(documents.discipline, filters.discipline)
+        : undefined,
       filters.revision ? eq(documents.revision, filters.revision) : undefined,
     ].filter(Boolean);
 
@@ -75,28 +82,38 @@ export async function getDocumentControlData(
     ] = await Promise.all([
       scopedDocumentCondition === null
         ? Promise.resolve([{ value: 0 }])
-        : db.select({ value: count() }).from(documents).where(scopedDocumentCondition),
+        : db
+            .select({ value: count() })
+            .from(documents)
+            .where(scopedDocumentCondition),
       db
         .select({ value: count() })
         .from(documents)
         .where(
           and(
             inArray(documents.status, ["submitted", "under_review"]),
-            scopedDocumentCondition ?? undefined
-          )
+            scopedDocumentCondition ?? undefined,
+          ),
         ),
       scopedDocumentCondition === null
         ? Promise.resolve([{ value: 0 }])
         : db
             .select({ value: count() })
             .from(documents)
-            .where(and(eq(documents.status, "under_review"), scopedDocumentCondition)),
+            .where(
+              and(
+                eq(documents.status, "under_review"),
+                scopedDocumentCondition,
+              ),
+            ),
       scopedDocumentCondition === null
         ? Promise.resolve([{ value: 0 }])
         : db
             .select({ value: count() })
             .from(documents)
-            .where(and(eq(documents.status, "approved"), scopedDocumentCondition)),
+            .where(
+              and(eq(documents.status, "approved"), scopedDocumentCondition),
+            ),
       scopedProjectCondition === null
         ? Promise.resolve([])
         : db
@@ -134,7 +151,9 @@ export async function getDocumentControlData(
         : db
             .select({ discipline: documents.discipline })
             .from(documents)
-            .where(and(ilike(documents.discipline, `%`), scopedDocumentCondition))
+            .where(
+              and(ilike(documents.discipline, `%`), scopedDocumentCondition),
+            )
             .orderBy(documents.discipline),
       scopedDocumentCondition === null
         ? Promise.resolve([])
@@ -203,15 +222,15 @@ export async function getDocumentControlData(
         new Set(
           disciplineRows
             .map((row) => row.discipline)
-            .filter((discipline): discipline is string => Boolean(discipline))
-        )
+            .filter((discipline): discipline is string => Boolean(discipline)),
+        ),
       ),
       availableRevisions: Array.from(
         new Set(
           revisionRows
             .map((row) => row.revision)
-            .filter((revision): revision is string => Boolean(revision))
-        )
+            .filter((revision): revision is string => Boolean(revision)),
+        ),
       ),
       isUsingFallbackData: false,
       statusMessage: null,
@@ -223,14 +242,15 @@ export async function getDocumentControlData(
 
 function createFallbackDocumentControlData(
   sessionUser: DashboardSessionUser,
-  error: unknown
+  error: unknown,
 ): Promise<DocumentControlData> {
   return getEdmsDashboardData(sessionUser).then((dashboard) => ({
     metrics: [
       {
         label: "Total documents",
         value: String(dashboard.documents.length),
-        description: "Sample document volume while the database is still being prepared.",
+        description:
+          "Sample document volume while the database is still being prepared.",
         tone: "blue",
         icon: "documents",
       },
@@ -238,8 +258,8 @@ function createFallbackDocumentControlData(
         label: "Submitted",
         value: String(
           dashboard.documents.filter((document) =>
-            ["submitted", "under_review"].includes(document.status)
-          ).length
+            ["submitted", "under_review"].includes(document.status),
+          ).length,
         ),
         description: "Sample review-ready revisions.",
         tone: "amber",
@@ -248,7 +268,9 @@ function createFallbackDocumentControlData(
       {
         label: "Under review",
         value: String(
-          dashboard.documents.filter((document) => document.status === "under_review").length
+          dashboard.documents.filter(
+            (document) => document.status === "under_review",
+          ).length,
         ),
         description: "Sample workflow load for the current package.",
         tone: "rose",
@@ -257,7 +279,9 @@ function createFallbackDocumentControlData(
       {
         label: "Approved",
         value: String(
-          dashboard.documents.filter((document) => document.status === "approved").length
+          dashboard.documents.filter(
+            (document) => document.status === "approved",
+          ).length,
         ),
         description: "Sample approved records in the fallback workspace.",
         tone: "emerald",
@@ -274,15 +298,15 @@ function createFallbackDocumentControlData(
       new Set(
         dashboard.documents
           .map((document) => document.discipline)
-          .filter((discipline): discipline is string => Boolean(discipline))
-      )
+          .filter((discipline): discipline is string => Boolean(discipline)),
+      ),
     ),
     availableRevisions: Array.from(
       new Set(
         dashboard.documents
           .map((document) => document.revision)
-          .filter((revision): revision is string => Boolean(revision))
-      )
+          .filter((revision): revision is string => Boolean(revision)),
+      ),
     ),
     isUsingFallbackData: true,
     statusMessage: getFallbackMessage(error),
@@ -298,11 +322,7 @@ function formatDateLabel(date: Date | null) {
     return "Uploaded date pending";
   }
 
-  return `Uploaded ${new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(date)}`;
+  return `Uploaded ${formatStoredAbsoluteDate(date) ?? "date pending"}`;
 }
 
 function getFallbackMessage(error: unknown) {

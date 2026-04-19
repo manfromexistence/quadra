@@ -1,10 +1,10 @@
 "use client";
 
 import { cn } from "@midday/ui/cn";
-import { Icons } from "@midday/ui/icons";
 import { Skeleton } from "@midday/ui/skeleton";
 import Link from "next/link";
 import { Suspense, useState } from "react";
+import { BrandLogo } from "./brand-logo";
 import { MainMenu } from "./main-menu";
 import { TeamDropdown } from "./team-dropdown";
 
@@ -57,7 +57,7 @@ export function Sidebar() {
         onMouseLeave={() => setIsExpanded(false)}
       >
         <Link href="/" className="flex items-center gap-3 pl-[22px]">
-          <Icons.LogoSmall />
+          <BrandLogo size={34} priority />
           {isExpanded && (
             <span className="text-xl font-semibold tracking-tight transition-opacity duration-200">
               Quadra

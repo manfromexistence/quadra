@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { createDocument } from "@/actions/documents";
+import { createDocumentsBatch } from "@/actions/documents";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@midday/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@midday/ui/form";
@@ -89,31 +89,25 @@ export function DocumentBulkUploadSheet({
 
   const onSubmit = (values: BulkDocumentValues) => {
     startTransition(async () => {
-      let successCount = 0;
-      let failCount = 0;
+      const result = await createDocumentsBatch({
+        projectId: values.projectId,
+        discipline: values.discipline,
+        category: values.category,
+        status: values.status,
+        files: values.files,
+      });
 
-      for (const file of values.files) {
-        const result = await createDocument({
-          projectId: values.projectId,
-          documentNumber: "",
-          title: file.title || file.fileName.replace(/\.[^/.]+$/, ""),
-          description: "",
-          discipline: values.discipline,
-          category: values.category,
-          version: "1.0",
-          revision: "",
-          status: values.status,
-          fileName: file.fileName,
-          fileSize: file.fileSize,
-          fileType: file.fileType,
-          fileUrl: file.fileUrl,
-          tags: "",
-          images: [],
+      if (!result.success) {
+        toast({
+          title: "Bulk upload failed",
+          description: result.error.message,
+          variant: "destructive",
         });
-
-        if (result.success) successCount++;
-        else failCount++;
+        return;
       }
+
+      const successCount = result.data.created.length;
+      const failCount = result.data.failed.length;
 
       toast({
         title: successCount > 0 ? "Bulk upload completed" : "Bulk upload failed",

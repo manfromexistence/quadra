@@ -14,6 +14,7 @@ import type {
 } from "@/lib/edms/dashboard";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { canAccessProject } from "./access";
+import { formatStoredAbsoluteDate } from "./dates";
 import type { DashboardSessionUser } from "./session";
 
 export interface ProjectMemberSummary {
@@ -63,7 +64,7 @@ export interface ProjectDetailData {
 
 export async function getProjectDetailData(
   projectId: string,
-  sessionUser: DashboardSessionUser
+  sessionUser: DashboardSessionUser,
 ): Promise<ProjectDetailData | null> {
   try {
     const hasAccess = await canAccessProject(sessionUser, projectId);
@@ -104,7 +105,10 @@ export async function getProjectDetailData(
         .select({ value: count() })
         .from(projectMembers)
         .where(eq(projectMembers.projectId, projectId)),
-      db.select({ value: count() }).from(documents).where(eq(documents.projectId, projectId)),
+      db
+        .select({ value: count() })
+        .from(documents)
+        .where(eq(documents.projectId, projectId)),
       db
         .select({ value: count() })
         .from(documentWorkflows)
@@ -165,7 +169,10 @@ export async function getProjectDetailData(
           dueDate: workflowSteps.dueDate,
         })
         .from(workflowSteps)
-        .innerJoin(documentWorkflows, eq(workflowSteps.workflowId, documentWorkflows.id))
+        .innerJoin(
+          documentWorkflows,
+          eq(workflowSteps.workflowId, documentWorkflows.id),
+        )
         .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
         .innerJoin(projects, eq(documents.projectId, projects.id))
         .where(eq(documents.projectId, projectId))
@@ -210,8 +217,12 @@ export async function getProjectDetailData(
         status: project.status,
         clientName: project.clientName,
         images: project.images,
-        startLabel: project.startDate ? formatAbsoluteDate(project.startDate) : "Not scheduled",
-        endLabel: project.endDate ? formatAbsoluteDate(project.endDate) : "Open-ended",
+        startLabel: project.startDate
+          ? formatAbsoluteDate(project.startDate)
+          : "Not scheduled",
+        endLabel: project.endDate
+          ? formatAbsoluteDate(project.endDate)
+          : "Open-ended",
         metrics: [
           {
             label: "Members",
@@ -242,7 +253,9 @@ export async function getProjectDetailData(
           : "Assignment date pending",
       })),
       assignableUsers: userRows
-        .filter((user) => !memberRows.some((member) => member.userId === user.id))
+        .filter(
+          (user) => !memberRows.some((member) => member.userId === user.id),
+        )
         .map((user) => ({
           id: user.id,
           name: user.name,
@@ -294,10 +307,12 @@ export async function getProjectDetailData(
 async function createFallbackProjectDetail(
   projectId: string,
   sessionUser: DashboardSessionUser,
-  error: unknown
+  error: unknown,
 ): Promise<ProjectDetailData | null> {
   const fallbackDashboard = await getEdmsDashboardData(sessionUser);
-  const project = fallbackDashboard.projects.find((entry) => entry.id === projectId);
+  const project = fallbackDashboard.projects.find(
+    (entry) => entry.id === projectId,
+  );
 
   if (!project) {
     return null;
@@ -371,12 +386,14 @@ async function createFallbackProjectDetail(
       },
     ],
     documents: fallbackDashboard.documents.filter(
-      (document) => document.projectName === project.name
+      (document) => document.projectName === project.name,
     ),
     workflows: fallbackDashboard.workflowQueue.filter(
-      (workflow) => workflow.projectName === project.name
+      (workflow) => workflow.projectName === project.name,
     ),
-    activity: fallbackDashboard.activity.filter((entry) => entry.projectName === project.name),
+    activity: fallbackDashboard.activity.filter(
+      (entry) => entry.projectName === project.name,
+    ),
     isUsingFallbackData: true,
     statusMessage: getFallbackMessage(error),
   };
@@ -395,11 +412,7 @@ function formatDateLabel(date: Date | null, prefix: string) {
 }
 
 function formatAbsoluteDate(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(date);
+  return formatStoredAbsoluteDate(date) ?? "Date pending";
 }
 
 function getFallbackMessage(error: unknown) {

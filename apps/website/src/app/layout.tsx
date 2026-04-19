@@ -39,6 +39,15 @@ export const metadata: Metadata = {
   },
   description:
     "Streamline your construction project documentation with Quadra. Manage documents, workflows, transmittals, and approvals in one powerful platform. Built for Clients, PMC, Vendors, and Subcontractors.",
+  manifest: "/site.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
   openGraph: {
     title: "Quadra — Electronic Document Management System for Construction",
     description:
@@ -68,8 +77,8 @@ export const metadata: Metadata = {
 
 export const viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)" },
-    { media: "(prefers-color-scheme: dark)" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f4ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#111111" },
   ],
 };
 

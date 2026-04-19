@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { documents } from "@/db/schema/documents";
 import { notifications } from "@/db/schema/notifications";
 import { projects } from "@/db/schema/projects";
+import { formatStoredAbsoluteDate } from "./dates";
 import type { DashboardSessionUser } from "./session";
 
 export interface EdmsNotificationFeedItem {
@@ -24,7 +25,7 @@ export interface EdmsNotificationFeedItem {
 
 export async function getEdmsNotificationFeed(
   sessionUser: DashboardSessionUser,
-  limit = 12
+  limit = 12,
 ) {
   const rows = await db
     .select({
@@ -63,13 +64,20 @@ export async function getEdmsNotificationFeed(
   })) satisfies EdmsNotificationFeedItem[];
 }
 
-export async function getEdmsUnreadNotificationCount(sessionUser: DashboardSessionUser) {
+export async function getEdmsUnreadNotificationCount(
+  sessionUser: DashboardSessionUser,
+) {
   const [row] = await db
     .select({
       value: count(),
     })
     .from(notifications)
-    .where(and(eq(notifications.userId, sessionUser.id), eq(notifications.isRead, false)));
+    .where(
+      and(
+        eq(notifications.userId, sessionUser.id),
+        eq(notifications.isRead, false),
+      ),
+    );
 
   return Number(row?.value ?? 0);
 }
@@ -79,9 +87,5 @@ function formatDateLabel(date: Date | null) {
     return "Just now";
   }
 
-  return new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(date);
+  return formatStoredAbsoluteDate(date) ?? "Just now";
 }

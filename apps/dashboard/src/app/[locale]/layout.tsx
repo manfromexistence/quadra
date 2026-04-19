@@ -8,6 +8,7 @@ import { Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { ReactElement } from "react";
 import { DesktopHeader } from "@/components/desktop-header";
+import { ThemeScript } from "@/components/theme-script";
 import { isDesktopApp } from "@/utils/desktop";
 import { Providers } from "./providers";
 
@@ -16,6 +17,15 @@ export const metadata: Metadata = {
   title: "Quadra EDMS | Construction Document Management",
   description:
     "Manage construction projects, documents, workflows, and transmittals efficiently with Quadra EDMS.",
+  manifest: "/site.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
   twitter: {
     title: "Quadra EDMS | Construction Document Management",
     description:
@@ -48,8 +58,8 @@ export const viewport = {
   maximumScale: 1,
   userScalable: false,
   themeColor: [
-    { media: "(prefers-color-scheme: light)" },
-    { media: "(prefers-color-scheme: dark)" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f4ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#111111" },
   ],
 };
 
@@ -69,6 +79,9 @@ export default async function Layout({
       suppressHydrationWarning
       className={cn(isDesktop && "desktop")}
     >
+      <head>
+        <ThemeScript />
+      </head>
       <body
         className={cn(
           `${hedvigSans.variable} ${hedvigSerif.variable} font-sans`,

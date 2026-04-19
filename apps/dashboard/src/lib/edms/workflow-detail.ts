@@ -7,6 +7,7 @@ import { documents } from "@/db/schema/documents";
 import { projects } from "@/db/schema/projects";
 import { documentWorkflows, workflowSteps } from "@/db/schema/workflows";
 import { canAccessProject } from "./access";
+import { formatStoredAbsoluteDate } from "./dates";
 import type { DashboardSessionUser } from "./session";
 
 export interface WorkflowDetailData {
@@ -40,7 +41,7 @@ export interface WorkflowDetailData {
 
 export async function getWorkflowDetailData(
   workflowId: string,
-  sessionUser: DashboardSessionUser
+  sessionUser: DashboardSessionUser,
 ): Promise<WorkflowDetailData | null> {
   const [workflow] = await db
     .select({
@@ -67,7 +68,10 @@ export async function getWorkflowDetailData(
     return null;
   }
 
-  const hasProjectAccess = await canAccessProject(sessionUser, String(workflow.projectId));
+  const hasProjectAccess = await canAccessProject(
+    sessionUser,
+    String(workflow.projectId),
+  );
 
   if (!hasProjectAccess) {
     return null;
@@ -126,9 +130,5 @@ function formatDateLabel(date: Date | null, prefix: string) {
     return `${prefix} pending`;
   }
 
-  return `${prefix} ${new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(date)}`;
+  return `${prefix} ${formatStoredAbsoluteDate(date) ?? "date pending"}`;
 }

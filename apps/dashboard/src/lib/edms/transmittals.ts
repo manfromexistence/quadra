@@ -9,6 +9,7 @@ import { projectMembers, projects } from "@/db/schema/projects";
 import { transmittalDocuments, transmittals } from "@/db/schema/transmittals";
 import { getProjectAccessScope } from "./access";
 import { type DashboardMetric, getEdmsDashboardData } from "./dashboard";
+import { formatStoredAbsoluteDate } from "./dates";
 import type { DashboardSessionUser } from "./session";
 
 export interface TransmittalProjectOption {
@@ -55,7 +56,7 @@ export interface TransmittalManagementData {
 }
 
 export async function getTransmittalManagementData(
-  sessionUser: DashboardSessionUser
+  sessionUser: DashboardSessionUser,
 ): Promise<TransmittalManagementData> {
   try {
     const accessScope = await getProjectAccessScope(sessionUser);
@@ -92,19 +93,29 @@ export async function getTransmittalManagementData(
     ] = await Promise.all([
       scopedTransmittalCondition === null
         ? Promise.resolve([{ value: 0 }])
-        : db.select({ value: count() }).from(transmittals).where(scopedTransmittalCondition),
+        : db
+            .select({ value: count() })
+            .from(transmittals)
+            .where(scopedTransmittalCondition),
       scopedTransmittalCondition === null
         ? Promise.resolve([{ value: 0 }])
         : db
             .select({ value: count() })
             .from(transmittals)
-            .where(and(eq(transmittals.status, "acknowledged"), scopedTransmittalCondition)),
+            .where(
+              and(
+                eq(transmittals.status, "acknowledged"),
+                scopedTransmittalCondition,
+              ),
+            ),
       scopedTransmittalCondition === null
         ? Promise.resolve([{ value: 0 }])
         : db
             .select({ value: count() })
             .from(transmittals)
-            .where(and(eq(transmittals.status, "sent"), scopedTransmittalCondition)),
+            .where(
+              and(eq(transmittals.status, "sent"), scopedTransmittalCondition),
+            ),
       db
         .select({ value: count() })
         .from(notifications)
@@ -164,7 +175,10 @@ export async function getTransmittalManagementData(
             .from(transmittals)
             .innerJoin(projects, eq(transmittals.projectId, projects.id))
             .leftJoin(userTable, eq(transmittals.acknowledgedBy, userTable.id))
-            .leftJoin(transmittalDocuments, eq(transmittalDocuments.transmittalId, transmittals.id))
+            .leftJoin(
+              transmittalDocuments,
+              eq(transmittalDocuments.transmittalId, transmittals.id),
+            )
             .where(scopedTransmittalCondition)
             .groupBy(
               transmittals.id,
@@ -175,7 +189,7 @@ export async function getTransmittalManagementData(
               transmittals.sentAt,
               transmittals.createdAt,
               transmittals.sentTo,
-              userTable.name
+              userTable.name,
             )
             .orderBy(desc(transmittals.createdAt))
             .limit(24),
@@ -198,7 +212,8 @@ export async function getTransmittalManagementData(
         {
           label: "Awaiting acknowledgement",
           value: formatCount(sentCount?.value),
-          description: "Packages that have been sent but not yet acknowledged by recipients.",
+          description:
+            "Packages that have been sent but not yet acknowledged by recipients.",
           tone: "amber",
           icon: "transmittals",
         },
@@ -212,7 +227,8 @@ export async function getTransmittalManagementData(
         {
           label: "Linked alerts",
           value: formatCount(notificationCount?.value),
-          description: "Notifications tied to delivery and acknowledgement activity.",
+          description:
+            "Notifications tied to delivery and acknowledgement activity.",
           tone: "slate",
           icon: "notifications",
         },
@@ -258,7 +274,7 @@ export async function getTransmittalManagementData(
 
 async function createFallbackTransmittalData(
   sessionUser: DashboardSessionUser,
-  error: unknown
+  error: unknown,
 ): Promise<TransmittalManagementData> {
   const dashboard = await getEdmsDashboardData(sessionUser);
 
@@ -267,13 +283,17 @@ async function createFallbackTransmittalData(
       {
         label: "Issued packages",
         value: String(dashboard.transmittals.length),
-        description: "Sample transmittals while the database is still being prepared.",
+        description:
+          "Sample transmittals while the database is still being prepared.",
         tone: "rose",
         icon: "transmittals",
       },
       {
         label: "Awaiting acknowledgement",
-        value: String(dashboard.transmittals.filter((item) => item.status === "sent").length),
+        value: String(
+          dashboard.transmittals.filter((item) => item.status === "sent")
+            .length,
+        ),
         description: "Sample packages still awaiting recipient confirmation.",
         tone: "amber",
         icon: "transmittals",
@@ -350,13 +370,20 @@ function parseRecipients(value: string) {
       ? parsed.filter((entry): entry is string => typeof entry === "string")
       : [];
   } catch {
-    return [];
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? [trimmed] : [];
   }
 }
 
 function parseRecipientLabel(
   value: string,
-  members: { id: string; name: string; email: string; role: string; projectId: string }[]
+  members: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    projectId: string;
+  }[],
 ) {
   const [firstRecipient] = parseRecipients(value);
 
@@ -364,7 +391,10 @@ function parseRecipientLabel(
     return "Recipient pending";
   }
 
-  return members.find((member) => member.id === firstRecipient)?.name ?? "Recipient pending";
+  return (
+    members.find((member) => member.id === firstRecipient)?.name ??
+    "Recipient pending"
+  );
 }
 
 function formatCount(value: number | string | null | undefined) {
@@ -376,11 +406,7 @@ function formatDateLabel(date: Date | null) {
     return "Updated date pending";
   }
 
-  return `Updated ${new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(date)}`;
+  return `Updated ${formatStoredAbsoluteDate(date) ?? "date pending"}`;
 }
 
 function getFallbackMessage(error: unknown) {

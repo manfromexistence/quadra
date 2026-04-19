@@ -1,5 +1,6 @@
 "use client";
 
+import { createDocument } from "@/actions/documents";
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import { Input } from "@midday/ui/input";
@@ -82,9 +83,37 @@ export function EdmsQuickUpload({
       }
 
       setLastUpload(payload);
+
+      const createResult = await createDocument({
+        projectId: selectedProjectId,
+        documentNumber: "",
+        title: file.name.replace(/\.[^/.]+$/, ""),
+        description: "",
+        discipline: "",
+        category: "",
+        version: "1.0",
+        revision: "",
+        status: "draft",
+        fileName: payload.fileName,
+        fileSize: payload.fileSize,
+        fileType: payload.fileType,
+        fileUrl: payload.fileUrl,
+        tags: "",
+        images: [],
+      });
+
+      if (!createResult.success) {
+        toast({
+          title: "File stored, register entry missing",
+          description: createResult.error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
       toast({
         title: "File uploaded",
-        description: `${payload.fileName} is now stored on ${payload.provider}.`,
+        description: `${payload.fileName} is now stored on ${payload.provider} and added to the document register.`,
       });
     });
   };

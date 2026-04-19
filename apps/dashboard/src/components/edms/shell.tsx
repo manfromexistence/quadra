@@ -5,7 +5,6 @@ import { Badge } from "@midday/ui/badge";
 import { Button } from "@midday/ui/button";
 import { Card } from "@midday/ui/card";
 import { cn } from "@midday/ui/cn";
-import { Icons } from "@midday/ui/icons";
 import { Sheet, SheetContent } from "@midday/ui/sheet";
 import {
   BarChart3,
@@ -22,6 +21,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { type ComponentType, useState } from "react";
+import { BrandLogo } from "@/components/brand-logo";
 import { signOut } from "@/lib/auth-client";
 import type { EdmsNotificationFeedItem } from "@/lib/edms/notification-feed";
 import { EdmsNotificationBell } from "./notification-bell";
@@ -74,7 +74,7 @@ export function EdmsShell({
         <div className="lg:hidden sticky top-0 z-40 border-b border-border bg-background/90 px-4 py-3 backdrop-blur">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <Icons.LogoSmall className="size-6" />
+              <BrandLogo size={30} priority />
               <div>
                 <p className="text-sm font-semibold tracking-[0.18em] uppercase">
                   Quadra
@@ -119,7 +119,10 @@ export function EdmsShell({
               <BellRing className="size-3.5" />
               <span>Unread alerts: {unreadCount}</span>
             </div>
-            <EdmsNotificationBell notifications={notifications} unreadCount={unreadCount} />
+            <EdmsNotificationBell
+              notifications={notifications}
+              unreadCount={unreadCount}
+            />
           </div>
         </div>
         <div className="mx-auto max-w-7xl px-4 py-6 md:px-6 lg:px-8">
@@ -149,7 +152,7 @@ function SidebarContent({
     <div className="flex h-full flex-col gap-4">
       <Card className="border-border bg-background/95 p-4 shadow-sm">
         <Link href="/projects" className="flex items-center gap-3">
-          <Icons.LogoSmall className="size-7" />
+          <BrandLogo size={36} priority />
           <div>
             <p className="text-sm font-semibold tracking-[0.18em] uppercase">
               Quadra
@@ -262,5 +265,3 @@ function getInitials(name: string) {
     .map((part) => part[0]?.toUpperCase())
     .join("");
 }
-
-

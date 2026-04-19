@@ -21,6 +21,7 @@ import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { TransmittalCreateSheet } from "@/components/edms/transmittal-create-sheet";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
+import { canManageEdmsContent } from "@/lib/edms/rbac";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { getTransmittalManagementData } from "@/lib/edms/transmittals";
 import { HydrateClient } from "@/trpc/server";
@@ -35,6 +36,7 @@ export default async function TransmittalsPage() {
     getEdmsDashboardData(sessionUser),
     getTransmittalManagementData(sessionUser),
   ]);
+  const canManageContent = canManageEdmsContent(sessionUser.role);
 
   return (
     <HydrateClient>
@@ -69,11 +71,13 @@ export default async function TransmittalsPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <TransmittalCreateSheet
-                projects={data.projects}
-                members={data.members}
-                documents={data.documents}
-              />
+              {canManageContent ? (
+                <TransmittalCreateSheet
+                  projects={data.projects}
+                  members={data.members}
+                  documents={data.documents}
+                />
+              ) : null}
               <Button variant="outline" asChild>
                 <Link href="/documents">
                   Open register

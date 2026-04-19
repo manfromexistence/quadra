@@ -1,10 +1,13 @@
 import { createGroq } from "@ai-sdk/groq";
 import { streamText } from "ai";
-import { eq } from "drizzle-orm";
+import { and, count, desc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
+import { documents } from "@/db/schema/documents";
 import { projects } from "@/db/schema/projects";
-import { userProjectAccess } from "@/db/schema/access";
+import { transmittals } from "@/db/schema/transmittals";
+import { documentWorkflows, workflowSteps } from "@/db/schema/workflows";
 import { auth } from "@/lib/auth";
+import { getProjectAccessScopeByUserId } from "@/lib/edms/access";
 
 const groq = createGroq({
   apiKey: process.env.GROQ_API_KEY,
@@ -47,24 +50,130 @@ export async function POST(req: Request) {
       };
     });
 
-    // Fetch user's EDMS projects to provide context to the AI
+    // Fetch the user's accessible EDMS projects to provide context to the AI.
     let projectsContext = "No active projects found for this user.";
     try {
-      const userProjects = await db
+      const accessScope = await getProjectAccessScopeByUserId(session.user.id);
+      const scopedProjectCondition = accessScope.isAdmin
+        ? undefined
+        : accessScope.projectIds.length > 0
+          ? inArray(projects.id, accessScope.projectIds)
+          : null;
+
+      const userProjects =
+        scopedProjectCondition === null
+          ? []
+          : await db
         .select({
+          id: projects.id,
           name: projects.name,
           number: projects.projectNumber,
           description: projects.description,
           status: projects.status,
+          startDate: projects.startDate,
+          endDate: projects.endDate,
         })
         .from(projects)
-        .innerJoin(userProjectAccess, eq(projects.id, userProjectAccess.projectId))
-        .where(eq(userProjectAccess.userId, session.user.id));
+        .where(scopedProjectCondition)
+        .orderBy(desc(projects.updatedAt))
+        .limit(8);
 
       if (userProjects.length > 0) {
+        const projectIds = userProjects.map((project) => project.id);
+
+        const [documentCounts, pendingWorkflowCounts, transmittalCounts, recentDocuments] =
+          await Promise.all([
+            db
+              .select({
+                projectId: documents.projectId,
+                value: count(),
+              })
+              .from(documents)
+              .where(inArray(documents.projectId, projectIds))
+              .groupBy(documents.projectId),
+            db
+              .select({
+                projectId: documents.projectId,
+                value: count(),
+              })
+              .from(workflowSteps)
+              .innerJoin(documentWorkflows, eq(workflowSteps.workflowId, documentWorkflows.id))
+              .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
+              .where(
+                and(
+                  inArray(documents.projectId, projectIds),
+                  inArray(workflowSteps.status, ["pending", "in_progress"])
+                )
+              )
+              .groupBy(documents.projectId),
+            db
+              .select({
+                projectId: transmittals.projectId,
+                value: count(),
+              })
+              .from(transmittals)
+              .where(inArray(transmittals.projectId, projectIds))
+              .groupBy(transmittals.projectId),
+            db
+              .select({
+                projectId: documents.projectId,
+                documentNumber: documents.documentNumber,
+                title: documents.title,
+                status: documents.status,
+              })
+              .from(documents)
+              .where(inArray(documents.projectId, projectIds))
+              .orderBy(desc(documents.uploadedAt))
+              .limit(12),
+          ]);
+
+        const documentCountMap = new Map(
+          documentCounts.map((row) => [String(row.projectId), Number(row.value ?? 0)])
+        );
+        const workflowCountMap = new Map(
+          pendingWorkflowCounts.map((row) => [String(row.projectId), Number(row.value ?? 0)])
+        );
+        const transmittalCountMap = new Map(
+          transmittalCounts.map((row) => [String(row.projectId), Number(row.value ?? 0)])
+        );
+        const recentDocumentsByProject = recentDocuments.reduce<Record<string, string[]>>(
+          (acc, document) => {
+            const key = String(document.projectId);
+            if (!acc[key]) {
+              acc[key] = [];
+            }
+            if (acc[key].length < 2) {
+              acc[key].push(
+                `${document.documentNumber}: ${document.title} (${document.status.replaceAll("_", " ")})`
+              );
+            }
+            return acc;
+          },
+          {}
+        );
+
         projectsContext = userProjects
-          .map((p) => `- ${p.number || "No number"}: ${p.name} (${p.status}) - ${p.description || "No description"}`)
-          .join("\n");
+          .map((project) => {
+            const projectId = String(project.id);
+            const recentProjectDocuments = recentDocumentsByProject[projectId] ?? [];
+
+            return [
+              `- Short title: ${project.number || project.name}`,
+              `  Project: ${project.name}`,
+              `  Status: ${project.status}`,
+              `  Description: ${project.description || "No description provided."}`,
+              `  Schedule: ${formatProjectDateRange(project.startDate, project.endDate)}`,
+              `  Documents: ${documentCountMap.get(projectId) ?? 0}`,
+              `  Workflow items: ${workflowCountMap.get(projectId) ?? 0}`,
+              `  Transmittals: ${transmittalCountMap.get(projectId) ?? 0}`,
+              `  Recent EDMS records: ${
+                recentProjectDocuments.length > 0
+                  ? recentProjectDocuments.join(" | ")
+                  : "No recent document records."
+              }`,
+            ].join("\n");
+          })
+          .join("\n\n");
       }
     } catch (e) {
       console.error("Failed to fetch projects context", e);
@@ -84,10 +193,12 @@ User's EDMS Projects:
 ${projectsContext}
 
 You help users with:
-- Understanding their business data and metrics
-- Analyzing transactions and financial information
-- Managing documents and projects
-- Answering questions about their dashboard and projects
+- Understanding their EDMS workspace and project portfolio
+- Managing documents, workflows, transmittals, and notifications
+- Answering questions using the user's actual project short title/code, project name, and description
+- Summarizing the state of their accessible EDMS records before giving advice
+
+If the user asks about a project, prioritize the exact EDMS context provided above. If the available context is insufficient, say what is missing instead of inventing details.
 
 Be concise, helpful, and professional in your responses.`,
     });
@@ -104,4 +215,26 @@ Be concise, helpful, and professional in your responses.`,
       headers: { 'Content-Type': 'application/json' }
     });
   }
+}
+
+function formatProjectDateRange(startDate: Date | null, endDate: Date | null) {
+  if (!startDate && !endDate) {
+    return "Dates not scheduled";
+  }
+
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
+  if (startDate && endDate) {
+    return `${formatter.format(startDate)} to ${formatter.format(endDate)}`;
+  }
+
+  if (startDate) {
+    return `Starts ${formatter.format(startDate)}`;
+  }
+
+  return `Ends ${formatter.format(endDate as Date)}`;
 }

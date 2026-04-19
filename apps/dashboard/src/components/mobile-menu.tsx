@@ -4,6 +4,7 @@ import { Button } from "@midday/ui/button";
 import { Icons } from "@midday/ui/icons";
 import { Sheet, SheetContent } from "@midday/ui/sheet";
 import { useState } from "react";
+import { BrandLogo } from "./brand-logo";
 import { MainMenu } from "./main-menu";
 
 export function MobileMenu() {
@@ -23,7 +24,7 @@ export function MobileMenu() {
       </div>
       <SheetContent side="left" className="border-none rounded-none -ml-4">
         <div className="ml-2 mb-8">
-          <Icons.LogoSmall />
+          <BrandLogo size={36} priority />
         </div>
 
         <div className="-ml-2">

@@ -25,6 +25,7 @@ import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
+import { canManageEdmsContent } from "@/lib/edms/rbac";
 import { getDocumentControlData } from "@/lib/edms/documents";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { expandImageArray } from "@/lib/storage-utils";
@@ -50,6 +51,7 @@ export default async function DocumentsPage({
     getEdmsDashboardData(sessionUser),
     getDocumentControlData(sessionUser, params),
   ]);
+  const canManageContent = canManageEdmsContent(sessionUser.role);
 
   return (
     <HydrateClient>
@@ -84,8 +86,8 @@ export default async function DocumentsPage({
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <DocumentCreateSheet projects={data.projects} />
-              <DocumentBulkUploadSheet projects={data.projects} />
+              {canManageContent ? <DocumentCreateSheet projects={data.projects} /> : null}
+              {canManageContent ? <DocumentBulkUploadSheet projects={data.projects} /> : null}
               <Button variant="outline" asChild>
                 <Link href="/workflows">
                   Review queue
@@ -106,7 +108,7 @@ export default async function DocumentsPage({
             message={data.statusMessage}
           />
 
-          <EdmsQuickUpload projects={data.projects} />
+          {canManageContent ? <EdmsQuickUpload projects={data.projects} /> : null}
 
           <ErrorBoundary errorComponent={ErrorFallback}>
             <Suspense fallback={<div className="text-sm text-muted-foreground">Loading documents...</div>}>

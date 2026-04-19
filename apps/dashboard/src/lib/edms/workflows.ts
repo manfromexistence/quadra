@@ -9,6 +9,7 @@ import { projectMembers, projects } from "@/db/schema/projects";
 import { documentWorkflows, workflowSteps } from "@/db/schema/workflows";
 import { getProjectAccessScope } from "./access";
 import { type DashboardMetric, getEdmsDashboardData } from "./dashboard";
+import { formatStoredAbsoluteDate } from "./dates";
 import type { DashboardSessionUser } from "./session";
 
 export interface WorkflowDocumentOption {
@@ -59,7 +60,7 @@ export interface WorkflowManagementData {
 }
 
 export async function getWorkflowManagementData(
-  sessionUser: DashboardSessionUser
+  sessionUser: DashboardSessionUser,
 ): Promise<WorkflowManagementData> {
   try {
     const accessScope = await getProjectAccessScope(sessionUser);
@@ -88,26 +89,40 @@ export async function getWorkflowManagementData(
         : db
             .select({ value: count() })
             .from(documentWorkflows)
-            .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
+            .innerJoin(
+              documents,
+              eq(documentWorkflows.documentId, documents.id),
+            )
             .where(scopedDocumentCondition),
       db
         .select({ value: count() })
         .from(workflowSteps)
-        .innerJoin(documentWorkflows, eq(workflowSteps.workflowId, documentWorkflows.id))
+        .innerJoin(
+          documentWorkflows,
+          eq(workflowSteps.workflowId, documentWorkflows.id),
+        )
         .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
         .where(
           and(
             inArray(workflowSteps.status, ["pending", "in_progress"]),
-            scopedDocumentCondition ?? undefined
-          )
+            scopedDocumentCondition ?? undefined,
+          ),
         ),
       scopedDocumentCondition === null
         ? Promise.resolve([{ value: 0 }])
         : db
             .select({ value: count() })
             .from(documentWorkflows)
-            .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
-            .where(and(eq(documentWorkflows.status, "approved"), scopedDocumentCondition)),
+            .innerJoin(
+              documents,
+              eq(documentWorkflows.documentId, documents.id),
+            )
+            .where(
+              and(
+                eq(documentWorkflows.status, "approved"),
+                scopedDocumentCondition,
+              ),
+            ),
       db
         .select({ value: count() })
         .from(notifications)
@@ -166,12 +181,21 @@ export async function getWorkflowManagementData(
               comments: workflowSteps.comments,
             })
             .from(workflowSteps)
-            .innerJoin(documentWorkflows, eq(workflowSteps.workflowId, documentWorkflows.id))
-            .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
+            .innerJoin(
+              documentWorkflows,
+              eq(workflowSteps.workflowId, documentWorkflows.id),
+            )
+            .innerJoin(
+              documents,
+              eq(documentWorkflows.documentId, documents.id),
+            )
             .innerJoin(projects, eq(documents.projectId, projects.id))
             .innerJoin(userTable, eq(workflowSteps.assignedTo, userTable.id))
             .where(scopedDocumentCondition)
-            .orderBy(desc(documentWorkflows.startedAt), asc(workflowSteps.stepNumber))
+            .orderBy(
+              desc(documentWorkflows.startedAt),
+              asc(workflowSteps.stepNumber),
+            )
             .limit(24),
     ]);
 
@@ -185,28 +209,32 @@ export async function getWorkflowManagementData(
         {
           label: "Active workflows",
           value: formatCount(workflowCount?.value),
-          description: "Review routes currently registered against controlled documents.",
+          description:
+            "Review routes currently registered against controlled documents.",
           tone: "emerald",
           icon: "reviews",
         },
         {
           label: "Pending actions",
           value: formatCount(pendingSteps?.value),
-          description: "Reviewer and approver steps still waiting on a decision.",
+          description:
+            "Reviewer and approver steps still waiting on a decision.",
           tone: "amber",
           icon: "reviews",
         },
         {
           label: "Approved routes",
           value: formatCount(approvedWorkflows?.value),
-          description: "Workflows that completed successfully and released the document.",
+          description:
+            "Workflows that completed successfully and released the document.",
           tone: "blue",
           icon: "documents",
         },
         {
           label: "Linked alerts",
           value: formatCount(notificationCount?.value),
-          description: "Notifications associated with workflow activity in the workspace.",
+          description:
+            "Notifications associated with workflow activity in the workspace.",
           tone: "slate",
           icon: "notifications",
         },
@@ -256,7 +284,7 @@ export async function getWorkflowManagementData(
 
 async function createFallbackWorkflowData(
   sessionUser: DashboardSessionUser,
-  error: unknown
+  error: unknown,
 ): Promise<WorkflowManagementData> {
   const dashboard = await getEdmsDashboardData(sessionUser);
 
@@ -272,8 +300,9 @@ async function createFallbackWorkflowData(
       {
         label: "Pending actions",
         value: String(
-          dashboard.workflowQueue.filter((item) => ["pending", "in_progress"].includes(item.status))
-            .length
+          dashboard.workflowQueue.filter((item) =>
+            ["pending", "in_progress"].includes(item.status),
+          ).length,
         ),
         description: "Sample review and approval decisions still outstanding.",
         tone: "amber",
@@ -282,7 +311,9 @@ async function createFallbackWorkflowData(
       {
         label: "Approved routes",
         value: String(
-          dashboard.documents.filter((document) => document.status === "approved").length
+          dashboard.documents.filter(
+            (document) => document.status === "approved",
+          ).length,
         ),
         description: "Sample approved workflow count in fallback mode.",
         tone: "blue",
@@ -363,11 +394,7 @@ function formatDateLabel(date: Date | null) {
     return "Due date pending";
   }
 
-  return `Due ${new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(date)}`;
+  return `Due ${formatStoredAbsoluteDate(date) ?? "date pending"}`;
 }
 
 function getFallbackMessage(error: unknown) {

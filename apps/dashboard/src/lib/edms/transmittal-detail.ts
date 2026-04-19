@@ -8,6 +8,7 @@ import { projects } from "@/db/schema/projects";
 import { transmittalDocuments, transmittals } from "@/db/schema/transmittals";
 import { documentWorkflows, workflowSteps } from "@/db/schema/workflows";
 import { canAccessProject } from "./access";
+import { formatStoredAbsoluteDate } from "./dates";
 import type { DashboardSessionUser } from "./session";
 
 export interface TransmittalDetailData {
@@ -59,7 +60,7 @@ export interface TransmittalDetailData {
 
 export async function getTransmittalDetailData(
   transmittalId: string,
-  sessionUser: DashboardSessionUser
+  sessionUser: DashboardSessionUser,
 ): Promise<TransmittalDetailData | null> {
   const [transmittal] = await db
     .select({
@@ -88,7 +89,10 @@ export async function getTransmittalDetailData(
     return null;
   }
 
-  const hasProjectAccess = await canAccessProject(sessionUser, String(transmittal.projectId));
+  const hasProjectAccess = await canAccessProject(
+    sessionUser,
+    String(transmittal.projectId),
+  );
 
   if (!hasProjectAccess) {
     return null;
@@ -125,13 +129,16 @@ export async function getTransmittalDetailData(
             documentTitle: documents.title,
           })
           .from(workflowSteps)
-          .innerJoin(documentWorkflows, eq(workflowSteps.workflowId, documentWorkflows.id))
+          .innerJoin(
+            documentWorkflows,
+            eq(workflowSteps.workflowId, documentWorkflows.id),
+          )
           .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
           .where(
             and(
               inArray(documents.id, documentIds),
-              inArray(workflowSteps.status, ["pending", "in_progress"])
-            )
+              inArray(workflowSteps.status, ["pending", "in_progress"]),
+            ),
           )
           .orderBy(asc(workflowSteps.stepNumber));
 
@@ -231,9 +238,5 @@ function formatDateLabel(date: Date | null) {
     return "Issued date pending";
   }
 
-  return new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(date);
+  return formatStoredAbsoluteDate(date) ?? "Issued date pending";
 }

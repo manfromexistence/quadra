@@ -25,6 +25,7 @@ import { ScrollableContent } from "@/components/scrollable-content";
 import { WorkflowActionSheet } from "@/components/edms/workflow-action-sheet";
 import { WorkflowCreateSheet } from "@/components/edms/workflow-create-sheet";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
+import { canManageEdmsContent } from "@/lib/edms/rbac";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { getWorkflowManagementData } from "@/lib/edms/workflows";
 import { HydrateClient } from "@/trpc/server";
@@ -39,6 +40,7 @@ export default async function WorkflowsPage() {
     getEdmsDashboardData(sessionUser),
     getWorkflowManagementData(sessionUser),
   ]);
+  const canManageContent = canManageEdmsContent(sessionUser.role);
 
   return (
     <HydrateClient>
@@ -73,7 +75,9 @@ export default async function WorkflowsPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <WorkflowCreateSheet documents={data.documents} assignees={data.assignees} />
+              {canManageContent ? (
+                <WorkflowCreateSheet documents={data.documents} assignees={data.assignees} />
+              ) : null}
               <Button variant="outline" asChild>
                 <Link href="/documents">
                   Source documents

@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { BrandLogo } from "./brand-logo";
 
 export function Footer() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -219,6 +220,13 @@ export function Footer() {
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <BrandLogo size={36} />
+            <div className="leading-tight">
+              <p className="text-sm font-semibold text-foreground">Quadra</p>
+              <p className="text-xs text-muted-foreground">Construction EDMS</p>
+            </div>
+          </div>
           <Link
             href="https://midday.openstatus.dev/"
             target="_blank"

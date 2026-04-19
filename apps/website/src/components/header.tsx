@@ -9,6 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { BrandLogo } from "./brand-logo";
 import { HeaderIntegrationsPreview } from "./header-integrations-preview";
 import type { Testimonial } from "./sections/testimonials-section";
 import { defaultTestimonials } from "./sections/testimonials-section";
@@ -261,9 +262,7 @@ export function Header({
             style={{ WebkitTapHighlightColor: "transparent" }}
             aria-label="Quadra - Go to homepage"
           >
-            <div className="w-6 h-6">
-              <Icons.LogoSmall className="w-full h-full text-foreground" />
-            </div>
+            <BrandLogo size={34} priority />
             <span className="font-sans text-base xl:hidden text-foreground">
               quadra
             </span>

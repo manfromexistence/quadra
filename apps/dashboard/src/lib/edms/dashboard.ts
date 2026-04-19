@@ -8,8 +8,9 @@ import { activityLog, notifications } from "@/db/schema/notifications";
 import { projects } from "@/db/schema/projects";
 import { transmittals } from "@/db/schema/transmittals";
 import { documentWorkflows, workflowSteps } from "@/db/schema/workflows";
-import { expandImageArray, expandStorageUrl } from "@/lib/storage-utils";
+import { expandStorageUrl } from "@/lib/storage-utils";
 import { getProjectAccessScope } from "./access";
+import { formatStoredAbsoluteDate } from "./dates";
 import type { DashboardSessionUser } from "./session";
 
 export interface DashboardUser {
@@ -109,7 +110,7 @@ export interface EdmsDashboardData {
 }
 
 export async function getEdmsDashboardData(
-  sessionUser: DashboardSessionUser
+  sessionUser: DashboardSessionUser,
 ): Promise<EdmsDashboardData> {
   try {
     const accessScope = await getProjectAccessScope(sessionUser);
@@ -162,20 +163,29 @@ export async function getEdmsDashboardData(
         .limit(1),
       scopedProjectCondition === null
         ? Promise.resolve([{ value: 0 }])
-        : db.select({ value: count() }).from(projects).where(scopedProjectCondition),
+        : db
+            .select({ value: count() })
+            .from(projects)
+            .where(scopedProjectCondition),
       scopedDocumentCondition === null
         ? Promise.resolve([{ value: 0 }])
-        : db.select({ value: count() }).from(documents).where(scopedDocumentCondition),
+        : db
+            .select({ value: count() })
+            .from(documents)
+            .where(scopedDocumentCondition),
       db
         .select({ value: count() })
         .from(workflowSteps)
-        .innerJoin(documentWorkflows, eq(workflowSteps.workflowId, documentWorkflows.id))
+        .innerJoin(
+          documentWorkflows,
+          eq(workflowSteps.workflowId, documentWorkflows.id),
+        )
         .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
         .where(
           and(
             inArray(workflowSteps.status, ["pending", "in_progress"]),
-            scopedDocumentCondition ?? undefined
-          )
+            scopedDocumentCondition ?? undefined,
+          ),
         ),
       db
         .select({ value: count() })
@@ -183,13 +193,18 @@ export async function getEdmsDashboardData(
         .where(
           and(
             inArray(transmittals.status, ["draft", "sent"]),
-            scopedTransmittalCondition ?? undefined
-          )
+            scopedTransmittalCondition ?? undefined,
+          ),
         ),
       db
         .select({ value: count() })
         .from(notifications)
-        .where(and(eq(notifications.userId, sessionUser.id), eq(notifications.isRead, false))),
+        .where(
+          and(
+            eq(notifications.userId, sessionUser.id),
+            eq(notifications.isRead, false),
+          ),
+        ),
       scopedProjectCondition === null
         ? Promise.resolve([])
         : db
@@ -243,16 +258,25 @@ export async function getEdmsDashboardData(
               dueDate: workflowSteps.dueDate,
             })
             .from(workflowSteps)
-            .innerJoin(documentWorkflows, eq(workflowSteps.workflowId, documentWorkflows.id))
-            .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
+            .innerJoin(
+              documentWorkflows,
+              eq(workflowSteps.workflowId, documentWorkflows.id),
+            )
+            .innerJoin(
+              documents,
+              eq(documentWorkflows.documentId, documents.id),
+            )
             .innerJoin(projects, eq(documents.projectId, projects.id))
             .where(
               and(
                 inArray(workflowSteps.status, ["pending", "in_progress"]),
-                scopedDocumentCondition
-              )
+                scopedDocumentCondition,
+              ),
             )
-            .orderBy(asc(workflowSteps.dueDate), desc(documentWorkflows.startedAt))
+            .orderBy(
+              asc(workflowSteps.dueDate),
+              desc(documentWorkflows.startedAt),
+            )
             .limit(6),
       scopedTransmittalCondition === null
         ? Promise.resolve([])
@@ -328,35 +352,40 @@ export async function getEdmsDashboardData(
         {
           label: "Active projects",
           value: formatCount(projectCount?.value),
-          description: "Projects currently being coordinated through the EDMS workspace.",
+          description:
+            "Projects currently being coordinated through the EDMS workspace.",
           tone: "amber",
           icon: "projects",
         },
         {
           label: "Controlled documents",
           value: formatCount(documentCount?.value),
-          description: "Latest drawing, specification, and report revisions available to the team.",
+          description:
+            "Latest drawing, specification, and report revisions available to the team.",
           tone: "blue",
           icon: "documents",
         },
         {
           label: "Pending reviews",
           value: formatCount(pendingReviews?.value),
-          description: "Workflow steps waiting on PMC, client, or vendor action.",
+          description:
+            "Workflow steps waiting on PMC, client, or vendor action.",
           tone: "emerald",
           icon: "reviews",
         },
         {
           label: "Open transmittals",
           value: formatCount(openTransmittals?.value),
-          description: "Draft and sent packages still moving across project parties.",
+          description:
+            "Draft and sent packages still moving across project parties.",
           tone: "rose",
           icon: "transmittals",
         },
         {
           label: "Unread alerts",
           value: formatCount(unreadNotifications?.value),
-          description: "Recent delivery, review, and approval notices still awaiting attention.",
+          description:
+            "Recent delivery, review, and approval notices still awaiting attention.",
           tone: "slate",
           icon: "notifications",
         },
@@ -367,7 +396,11 @@ export async function getEdmsDashboardData(
         projectNumber: project.projectNumber,
         location: project.location,
         status: project.status,
-        schedule: formatProjectSchedule(project.startDate, project.endDate, project.updatedAt),
+        schedule: formatProjectSchedule(
+          project.startDate,
+          project.endDate,
+          project.updatedAt,
+        ),
         images: project.images, // Keep truncated for now, expand in component
       })),
       documents: documentRows.map((document) => ({
@@ -399,7 +432,10 @@ export async function getEdmsDashboardData(
         subject: transmittal.subject,
         projectName: transmittal.projectName,
         status: transmittal.status,
-        sentLabel: formatDateLabel(transmittal.sentAt ?? transmittal.createdAt, "Updated"),
+        sentLabel: formatDateLabel(
+          transmittal.sentAt ?? transmittal.createdAt,
+          "Updated",
+        ),
       })),
       notifications: notificationRows.map((notification) => ({
         id: String(notification.id),
@@ -431,7 +467,7 @@ export async function getEdmsDashboardData(
 
 function createFallbackDashboardData(
   sessionUser: DashboardSessionUser,
-  statusMessage: string
+  statusMessage: string,
 ): EdmsDashboardData {
   return {
     user: {
@@ -446,35 +482,40 @@ function createFallbackDashboardData(
       {
         label: "Active projects",
         value: "07",
-        description: "Live jobs requiring weekly coordination, reviews, and issue tracking.",
+        description:
+          "Live jobs requiring weekly coordination, reviews, and issue tracking.",
         tone: "amber",
         icon: "projects",
       },
       {
         label: "Controlled documents",
         value: "184",
-        description: "Current revisions distributed across drawings, specifications, and reports.",
+        description:
+          "Current revisions distributed across drawings, specifications, and reports.",
         tone: "blue",
         icon: "documents",
       },
       {
         label: "Pending reviews",
         value: "12",
-        description: "Review steps still waiting on PMC and client responses this week.",
+        description:
+          "Review steps still waiting on PMC and client responses this week.",
         tone: "emerald",
         icon: "reviews",
       },
       {
         label: "Open transmittals",
         value: "05",
-        description: "Formal packages still in draft, sent, or acknowledgement stages.",
+        description:
+          "Formal packages still in draft, sent, or acknowledgement stages.",
         tone: "rose",
         icon: "transmittals",
       },
       {
         label: "Unread alerts",
         value: "09",
-        description: "Operational notifications queued while the live database is being prepared.",
+        description:
+          "Operational notifications queued while the live database is being prepared.",
         tone: "slate",
         icon: "notifications",
       },
@@ -665,7 +706,7 @@ function formatCount(value: number | string | null | undefined) {
 function formatProjectSchedule(
   startDate: Date | null,
   endDate: Date | null,
-  updatedAt: Date | null
+  updatedAt: Date | null,
 ) {
   if (endDate) {
     return `Ends ${formatAbsoluteDate(endDate)}`;
@@ -691,11 +732,7 @@ function formatDateLabel(date: Date | null, prefix: string) {
 }
 
 function formatAbsoluteDate(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(date);
+  return formatStoredAbsoluteDate(date) ?? "Date pending";
 }
 
 function getFallbackMessage(error: unknown) {

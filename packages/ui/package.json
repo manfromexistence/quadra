@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit"
   },
   "exports": {
+    "./theme": "./src/theme/index.ts",
     "./animated-size-container": "./src/components/animated-size-container.tsx",
     "./accordion": "./src/components/accordion.tsx",
     "./alert-dialog": "./src/components/alert-dialog.tsx",
@@ -138,6 +139,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.1.1",
+    "culori": "^4.0.2",
     "date-fns": "catalog:",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.34.0",
@@ -152,7 +154,8 @@
     "tailwind-merge": "3.4.0",
     "tailwindcss": "3.4.17",
     "tailwindcss-animate": "^1.0.7",
-    "vaul": "^1.1.2"
+    "vaul": "^1.1.2",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "next-themes": ">=0.3.0"

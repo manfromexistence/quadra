@@ -3,11 +3,16 @@ import "server-only";
 import { asc, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";
-import { documentComments, documents, documentVersions } from "@/db/schema/documents";
+import {
+  documentComments,
+  documents,
+  documentVersions,
+} from "@/db/schema/documents";
 import { projects } from "@/db/schema/projects";
 import { documentWorkflows, workflowSteps } from "@/db/schema/workflows";
 import { canAccessProject } from "./access";
 import { getEdmsDashboardData } from "./dashboard";
+import { formatStoredAbsoluteDate } from "./dates";
 import type { DashboardSessionUser } from "./session";
 
 export interface DocumentDetailData {
@@ -67,73 +72,74 @@ export interface DocumentDetailData {
 
 export async function getDocumentDetailData(
   documentId: string,
-  sessionUser: DashboardSessionUser
+  sessionUser: DashboardSessionUser,
 ): Promise<DocumentDetailData | null> {
   try {
-    const [documentRows, versionRows, commentRows, workflowRows] = await Promise.all([
-      db
-        .select({
-          id: documents.id,
-          title: documents.title,
-          documentNumber: documents.documentNumber,
-          description: documents.description,
-          projectName: projects.name,
-          projectId: projects.id,
-          status: documents.status,
-          discipline: documents.discipline,
-          category: documents.category,
-          version: documents.version,
-          revision: documents.revision,
-          fileName: documents.fileName,
-          fileType: documents.fileType,
-          fileUrl: documents.fileUrl,
-          images: documents.images,
-          tags: documents.tags,
-          uploadedAt: documents.uploadedAt,
-        })
-        .from(documents)
-        .innerJoin(projects, eq(documents.projectId, projects.id))
-        .where(eq(documents.id, documentId))
-        .limit(1),
-      db
-        .select({
-          id: documentVersions.id,
-          version: documentVersions.version,
-          fileName: documentVersions.fileName,
-          fileUrl: documentVersions.fileUrl,
-          changeDescription: documentVersions.changeDescription,
-          uploadedAt: documentVersions.uploadedAt,
-          uploadedByName: userTable.name,
-        })
-        .from(documentVersions)
-        .leftJoin(userTable, eq(documentVersions.uploadedBy, userTable.id))
-        .where(eq(documentVersions.documentId, documentId))
-        .orderBy(desc(documentVersions.uploadedAt)),
-      db
-        .select({
-          id: documentComments.id,
-          comment: documentComments.comment,
-          commentType: documentComments.commentType,
-          authorName: userTable.name,
-          createdAt: documentComments.createdAt,
-        })
-        .from(documentComments)
-        .leftJoin(userTable, eq(documentComments.userId, userTable.id))
-        .where(eq(documentComments.documentId, documentId))
-        .orderBy(desc(documentComments.createdAt)),
-      db
-        .select({
-          id: documentWorkflows.id,
-          workflowName: documentWorkflows.workflowName,
-          status: documentWorkflows.status,
-          currentStep: documentWorkflows.currentStep,
-          totalSteps: documentWorkflows.totalSteps,
-        })
-        .from(documentWorkflows)
-        .where(eq(documentWorkflows.documentId, documentId))
-        .orderBy(desc(documentWorkflows.startedAt))
-        .limit(1),
-    ]);
+    const [documentRows, versionRows, commentRows, workflowRows] =
+      await Promise.all([
+        db
+          .select({
+            id: documents.id,
+            title: documents.title,
+            documentNumber: documents.documentNumber,
+            description: documents.description,
+            projectName: projects.name,
+            projectId: projects.id,
+            status: documents.status,
+            discipline: documents.discipline,
+            category: documents.category,
+            version: documents.version,
+            revision: documents.revision,
+            fileName: documents.fileName,
+            fileType: documents.fileType,
+            fileUrl: documents.fileUrl,
+            images: documents.images,
+            tags: documents.tags,
+            uploadedAt: documents.uploadedAt,
+          })
+          .from(documents)
+          .innerJoin(projects, eq(documents.projectId, projects.id))
+          .where(eq(documents.id, documentId))
+          .limit(1),
+        db
+          .select({
+            id: documentVersions.id,
+            version: documentVersions.version,
+            fileName: documentVersions.fileName,
+            fileUrl: documentVersions.fileUrl,
+            changeDescription: documentVersions.changeDescription,
+            uploadedAt: documentVersions.uploadedAt,
+            uploadedByName: userTable.name,
+          })
+          .from(documentVersions)
+          .leftJoin(userTable, eq(documentVersions.uploadedBy, userTable.id))
+          .where(eq(documentVersions.documentId, documentId))
+          .orderBy(desc(documentVersions.uploadedAt)),
+        db
+          .select({
+            id: documentComments.id,
+            comment: documentComments.comment,
+            commentType: documentComments.commentType,
+            authorName: userTable.name,
+            createdAt: documentComments.createdAt,
+          })
+          .from(documentComments)
+          .leftJoin(userTable, eq(documentComments.userId, userTable.id))
+          .where(eq(documentComments.documentId, documentId))
+          .orderBy(desc(documentComments.createdAt)),
+        db
+          .select({
+            id: documentWorkflows.id,
+            workflowName: documentWorkflows.workflowName,
+            status: documentWorkflows.status,
+            currentStep: documentWorkflows.currentStep,
+            totalSteps: documentWorkflows.totalSteps,
+          })
+          .from(documentWorkflows)
+          .where(eq(documentWorkflows.documentId, documentId))
+          .orderBy(desc(documentWorkflows.startedAt))
+          .limit(1),
+      ]);
 
     const [document] = documentRows;
 
@@ -141,7 +147,10 @@ export async function getDocumentDetailData(
       return null;
     }
 
-    const hasAccess = await canAccessProject(sessionUser, String(document.projectId));
+    const hasAccess = await canAccessProject(
+      sessionUser,
+      String(document.projectId),
+    );
 
     if (!hasAccess) {
       return null;
@@ -229,7 +238,7 @@ export async function getDocumentDetailData(
 async function createFallbackDocumentDetail(
   documentId: string,
   sessionUser: DashboardSessionUser,
-  error: unknown
+  error: unknown,
 ): Promise<DocumentDetailData | null> {
   const dashboard = await getEdmsDashboardData(sessionUser);
   const document = dashboard.documents.find((entry) => entry.id === documentId);
@@ -273,7 +282,8 @@ async function createFallbackDocumentDetail(
     comments: [
       {
         id: "fallback-comment-1",
-        comment: "PMC review comments will appear here once the live database is connected.",
+        comment:
+          "PMC review comments will appear here once the live database is connected.",
         commentType: "review",
         authorName: "Ayesha Karim",
         createdLabel: "Logged 01 Apr 2026",
@@ -321,11 +331,7 @@ function formatDateLabel(date: Date | null, prefix: string) {
     return `${prefix} not scheduled`;
   }
 
-  return `${prefix} ${new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(date)}`;
+  return `${prefix} ${formatStoredAbsoluteDate(date) ?? "date pending"}`;
 }
 
 function getFallbackMessage(error: unknown) {

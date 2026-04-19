@@ -15,6 +15,7 @@ import { Spinner } from "@midday/ui/spinner";
 import { formatDate } from "@midday/utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { formatISO } from "date-fns";
+import { BellRing, FileStack, FolderKanban, Send, Workflow } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -39,6 +40,9 @@ interface SearchItem {
   id: string;
   type: string;
   title: string;
+  subtitle?: string;
+  href?: string;
+  meta?: string;
   data?: {
     name?: string;
     email?: string;
@@ -168,6 +172,16 @@ const formatGroupName = (name: string): string | null => {
       return "Transactions";
     case "inbox":
       return "Inbox";
+    case "edms_project":
+      return "EDMS Projects";
+    case "edms_document":
+      return "EDMS Documents";
+    case "edms_workflow":
+      return "EDMS Workflows";
+    case "edms_transmittal":
+      return "EDMS Transmittals";
+    case "edms_notification":
+      return "EDMS Notifications";
 
     default:
       return null;
@@ -530,6 +544,86 @@ const SearchResultItemDisplay = ({
         );
         break;
       }
+      case "edms_project": {
+        onSelect = () => nav.navigateToPath(item.href || "/projects");
+        icon = <FolderKanban className="size-4 dark:text-[#666] text-primary" />;
+        resultDisplay = (
+          <div className="flex items-center justify-between w-full">
+            <div className="min-w-0 flex-1">
+              <span className="block truncate">{item.title}</span>
+              <span className="block truncate text-xs text-muted-foreground">
+                {[item.subtitle, item.meta].filter(Boolean).join(" · ")}
+              </span>
+            </div>
+            <Icons.ArrowOutward className="size-4 dark:text-[#666] text-primary hover:!text-primary cursor-pointer" />
+          </div>
+        );
+        break;
+      }
+      case "edms_document": {
+        onSelect = () => nav.navigateToPath(item.href || "/documents");
+        icon = <FileStack className="size-4 dark:text-[#666] text-primary" />;
+        resultDisplay = (
+          <div className="flex items-center justify-between w-full">
+            <div className="min-w-0 flex-1">
+              <span className="block truncate">{item.title}</span>
+              <span className="block truncate text-xs text-muted-foreground">
+                {[item.subtitle, item.meta].filter(Boolean).join(" · ")}
+              </span>
+            </div>
+            <Icons.ArrowOutward className="size-4 dark:text-[#666] text-primary hover:!text-primary cursor-pointer" />
+          </div>
+        );
+        break;
+      }
+      case "edms_workflow": {
+        onSelect = () => nav.navigateToPath(item.href || "/workflows");
+        icon = <Workflow className="size-4 dark:text-[#666] text-primary" />;
+        resultDisplay = (
+          <div className="flex items-center justify-between w-full">
+            <div className="min-w-0 flex-1">
+              <span className="block truncate">{item.title}</span>
+              <span className="block truncate text-xs text-muted-foreground">
+                {[item.subtitle, item.meta].filter(Boolean).join(" · ")}
+              </span>
+            </div>
+            <Icons.ArrowOutward className="size-4 dark:text-[#666] text-primary hover:!text-primary cursor-pointer" />
+          </div>
+        );
+        break;
+      }
+      case "edms_transmittal": {
+        onSelect = () => nav.navigateToPath(item.href || "/transmittals");
+        icon = <Send className="size-4 dark:text-[#666] text-primary" />;
+        resultDisplay = (
+          <div className="flex items-center justify-between w-full">
+            <div className="min-w-0 flex-1">
+              <span className="block truncate">{item.title}</span>
+              <span className="block truncate text-xs text-muted-foreground">
+                {[item.subtitle, item.meta].filter(Boolean).join(" · ")}
+              </span>
+            </div>
+            <Icons.ArrowOutward className="size-4 dark:text-[#666] text-primary hover:!text-primary cursor-pointer" />
+          </div>
+        );
+        break;
+      }
+      case "edms_notification": {
+        onSelect = () => nav.navigateToPath(item.href || "/notifications");
+        icon = <BellRing className="size-4 dark:text-[#666] text-primary" />;
+        resultDisplay = (
+          <div className="flex items-center justify-between w-full">
+            <div className="min-w-0 flex-1">
+              <span className="block truncate">{item.title}</span>
+              <span className="block truncate text-xs text-muted-foreground">
+                {[item.subtitle, item.meta].filter(Boolean).join(" · ")}
+              </span>
+            </div>
+            <Icons.ArrowOutward className="size-4 dark:text-[#666] text-primary hover:!text-primary cursor-pointer" />
+          </div>
+        );
+        break;
+      }
       default:
         // For types not explicitly handled but have data,
         // icon remains the default data icon, and resultDisplay remains item.title.
@@ -657,6 +751,30 @@ export function Search() {
       action: () => nav.navigateToPath("/vault"),
     },
     {
+      id: "sc-view-edms-projects",
+      type: "edms_project",
+      title: "View EDMS projects",
+      action: () => nav.navigateToPath("/projects"),
+    },
+    {
+      id: "sc-view-edms-documents",
+      type: "edms_document",
+      title: "View EDMS documents",
+      action: () => nav.navigateToPath("/documents"),
+    },
+    {
+      id: "sc-view-edms-workflows",
+      type: "edms_workflow",
+      title: "View EDMS workflows",
+      action: () => nav.navigateToPath("/workflows"),
+    },
+    {
+      id: "sc-view-edms-transmittals",
+      type: "edms_transmittal",
+      title: "View EDMS transmittals",
+      action: () => nav.navigateToPath("/transmittals"),
+    },
+    {
       id: "sc-view-customers",
       type: "customer",
       title: "View customers",
@@ -695,7 +813,7 @@ export function Search() {
     isFetching,
   } = useQuery({
     ...trpc.search.global.queryOptions({
-      searchTerm: debouncedSearch,
+      query: debouncedSearch,
     }),
     placeholderData: (previousData) => previousData,
   });
@@ -755,6 +873,11 @@ export function Search() {
     // Prioritize tracker projects when timer is running
     const definedGroupOrder = timerStatus?.isRunning
       ? [
+          "edms_project",
+          "edms_document",
+          "edms_workflow",
+          "edms_transmittal",
+          "edms_notification",
           "tracker_project",
           "vault",
           "customer",
@@ -763,6 +886,11 @@ export function Search() {
           "inbox",
         ]
       : [
+          "edms_project",
+          "edms_document",
+          "edms_workflow",
+          "edms_transmittal",
+          "edms_notification",
           "vault",
           "customer",
           "invoice",

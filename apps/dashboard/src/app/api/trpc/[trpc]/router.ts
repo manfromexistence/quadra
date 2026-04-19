@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { Context } from "./context";
 import superjson from "superjson";
 import * as mockData from "./mock-data";
+import { searchEdmsForCommandPalette } from "@/lib/edms/global-search";
 
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
@@ -978,10 +979,22 @@ export const appRouter = t.router({
   // Search
   search: t.router({
     global: t.procedure
-      .input(z.object({ query: z.string().nullable().optional() }).optional())
-      .query(() => {
-        console.log("[tRPC] search.global: Returning empty search results");
-        return [];
+      .input(
+        z
+          .object({
+            query: z.string().nullable().optional(),
+            searchTerm: z.string().nullable().optional(),
+          })
+          .optional()
+      )
+      .query(async ({ input, ctx }) => {
+        const query = input?.query ?? input?.searchTerm ?? "";
+
+        if (!ctx.userId || query.trim().length === 0) {
+          return [];
+        }
+
+        return searchEdmsForCommandPalette(ctx.userId, query, 5);
       }),
   }),
 
