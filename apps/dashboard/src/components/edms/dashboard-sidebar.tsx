@@ -71,7 +71,7 @@ const ADMIN_NAVIGATION = [
 
 const SECONDARY_NAVIGATION = [
   { title: "Settings", href: "/settings", icon: Settings },
-  { title: "Theme Studio", href: "/editor/theme", icon: Sparkles },
+  { title: "Theme Studio", href: "/theme", icon: Sparkles },
 ] as const;
 
 export function EdmsDashboardSidebar({ user }: { user: DashboardUser }) {

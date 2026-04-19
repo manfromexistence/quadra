@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Fixed
+- **apps/dashboard — Turbopack panic on old editor/theme route**
+  - Removed leftover `apps/dashboard/src/app/[locale]/(app)/editor/theme/[[...themeId]]/` directory from construction app migration
+  - Updated dashboard sidebar to use new `/theme` route instead of `/editor/theme`
+  - Fixed "metadata file not found" Turbopack error that was causing repeated panics
+  - Theme editor now accessible only at `/theme` route (cleaner URL structure)
+
 ### Added
 - `PrintButton` component at `apps/dashboard/src/components/edms/print-button.tsx`
   - Integrated into: reports, schedule, databook, matrix, audit pages

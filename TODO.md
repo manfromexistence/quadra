@@ -2,13 +2,13 @@
 
 ## In Progress
 
-- [ ] No active implementation task. Return to the DX loop for the next prompt.
+- [ ] No active implementation task. All requested tasks completed.
 
 ---
 
 ## Pending
 
-- [ ] No pending repo tasks from the current EDMS/dashboard batch.
+- [ ] Theme switcher toggle fix (see HELP-THEME-SWITCHER.md)
 
 ---
 
