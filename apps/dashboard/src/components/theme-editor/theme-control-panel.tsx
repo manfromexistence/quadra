@@ -7,10 +7,8 @@ import { ScrollArea } from "@midday/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@midday/ui/tabs";
 import type { ThemeMode, ThemeStyleProps } from "@midday/ui/theme";
 import { useTheme } from "next-themes";
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { createTheme, updateTheme } from "@/actions/themes";
+import { useMemo } from "react";
 import { useThemeEditorStore } from "@/store/theme-editor-store";
-import { useThemePresetStore } from "@/store/theme-preset-store";
 import { ColorsTabContent } from "./colors-tab-content";
 import { ControlSection } from "./control-section";
 import { HslAdjustmentControls } from "./hsl-adjustment-controls";
@@ -20,22 +18,12 @@ import { ThemePresetSelect } from "./theme-preset-select";
 
 export function ThemeControlPanel() {
   const { resolvedTheme, setTheme } = useTheme();
-  const [isPending, startTransition] = useTransition();
-  const [themeName, setThemeName] = useState("Quadra");
   const themeState = useThemeEditorStore((state) => state.themeState);
-  const setThemeState = useThemeEditorStore((state) => state.setThemeState);
   const updateStyle = useThemeEditorStore((state) => state.updateStyle);
   const restoreThemeCheckpoint = useThemeEditorStore(
     (state) => state.restoreThemeCheckpoint,
   );
   const resetToDefault = useThemeEditorStore((state) => state.resetToDefault);
-  const saveThemeCheckpoint = useThemeEditorStore(
-    (state) => state.saveThemeCheckpoint,
-  );
-  const currentPreset = useThemePresetStore((state) =>
-    state.getPreset(themeState.preset ?? "quadra"),
-  );
-  const registerPreset = useThemePresetStore((state) => state.registerPreset);
 
   const currentMode = (
     resolvedTheme === "dark" ? "dark" : "light"
@@ -45,17 +33,7 @@ export function ThemeControlPanel() {
     [currentMode, themeState.styles],
   );
 
-  useEffect(() => {
-    const label = currentPreset?.label;
-    if (label) {
-      setThemeName(label);
-      return;
-    }
-
-    if ((themeState.preset ?? "quadra") === "quadra") {
-      setThemeName("Quadra");
-    }
-  }, [currentPreset?.label, themeState.preset]);
+  const setThemeState = useThemeEditorStore((state) => state.setThemeState);
 
   const updateStyles = (updates: Partial<ThemeStyleProps>) => {
     setThemeState({
@@ -70,65 +48,19 @@ export function ThemeControlPanel() {
     });
   };
 
-  const handleSave = () => {
-    startTransition(async () => {
-      const presetId = themeState.preset;
-      const isSavedTheme = currentPreset?.source === "SAVED" && presetId;
-
-      const result = isSavedTheme
-        ? await updateTheme({
-            id: presetId,
-            name: themeName,
-            styles: themeState.styles,
-          })
-        : await createTheme({
-            name: themeName,
-            styles: themeState.styles,
-          });
-
-      registerPreset(result.id, {
-        label: result.name,
-        source: "SAVED",
-        styles: result.styles,
-      });
-
-      setThemeState({
-        ...themeState,
-        preset: result.id,
-        styles: result.styles,
-      });
-      setThemeName(result.name);
-      saveThemeCheckpoint();
-    });
-  };
-
   return (
     <div className="flex h-full min-h-[70vh] flex-col overflow-hidden border border-border bg-card">
       <div className="space-y-4 border-b border-border p-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Theme Editor
-          </p>
-          <h2 className="text-lg font-semibold">Quadra</h2>
+          <h2 className="text-lg font-semibold">Customizes</h2>
           <p className="text-sm text-muted-foreground">
-            This is the dashboard copy of the construction theme editor, backed
-            by the shared `@midday/ui` theme tokens and applied live to the
-            current shell.
+            Adjust colors, fonts, and layout to create your perfect workspace.
           </p>
         </div>
 
-        <div className="grid gap-3 xl:grid-cols-2">
-          <div className="space-y-2">
-            <Label>Preset</Label>
-            <ThemePresetSelect />
-          </div>
-          <div className="space-y-2">
-            <Label>Theme Name</Label>
-            <Input
-              value={themeName}
-              onChange={(event) => setThemeName(event.target.value)}
-            />
-          </div>
+        <div className="space-y-2">
+          <Label>Theme Preset</Label>
+          <ThemePresetSelect />
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
@@ -154,18 +86,7 @@ export function ThemeControlPanel() {
             Restore
           </Button>
           <Button type="button" variant="outline" onClick={resetToDefault}>
-            Reset Quadra
-          </Button>
-          <Button
-            type="button"
-            onClick={handleSave}
-            disabled={isPending || !themeName.trim()}
-          >
-            {isPending
-              ? "Saving..."
-              : currentPreset?.source === "SAVED"
-                ? "Update Theme"
-                : "Save Theme"}
+            Reset to Default
           </Button>
         </div>
       </div>
@@ -323,9 +244,7 @@ export function ThemeControlPanel() {
           <ScrollArea className="h-full px-4 py-3">
             <ControlSection title="HSL Adjustments" expanded>
               <p className="pb-3 text-sm text-muted-foreground">
-                These controls are ported from the construction editor and now
-                normalize the result back into OKLCH values for the dashboard
-                theme store.
+                Fine-tune hue, saturation, and lightness for precise color control.
               </p>
               <HslAdjustmentControls />
             </ControlSection>

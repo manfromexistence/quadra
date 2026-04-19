@@ -13,16 +13,31 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Replaced hardcoded SVG icon with BrandLogo component in EdmsDashboardSidebar header (note: EdmsDashboardSidebar is not currently active; the main Sidebar component already uses BrandLogo correctly)
 - Fixed ChunkLoadError in GlobalSheetsProvider by adding loading fallback to dynamic import
 - Fixed theme preset helper to import from correct presets file (was importing from old theme-presets.ts instead of new presets.ts with Quadra theme)
+- Fixed BrandLogo component rendering issues by adding explicit style prop, inline-block display, and unoptimized flag for Next.js 16.3 compatibility
+
+### Changed
+
+- Reorganized theme preview panel layout: moved button showcase to top, removed Progress component per user request
+- Simplified Document Control Summary card with cleaner layout
+- Professionalized all theme editor text: removed developer jargon, package references, and technical implementation details
+- Updated theme editor descriptions to be concise and user-focused
+- Made all color accordions auto-expand in theme editor Colors tab for better UX
+- Removed Theme Name input field from theme control panel (redundant with preset selector)
+- Cleaned up unused imports and state management code (removed themeName state, createTheme/updateTheme actions, useTransition, useEffect)
+- Removed NavigationSidebar Menu section from theme preview panel
 
 ### Added
 
-- Enhanced theme preview panel with comprehensive Midday UI components showcase:
-  - Form components: Input, Select, Textarea, Checkbox, Switch, RadioGroup
-  - Navigation: Tabs component with multiple sections
-  - Data display: Enhanced table with more rows and badge variants
-  - Typography & color swatches for visual theme verification
-  - Additional button variants (Ghost)
-  - Separator components for visual hierarchy
+- Enhanced theme preview panel with comprehensive interactive Midday UI components:
+  - **Interactive Controls**: Slider with live value display, switches and checkboxes with conditional rendering
+  - **Form Components**: Input, Select (2 dropdowns), Textarea, Checkbox, Switch, RadioGroup with 3 options
+  - **Navigation**: Tabs with 3 sections (Overview, Details, History) with rich content
+  - **Data Display**: Enhanced table with 4 rows and multiple badge variants
+  - **Sidebar Preview**: Interactive navigation with hover states
+  - **Typography & Colors**: Color palette swatches for all theme colors
+  - **Button Showcase**: All variants (Primary, Secondary, Outline, Ghost, Destructive) and sizes (Small, Default, Large, Icon) - now at the top
+  - **Card Footer**: Action buttons in form card footer
+  - **Real-time Updates**: All components respond instantly to theme changes
 - **Logo and favicon assets configured for both websites**
   - Copied `logo-dark.png` and `logo-light.png` to `apps/website/public/`
   - Extracted favicon bundle to `apps/website/public/`

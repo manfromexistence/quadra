@@ -48,6 +48,7 @@ const COLOR_GROUPS: ColorGroup[] = [
   },
   {
     title: "Accent",
+    expanded: true,
     colors: [
       { key: "accent", name: "accent", label: "Background" },
       {
@@ -59,6 +60,7 @@ const COLOR_GROUPS: ColorGroup[] = [
   },
   {
     title: "Base",
+    expanded: true,
     colors: [
       { key: "background", name: "background", label: "Background" },
       { key: "foreground", name: "foreground", label: "Foreground" },
@@ -66,6 +68,7 @@ const COLOR_GROUPS: ColorGroup[] = [
   },
   {
     title: "Card",
+    expanded: true,
     colors: [
       { key: "card", name: "card", label: "Background" },
       { key: "card-foreground", name: "card-foreground", label: "Foreground" },
@@ -73,6 +76,7 @@ const COLOR_GROUPS: ColorGroup[] = [
   },
   {
     title: "Popover",
+    expanded: true,
     colors: [
       { key: "popover", name: "popover", label: "Background" },
       {
@@ -84,6 +88,7 @@ const COLOR_GROUPS: ColorGroup[] = [
   },
   {
     title: "Muted",
+    expanded: true,
     colors: [
       { key: "muted", name: "muted", label: "Background" },
       {
@@ -95,6 +100,7 @@ const COLOR_GROUPS: ColorGroup[] = [
   },
   {
     title: "Destructive",
+    expanded: true,
     colors: [
       { key: "destructive", name: "destructive", label: "Background" },
       {
@@ -106,6 +112,7 @@ const COLOR_GROUPS: ColorGroup[] = [
   },
   {
     title: "Border & Input",
+    expanded: true,
     colors: [
       { key: "border", name: "border", label: "Border" },
       { key: "input", name: "input", label: "Input" },
@@ -114,6 +121,7 @@ const COLOR_GROUPS: ColorGroup[] = [
   },
   {
     title: "Chart",
+    expanded: true,
     colors: [
       { key: "chart-1", name: "chart-1", label: "Chart 1" },
       { key: "chart-2", name: "chart-2", label: "Chart 2" },
@@ -124,6 +132,7 @@ const COLOR_GROUPS: ColorGroup[] = [
   },
   {
     title: "Sidebar",
+    expanded: true,
     colors: [
       { key: "sidebar", name: "sidebar", label: "Background" },
       {
@@ -243,7 +252,7 @@ export function ColorsTabContent({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="px-4 pb-3">
+      <div className="px-4 py-3">
         <div className="bg-muted/50 flex items-center gap-2.5 rounded-lg border px-3">
           <Search className="text-muted-foreground size-4 shrink-0" />
           <input
