@@ -19,6 +19,7 @@ import { EdmsMetricCard } from "@/components/edms/metric-card";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
 import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { ExportButton } from "@/components/edms/export-button";
 import { PrintButton } from "@/components/edms/print-button";
 import { TransmittalCreateSheet } from "@/components/edms/transmittal-create-sheet";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
@@ -38,6 +39,27 @@ export default async function TransmittalsPage() {
     getTransmittalManagementData(sessionUser),
   ]);
   const canManageContent = canManageEdmsContent(sessionUser.role);
+
+  // Prepare export data
+  const exportData = data.transmittals.map((t) => ({
+    transmittalNumber: t.transmittalNumber,
+    subject: t.subject,
+    projectName: t.projectName,
+    status: t.status,
+    recipientName: t.recipientName,
+    documentCount: t.documentCount,
+    sentDate: t.sentLabel,
+  }));
+
+  const exportColumns = [
+    { header: "Transmittal No.", key: "transmittalNumber", width: 25 },
+    { header: "Subject", key: "subject", width: 40 },
+    { header: "Project", key: "projectName", width: 30 },
+    { header: "Status", key: "status", width: 15 },
+    { header: "Recipient", key: "recipientName", width: 25 },
+    { header: "Documents", key: "documentCount", width: 12 },
+    { header: "Sent Date", key: "sentDate", width: 20 },
+  ];
 
   return (
     <HydrateClient>
@@ -72,13 +94,31 @@ export default async function TransmittalsPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <PrintButton label="Export to PDF" variant="secondary" />
+              <ExportButton
+                data={exportData}
+                columns={exportColumns}
+                title="Transmittals"
+                filename="transmittals_export"
+                variant="secondary"
+                metadata={[
+                  { label: "Generated", value: new Date().toLocaleDateString() },
+                  { label: "Total Records", value: String(data.transmittals.length) },
+                ]}
+              />
+              <PrintButton label="Print" variant="outline" icon="print" />
               {canManageContent ? (
-                <TransmittalCreateSheet
-                  projects={data.projects}
-                  members={data.members}
-                  documents={data.documents}
-                />
+                <>
+                  <Button asChild>
+                    <Link href="/transmittals/new">
+                      New Transmittal
+                    </Link>
+                  </Button>
+                  <TransmittalCreateSheet
+                    projects={data.projects}
+                    members={data.members}
+                    documents={data.documents}
+                  />
+                </>
               ) : null}
               <Button variant="outline" asChild>
                 <Link href="/documents">

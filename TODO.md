@@ -21,6 +21,10 @@
 - [x] ~~Task 4 - Migrate Quadra theme editor from `apps/construction` into `apps/dashboard`~~ ✅ 2026-04-19 07:14
 - [x] ~~Task 3 - Apply root branding assets to dashboard + website~~ ✅ 2026-04-19 07:14
 - [x] ~~Task 5 - Verify with low-end-device friendly Bun checks~~ ✅ 2026-04-19 07:14
+- [x] ~~Implement PDF and Excel export functionality with actual file downloads~~ ✅ 2026-04-19
+- [x] ~~Fix CSS print styles PostCSS parsing errors~~ ✅ 2026-04-19
+- [x] ~~Add print buttons alongside export buttons on all EDMS pages~~ ✅ 2026-04-19
+- [x] ~~Create transmittal creation page with live preview~~ ✅ 2026-04-19
 
 ---
 

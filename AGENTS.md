@@ -72,6 +72,11 @@ The agent should follow the DX loop first, then execute the work.
 - Do not store secrets, environment variables, or redundant examples here
 - Use `TODO.md` for task tracking, `CHANGELOG.md` for work history
 - Use `HELP.md` only when tasks fail after 3 attempts
+- **NEVER create stray markdown files** (README, SUMMARY, IMPLEMENTATION, ANALYSIS, etc.) unless explicitly requested by the user
+- **NEVER create scripts** (PowerShell, bash, Python, etc.) unless explicitly requested by the user
+- Focus on implementing actual code changes, not documentation
+- The only acceptable markdown files are: `TODO.md`, `CHANGELOG.md`, `HELP.md` (when blocked after 3 attempts)
+- If you need to document something, update existing files or add code comments
 
 ---
 

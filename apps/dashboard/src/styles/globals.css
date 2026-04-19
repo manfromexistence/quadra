@@ -275,3 +275,106 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .hide-scrollbar *::-webkit-scrollbar {
   display: none;
 }
+
+/* Print Styles */
+@media print {
+  /* Hide navigation, headers, and UI elements */
+  nav,
+  aside,
+  header,
+  footer,
+  [data-print-hide],
+  button:not([data-print-show]),
+  .sidebar,
+  .topbar,
+  .mobile-menu {
+    display: none !important;
+  }
+
+  /* Tailwind print utilities */
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .print\:block {
+    display: block !important;
+  }
+
+  .print\:inline {
+    display: inline !important;
+  }
+
+  .print\:inline-block {
+    display: inline-block !important;
+  }
+
+  /* Reset page layout for printing */
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+    color: black;
+  }
+
+  /* Full width content */
+  main,
+  .main,
+  [role="main"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 1rem !important;
+  }
+
+  /* Remove shadows and borders */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Ensure tables print properly */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  table,
+  th,
+  td {
+    border: 1px solid #ddd !important;
+  }
+
+  th,
+  td {
+    padding: 8px !important;
+  }
+
+  /* Page breaks */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+
+  table,
+  figure,
+  img {
+    page-break-inside: avoid;
+  }
+
+  /* Ensure links are visible */
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  a[href^="#"]:after,
+  a[href^="javascript:"]:after {
+    content: "";
+  }
+}

@@ -22,6 +22,7 @@ import { DocumentCreateSheet } from "@/components/edms/document-create-sheet";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
 import { EdmsQuickUpload } from "@/components/edms/quick-upload";
 import { ErrorFallback } from "@/components/error-fallback";
+import { ExportButton } from "@/components/edms/export-button";
 import { PrintButton } from "@/components/edms/print-button";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
@@ -53,6 +54,27 @@ export default async function DocumentsPage({
     getDocumentControlData(sessionUser, params),
   ]);
   const canManageContent = canManageEdmsContent(sessionUser.role);
+
+  // Prepare export data
+  const exportData = data.documents.map((doc) => ({
+    documentNumber: doc.documentNumber,
+    title: doc.title,
+    projectName: doc.projectName,
+    discipline: doc.discipline,
+    status: doc.status,
+    revision: doc.revision,
+    issueDate: doc.issueDateLabel,
+  }));
+
+  const exportColumns = [
+    { header: "Document No.", key: "documentNumber", width: 30 },
+    { header: "Title", key: "title", width: 50 },
+    { header: "Project", key: "projectName", width: 30 },
+    { header: "Discipline", key: "discipline", width: 20 },
+    { header: "Status", key: "status", width: 15 },
+    { header: "Rev", key: "revision", width: 10 },
+    { header: "Issue Date", key: "issueDate", width: 20 },
+  ];
 
   return (
     <HydrateClient>
@@ -87,7 +109,20 @@ export default async function DocumentsPage({
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <PrintButton label="Export to PDF" variant="secondary" />
+              <ExportButton
+                data={exportData}
+                columns={exportColumns}
+                title="Documents"
+                filename="documents_export"
+                variant="secondary"
+                metadata={[
+                  { label: "Generated", value: new Date().toLocaleDateString() },
+                  { label: "Total Records", value: String(data.documents.length) },
+                  ...(params.query ? [{ label: "Search Query", value: params.query }] : []),
+                  ...(params.status ? [{ label: "Status Filter", value: params.status }] : []),
+                ]}
+              />
+              <PrintButton label="Print" variant="outline" icon="print" />
               {canManageContent ? <DocumentCreateSheet projects={data.projects} /> : null}
               {canManageContent ? <DocumentBulkUploadSheet projects={data.projects} /> : null}
               <Button variant="outline" asChild>

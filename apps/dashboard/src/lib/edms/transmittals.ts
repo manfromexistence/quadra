@@ -31,6 +31,8 @@ export interface TransmittalDocumentOption {
   projectId: string;
   documentNumber: string;
   title: string;
+  revision: string | null;
+  status: string | null;
 }
 
 export interface TransmittalSummary {
@@ -153,6 +155,8 @@ export async function getTransmittalManagementData(
               projectId: documents.projectId,
               documentNumber: documents.documentNumber,
               title: documents.title,
+              revision: documents.revision,
+              status: documents.status,
             })
             .from(documents)
             .where(scopedDocumentCondition)
@@ -250,6 +254,8 @@ export async function getTransmittalManagementData(
         projectId: String(document.projectId),
         documentNumber: document.documentNumber,
         title: document.title,
+        revision: document.revision ?? null,
+        status: document.status ?? null,
       })),
       transmittals: transmittalRows.map((transmittal) => ({
         id: String(transmittal.id),
@@ -346,6 +352,8 @@ async function createFallbackTransmittalData(
       projectId: `fallback-project-${index + 1}`,
       documentNumber: document.documentNumber,
       title: document.title,
+      revision: null,
+      status: null,
     })),
     transmittals: dashboard.transmittals.map((item, index) => ({
       id: item.id,

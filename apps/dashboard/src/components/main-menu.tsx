@@ -4,9 +4,13 @@ import { cn } from "@midday/ui/cn";
 import { Icons } from "@midday/ui/icons";
 import {
   Activity,
+  BookOpen,
+  Calendar,
+  ClipboardList,
   Cog,
   FileStack,
   FolderKanban,
+  Grid3X3,
   Palette,
   Send,
   Workflow,
@@ -31,6 +35,10 @@ const icons = {
   "/workflows": () => <Workflow size={20} />,
   "/transmittals": () => <Send size={20} />,
   "/notifications": () => <Activity size={20} />,
+  "/schedule": () => <Calendar size={20} />,
+  "/databook": () => <BookOpen size={20} />,
+  "/matrix": () => <Grid3X3 size={20} />,
+  "/audit": () => <ClipboardList size={20} />,
   "/theme": () => <Palette size={20} />,
 } as const;
 
@@ -62,6 +70,22 @@ const items = [
   {
     path: "/reports",
     name: "Reports",
+  },
+  {
+    path: "/schedule",
+    name: "Schedule",
+  },
+  {
+    path: "/databook",
+    name: "Data Book",
+  },
+  {
+    path: "/matrix",
+    name: "Matrix",
+  },
+  {
+    path: "/audit",
+    name: "Audit",
   },
   {
     path: "/theme",
@@ -318,7 +342,12 @@ type Props = {
 
 export function MainMenu({ onSelect, isExpanded = false }: Props) {
   const pathname = usePathname();
-  const part = pathname?.split("/")[1];
+  // Strip locale prefix (e.g. /en/documents -> /documents)
+  // next-international with urlMappingStrategy:"rewrite" can expose /en/... to usePathname()
+  const normalizedPath = pathname
+    ? pathname.replace(/^\/[a-z]{2}(\/|$)/, "/") || "/"
+    : "/";
+  const part = normalizedPath.split("/")[1];
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
   // Reset expanded item when sidebar expands/collapses
@@ -332,8 +361,8 @@ export function MainMenu({ onSelect, isExpanded = false }: Props) {
         <div className="flex flex-col gap-2">
           {items.map((item) => {
             const isActive =
-              (pathname === "/" && item.path === "/") ||
-              (pathname !== "/" && item.path.startsWith(`/${part}`));
+              (normalizedPath === "/" && item.path === "/") ||
+              (normalizedPath !== "/" && item.path !== "/" && `/${part}` === item.path);
 
             return (
               <Item

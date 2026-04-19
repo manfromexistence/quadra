@@ -5,6 +5,53 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Added
+
+- **Export to PDF and Excel** - Proper file download functionality
+  - Created `ExportButton` component with dropdown menu for PDF/Excel options
+  - Integrated `jspdf`, `jspdf-autotable`, and `xlsx` libraries
+  - Export utility functions in `lib/export-utils.ts`
+  - PDF exports include: title, metadata, formatted tables, page numbers, generation date
+  - Excel exports include: headers, data, column widths, proper formatting
+  - Replaced `PrintButton` with `ExportButton` in documents and transmittals pages
+  - Export includes current filters and search queries in metadata
+- **Transmittal Creation Page** - `/transmittals/new` with live preview
+  - Form with all transmittal fields (number, date, recipient, purpose, subject, due date, remarks)
+  - Checkbox list to select documents
+  - Live preview that updates in real-time as form changes
+  - Document table in preview
+  - Signature blocks
+  - Database integration with transmittals and transmittalDocuments tables
+- **Print CSS Styles** - Added comprehensive print media queries
+  - Hides navigation, sidebars, buttons, and UI elements
+  - Full-width content layout for printing
+  - Proper table formatting
+  - Page break controls
+  - Link URL display in print
+
+### Changed
+
+- **AGENTS.md File Policy** - Added strict rules against creating stray markdown and script files
+  - Only allowed markdown files: TODO.md, CHANGELOG.md, HELP.md (when blocked)
+  - No README, SUMMARY, IMPLEMENTATION, ANALYSIS, or other documentation files
+  - Focus on code implementation, not documentation
+
+### Fixed
+
+- **CSS Print Styles** - Fixed PostCSS parsing errors with escaped class names
+  - Changed `.print\\:hidden` to `.print\:hidden` (single backslash)
+  - Fixed all print utility classes (hidden, block, inline, inline-block)
+  - Print styles now compile without warnings
+- **Print Button** - Now properly triggers browser print dialog with print CSS
+  - Added print media queries to hide UI elements
+  - Format content for PDF export
+  - Proper table and page break handling
+  - Print button available alongside Export button on all pages
+
+### Removed
+
+- **PrintButton component** - Replaced with ExportButton for actual file downloads
+
 ### Blocked / Failed
 
 - **Logo and favicon not displaying** - Created `HELP-LOGO-FAVICON.md` with full diagnostic info after 5 failed attempts. Files exist in public/ but images don't load. Needs investigation of custom image loader + Turbopack interaction.
