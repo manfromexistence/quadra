@@ -22,6 +22,7 @@ import { DocumentCreateSheet } from "@/components/edms/document-create-sheet";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
 import { EdmsQuickUpload } from "@/components/edms/quick-upload";
 import { ErrorFallback } from "@/components/error-fallback";
+import { PrintButton } from "@/components/edms/print-button";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
@@ -86,6 +87,7 @@ export default async function DocumentsPage({
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
+              <PrintButton label="Export to PDF" variant="secondary" />
               {canManageContent ? <DocumentCreateSheet projects={data.projects} /> : null}
               {canManageContent ? <DocumentBulkUploadSheet projects={data.projects} /> : null}
               <Button variant="outline" asChild>

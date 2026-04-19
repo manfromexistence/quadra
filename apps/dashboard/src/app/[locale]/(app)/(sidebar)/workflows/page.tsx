@@ -22,6 +22,7 @@ import {
 } from "@/components/edms/status-badge";
 import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { PrintButton } from "@/components/edms/print-button";
 import { WorkflowActionSheet } from "@/components/edms/workflow-action-sheet";
 import { WorkflowCreateSheet } from "@/components/edms/workflow-create-sheet";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
@@ -75,6 +76,7 @@ export default async function WorkflowsPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
+              <PrintButton label="Export to PDF" variant="secondary" />
               {canManageContent ? (
                 <WorkflowCreateSheet documents={data.documents} assignees={data.assignees} />
               ) : null}

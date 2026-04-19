@@ -19,6 +19,7 @@ import { EdmsMetricCard } from "@/components/edms/metric-card";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
 import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { PrintButton } from "@/components/edms/print-button";
 import { TransmittalCreateSheet } from "@/components/edms/transmittal-create-sheet";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { canManageEdmsContent } from "@/lib/edms/rbac";
@@ -71,6 +72,7 @@ export default async function TransmittalsPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
+              <PrintButton label="Export to PDF" variant="secondary" />
               {canManageContent ? (
                 <TransmittalCreateSheet
                   projects={data.projects}
