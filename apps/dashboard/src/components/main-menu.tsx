@@ -52,7 +52,7 @@ const icons = {
   "/databook": () => <BookOpen size={20} />,
   "/matrix": () => <Grid3X3 size={20} />,
   "/audit": () => <ClipboardList size={20} />,
-  "/config": () => <Cog size={20} />,
+  "/bulk-upload": () => <Icons.Upload size={20} />,
   "/theme": () => <Palette size={20} />,
 } as const;
 
@@ -166,8 +166,8 @@ const items = [
     name: "Audit",
   },
   {
-    path: "/config",
-    name: "Project Setup",
+    path: "/bulk-upload",
+    name: "Bulk Upload",
   },
   {
     path: "/theme",
