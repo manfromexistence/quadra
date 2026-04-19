@@ -76,7 +76,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background-color: hsl(var(--background));
+    background-color: oklch(var(--background));
     opacity: 0.8;
     z-index: -1;
     pointer-events: none;
@@ -177,7 +177,7 @@ pre code div,
   padding-left: 14px;
   padding-right: 14px;
   border-left: 3px solid;
-  color: hsl(var(--foreground));
+  color: oklch(var(--foreground));
 }
 
 .updates b,
@@ -190,7 +190,7 @@ pre code div,
   display: block;
   padding-top: 1.5em;
   padding-bottom: 0.5em;
-  color: hsl(var(--foreground));
+  color: oklch(var(--foreground));
 }
 
 .app-description strong:first-child {

@@ -263,12 +263,12 @@ export function Footer() {
           className={cn(
             "font-sans text-[200px] sm:text-[508px] leading-none select-none",
             "text-secondary",
-            "[WebkitTextStroke:1px_hsl(var(--muted-foreground))]",
-            "[textStroke:1px_hsl(var(--muted-foreground))]",
+            "[WebkitTextStroke:1px_oklch(var(--muted-foreground))]",
+            "[textStroke:1px_oklch(var(--muted-foreground))]",
           )}
           style={{
-            WebkitTextStroke: "1px hsl(var(--muted-foreground))",
-            color: "hsl(var(--secondary))",
+            WebkitTextStroke: "1px oklch(var(--muted-foreground))",
+            color: "oklch(var(--secondary))",
           }}
         >
           quadra
