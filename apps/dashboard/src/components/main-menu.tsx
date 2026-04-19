@@ -75,6 +75,39 @@ const items = [
     name: "Workflows",
   },
   {
+    path: "/bulk-upload",
+    name: "Bulk Upload",
+  },
+
+  {
+    path: "/schedule",
+    name: "Schedule",
+  },
+  {
+    path: "/databook",
+    name: "Data Book",
+  },
+  {
+    path: "/matrix",
+    name: "Matrix",
+  },
+  {
+    path: "/audit",
+    name: "Audit",
+  },
+  {
+    path: "/notifications",
+    name: "Notifications",
+  },
+  {
+    path: "/reports",
+    name: "Reports",
+  },
+  {
+    path: "/theme",
+    name: "Theme",
+  },
+  {
     path: "/transmittals",
     name: "Transmittals",
     children: [
@@ -94,7 +127,7 @@ const items = [
   },
   {
     path: "/technical-queries",
-    name: "Queries & RFIs",
+    name: "Queries",
     children: [
       {
         path: "/technical-queries",
@@ -142,98 +175,67 @@ const items = [
       },
     ],
   },
-  {
-    path: "/notifications",
-    name: "Activities",
-  },
-  {
-    path: "/reports",
-    name: "Reports",
-  },
-  {
-    path: "/schedule",
-    name: "Schedule",
-  },
-  {
-    path: "/databook",
-    name: "Data Book",
-  },
-  {
-    path: "/matrix",
-    name: "Matrix",
-  },
-  {
-    path: "/audit",
-    name: "Audit",
-  },
-  {
-    path: "/bulk-upload",
-    name: "Bulk Upload",
-  },
-  {
-    path: "/theme",
-    name: "Theme",
-  },
-  {
-    path: "/vault",
-    name: "Vault",
-  },
-  {
-    path: "/transactions",
-    name: "Transactions",
-    children: [
-      {
-        path: "/transactions/categories",
-        name: "Categories",
-      },
-      {
-        path: "/transactions?step=connect",
-        name: "Connect bank",
-      },
-      {
-        path: "/transactions?step=import&hide=true",
-        name: "Import",
-      },
-      { path: "/transactions?createTransaction=true", name: "Create new" },
-    ],
-  },
-  {
-    path: "/inbox",
-    name: "Inbox",
-    children: [{ path: "/inbox/settings", name: "Settings" }],
-  },
-  {
-    path: "/invoices",
-    name: "Invoices",
-    children: [
-      { path: "/invoices/products", name: "Products" },
-      { path: "/invoices?invoiceType=create", name: "Create new" },
-    ],
-  },
-  {
-    path: "/tracker",
-    name: "Tracker",
-    children: [{ path: "/tracker?create=true", name: "Create new" }],
-  },
-  {
-    path: "/customers",
-    name: "Customers",
-    children: [{ path: "/customers?createCustomer=true", name: "Create new" }],
-  },
-  {
-    path: "/apps",
-    name: "Apps",
-    children: [
-      { path: "/apps", name: "All" },
-      { path: "/apps?tab=installed", name: "Installed" },
-    ],
-  },
+
+  // {
+  //   path: "/vault",
+  //   name: "Vault",
+  // },
+  // {
+  //   path: "/transactions",
+  //   name: "Transactions",
+  //   children: [
+  //     {
+  //       path: "/transactions/categories",
+  //       name: "Categories",
+  //     },
+  //     {
+  //       path: "/transactions?step=connect",
+  //       name: "Connect bank",
+  //     },
+  //     {
+  //       path: "/transactions?step=import&hide=true",
+  //       name: "Import",
+  //     },
+  //     { path: "/transactions?createTransaction=true", name: "Create new" },
+  //   ],
+  // },
+  // {
+  //   path: "/inbox",
+  //   name: "Inbox",
+  //   children: [{ path: "/inbox/settings", name: "Settings" }],
+  // },
+  // {
+  //   path: "/invoices",
+  //   name: "Invoices",
+  //   children: [
+  //     { path: "/invoices/products", name: "Products" },
+  //     { path: "/invoices?invoiceType=create", name: "Create new" },
+  //   ],
+  // },
+  // {
+  //   path: "/tracker",
+  //   name: "Tracker",
+  //   children: [{ path: "/tracker?create=true", name: "Create new" }],
+  // },
+  // {
+  //   path: "/customers",
+  //   name: "Customers",
+  //   children: [{ path: "/customers?createCustomer=true", name: "Create new" }],
+  // },
+  // {
+  //   path: "/apps",
+  //   name: "Apps",
+  //   children: [
+  //     { path: "/apps", name: "All" },
+  //     { path: "/apps?tab=installed", name: "Installed" },
+  //   ],
+  // },
   {
     path: "/settings",
     name: "Settings",
     children: [
       { path: "/settings", name: "General" },
-      { path: "/settings/billing", name: "Billing" },
+      // { path: "/settings/billing", name: "Billing" },
       { path: "/settings/accounts", name: "Bank Connections" },
       { path: "/settings/members", name: "Members" },
       { path: "/settings/notifications", name: "Notifications" },

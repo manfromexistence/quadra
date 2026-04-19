@@ -83,4 +83,6 @@ No our website is not crashing - its fine but the data is not showing sh the pag
 
 In our edms page like projects, document, workflow, transmittal all items are failing and going back to default overview page maybe the i18n is not configured correctly in those links so please fix all of them
 
+So in our apps dashboard project at the login screen the logo was the previous logo. Please look for the logo that we are using in our dashboard sidebar at the top and use that in our login screen too. In our login screen next to that logo there is a text.
+
 Please lint and format all files and folder in the apps/dashbnoard correctly - and check for errors - in lowend device way and fix all errors

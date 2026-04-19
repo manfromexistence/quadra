@@ -63,7 +63,7 @@ export function Sidebar() {
           <BrandLogo size={34} priority />
           {isExpanded && (
             <span className="text-xl font-semibold tracking-tight transition-opacity duration-200">
-              Quadra
+              Quadra Demo
             </span>
           )}
         </Link>

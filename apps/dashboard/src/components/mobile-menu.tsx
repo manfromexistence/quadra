@@ -2,6 +2,7 @@
 
 import { Button } from "@midday/ui/button";
 import { Icons } from "@midday/ui/icons";
+import { ScrollArea } from "@midday/ui/scroll-area";
 import { Sheet, SheetContent } from "@midday/ui/sheet";
 import { useState } from "react";
 import { BrandLogo } from "./brand-logo";
@@ -22,13 +23,17 @@ export function MobileMenu() {
           <Icons.Menu size={16} />
         </Button>
       </div>
-      <SheetContent side="left" className="border-none rounded-none -ml-4">
-        <div className="ml-2 mb-8">
-          <BrandLogo size={36} priority />
-        </div>
+      <SheetContent side="left" className="border-none rounded-none -ml-4 p-0">
+        <div className="flex flex-col h-full">
+          <div className="ml-2 mb-8 pt-6 px-4">
+            <BrandLogo size={36} priority />
+          </div>
 
-        <div className="-ml-2">
-          <MainMenu onSelect={() => setOpen(false)} isExpanded={true} />
+          <ScrollArea className="flex-1 px-2">
+            <div className="-ml-2">
+              <MainMenu onSelect={() => setOpen(false)} isExpanded={true} />
+            </div>
+          </ScrollArea>
         </div>
       </SheetContent>
     </Sheet>

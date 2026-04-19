@@ -1,7 +1,7 @@
-import { Icons } from "@midday/ui/icons";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AuthPanel } from "@/components/auth/auth-panel";
+import { BrandLogo } from "@/components/brand-logo";
 import { LoginVideoBackground } from "@/components/login-video-background";
 
 export const metadata: Metadata = {
@@ -18,9 +18,10 @@ export default async function Page() {
             href="/"
             className="flex items-center gap-2 hover:opacity-80 active:opacity-80 transition-opacity duration-200 pointer-events-auto"
           >
-            <div className="w-6 h-6">
-              <Icons.LogoSmall className="w-full h-full text-foreground lg:text-white" />
-            </div>
+            <BrandLogo size={24} />
+            <span className="text-base font-semibold tracking-tight text-foreground lg:text-white">
+              Quadra Demo
+            </span>
           </Link>
         </div>
       </nav>
