@@ -18,14 +18,7 @@ export const metadata: Metadata = {
   description:
     "Manage construction projects, documents, workflows, and transmittals efficiently with Quadra EDMS.",
   manifest: "/site.webmanifest",
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
-      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
-    ],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
-  },
+  // favicon.ico is placed at src/app/favicon.ico for file-based metadata (most reliable in App Router)
   twitter: {
     title: "Quadra EDMS | Construction Document Management",
     description:
@@ -81,11 +74,6 @@ export default async function Layout({
     >
       <head>
         <ThemeScript />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body
         className={cn(

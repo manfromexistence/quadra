@@ -13,7 +13,10 @@ export async function proxy(request: NextRequest) {
   const origin = request.nextUrl.origin;
 
   // Skip proxy for static assets completely
-  if (request.nextUrl.pathname.startsWith("/_next/")) {
+  if (
+    request.nextUrl.pathname.startsWith("/_next/") ||
+    request.nextUrl.pathname.match(/\.(png|jpe?g|gif|svg|webp|ico|webmanifest|txt)$/i)
+  ) {
     return NextResponse.next();
   }
 

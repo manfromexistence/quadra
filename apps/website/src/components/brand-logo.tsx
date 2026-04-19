@@ -14,24 +14,28 @@ export function BrandLogo({
 }: BrandLogoProps) {
   return (
     <span
-      className={cn("relative block shrink-0", className)}
+      className={cn("relative inline-block shrink-0", className)}
       style={{ width: size, height: size }}
     >
-      <Image
-        src="/logo-dark.png"
-        alt="Quadra"
-        fill
-        priority={priority}
-        className="object-contain dark:hidden"
-        sizes={`${size}px`}
+      {/* Light mode logo */}
+      <img
+        src="/logo-light.svg"
+        alt="Quadra Logo"
+        width={size}
+        height={size}
+        className="dark:hidden object-contain"
+        style={{ width: size, height: size, position: 'absolute', inset: 0 }}
+        loading={priority ? "eager" : "lazy"}
       />
-      <Image
-        src="/logo-light.png"
-        alt="Quadra"
-        fill
-        priority={priority}
-        className="hidden object-contain dark:block"
-        sizes={`${size}px`}
+      {/* Dark mode logo */}
+      <img
+        src="/logo-dark.svg"
+        alt="Quadra Logo"
+        width={size}
+        height={size}
+        className="hidden dark:block object-contain"
+        style={{ width: size, height: size, position: 'absolute', inset: 0 }}
+        loading={priority ? "eager" : "lazy"}
       />
     </span>
   );

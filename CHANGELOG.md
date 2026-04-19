@@ -5,6 +5,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Blocked / Failed
+
+- **Logo and favicon not displaying** - Created `HELP-LOGO-FAVICON.md` with full diagnostic info after 5 failed attempts. Files exist in public/ but images don't load. Needs investigation of custom image loader + Turbopack interaction.
+
 ### Fixed
 
 - Fixed dashboard image loader to properly serve local logo files in development (removed hardcoded midday.ai CDN URL)
