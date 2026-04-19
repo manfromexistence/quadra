@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@midday/ui/form";
+import { ScrollArea } from "@midday/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -156,133 +157,135 @@ export function WorkflowActionSheet({
           Act on step
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
+      <SheetContent className="w-full sm:max-w-lg">
         <SheetHeader className="space-y-1">
           <SheetTitle>Record decision</SheetTitle>
           <SheetDescription>{title}</SheetDescription>
         </SheetHeader>
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="mt-8 space-y-6"
-          >
-            <FormField
-              control={form.control}
-              name="decision"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Decision</FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select decision" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="approve">
-                        Code-1: Approve (No comments required)
-                      </SelectItem>
-                      <SelectItem value="approve_with_comments">
-                        Code-2: Approved with Comments
-                      </SelectItem>
-                      <SelectItem value="reject">Code-3: Reject</SelectItem>
-                      <SelectItem value="for_information">
-                        Code-4: For Information Only
-                      </SelectItem>
-                      <SelectItem value="comment">
-                        Comment only (doesn't complete step)
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="comments"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Comments</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      className="min-h-32 resize-none"
-                      placeholder="Add review notes, approval remarks, or rejection comments."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="space-y-3">
-              <FormLabel>CSR Attachment (Optional)</FormLabel>
-              <FormDescription>
-                Upload a Comments Resolution Sheet (Excel/PDF) or other
-                supporting documents
-              </FormDescription>
-
-              {!uploadedFile && projectId && (
-                <DocumentFileUpload
-                  projectId={projectId}
-                  folder="workflow-attachments"
-                  helperText="Upload CSR or supporting document"
-                  onUploaded={(file) => setUploadedFile(file)}
-                />
-              )}
-
-              {uploadedFile && (
-                <div className="flex items-center gap-3 rounded-lg border p-3">
-                  <Upload className="size-4 text-muted-foreground" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">
-                      {uploadedFile.fileName}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {uploadedFile.fileSize
-                        ? `${(uploadedFile.fileSize / 1024).toFixed(1)} KB`
-                        : "Uploaded"}
-                    </p>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setUploadedFile(null)}
-                  >
-                    <X className="size-4" />
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center justify-end gap-3 border-t pt-6">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setIsOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isPending}>
-                {isPending ? (
-                  <>
-                    <Loader2 className="size-4 animate-spin" />
-                    Saving
-                  </>
-                ) : (
-                  <>
-                    <MessageSquareMore className="size-4" />
-                    Save decision
-                  </>
+        <ScrollArea className="h-[calc(100vh-120px)] pr-4">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="mt-8 space-y-6"
+            >
+              <FormField
+                control={form.control}
+                name="decision"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Decision</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select decision" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="approve">
+                          Code-1: Approve (No comments required)
+                        </SelectItem>
+                        <SelectItem value="approve_with_comments">
+                          Code-2: Approved with Comments
+                        </SelectItem>
+                        <SelectItem value="reject">Code-3: Reject</SelectItem>
+                        <SelectItem value="for_information">
+                          Code-4: For Information Only
+                        </SelectItem>
+                        <SelectItem value="comment">
+                          Comment only (doesn't complete step)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </Button>
-            </div>
-          </form>
-        </Form>
+              />
+
+              <FormField
+                control={form.control}
+                name="comments"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Comments</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        className="min-h-32 resize-none"
+                        placeholder="Add review notes, approval remarks, or rejection comments."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="space-y-3">
+                <FormLabel>CSR Attachment (Optional)</FormLabel>
+                <FormDescription>
+                  Upload a Comments Resolution Sheet (Excel/PDF) or other
+                  supporting documents
+                </FormDescription>
+
+                {!uploadedFile && projectId && (
+                  <DocumentFileUpload
+                    projectId={projectId}
+                    folder="workflow-attachments"
+                    helperText="Upload CSR or supporting document"
+                    onUploaded={(file) => setUploadedFile(file)}
+                  />
+                )}
+
+                {uploadedFile && (
+                  <div className="flex items-center gap-3 rounded-lg border p-3">
+                    <Upload className="size-4 text-muted-foreground" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">
+                        {uploadedFile.fileName}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {uploadedFile.fileSize
+                          ? `${(uploadedFile.fileSize / 1024).toFixed(1)} KB`
+                          : "Uploaded"}
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setUploadedFile(null)}
+                    >
+                      <X className="size-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-end gap-3 border-t pt-6">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isPending}>
+                  {isPending ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      Saving
+                    </>
+                  ) : (
+                    <>
+                      <MessageSquareMore className="size-4" />
+                      Save decision
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );

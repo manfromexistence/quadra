@@ -11,6 +11,7 @@ import {
 } from "@midday/ui/dialog";
 import { Input } from "@midday/ui/input";
 import { Label } from "@midday/ui/label";
+import { ScrollArea } from "@midday/ui/scroll-area";
 import { useState } from "react";
 
 interface AddSectionDialogProps {
@@ -38,8 +39,8 @@ export function AddSectionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
+      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6">
           <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1">
             Data Book
           </div>
@@ -50,48 +51,50 @@ export function AddSectionDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label>Section Code</Label>
-            <Input
-              className="font-mono"
-              placeholder="SEC-09"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-            />
+        <ScrollArea className="flex-1 px-6">
+          <div className="grid gap-4 sm:grid-cols-2 pr-4 py-4">
+            <div className="space-y-2">
+              <Label>Section Code</Label>
+              <Input
+                className="font-mono"
+                placeholder="SEC-09"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Expected Document Count</Label>
+              <Input
+                type="number"
+                placeholder="12"
+                value={count}
+                onChange={(e) => setCount(e.target.value)}
+              />
+            </div>
+            <div className="col-span-2 space-y-2">
+              <Label>Section Title</Label>
+              <Input
+                placeholder="e.g. HSE Records & Permits"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
+            <div className="col-span-2 space-y-2">
+              <Label>Auto-Populate Rule</Label>
+              <Input
+                className="font-mono"
+                placeholder="e.g. *-HSE-* OR status=IFC"
+                value={rule}
+                onChange={(e) => setRule(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Documents matching this pattern will auto-file to this section
+              </p>
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label>Expected Document Count</Label>
-            <Input
-              type="number"
-              placeholder="12"
-              value={count}
-              onChange={(e) => setCount(e.target.value)}
-            />
-          </div>
-          <div className="col-span-2 space-y-2">
-            <Label>Section Title</Label>
-            <Input
-              placeholder="e.g. HSE Records & Permits"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-          <div className="col-span-2 space-y-2">
-            <Label>Auto-Populate Rule</Label>
-            <Input
-              className="font-mono"
-              placeholder="e.g. *-HSE-* OR status=IFC"
-              value={rule}
-              onChange={(e) => setRule(e.target.value)}
-            />
-            <p className="text-xs text-muted-foreground">
-              Documents matching this pattern will auto-file to this section
-            </p>
-          </div>
-        </div>
+        </ScrollArea>
 
-        <DialogFooter>
+        <DialogFooter className="px-6 pb-6">
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>

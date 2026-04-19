@@ -1,7 +1,7 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { createClient } from "@libsql/client";
 import { config } from "dotenv";
-import { readFileSync } from "fs";
-import { join } from "path";
 
 config({ path: ".env.local" });
 
@@ -37,7 +37,7 @@ const applySchema = async () => {
     if (!statement) continue;
 
     console.log(`\n[${i + 1}/${statements.length}] Executing statement...`);
-    console.log(statement.substring(0, 100) + "...");
+    console.log(`${statement.substring(0, 100)}...`);
 
     try {
       await client.execute(statement);
@@ -53,7 +53,7 @@ const applySchema = async () => {
   // Verify tables were created
   console.log("\n🔍 Verifying tables...");
   const tables = await client.execute(
-    "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
+    "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name",
   );
   console.log("Tables created:", tables.rows);
 

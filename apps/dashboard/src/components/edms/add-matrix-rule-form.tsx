@@ -8,6 +8,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@midday/ui/card";
+import { Label } from "@midday/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
 import {
   Table,
   TableBody,
@@ -90,66 +98,72 @@ export function AddMatrixRuleForm() {
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-2">
-              <label
+              <Label
                 htmlFor="discipline-select"
                 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
               >
                 Discipline
-              </label>
-              <select
-                id="discipline-select"
-                value={discipline}
-                onChange={(e) => setDiscipline(e.target.value)}
-                className="flex h-10 w-full rounded-lg border border-input bg-transparent px-3 text-sm"
-              >
-                <option value="CIVIL">CIVIL — Civil Engineering</option>
-                <option value="ELEC">ELEC — Electrical</option>
-                <option value="MECH">MECH — Mechanical</option>
-                <option value="PROC">PROC — Process</option>
-                <option value="INST">INST — Instrumentation</option>
-                <option value="PIPING">PIPING — Piping</option>
-                <option value="STRUCT">STRUCT — Structural</option>
-              </select>
+              </Label>
+              <Select value={discipline} onValueChange={setDiscipline}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="CIVIL">
+                    CIVIL — Civil Engineering
+                  </SelectItem>
+                  <SelectItem value="ELEC">ELEC — Electrical</SelectItem>
+                  <SelectItem value="MECH">MECH — Mechanical</SelectItem>
+                  <SelectItem value="PROC">PROC — Process</SelectItem>
+                  <SelectItem value="INST">INST — Instrumentation</SelectItem>
+                  <SelectItem value="PIPING">PIPING — Piping</SelectItem>
+                  <SelectItem value="STRUCT">STRUCT — Structural</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
-              <label
+              <Label
                 htmlFor="doctype-select"
                 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
               >
                 Document Type
-              </label>
-              <select
-                id="doctype-select"
-                value={docType}
-                onChange={(e) => setDocType(e.target.value)}
-                className="flex h-10 w-full rounded-lg border border-input bg-transparent px-3 text-sm"
-              >
-                <option value="DWG">DWG — Drawing</option>
-                <option value="SPEC">SPEC — Specification</option>
-                <option value="CALC">CALC — Calculation</option>
-                <option value="RPT">RPT — Report</option>
-                <option value="DATA">DATA — Datasheet</option>
-                <option value="PROC">PROC — Procedure</option>
-              </select>
+              </Label>
+              <Select value={docType} onValueChange={setDocType}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DWG">DWG — Drawing</SelectItem>
+                  <SelectItem value="SPEC">SPEC — Specification</SelectItem>
+                  <SelectItem value="CALC">CALC — Calculation</SelectItem>
+                  <SelectItem value="RPT">RPT — Report</SelectItem>
+                  <SelectItem value="DATA">DATA — Datasheet</SelectItem>
+                  <SelectItem value="PROC">PROC — Procedure</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
-              <label
+              <Label
                 htmlFor="purpose-select"
                 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
               >
                 Purpose Code
-              </label>
-              <select
-                id="purpose-select"
-                value={purpose}
-                onChange={(e) => setPurpose(e.target.value)}
-                className="flex h-10 w-full rounded-lg border border-input bg-transparent px-3 text-sm"
-              >
-                <option value="IFR">IFR — Issued for Review</option>
-                <option value="IFA">IFA — Issued for Approval</option>
-                <option value="IFC">IFC — Issued for Construction</option>
-                <option value="IFI">IFI — Issued for Information</option>
-              </select>
+              </Label>
+              <Select value={purpose} onValueChange={setPurpose}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="IFR">IFR — Issued for Review</SelectItem>
+                  <SelectItem value="IFA">IFA — Issued for Approval</SelectItem>
+                  <SelectItem value="IFC">
+                    IFC — Issued for Construction
+                  </SelectItem>
+                  <SelectItem value="IFI">
+                    IFI — Issued for Information
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex items-end">
               <Button

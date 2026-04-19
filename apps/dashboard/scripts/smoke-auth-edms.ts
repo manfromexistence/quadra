@@ -24,8 +24,10 @@ for (const candidate of envCandidates) {
 }
 
 const baseURL = process.env.SMOKE_BASE_URL?.trim() || "http://127.0.0.1:3001";
-const smokeEmail = process.env.SMOKE_AUTH_EMAIL?.trim() || "smoke-edms@quadra.example";
-const smokePassword = process.env.SMOKE_AUTH_PASSWORD?.trim() || "QuadraSmoke123!";
+const smokeEmail =
+  process.env.SMOKE_AUTH_EMAIL?.trim() || "smoke-edms@quadra.example";
+const smokePassword =
+  process.env.SMOKE_AUTH_PASSWORD?.trim() || "QuadraSmoke123!";
 const smokeName = process.env.SMOKE_AUTH_NAME?.trim() || "Quadra Smoke";
 
 const pageRoutes = [
@@ -48,7 +50,9 @@ async function main() {
   const failures = results.filter((result) => !result.ok);
 
   for (const result of results) {
-    console.log(`${result.ok ? "PASS" : "FAIL"} ${result.step}: ${result.details}`);
+    console.log(
+      `${result.ok ? "PASS" : "FAIL"} ${result.step}: ${result.details}`,
+    );
   }
 
   if (failures.length > 0) {
@@ -68,7 +72,11 @@ async function ensureAuthenticated() {
     callbackURL: "/en/projects",
   });
 
-  if (signUpResult.ok && signUpResult.body?.token && signUpResult.cookieHeader) {
+  if (
+    signUpResult.ok &&
+    signUpResult.body?.token &&
+    signUpResult.cookieHeader
+  ) {
     results.push({
       step: "auth.signUp",
       ok: true,
@@ -88,7 +96,11 @@ async function ensureAuthenticated() {
     callbackURL: "/en/projects",
   });
 
-  if (signInResult.ok && signInResult.body?.token && signInResult.cookieHeader) {
+  if (
+    signInResult.ok &&
+    signInResult.body?.token &&
+    signInResult.cookieHeader
+  ) {
     results.push({
       step: "auth.signIn",
       ok: true,
@@ -150,7 +162,8 @@ async function checkProtectedPages(cookieHeader: string) {
       response.status < 400 &&
       response.headers.get("location")?.includes("/login");
     const hasServerError =
-      body.includes("This page couldn’t load") || body.includes("Internal Server Error");
+      body.includes("This page couldn’t load") ||
+      body.includes("Internal Server Error");
     const ok = response.status === 200 && !redirectedToLogin && !hasServerError;
 
     results.push({
@@ -166,10 +179,12 @@ async function checkProtectedPages(cookieHeader: string) {
 async function checkUploadRoute(cookieHeader: string) {
   const textUpload = await uploadFixture(
     cookieHeader,
-    new File([tinyPdf()], "smoke-check.pdf", { type: "application/pdf" })
+    new File([tinyPdf()], "smoke-check.pdf", { type: "application/pdf" }),
   );
 
-  const textProvider = textUpload.ok ? String(textUpload.body.provider ?? "unknown") : "failed";
+  const textProvider = textUpload.ok
+    ? String(textUpload.body.provider ?? "unknown")
+    : "failed";
   results.push({
     step: "upload.text",
     ok: textUpload.ok,
@@ -180,7 +195,7 @@ async function checkUploadRoute(cookieHeader: string) {
 
   const imageUpload = await uploadFixture(
     cookieHeader,
-    new File([tinyPng()], "smoke-image.png", { type: "image/png" })
+    new File([tinyPng()], "smoke-image.png", { type: "image/png" }),
   );
 
   const expectedImageProviders = process.env.IMGBB
@@ -228,7 +243,10 @@ async function uploadFixture(cookieHeader: string, file: File) {
   };
 }
 
-async function postAuthJson(pathname: string, payload: Record<string, unknown>) {
+async function postAuthJson(
+  pathname: string,
+  payload: Record<string, unknown>,
+) {
   const response = await fetch(new URL(pathname, baseURL), {
     method: "POST",
     headers: {
@@ -237,7 +255,10 @@ async function postAuthJson(pathname: string, payload: Record<string, unknown>) 
     body: JSON.stringify(payload),
   });
 
-  const body = (await response.json().catch(() => null)) as Record<string, unknown> | null;
+  const body = (await response.json().catch(() => null)) as Record<
+    string,
+    unknown
+  > | null;
   const cookieHeader = response.headers
     .getSetCookie()
     .map((entry) => entry.split(";")[0])
@@ -255,8 +276,8 @@ function tinyPng() {
   return Uint8Array.from(
     Buffer.from(
       "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9p3h2N8AAAAASUVORK5CYII=",
-      "base64"
-    )
+      "base64",
+    ),
   );
 }
 

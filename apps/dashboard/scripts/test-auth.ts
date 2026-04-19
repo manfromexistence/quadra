@@ -1,7 +1,7 @@
+import bcrypt from "bcryptjs";
+import { config } from "dotenv";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
-import { config } from "dotenv";
-import bcrypt from "bcryptjs";
 
 config({ path: ".env.local" });
 
@@ -13,7 +13,7 @@ const testAuth = async () => {
     console.log("1️⃣ Creating test user...");
     const hashedPassword = await bcrypt.hash("testpassword123", 10);
     const testUser = {
-      id: "test-user-" + Date.now(),
+      id: `test-user-${Date.now()}`,
       name: "Test User",
       email: "test@quadra-edms.com",
       emailVerified: false,
@@ -35,7 +35,7 @@ const testAuth = async () => {
     // Test 2: Create account entry for email/password
     console.log("\n2️⃣ Creating account entry...");
     const testAccount = {
-      id: "test-account-" + Date.now(),
+      id: `test-account-${Date.now()}`,
       accountId: testUser.id,
       providerId: "credential",
       userId: testUser.id,
@@ -56,7 +56,10 @@ const testAuth = async () => {
     // Test 3: Verify user can be queried
     console.log("\n3️⃣ Verifying user query...");
     const { eq } = await import("drizzle-orm");
-    const users = await db.select().from(schema.user).where(eq(schema.user.email, testUser.email));
+    const users = await db
+      .select()
+      .from(schema.user)
+      .where(eq(schema.user.email, testUser.email));
     console.log("✅ User found:", users[0]?.name);
 
     // Test 4: Check all tables
@@ -64,7 +67,7 @@ const testAuth = async () => {
     const userCount = (await db.select().from(schema.user)).length;
     const sessionCount = (await db.select().from(schema.session)).length;
     const accountCount = (await db.select().from(schema.account)).length;
-    
+
     console.log(`   Users: ${userCount}`);
     console.log(`   Sessions: ${sessionCount}`);
     console.log(`   Accounts: ${accountCount}`);
@@ -73,8 +76,9 @@ const testAuth = async () => {
     console.log("\n📝 Test Credentials:");
     console.log("   Email: test@quadra-edms.com");
     console.log("   Password: testpassword123");
-    console.log("\n🚀 Start the dev server and visit http://localhost:3001/login");
-
+    console.log(
+      "\n🚀 Start the dev server and visit http://localhost:3001/login",
+    );
   } catch (error) {
     console.error("❌ Error:", error);
   }

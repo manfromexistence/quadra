@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@midday/ui/dialog";
+import { ScrollArea } from "@midday/ui/scroll-area";
 
 interface CompileDataBookDialogProps {
   open: boolean;
@@ -39,95 +40,97 @@ export function CompileDataBookDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh]">
-        <DialogHeader>
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6">
           <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1">
             Compile
           </div>
           <DialogTitle>Compile Data Book</DialogTitle>
         </DialogHeader>
 
-        <div className="overflow-y-auto bg-muted/30 p-8">
-          <div className="bg-white border border-border p-12 max-w-3xl mx-auto shadow-sm">
-            {/* Cover Page */}
-            <div className="text-center pb-6 border-b-2 border-foreground mb-6">
-              <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3">
-                FINAL PROJECT DATA BOOK
+        <ScrollArea className="flex-1 px-6">
+          <div className="bg-muted/30 p-8 pr-4 my-4">
+            <div className="bg-white border border-border p-12 max-w-3xl mx-auto shadow-sm">
+              {/* Cover Page */}
+              <div className="text-center pb-6 border-b-2 border-foreground mb-6">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3">
+                  FINAL PROJECT DATA BOOK
+                </div>
+                <h1 className="text-4xl font-serif font-normal mb-2">
+                  {metadata.title}
+                </h1>
+                <div className="text-sm text-muted-foreground">
+                  Al Hamra Refinery Expansion · Revision {metadata.revision}
+                </div>
+                <div className="text-xs text-muted-foreground mt-8 space-y-1">
+                  <div>Prepared by Gulf Engineering Consultants</div>
+                  <div>For Gulf National Petroleum</div>
+                  <div className="font-mono mt-3">{metadata.targetDate}</div>
+                </div>
               </div>
-              <h1 className="text-4xl font-serif font-normal mb-2">
-                {metadata.title}
-              </h1>
-              <div className="text-sm text-muted-foreground">
-                Al Hamra Refinery Expansion · Revision {metadata.revision}
-              </div>
-              <div className="text-xs text-muted-foreground mt-8 space-y-1">
-                <div>Prepared by Gulf Engineering Consultants</div>
-                <div>For Gulf National Petroleum</div>
-                <div className="font-mono mt-3">{metadata.targetDate}</div>
-              </div>
-            </div>
 
-            {/* Table of Contents */}
-            <div className="text-sm font-semibold mb-4 tracking-wide">
-              TABLE OF CONTENTS
-            </div>
-            <div className="space-y-0">
-              {sections.map((section) => {
-                const sectionPage = pageNumber;
-                const collectedDocs = section.docs.filter(
-                  (d) => d.status === "collected",
-                );
+              {/* Table of Contents */}
+              <div className="text-sm font-semibold mb-4 tracking-wide">
+                TABLE OF CONTENTS
+              </div>
+              <div className="space-y-0">
+                {sections.map((section) => {
+                  const sectionPage = pageNumber;
+                  const collectedDocs = section.docs.filter(
+                    (d) => d.status === "collected",
+                  );
 
-                const sectionContent = (
-                  <div key={section.code}>
-                    <div className="flex justify-between items-center py-2 border-b border-foreground font-semibold">
-                      <span>
-                        <span className="font-mono text-xs">
-                          {section.code}
-                        </span>{" "}
-                        &nbsp; {section.title}
-                      </span>
-                      <span className="font-mono text-xs text-muted-foreground">
-                        {String(sectionPage).padStart(3, "0")}
-                      </span>
+                  const sectionContent = (
+                    <div key={section.code}>
+                      <div className="flex justify-between items-center py-2 border-b border-foreground font-semibold">
+                        <span>
+                          <span className="font-mono text-xs">
+                            {section.code}
+                          </span>{" "}
+                          &nbsp; {section.title}
+                        </span>
+                        <span className="font-mono text-xs text-muted-foreground">
+                          {String(sectionPage).padStart(3, "0")}
+                        </span>
+                      </div>
+                      {collectedDocs.map((doc, i) => {
+                        const docPage = sectionPage + i + 1;
+                        return (
+                          <div
+                            key={doc.code}
+                            className="flex justify-between items-center py-1.5 pl-5 border-b border-dotted border-border text-xs"
+                          >
+                            <span className="text-muted-foreground">
+                              <span className="font-mono text-[10.5px]">
+                                {doc.code}
+                              </span>{" "}
+                              &nbsp; {doc.title}
+                            </span>
+                            <span className="font-mono text-[10px] text-muted-foreground">
+                              {String(docPage).padStart(3, "0")}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
-                    {collectedDocs.map((doc, i) => {
-                      const docPage = sectionPage + i + 1;
-                      return (
-                        <div
-                          key={doc.code}
-                          className="flex justify-between items-center py-1.5 pl-5 border-b border-dotted border-border text-xs"
-                        >
-                          <span className="text-muted-foreground">
-                            <span className="font-mono text-[10.5px]">
-                              {doc.code}
-                            </span>{" "}
-                            &nbsp; {doc.title}
-                          </span>
-                          <span className="font-mono text-[10px] text-muted-foreground">
-                            {String(docPage).padStart(3, "0")}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
+                  );
 
-                pageNumber += collectedDocs.length + 3;
-                return sectionContent;
-              })}
-            </div>
+                  pageNumber += collectedDocs.length + 3;
+                  return sectionContent;
+                })}
+              </div>
 
-            <div className="mt-8 pt-4 border-t border-border text-[10px] text-muted-foreground flex justify-between">
-              <span>
-                Generated by Quadra EDMS · Document Controller: S. Kumar
-              </span>
-              <span className="font-mono">Page 1 of 1</span>
+              <div className="mt-8 pt-4 border-t border-border text-[10px] text-muted-foreground flex justify-between">
+                <span>
+                  Generated by Quadra EDMS · Document Controller: S. Kumar
+                </span>
+                <span className="font-mono">Page 1 of 1</span>
+              </div>
             </div>
           </div>
-        </div>
+        </ScrollArea>
 
-        <DialogFooter>
+        <DialogFooter className="px-6 pb-6">
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
             Close
           </Button>

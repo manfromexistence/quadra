@@ -21,11 +21,8 @@ export default async function NewDocumentPage() {
 
   return (
     <ScrollableContent>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 pt-6">
         <div className="space-y-2">
-          <p className="text-sm text-muted-foreground uppercase tracking-wider">
-            Documents / New
-          </p>
           <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
             Upload Document
           </h1>

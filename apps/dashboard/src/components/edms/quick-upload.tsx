@@ -4,6 +4,13 @@ import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import { Input } from "@midday/ui/input";
 import { Label } from "@midday/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
 import { useToast } from "@midday/ui/use-toast";
 import { Loader2, UploadCloud } from "lucide-react";
 import { useId, useMemo, useState, useTransition } from "react";
@@ -132,21 +139,23 @@ export function EdmsQuickUpload({
         <div className="grid gap-3 md:grid-cols-[1fr_auto]">
           <div className="space-y-2">
             <Label htmlFor="edms-project">Project</Label>
-            <select
-              id="edms-project"
+            <Select
               value={selectedProjectId}
-              onChange={(event) => setSelectedProjectId(event.target.value)}
-              className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+              onValueChange={setSelectedProjectId}
             >
-              <option value="">Select project</option>
-              {projects.map((project) => (
-                <option key={project.id} value={project.id}>
-                  {project.projectNumber
-                    ? `${project.projectNumber} - ${project.name}`
-                    : project.name}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger>
+                <SelectValue placeholder="Select project" />
+              </SelectTrigger>
+              <SelectContent>
+                {projects.map((project) => (
+                  <SelectItem key={project.id} value={project.id}>
+                    {project.projectNumber
+                      ? `${project.projectNumber} - ${project.name}`
+                      : project.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex items-end">

@@ -143,12 +143,14 @@ for (const nftFile of nftFiles) {
       fs.writeFileSync(nftFile, JSON.stringify(manifest));
       filesRewritten++;
     } catch (err) {
-      console.error(`fix-nft-symlinks: failed to write ${nftFile}: ${err.message}`);
+      console.error(
+        `fix-nft-symlinks: failed to write ${nftFile}: ${err.message}`,
+      );
     }
   }
 }
 
 console.log(
   `fix-nft-symlinks: inspected ${filesInspected} .nft.json file(s), ` +
-  `rewrote ${filesRewritten} file(s), fixed ${pathsFixed} symlinked path(s).`
+    `rewrote ${filesRewritten} file(s), fixed ${pathsFixed} symlinked path(s).`,
 );

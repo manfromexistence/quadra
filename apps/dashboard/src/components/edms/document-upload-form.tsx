@@ -1,9 +1,12 @@
 "use client";
 
 import { Button } from "@midday/ui/button";
+import { Calendar } from "@midday/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
+import { cn } from "@midday/ui/cn";
 import { Input } from "@midday/ui/input";
 import { Label } from "@midday/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
 import {
   Select,
   SelectContent,
@@ -12,7 +15,8 @@ import {
   SelectValue,
 } from "@midday/ui/select";
 import { Textarea } from "@midday/ui/textarea";
-import { FileText, Loader2, Upload } from "lucide-react";
+import { format } from "date-fns";
+import { CalendarIcon, FileText, Loader2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DocumentCodeBuilder } from "./document-code-builder";
@@ -166,14 +170,39 @@ export function DocumentUploadForm({ projects }: DocumentUploadFormProps) {
 
             <div className="space-y-2">
               <Label htmlFor="issueDate">Issue Date</Label>
-              <Input
-                id="issueDate"
-                type="date"
-                value={formData.issueDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, issueDate: e.target.value })
-                }
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !formData.issueDate && "text-muted-foreground",
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.issueDate
+                      ? format(new Date(formData.issueDate), "PPP")
+                      : "Pick a date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={
+                      formData.issueDate
+                        ? new Date(formData.issueDate)
+                        : undefined
+                    }
+                    onSelect={(date) =>
+                      setFormData({
+                        ...formData,
+                        issueDate: date ? format(date, "yyyy-MM-dd") : "",
+                      })
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 

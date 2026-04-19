@@ -3,7 +3,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Badge } from "@midday/ui/badge";
 import { Button } from "@midday/ui/button";
+import { Calendar } from "@midday/ui/calendar";
 import { Checkbox } from "@midday/ui/checkbox";
+import { cn } from "@midday/ui/cn";
 import {
   Form,
   FormControl,
@@ -13,6 +15,7 @@ import {
   FormMessage,
 } from "@midday/ui/form";
 import { Input } from "@midday/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
 import {
   Select,
   SelectContent,
@@ -30,7 +33,7 @@ import {
 } from "@midday/ui/sheet";
 import { Textarea } from "@midday/ui/textarea";
 import { format } from "date-fns";
-import { Building2, FileText, Loader2, Send } from "lucide-react";
+import { Building2, CalendarIcon, FileText, Loader2, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -512,9 +515,43 @@ export function TransmittalCreateSheet({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Response required by</FormLabel>
-                          <FormControl>
-                            <Input type="date" {...field} />
-                          </FormControl>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  className={cn(
+                                    "w-full justify-start text-left font-normal",
+                                    !field.value && "text-muted-foreground",
+                                  )}
+                                >
+                                  <CalendarIcon className="mr-2 h-4 w-4" />
+                                  {field.value
+                                    ? format(new Date(field.value), "PPP")
+                                    : "Pick a date"}
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={
+                                  field.value
+                                    ? new Date(field.value)
+                                    : undefined
+                                }
+                                onSelect={(date) =>
+                                  field.onChange(
+                                    date ? format(date, "yyyy-MM-dd") : "",
+                                  )
+                                }
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
                           <FormMessage />
                         </FormItem>
                       )}

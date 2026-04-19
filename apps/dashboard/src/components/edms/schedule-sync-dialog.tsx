@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@midday/ui/button";
+import { Checkbox } from "@midday/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +11,14 @@ import {
   DialogTitle,
 } from "@midday/ui/dialog";
 import { Label } from "@midday/ui/label";
+import { ScrollArea } from "@midday/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
 import { useState } from "react";
 
 interface ScheduleSyncDialogProps {
@@ -33,8 +42,8 @@ export function ScheduleSyncDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
+      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6">
           <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1">
             Planning
           </div>
@@ -45,84 +54,126 @@ export function ScheduleSyncDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Source System</Label>
-              <select className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm">
-                <option>Primavera P6</option>
-                <option>MS Project</option>
-                <option>Asta Powerproject</option>
-                <option>Smartsheet</option>
-                <option>CSV Upload</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label>Baseline</Label>
-              <select className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm">
-                <option>Current — Baseline 3</option>
-                <option>Baseline 2 (approved)</option>
-                <option>Baseline 1 (original)</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Schedule File</Label>
-            <div className="border-2 border-dashed border-border rounded-md p-8 text-center bg-muted/30">
-              <div className="text-sm font-medium">
-                ↑ Drop .xer / .mpp / .xlsx file
+        <ScrollArea className="flex-1 px-6">
+          <div className="space-y-4 pr-4 py-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Source System</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Primavera P6" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="p6">Primavera P6</SelectItem>
+                    <SelectItem value="msproject">MS Project</SelectItem>
+                    <SelectItem value="asta">Asta Powerproject</SelectItem>
+                    <SelectItem value="smartsheet">Smartsheet</SelectItem>
+                    <SelectItem value="csv">CSV Upload</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="text-xs text-muted-foreground mt-1">
-                Or connect via API — configured in admin
+              <div className="space-y-2">
+                <Label>Baseline</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Current — Baseline 3" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="baseline3">
+                      Current — Baseline 3
+                    </SelectItem>
+                    <SelectItem value="baseline2">
+                      Baseline 2 (approved)
+                    </SelectItem>
+                    <SelectItem value="baseline1">
+                      Baseline 1 (original)
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Schedule File</Label>
+              <div className="border-2 border-dashed border-border rounded-md p-8 text-center bg-muted/30">
+                <div className="text-sm font-medium">
+                  ↑ Drop .xer / .mpp / .xlsx file
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  Or connect via API — configured in admin
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Merge Options</Label>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="preserve-links"
+                    checked={preserveLinks}
+                    onCheckedChange={(checked) =>
+                      setPreserveLinks(checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor="preserve-links"
+                    className="text-sm font-normal cursor-pointer"
+                  >
+                    Preserve existing document linkages
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="update-dates"
+                    checked={updateDates}
+                    onCheckedChange={(checked) =>
+                      setUpdateDates(checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor="update-dates"
+                    className="text-sm font-normal cursor-pointer"
+                  >
+                    Update activity dates (start / finish)
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="recalculate-ev"
+                    checked={recalculateEV}
+                    onCheckedChange={(checked) =>
+                      setRecalculateEV(checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor="recalculate-ev"
+                    className="text-sm font-normal cursor-pointer"
+                  >
+                    Recalculate earned-value from document status
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="auto-create"
+                    checked={autoCreate}
+                    onCheckedChange={(checked) =>
+                      setAutoCreate(checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor="auto-create"
+                    className="text-sm font-normal cursor-pointer"
+                  >
+                    Auto-create activities for unlinked WBS nodes
+                  </Label>
+                </div>
               </div>
             </div>
           </div>
+        </ScrollArea>
 
-          <div className="space-y-2">
-            <Label>Merge Options</Label>
-            <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={preserveLinks}
-                  onChange={(e) => setPreserveLinks(e.target.checked)}
-                  className="size-4"
-                />
-                Preserve existing document linkages
-              </label>
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={updateDates}
-                  onChange={(e) => setUpdateDates(e.target.checked)}
-                  className="size-4"
-                />
-                Update activity dates (start / finish)
-              </label>
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={recalculateEV}
-                  onChange={(e) => setRecalculateEV(e.target.checked)}
-                  className="size-4"
-                />
-                Recalculate earned-value from document status
-              </label>
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={autoCreate}
-                  onChange={(e) => setAutoCreate(e.target.checked)}
-                  className="size-4"
-                />
-                Auto-create activities for unlinked WBS nodes
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <DialogFooter>
+        <DialogFooter className="px-6 pb-6">
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>

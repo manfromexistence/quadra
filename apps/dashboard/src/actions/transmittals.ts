@@ -1,5 +1,6 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
@@ -59,5 +60,93 @@ export async function createTransmittal(data: CreateTransmittalData) {
   } catch (error) {
     console.error("Failed to create transmittal:", error);
     throw new Error("Failed to create transmittal");
+  }
+}
+
+interface AcknowledgeTransmittalData {
+  transmittalId: string;
+}
+
+export async function acknowledgeTransmittal(data: AcknowledgeTransmittalData) {
+  const sessionUser = await getRequiredDashboardSessionUser();
+
+  if (!canManageEdmsContent(sessionUser.role)) {
+    return {
+      success: false,
+      error: { message: "Unauthorized to acknowledge transmittals" },
+    };
+  }
+
+  try {
+    await db
+      .update(transmittals)
+      .set({
+        status: "acknowledged",
+        acknowledgedAt: new Date(),
+        acknowledgedBy: sessionUser.id,
+      })
+      .where(eq(transmittals.id, data.transmittalId));
+
+    revalidatePath("/transmittals");
+    revalidatePath(`/transmittals/${data.transmittalId}`);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to acknowledge transmittal:", error);
+    return {
+      success: false,
+      error: { message: "Failed to acknowledge transmittal" },
+    };
+  }
+}
+
+interface ReviewTransmittalData {
+  transmittalId: string;
+  reviewStatus: string;
+  comments: string;
+  approvalCode: string;
+  attachmentUrl?: string;
+  attachmentFileName?: string;
+  attachmentFileSize?: number;
+}
+
+export async function reviewTransmittal(data: ReviewTransmittalData) {
+  const sessionUser = await getRequiredDashboardSessionUser();
+
+  if (!canManageEdmsContent(sessionUser.role)) {
+    return {
+      success: false,
+      error: { message: "Unauthorized to review transmittals" },
+    };
+  }
+
+  try {
+    // Update transmittal with review information
+    await db
+      .update(transmittals)
+      .set({
+        status: data.reviewStatus,
+        notes: data.comments,
+        customFields: JSON.stringify({
+          approvalCode: data.approvalCode,
+          attachmentUrl: data.attachmentUrl,
+          attachmentFileName: data.attachmentFileName,
+          attachmentFileSize: data.attachmentFileSize,
+          reviewedAt: new Date().toISOString(),
+          reviewedBy: sessionUser.id,
+        }),
+      })
+      .where(eq(transmittals.id, data.transmittalId));
+
+    revalidatePath("/transmittals");
+    revalidatePath(`/transmittals/${data.transmittalId}`);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to review transmittal:", error);
+    return {
+      success: false,
+      error: { message: "Failed to submit review" },
+    };
   }
 }

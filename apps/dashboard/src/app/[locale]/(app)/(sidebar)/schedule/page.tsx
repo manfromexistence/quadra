@@ -233,9 +233,9 @@ export default async function SchedulePage() {
                 </div>
                 <div className="relative p-3">
                   <div className="grid grid-cols-12 gap-0">
-                    {MONTHS.map((month) => (
+                    {MONTHS.map((month, index) => (
                       <div
-                        key={month}
+                        key={`month-header-${index}`}
                         className="text-xs text-muted-foreground font-mono text-center border-r border-border last:border-r-0"
                       >
                         {month}
@@ -264,7 +264,7 @@ export default async function SchedulePage() {
                     <div className="p-3 border-r border-border">
                       <div className="font-medium text-sm">{activity.name}</div>
                       <div className="text-xs text-muted-foreground font-mono mt-1">
-                        {activity.id} · WBS {activity.wbs} ·{" "}
+                        {activity.activityCode} · WBS {activity.wbs} ·{" "}
                         {activity.linkedDocs.length} docs linked
                       </div>
                     </div>
@@ -272,7 +272,7 @@ export default async function SchedulePage() {
                       <div className="grid grid-cols-12 gap-0 h-full">
                         {MONTHS.map((_, i) => (
                           <div
-                            key={i}
+                            key={`month-grid-${activity.id}-${i}`}
                             className="border-r border-border/30 last:border-r-0"
                           />
                         ))}
@@ -338,7 +338,8 @@ export default async function SchedulePage() {
                     <TableCell className="px-6">
                       <div className="font-medium text-sm">{activity.name}</div>
                       <div className="text-xs text-muted-foreground font-mono mt-1">
-                        {activity.id} · {activity.start} → {activity.end}
+                        {activity.activityCode} · {activity.start} →{" "}
+                        {activity.end}
                       </div>
                     </TableCell>
                     <TableCell className="font-mono text-xs">

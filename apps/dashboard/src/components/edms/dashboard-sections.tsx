@@ -52,7 +52,7 @@ export function EdmsProjectList({
           </CardDescription>
         </div>
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/dashboard/projects">
+          <Link href="/projects">
             View all
             <ArrowRight className="size-4" />
           </Link>
@@ -73,7 +73,7 @@ export function EdmsProjectList({
             return (
               <Link
                 key={project.id}
-                href={`/dashboard/projects/${project.id}`}
+                href={`/projects/${project.id}`}
                 className="rounded-2xl border border-border bg-muted/25 p-4 shadow-sm transition-all hover:shadow-md"
               >
                 <div className="flex gap-4">
@@ -143,7 +143,7 @@ export function EdmsDocumentTable({
           </CardDescription>
         </div>
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/dashboard/documents">
+          <Link href="/documents">
             Document control
             <ArrowRight className="size-4" />
           </Link>
@@ -259,7 +259,7 @@ export function EdmsWorkflowQueue({
           </CardDescription>
         </div>
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/dashboard/workflows">
+          <Link href="/workflows">
             Review queue
             <ArrowRight className="size-4" />
           </Link>
@@ -274,9 +274,10 @@ export function EdmsWorkflowQueue({
           />
         ) : (
           items.map((item) => (
-            <div
+            <Link
               key={item.id}
-              className="rounded-2xl border border-border bg-muted/25 p-4 shadow-sm"
+              href={`/workflows/${item.workflowId}`}
+              className="block rounded-2xl border border-border bg-muted/25 p-4 shadow-sm transition-colors hover:bg-muted/40"
             >
               <div className="flex flex-col gap-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -299,7 +300,7 @@ export function EdmsWorkflowQueue({
                   <span>{item.dueLabel}</span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))
         )}
       </CardContent>
@@ -322,7 +323,7 @@ export function EdmsTransmittalList({
           </CardDescription>
         </div>
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/dashboard/transmittals">
+          <Link href="/transmittals">
             Manage
             <ArrowRight className="size-4" />
           </Link>
@@ -337,9 +338,10 @@ export function EdmsTransmittalList({
           />
         ) : (
           items.map((item) => (
-            <div
+            <Link
               key={item.id}
-              className="rounded-2xl border border-border bg-muted/25 p-4 shadow-sm"
+              href={`/transmittals/${item.id}`}
+              className="block rounded-2xl border border-border bg-muted/25 p-4 shadow-sm transition-colors hover:bg-muted/40"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-2">
@@ -356,7 +358,7 @@ export function EdmsTransmittalList({
               <p className="mt-3 text-sm text-muted-foreground">
                 {item.sentLabel}
               </p>
-            </div>
+            </Link>
           ))
         )}
       </CardContent>
@@ -379,7 +381,7 @@ export function EdmsNotificationList({
           </CardDescription>
         </div>
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/dashboard/notifications">
+          <Link href="/notifications">
             Inbox
             <ArrowRight className="size-4" />
           </Link>

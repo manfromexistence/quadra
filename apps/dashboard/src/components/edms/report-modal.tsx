@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@midday/ui/dialog";
+import { ScrollArea } from "@midday/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -47,15 +48,15 @@ export function ReportModal({ report, open, onOpenChange }: ReportModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader>
+      <DialogContent className="max-w-5xl max-h-[90vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6">
           <DialogTitle className="text-2xl font-serif font-normal">
             {report.title}
           </DialogTitle>
           <DialogDescription>{report.description}</DialogDescription>
         </DialogHeader>
 
-        <div className="flex items-center gap-2 border-t border-b py-3">
+        <div className="flex items-center gap-2 border-t border-b py-3 px-6">
           <div className="flex-1 text-sm text-muted-foreground">
             <span className="font-medium">Project:</span> Al Hamra Refinery
             Expansion
@@ -83,8 +84,8 @@ export function ReportModal({ report, open, onOpenChange }: ReportModalProps) {
           </Button>
         </div>
 
-        <div className="flex-1 overflow-auto">
-          <div className="bg-white p-8 text-black">
+        <ScrollArea className="flex-1 px-6">
+          <div className="bg-white p-8 text-black pr-4 my-4">
             <div className="border-b-2 border-black pb-4 mb-6">
               <h2 className="text-3xl font-serif font-normal">
                 {report.title}
@@ -153,7 +154,7 @@ export function ReportModal({ report, open, onOpenChange }: ReportModalProps) {
               </TableBody>
             </Table>
           </div>
-        </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

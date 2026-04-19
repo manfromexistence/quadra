@@ -6,9 +6,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@midday/ui/breadcrumb";
+import { SidebarTrigger } from "@midday/ui/sidebar";
 import Link from "next/link";
 import React from "react";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 
 interface PageHeaderCrumb {
   label: string;

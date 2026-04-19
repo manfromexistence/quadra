@@ -2,10 +2,13 @@
 
 import { Badge } from "@midday/ui/badge";
 import { Button } from "@midday/ui/button";
+import { Calendar } from "@midday/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import { Checkbox } from "@midday/ui/checkbox";
+import { cn } from "@midday/ui/cn";
 import { Input } from "@midday/ui/input";
 import { Label } from "@midday/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
 import { ScrollArea } from "@midday/ui/scroll-area";
 import {
   Select,
@@ -14,16 +17,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@midday/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@midday/ui/table";
 import { Textarea } from "@midday/ui/textarea";
 import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 
 interface Document {
   id: string;
-  code: string;
+  documentNumber: string;
   title: string;
-  revision: string;
-  status: string;
+  revision: string | null;
+  status: string | null;
 }
 
 interface Project {
@@ -139,14 +151,37 @@ export function TransmittalFormWithPreview({
 
               <div className="space-y-2">
                 <Label htmlFor="date">Issue Date</Label>
-                <Input
-                  id="date"
-                  type="date"
-                  value={formData.date}
-                  onChange={(e) =>
-                    setFormData({ ...formData, date: e.target.value })
-                  }
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !formData.date && "text-muted-foreground",
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.date
+                        ? format(new Date(formData.date), "PPP")
+                        : "Pick a date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={
+                        formData.date ? new Date(formData.date) : undefined
+                      }
+                      onSelect={(date) =>
+                        setFormData({
+                          ...formData,
+                          date: date ? format(date, "yyyy-MM-dd") : "",
+                        })
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
@@ -184,8 +219,11 @@ export function TransmittalFormWithPreview({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {members.map((member) => (
-                      <SelectItem key={member.id} value={member.id}>
+                    {members.map((member, index) => (
+                      <SelectItem
+                        key={`${member.id}-${index}`}
+                        value={member.id}
+                      >
                         {member.name}
                       </SelectItem>
                     ))}
@@ -228,14 +266,37 @@ export function TransmittalFormWithPreview({
 
             <div className="space-y-2">
               <Label htmlFor="dueDate">Due Date</Label>
-              <Input
-                id="dueDate"
-                type="date"
-                value={formData.dueDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, dueDate: e.target.value })
-                }
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !formData.dueDate && "text-muted-foreground",
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.dueDate
+                      ? format(new Date(formData.dueDate), "PPP")
+                      : "Pick a date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={
+                      formData.dueDate ? new Date(formData.dueDate) : undefined
+                    }
+                    onSelect={(date) =>
+                      setFormData({
+                        ...formData,
+                        dueDate: date ? format(date, "yyyy-MM-dd") : "",
+                      })
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="space-y-2">
@@ -282,15 +343,15 @@ export function TransmittalFormWithPreview({
                       className="flex-1 cursor-pointer space-y-1"
                     >
                       <p className="font-mono text-sm font-medium">
-                        {doc.code}
+                        {doc.documentNumber}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {doc.title}
                       </p>
                       <div className="flex gap-2 text-xs text-muted-foreground">
-                        <span>Rev {doc.revision}</span>
+                        <span>Rev {doc.revision || "—"}</span>
                         <span>·</span>
-                        <span>{doc.status}</span>
+                        <span>{doc.status || "—"}</span>
                       </div>
                     </label>
                   </div>
@@ -335,30 +396,30 @@ export function TransmittalFormWithPreview({
             </div>
           </CardHeader>
           <CardContent className="bg-muted p-6">
-            {/* Transmittal Paper */}
-            <div className="bg-white border border-border p-8 shadow-sm">
+            {/* Transmittal Paper - Force light theme appearance */}
+            <div className="bg-white text-black border border-gray-300 p-8 shadow-sm [&_*]:!text-black dark:bg-white dark:text-black dark:border-gray-300">
               {/* Header */}
-              <div className="flex items-start justify-between border-b-2 border-black pb-3 mb-5">
+              <div className="flex items-start justify-between border-b-2 border-gray-900 pb-3 mb-5">
                 <div>
-                  <div className="text-[9px] uppercase tracking-[2px] text-muted-foreground font-semibold mb-0.5">
+                  <div className="text-[9px] uppercase tracking-[2px] text-gray-600 font-semibold mb-0.5">
                     Quadra EDMS
                   </div>
-                  <h2 className="font-serif text-2xl font-normal">
+                  <h2 className="font-serif text-2xl font-normal text-black">
                     Document Transmittal
                   </h2>
-                  <div className="text-[10px] text-muted-foreground mt-0.5">
+                  <div className="text-[10px] text-gray-600 mt-0.5">
                     {selectedProject?.code || "PRJ-XXX"} ·{" "}
                     {selectedProject?.name || "Select project"}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground mb-1">
+                  <div className="text-[9px] uppercase tracking-wider text-gray-600 mb-1">
                     Transmittal №
                   </div>
-                  <div className="font-mono text-sm font-medium">
+                  <div className="font-mono text-sm font-medium text-black">
                     {formData.transmittalNumber}
                   </div>
-                  <div className="text-[10px] text-muted-foreground mt-1.5">
+                  <div className="text-[10px] text-gray-600 mt-1.5">
                     {formData.date
                       ? format(new Date(formData.date), "yyyy-MM-dd")
                       : ""}
@@ -369,29 +430,29 @@ export function TransmittalFormWithPreview({
               {/* Metadata Grid */}
               <div className="grid grid-cols-2 gap-4 mb-5 text-xs">
                 <div>
-                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                  <div className="text-[9px] uppercase tracking-wider text-gray-600 font-semibold mb-1">
                     From
                   </div>
-                  <div className="font-medium">
+                  <div className="font-medium text-black">
                     {selectedProject?.name || "—"}
                   </div>
-                  <div className="text-muted-foreground text-[10.5px]">
+                  <div className="text-gray-600 text-[10.5px]">
                     Document Controller
                   </div>
                 </div>
                 <div>
-                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                  <div className="text-[9px] uppercase tracking-wider text-gray-600 font-semibold mb-1">
                     To
                   </div>
-                  <div className="font-medium">
+                  <div className="font-medium text-black">
                     {selectedRecipient?.name || "—"}
                   </div>
-                  <div className="text-muted-foreground text-[10.5px]">
+                  <div className="text-gray-600 text-[10.5px]">
                     {selectedRecipient?.email || ""}
                   </div>
                 </div>
                 <div>
-                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                  <div className="text-[9px] uppercase tracking-wider text-gray-600 font-semibold mb-1">
                     Purpose
                   </div>
                   <div>
@@ -411,18 +472,18 @@ export function TransmittalFormWithPreview({
                   </div>
                 </div>
                 <div>
-                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                  <div className="text-[9px] uppercase tracking-wider text-gray-600 font-semibold mb-1">
                     Response Due
                   </div>
-                  <div className="font-mono text-xs">
+                  <div className="font-mono text-xs text-black">
                     {formData.dueDate || "—"}
                   </div>
                 </div>
                 <div className="col-span-2">
-                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                  <div className="text-[9px] uppercase tracking-wider text-gray-600 font-semibold mb-1">
                     Subject
                   </div>
-                  <div className="font-medium">
+                  <div className="font-medium text-black">
                     {formData.subject || "Enter subject..."}
                   </div>
                 </div>
@@ -430,11 +491,11 @@ export function TransmittalFormWithPreview({
 
               {/* Documents Table */}
               <div className="mb-5">
-                <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1.5">
+                <div className="text-[9px] uppercase tracking-wider text-gray-600 font-semibold mb-1.5">
                   Documents Transmitted
                 </div>
                 {selectedDocs.length === 0 ? (
-                  <div className="text-center py-12 text-muted-foreground">
+                  <div className="text-center py-12 text-gray-600">
                     <div className="font-serif text-lg mb-1">
                       No documents selected
                     </div>
@@ -444,58 +505,63 @@ export function TransmittalFormWithPreview({
                     </div>
                   </div>
                 ) : (
-                  <table className="w-full text-xs border border-border">
-                    <thead>
-                      <tr className="bg-muted">
-                        <th className="border border-border px-2 py-1.5 text-left text-[9px] uppercase tracking-wider font-semibold">
-                          #
-                        </th>
-                        <th className="border border-border px-2 py-1.5 text-left text-[9px] uppercase tracking-wider font-semibold">
-                          Document Code
-                        </th>
-                        <th className="border border-border px-2 py-1.5 text-left text-[9px] uppercase tracking-wider font-semibold">
-                          Title
-                        </th>
-                        <th className="border border-border px-2 py-1.5 text-left text-[9px] uppercase tracking-wider font-semibold">
-                          Rev
-                        </th>
-                        <th className="border border-border px-2 py-1.5 text-left text-[9px] uppercase tracking-wider font-semibold">
-                          Format
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedDocs.map((doc, index) => (
-                        <tr key={doc.id}>
-                          <td className="border border-border px-2 py-1.5">
-                            {index + 1}
-                          </td>
-                          <td className="border border-border px-2 py-1.5 font-mono text-[11px]">
-                            {doc.code}
-                          </td>
-                          <td className="border border-border px-2 py-1.5">
-                            {doc.title}
-                          </td>
-                          <td className="border border-border px-2 py-1.5 font-mono text-[11px]">
-                            {doc.revision}
-                          </td>
-                          <td className="border border-border px-2 py-1.5 font-mono text-[11px]">
-                            PDF
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  <div className="border border-gray-300 rounded-md overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-gray-100 border-b border-gray-300">
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300">
+                            #
+                          </TableHead>
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300">
+                            Document Code
+                          </TableHead>
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300">
+                            Title
+                          </TableHead>
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300">
+                            Rev
+                          </TableHead>
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900">
+                            Format
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {selectedDocs.map((doc, index) => (
+                          <TableRow
+                            key={doc.id}
+                            className="border-b border-gray-300 last:border-b-0"
+                          >
+                            <TableCell className="text-black border-r border-gray-300">
+                              {index + 1}
+                            </TableCell>
+                            <TableCell className="font-mono text-[11px] text-black border-r border-gray-300">
+                              {doc.documentNumber}
+                            </TableCell>
+                            <TableCell className="text-black border-r border-gray-300">
+                              {doc.title}
+                            </TableCell>
+                            <TableCell className="font-mono text-[11px] text-black border-r border-gray-300">
+                              {doc.revision || "—"}
+                            </TableCell>
+                            <TableCell className="font-mono text-[11px] text-black">
+                              PDF
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 )}
               </div>
 
               {/* Remarks */}
               {formData.remarks && (
                 <div className="mb-5">
-                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                  <div className="text-[9px] uppercase tracking-wider text-gray-600 font-semibold mb-1">
                     Remarks
                   </div>
-                  <div className="text-xs leading-relaxed">
+                  <div className="text-xs leading-relaxed text-black">
                     {formData.remarks}
                   </div>
                 </div>
@@ -504,13 +570,13 @@ export function TransmittalFormWithPreview({
               {/* Signature Blocks */}
               <div className="grid grid-cols-2 gap-8 mt-7 text-xs">
                 <div>
-                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                  <div className="text-[9px] uppercase tracking-wider text-gray-600 font-semibold mb-1">
                     Issued By
                   </div>
-                  <div className="border-t border-black pt-1.5 mt-10">
+                  <div className="border-t border-gray-900 pt-1.5 mt-10 text-black">
                     Document Controller
                     <br />
-                    <span className="text-muted-foreground text-[10px]">
+                    <span className="text-gray-600 text-[10px]">
                       Date:{" "}
                       {formData.date
                         ? format(new Date(formData.date), "yyyy-MM-dd")
@@ -519,13 +585,13 @@ export function TransmittalFormWithPreview({
                   </div>
                 </div>
                 <div>
-                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                  <div className="text-[9px] uppercase tracking-wider text-gray-600 font-semibold mb-1">
                     Received By
                   </div>
-                  <div className="border-t border-black pt-1.5 mt-10">
+                  <div className="border-t border-gray-900 pt-1.5 mt-10 text-black">
                     {selectedRecipient?.name || "_______________"}
                     <br />
-                    <span className="text-muted-foreground text-[10px]">
+                    <span className="text-gray-600 text-[10px]">
                       Date: _______________
                     </span>
                   </div>

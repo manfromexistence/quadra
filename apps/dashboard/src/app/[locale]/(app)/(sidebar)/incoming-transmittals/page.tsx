@@ -2,6 +2,13 @@ import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
 import { Input } from "@midday/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -73,7 +80,7 @@ export default async function IncomingTransmittalsPage({
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card>
+          <Card className="rounded-lg">
             <CardHeader className="pb-3">
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Total Incoming
@@ -89,7 +96,7 @@ export default async function IncomingTransmittalsPage({
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="rounded-lg">
             <CardHeader className="pb-3">
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Pending Response
@@ -105,7 +112,7 @@ export default async function IncomingTransmittalsPage({
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="rounded-lg">
             <CardHeader className="pb-3">
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Overdue
@@ -121,7 +128,7 @@ export default async function IncomingTransmittalsPage({
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="rounded-lg">
             <CardHeader className="pb-3">
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 In Progress
@@ -148,56 +155,63 @@ export default async function IncomingTransmittalsPage({
                 className="max-w-[280px]"
               />
 
-              <select
-                name="from"
-                defaultValue={params.from ?? ""}
-                className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
-              >
-                <option value="">All Senders</option>
-                <option value="CLT">Client</option>
-                <option value="VND">Vendor</option>
-                <option value="SUB">Subcontractor</option>
-                <option value="THP">Third Party</option>
-              </select>
+              <Select name="from" defaultValue={params.from ?? ""}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="All Senders" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Senders</SelectItem>
+                  <SelectItem value="CLT">Client</SelectItem>
+                  <SelectItem value="VND">Vendor</SelectItem>
+                  <SelectItem value="SUB">Subcontractor</SelectItem>
+                  <SelectItem value="THP">Third Party</SelectItem>
+                </SelectContent>
+              </Select>
 
-              <select
-                name="purpose"
-                defaultValue={params.purpose ?? ""}
-                className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
-              >
-                <option value="">All Purposes</option>
-                <option value="IFR">IFR</option>
-                <option value="IFA">IFA</option>
-                <option value="IFC">IFC</option>
-                <option value="IFI">IFI</option>
-              </select>
+              <Select name="purpose" defaultValue={params.purpose ?? ""}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="All Purposes" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Purposes</SelectItem>
+                  <SelectItem value="IFR">IFR</SelectItem>
+                  <SelectItem value="IFA">IFA</SelectItem>
+                  <SelectItem value="IFC">IFC</SelectItem>
+                  <SelectItem value="IFI">IFI</SelectItem>
+                </SelectContent>
+              </Select>
 
-              <select
+              <Select
                 name="responseStatus"
                 defaultValue={params.responseStatus ?? ""}
-                className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
               >
-                <option value="">All Status</option>
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Responded">Responded</option>
-                <option value="Acknowledged">Acknowledged</option>
-                <option value="No Response Required">
-                  No Response Required
-                </option>
-                <option value="Closed">Closed</option>
-              </select>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="Pending">Pending</SelectItem>
+                  <SelectItem value="In Progress">In Progress</SelectItem>
+                  <SelectItem value="Responded">Responded</SelectItem>
+                  <SelectItem value="Acknowledged">Acknowledged</SelectItem>
+                  <SelectItem value="No Response Required">
+                    No Response Required
+                  </SelectItem>
+                  <SelectItem value="Closed">Closed</SelectItem>
+                </SelectContent>
+              </Select>
 
-              <select
-                name="priority"
-                defaultValue={params.priority ?? ""}
-                className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
-              >
-                <option value="">All Priorities</option>
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
-              </select>
+              <Select name="priority" defaultValue={params.priority ?? ""}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="All Priorities" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Priorities</SelectItem>
+                  <SelectItem value="High">High</SelectItem>
+                  <SelectItem value="Medium">Medium</SelectItem>
+                  <SelectItem value="Low">Low</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardHeader>
 

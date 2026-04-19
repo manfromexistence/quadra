@@ -50,9 +50,13 @@ async function testMockData() {
     console.log("6️⃣ Testing transaction queries...");
     const transactions = await db.query.transactions.findMany();
     console.log(`   ✅ Found ${transactions.length} transactions`);
-    console.log(`   📝 Sample: ${transactions[0]?.name} - $${transactions[0]?.amount}\n`);
+    console.log(
+      `   📝 Sample: ${transactions[0]?.name} - $${transactions[0]?.amount}\n`,
+    );
 
-    console.log("✨ All tests passed! Mock data system is working correctly.\n");
+    console.log(
+      "✨ All tests passed! Mock data system is working correctly.\n",
+    );
   } catch (error) {
     console.error("❌ Test failed:", error);
     process.exit(1);

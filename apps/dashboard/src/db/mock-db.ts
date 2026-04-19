@@ -4,19 +4,6 @@
 import * as mockData from "./mock-data";
 import * as schema from "./schema";
 
-// Type for mock query builder
-type MockQueryBuilder<T> = {
-  where: (condition: unknown) => MockQueryBuilder<T>;
-  limit: (count: number) => MockQueryBuilder<T>;
-  offset: (count: number) => MockQueryBuilder<T>;
-  orderBy: (...args: unknown[]) => MockQueryBuilder<T>;
-  execute: () => Promise<T[]>;
-  then: (
-    resolve: (value: T[]) => void,
-    reject?: (reason: unknown) => void,
-  ) => Promise<T[]>;
-};
-
 // Mock database class
 class MockDatabase {
   private mockEnabled = true;
@@ -297,8 +284,7 @@ class MockDatabase {
             const limitedData = data.slice(0, count);
             return Promise.resolve(limitedData);
           },
-          then: (resolve: (value: unknown[]) => void) => {
-            resolve(data);
+          execute: () => {
             return Promise.resolve(data);
           },
         };

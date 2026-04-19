@@ -17,6 +17,7 @@ import {
   MessageSquare,
   Palette,
   Send,
+  Upload,
   Users,
   Workflow,
   Wrench,
@@ -52,7 +53,7 @@ const icons = {
   "/databook": () => <BookOpen size={20} />,
   "/matrix": () => <Grid3X3 size={20} />,
   "/audit": () => <ClipboardList size={20} />,
-  "/bulk-upload": () => <Icons.Upload size={20} />,
+  "/bulk-upload": () => <Upload size={20} />,
   "/theme": () => <Palette size={20} />,
 } as const;
 

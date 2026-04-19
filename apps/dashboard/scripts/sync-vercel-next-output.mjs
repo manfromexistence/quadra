@@ -3,7 +3,8 @@ import path from "node:path";
 
 const cwd = process.cwd();
 const projectRoot =
-  path.basename(cwd) === "dashboard" && path.basename(path.dirname(cwd)) === "apps"
+  path.basename(cwd) === "dashboard" &&
+  path.basename(path.dirname(cwd)) === "apps"
     ? cwd
     : path.resolve("apps/dashboard");
 const sourceDir = path.join(projectRoot, ".next");

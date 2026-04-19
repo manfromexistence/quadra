@@ -277,6 +277,8 @@ export function EdmsDashboardSidebar({ user }: { user: DashboardUser }) {
                 <AvatarImage
                   src={user.image || "https://github.com/shadcn.png"}
                   alt={user.name}
+                  width={40}
+                  height={40}
                 />
                 <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
               </Avatar>

@@ -9,7 +9,8 @@ export async function getScheduleActivities(projectId: string) {
     .where(eq(scheduleActivities.projectId, projectId));
 
   return activities.map((activity) => ({
-    id: activity.activityCode,
+    id: activity.id, // Use database ID for unique keys
+    activityCode: activity.activityCode,
     name: activity.name,
     wbs: activity.wbs,
     phase: activity.phase,

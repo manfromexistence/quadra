@@ -46,7 +46,7 @@ export function EdmsMetricCard({ metric }: { metric: DashboardMetric }) {
   return (
     <Card
       className={cn(
-        "relative overflow-hidden shadow-sm h-full flex flex-col",
+        "relative overflow-hidden shadow-sm h-full flex flex-col rounded-lg",
         SURFACE_STYLES[metric.tone],
       )}
     >

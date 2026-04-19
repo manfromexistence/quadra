@@ -65,4 +65,22 @@ Bulk Import - Excel file documents list import option to be added
 Boxes to be made curve style for better appearance
 Matrix add rule is added but no action , just make it functional
 
+So we have create new edms pages so please make sure to make all of them functional and properly connected with our database!!!
+
+And in our all edms pages wheneven we use a select or dates input its not styles correctly so please use midday-ui components there correctly and don't lie the new pages are totally dummy so please make all of them functaional!!!
+
+In our edms pages - where you see metric top cards please make those cards have border radius
+
+The new edms page - has only some download button but now action buttons and also in the data table the search bar don't works - so please fix these errors - and also in many edms pages we are still using native select and input components instead of midday-ui components so please fix that too
+And mainly in schedule page link docuemnt popover please put popover and also use midda-ui select and i checkbox and other components correctly and ther eplease fix these too:
+[browser] Encountered two children with the same key, `ACT-003`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+[browser] Encountered two children with the same key, `ACT-004`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+[browser] Encountered two children with the same key, `ACT-005`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+
+Locally transactions and non edms related pages are showing but in the production they are not working and showing errors and why and please fix them so that show some data like the local correctly so don't break our website
+
+No our website is not crashing - its fine but the data is not showing sh the page is not showing but I want to show the page so please make sure that even in production we can those data in like the current local setup even in production do that
+
+In our edms page like projects, document, workflow, transmittal all items are failing and going back to default overview page maybe the i18n is not configured correctly in those links so please fix all of them
+
 Please lint and format all files and folder in the apps/dashbnoard correctly - and check for errors - in lowend device way and fix all errors

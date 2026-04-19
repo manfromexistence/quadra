@@ -2,6 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@midday/ui/button";
+import { Calendar } from "@midday/ui/calendar";
+import { cn } from "@midday/ui/cn";
 import {
   Form,
   FormControl,
@@ -12,6 +14,8 @@ import {
   FormMessage,
 } from "@midday/ui/form";
 import { Input } from "@midday/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
+import { ScrollArea } from "@midday/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -27,7 +31,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@midday/ui/sheet";
-import { CheckCheck, Loader2 } from "lucide-react";
+import { format } from "date-fns";
+import { CalendarIcon, CheckCheck, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -187,7 +192,7 @@ export function WorkflowCreateSheet({
           Create workflow
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full overflow-y-auto sm:max-w-2xl">
+      <SheetContent className="w-full sm:max-w-2xl">
         <SheetHeader className="space-y-1">
           <SheetTitle>Create workflow</SheetTitle>
           <SheetDescription>
@@ -196,178 +201,217 @@ export function WorkflowCreateSheet({
           </SheetDescription>
         </SheetHeader>
 
-        {documents.length === 0 ? (
-          <div className="mt-8 rounded-2xl border border-dashed border-border bg-card p-5">
-            <p className="text-sm text-muted-foreground">
-              Create at least one document before starting a workflow route.
-            </p>
-          </div>
-        ) : (
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="mt-8 space-y-6"
-            >
-              <FormField
-                control={form.control}
-                name="documentId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Document</FormLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a document" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {documents.map((document) => (
-                          <SelectItem key={document.id} value={document.id}>
-                            {document.documentNumber} - {document.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Documents are grouped by project so assignees stay inside
-                      the same workspace.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="workflowName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Workflow name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Vendor review and client approval"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid gap-4 md:grid-cols-2">
+        <ScrollArea className="h-[calc(100vh-120px)] pr-4">
+          {documents.length === 0 ? (
+            <div className="mt-8 rounded-2xl border border-dashed border-border bg-card p-5">
+              <p className="text-sm text-muted-foreground">
+                Create at least one document before starting a workflow route.
+              </p>
+            </div>
+          ) : (
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="mt-8 space-y-6"
+              >
                 <FormField
                   control={form.control}
-                  name="reviewUserId"
+                  name="documentId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Reviewer</FormLabel>
+                      <FormLabel>Document</FormLabel>
                       <Select
                         value={field.value}
-                        onValueChange={(value) =>
-                          field.onChange(value === "__none__" ? "" : value)
-                        }
-                        disabled={
-                          !selectedDocument || eligibleAssignees.length === 0
-                        }
+                        onValueChange={field.onChange}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select reviewer" />
+                            <SelectValue placeholder="Select a document" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {eligibleAssignees.map((assignee) => (
-                            <SelectItem key={assignee.id} value={assignee.id}>
-                              {assignee.name} - {assignee.role}
+                          {documents.map((document) => (
+                            <SelectItem key={document.id} value={document.id}>
+                              {document.documentNumber} - {document.title}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="approveUserId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Final approver</FormLabel>
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        disabled={
-                          !selectedDocument || eligibleAssignees.length === 0
-                        }
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Optional second step" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="__none__">
-                            No final approver
-                          </SelectItem>
-                          {eligibleAssignees
-                            .filter((assignee) => assignee.id !== reviewUserId)
-                            .map((assignee) => (
-                              <SelectItem key={assignee.id} value={assignee.id}>
-                                {assignee.name} - {assignee.role}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
                       <FormDescription>
-                        Add a second step when the route needs formal client or
-                        PMC sign-off.
+                        Documents are grouped by project so assignees stay
+                        inside the same workspace.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
 
-              <FormField
-                control={form.control}
-                name="dueDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Due date</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex items-center justify-end gap-3 border-t pt-6">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isPending}>
-                  {isPending ? (
-                    <>
-                      <Loader2 className="size-4 animate-spin" />
-                      Routing
-                    </>
-                  ) : (
-                    <>
-                      <CheckCheck className="size-4" />
-                      Start workflow
-                    </>
+                <FormField
+                  control={form.control}
+                  name="workflowName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Workflow name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Vendor review and client approval"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        )}
+                />
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="reviewUserId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Reviewer</FormLabel>
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) =>
+                            field.onChange(value === "__none__" ? "" : value)
+                          }
+                          disabled={
+                            !selectedDocument || eligibleAssignees.length === 0
+                          }
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select reviewer" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {eligibleAssignees.map((assignee) => (
+                              <SelectItem key={assignee.id} value={assignee.id}>
+                                {assignee.name} - {assignee.role}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="approveUserId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Final approver</FormLabel>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          disabled={
+                            !selectedDocument || eligibleAssignees.length === 0
+                          }
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Optional second step" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="__none__">
+                              No final approver
+                            </SelectItem>
+                            {eligibleAssignees
+                              .filter(
+                                (assignee) => assignee.id !== reviewUserId,
+                              )
+                              .map((assignee) => (
+                                <SelectItem
+                                  key={assignee.id}
+                                  value={assignee.id}
+                                >
+                                  {assignee.name} - {assignee.role}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Add a second step when the route needs formal client
+                          or PMC sign-off.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="dueDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Due date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {field.value
+                                ? format(new Date(field.value), "PPP")
+                                : "Pick a date"}
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={
+                              field.value ? new Date(field.value) : undefined
+                            }
+                            onSelect={(date) =>
+                              field.onChange(
+                                date ? format(date, "yyyy-MM-dd") : "",
+                              )
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex items-center justify-end gap-3 border-t pt-6">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isPending}>
+                    {isPending ? (
+                      <>
+                        <Loader2 className="size-4 animate-spin" />
+                        Routing
+                      </>
+                    ) : (
+                      <>
+                        <CheckCheck className="size-4" />
+                        Start workflow
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          )}
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );

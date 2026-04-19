@@ -42,11 +42,11 @@ export default function imageLoader({
       const url = new URL(src);
       const params = url.searchParams.toString();
       const baseUrl = url.origin + url.pathname;
-      
+
       if (!CDN_URL) {
         return src;
       }
-      
+
       return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/${baseUrl}${params ? `?${params}` : ""}`;
     } catch {
       return src;

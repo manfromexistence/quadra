@@ -321,9 +321,7 @@ export function AuthPanel({
                     <SelectItem value="user">User</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                     <SelectItem value="client">Client</SelectItem>
-                    <SelectItem value="pmc">
-                      PMC (Project Management Consultant)
-                    </SelectItem>
+                    <SelectItem value="pmc">PMC</SelectItem>
                     <SelectItem value="vendor">Vendor</SelectItem>
                     <SelectItem value="subcontractor">Subcontractor</SelectItem>
                   </SelectContent>
@@ -387,7 +385,7 @@ export function AuthPanel({
           </Button>
         </form>
 
-        <div className="border-t pt-6 text-center text-sm">
+        <div className="pt-2 text-center text-sm">
           {mode === "forgot" ? (
             <button
               type="button"

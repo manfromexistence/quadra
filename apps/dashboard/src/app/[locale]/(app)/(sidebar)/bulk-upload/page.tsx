@@ -2,18 +2,30 @@ import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
 import { FileSpreadsheet, Upload } from "lucide-react";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { DocumentBulkImportSheet } from "@/components/edms/document-bulk-import-sheet";
 import { DocumentBulkUploadSheet } from "@/components/edms/document-bulk-upload-sheet";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { getDocumentControlData } from "@/lib/edms/documents";
+import { canManageEdmsContent } from "@/lib/edms/rbac";
+import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
 export const metadata: Metadata = {
   title: "Bulk Upload | Quadra EDMS",
 };
 
 export default async function BulkUploadPage() {
+  const sessionUser = await getRequiredDashboardSessionUser();
+
+  if (!canManageEdmsContent(sessionUser.role)) {
+    redirect("/documents");
+  }
+
+  const data = await getDocumentControlData(sessionUser, {});
+
   return (
     <ScrollableContent>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 pt-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="max-w-3xl space-y-3">
             <div className="space-y-2">
@@ -49,7 +61,7 @@ export default async function BulkUploadPage() {
                 upload them simultaneously. Each file will be processed and
                 added to the document register.
               </p>
-              <DocumentBulkUploadSheet>
+              <DocumentBulkUploadSheet projects={data.projects}>
                 <Button className="w-full">
                   <Upload className="mr-2 h-4 w-4" />
                   Start File Upload
@@ -78,7 +90,7 @@ export default async function BulkUploadPage() {
                 the data to import multiple document records. Includes
                 validation and error checking.
               </p>
-              <DocumentBulkImportSheet>
+              <DocumentBulkImportSheet projects={data.projects}>
                 <Button variant="outline" className="w-full">
                   <FileSpreadsheet className="mr-2 h-4 w-4" />
                   Start CSV Import

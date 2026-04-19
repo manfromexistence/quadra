@@ -3,6 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import { Checkbox } from "@midday/ui/checkbox";
 import { Input } from "@midday/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -175,30 +182,35 @@ export default async function DocumentsPage({
                         className="max-w-[280px]"
                       />
 
-                      <select
+                      <Select
                         name="discipline"
                         defaultValue={params.discipline ?? ""}
-                        className="flex h-10 rounded-md border border-input bg-background px-3 text-sm font-mono"
                       >
-                        <option value="">All Disciplines</option>
-                        {data.availableDisciplines.map((discipline) => (
-                          <option key={discipline} value={discipline}>
-                            {discipline}
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="w-[180px] font-mono">
+                          <SelectValue placeholder="All Disciplines" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Disciplines</SelectItem>
+                          {data.availableDisciplines.map((discipline) => (
+                            <SelectItem key={discipline} value={discipline}>
+                              {discipline}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
 
-                      <select
-                        name="status"
-                        defaultValue={params.status ?? ""}
-                        className="flex h-10 rounded-md border border-input bg-background px-3 text-sm font-mono"
-                      >
-                        <option value="">All Statuses</option>
-                        <option value="draft">DRAFT</option>
-                        <option value="submitted">IFR</option>
-                        <option value="under_review">IFA</option>
-                        <option value="approved">IFC</option>
-                      </select>
+                      <Select name="status" defaultValue={params.status ?? ""}>
+                        <SelectTrigger className="w-[150px]">
+                          <SelectValue placeholder="All Statuses" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Statuses</SelectItem>
+                          <SelectItem value="draft">DRAFT</SelectItem>
+                          <SelectItem value="submitted">IFR</SelectItem>
+                          <SelectItem value="under_review">IFA</SelectItem>
+                          <SelectItem value="approved">IFC</SelectItem>
+                        </SelectContent>
+                      </Select>
 
                       <Button type="submit" variant="secondary" size="sm">
                         Filter

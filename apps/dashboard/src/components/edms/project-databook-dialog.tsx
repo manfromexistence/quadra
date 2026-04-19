@@ -134,8 +134,8 @@ export function ProjectDataBookDialog({
           Project Data Book
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl">
-        <DialogHeader>
+      <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6">
           <DialogTitle>Generate Project Data Book</DialogTitle>
           <DialogDescription>
             Compile all approved final documents into a single PDF for project
@@ -144,40 +144,40 @@ export function ProjectDataBookDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-            <div>
-              <p className="font-medium">{projectName}</p>
-              <p className="text-sm text-muted-foreground">
-                {documents.length} document(s) available
-              </p>
+        <ScrollArea className="flex-1 px-6">
+          <div className="space-y-4 pr-4 py-4">
+            <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+              <div>
+                <p className="font-medium">{projectName}</p>
+                <p className="text-sm text-muted-foreground">
+                  {documents.length} document(s) available
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleAll}
+                disabled={isLoading || documents.length === 0}
+              >
+                {selectedDocs.size === documents.length
+                  ? "Deselect All"
+                  : "Select All"}
+              </Button>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleAll}
-              disabled={isLoading || documents.length === 0}
-            >
-              {selectedDocs.size === documents.length
-                ? "Deselect All"
-                : "Select All"}
-            </Button>
-          </div>
 
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="size-8 animate-spin text-muted-foreground" />
-            </div>
-          ) : documents.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-border bg-muted/10 p-8 text-center">
-              <p className="text-muted-foreground">
-                No documents found for this project. Upload and approve
-                documents to generate a Project Data Book.
-              </p>
-            </div>
-          ) : (
-            <ScrollArea className="h-[400px] rounded-lg border border-border">
-              <div className="space-y-2 p-4">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="size-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : documents.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-border bg-muted/10 p-8 text-center">
+                <p className="text-muted-foreground">
+                  No documents found for this project. Upload and approve
+                  documents to generate a Project Data Book.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2">
                 {documents.map((doc) => (
                   <div
                     key={doc.id}
@@ -211,36 +211,36 @@ export function ProjectDataBookDialog({
                   </div>
                 ))}
               </div>
-            </ScrollArea>
-          )}
+            )}
 
-          <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-            <div>
-              <p className="font-medium">
-                Selected: {selectedDocs.size} document(s)
-              </p>
-              <p className="text-sm text-muted-foreground">
-                These documents will be compiled into a single PDF
-              </p>
+            <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+              <div>
+                <p className="font-medium">
+                  Selected: {selectedDocs.size} document(s)
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  These documents will be compiled into a single PDF
+                </p>
+              </div>
+              <Button
+                onClick={handleGenerate}
+                disabled={isPending || selectedDocs.size === 0 || isLoading}
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Download className="size-4" />
+                    Generate Data Book
+                  </>
+                )}
+              </Button>
             </div>
-            <Button
-              onClick={handleGenerate}
-              disabled={isPending || selectedDocs.size === 0 || isLoading}
-            >
-              {isPending ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <Download className="size-4" />
-                  Generate Data Book
-                </>
-              )}
-            </Button>
           </div>
-        </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

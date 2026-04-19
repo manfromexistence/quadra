@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@midday/ui/form";
+import { ScrollArea } from "@midday/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -123,112 +124,118 @@ export function ProjectMemberSheet({
           Assign member
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full overflow-y-auto px-6 sm:max-w-xl">
-        <SheetHeader className="space-y-1">
-          <div className="px-6 pt-6">
-            <SheetTitle>Assign project member</SheetTitle>
-            <SheetDescription>
-              Add a project participant and define the role they will hold
-              inside this workspace.
-            </SheetDescription>
-          </div>
+      <SheetContent className="w-full px-0 sm:max-w-xl">
+        <SheetHeader className="space-y-1 px-6 pt-6">
+          <SheetTitle>Assign project member</SheetTitle>
+          <SheetDescription>
+            Add a project participant and define the role they will hold inside
+            this workspace.
+          </SheetDescription>
         </SheetHeader>
 
-        {users.length === 0 ? (
-          <div className="mt-8 rounded-2xl border border-dashed border-border bg-card p-5">
-            <p className="text-sm text-muted-foreground">
-              All available users are already assigned to this project.
-            </p>
-          </div>
-        ) : (
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="mt-8 space-y-6 px-6 pb-6"
-            >
-              <FormField
-                control={form.control}
-                name="userId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>User</FormLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a user" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {users.map((user) => (
-                          <SelectItem key={user.id} value={user.id}>
-                            {user.name} - {user.email}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Existing global users can be assigned immediately to the
-                      project team.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Project role</FormLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {projectMemberRoles.map((role) => (
-                          <SelectItem key={role} value={role}>
-                            {role}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      This role controls how the user participates in reviews,
-                      approvals, and document submission on this project.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex items-center justify-end gap-3 border-t pt-6">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isPending}>
-                  {isPending ? (
-                    <>
-                      <Loader2 className="size-4 animate-spin" />
-                      Saving
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus2 className="size-4" />
-                      Save assignment
-                    </>
+        <ScrollArea className="h-[calc(100vh-120px)]">
+          {users.length === 0 ? (
+            <div className="mt-8 rounded-2xl border border-dashed border-border bg-card p-5 mx-6">
+              <p className="text-sm text-muted-foreground">
+                All available users are already assigned to this project.
+              </p>
+            </div>
+          ) : (
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="mt-8 space-y-6 px-6 pb-6"
+              >
+                <FormField
+                  control={form.control}
+                  name="userId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>User</FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a user" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {users.map((user) => (
+                            <SelectItem key={user.id} value={user.id}>
+                              {user.name} - {user.email}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Existing global users can be assigned immediately to the
+                        project team.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Project role</FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {projectMemberRoles.map((role) => (
+                            <SelectItem key={role} value={role}>
+                              {role}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        This role controls how the user participates in reviews,
+                        approvals, and document submission on this project.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex items-center justify-end gap-3 border-t pt-6">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isPending}>
+                    {isPending ? (
+                      <>
+                        <Loader2 className="size-4 animate-spin" />
+                        Saving
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus2 className="size-4" />
+                        Save assignment
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          )}
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );

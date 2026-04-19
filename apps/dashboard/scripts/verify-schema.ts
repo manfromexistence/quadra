@@ -1,6 +1,6 @@
+import { config } from "dotenv";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
-import { config } from "dotenv";
 
 config({ path: ".env.local" });
 

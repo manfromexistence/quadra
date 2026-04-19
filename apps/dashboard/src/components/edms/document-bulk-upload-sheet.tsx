@@ -26,7 +26,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@midday/ui/sheet";
-import { FilePlus2, Loader2, Upload, X } from "lucide-react";
+import { FilePlus2, Loader2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -66,8 +66,10 @@ type BulkDocumentValues = z.infer<typeof bulkDocumentSchema>;
 
 export function DocumentBulkUploadSheet({
   projects,
+  children,
 }: {
   projects: { id: string; name: string; projectNumber: string | null }[];
+  children: React.ReactNode;
 }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -147,12 +149,7 @@ export function DocumentBulkUploadSheet({
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <Button variant="outline">
-          <Upload className="size-4" />
-          Bulk upload
-        </Button>
-      </SheetTrigger>
+      <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="w-full overflow-y-auto px-6 sm:max-w-3xl">
         <SheetHeader className="space-y-1">
           <div className="px-6 pt-6">

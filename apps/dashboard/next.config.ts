@@ -82,7 +82,10 @@ const config = {
   experimental: {
     // Local dev: Use reasonable CPU count for stability
     // Production: Use all CPUs for maximum performance
-    cpus: process.env.NODE_ENV === "production" ? 0 : Math.min(4, require("os").cpus().length),
+    cpus:
+      process.env.NODE_ENV === "production"
+        ? 0
+        : Math.min(4, require("node:os").cpus().length),
     optimizePackageImports: [
       "lucide-react",
       "react-icons",
@@ -117,8 +120,12 @@ const config = {
     loader: "custom",
     loaderFile: "./image-loader.ts",
     // Production: Ultra-high quality images with multiple formats
-    qualities: process.env.NODE_ENV === "production" ? [50, 75, 90, 100] : [80, 100],
-    formats: process.env.NODE_ENV === "production" ? ["image/avif", "image/webp"] : ["image/webp"],
+    qualities:
+      process.env.NODE_ENV === "production" ? [50, 75, 90, 100] : [80, 100],
+    formats:
+      process.env.NODE_ENV === "production"
+        ? ["image/avif", "image/webp"]
+        : ["image/webp"],
     // Aggressive caching for production
     minimumCacheTTL: process.env.NODE_ENV === "production" ? 31536000 : 60, // 1 year vs 1 minute
     remotePatterns: [
@@ -142,17 +149,17 @@ const config = {
     if (dev && !isServer) {
       // Suppress ALL webpack logging
       config.infrastructureLogging = {
-        level: 'none',
+        level: "none",
       };
 
       // Suppress webpack stats logging completely
-      config.stats = 'none';
+      config.stats = "none";
 
       // Disable CSS preloading in development to prevent warnings
       config.optimization = {
         ...config.optimization,
         splitChunks: {
-          chunks: 'async', // Only split async chunks in development
+          chunks: "async", // Only split async chunks in development
           cacheGroups: {
             default: false,
             vendors: false,
@@ -169,7 +176,7 @@ const config = {
           // Store original console methods
           let originalConsole = {};
 
-          compiler.hooks.compile.tap('SuppressAllLogsPlugin', () => {
+          compiler.hooks.compile.tap("SuppressAllLogsPlugin", () => {
             // Store and override all console methods during compilation
             originalConsole = {
               log: console.log,
@@ -184,14 +191,18 @@ const config = {
             console.info = () => {};
             // Keep errors for actual webpack errors
             console.error = (...args) => {
-              const message = args.join(' ');
-              if (!message.includes('IncrementalCache') && !message.includes('FileSystemCache') && !message.includes('use-cache')) {
+              const message = args.join(" ");
+              if (
+                !message.includes("IncrementalCache") &&
+                !message.includes("FileSystemCache") &&
+                !message.includes("use-cache")
+              ) {
                 originalConsole.error.apply(console, args);
               }
             };
           });
 
-          compiler.hooks.done.tap('RestoreConsolePlugin', () => {
+          compiler.hooks.done.tap("RestoreConsolePlugin", () => {
             // Restore console methods after compilation
             if (originalConsole.log) {
               console.log = originalConsole.log;
@@ -202,15 +213,16 @@ const config = {
           });
 
           // Suppress all webpack warnings
-          compiler.hooks.done.tap('SuppressAllWarningsPlugin', (stats) => {
+          compiler.hooks.done.tap("SuppressAllWarningsPlugin", (stats) => {
             stats.compilation.warnings = [];
-            stats.compilation.errors = stats.compilation.errors.filter(error =>
-              !error.message.includes('IncrementalCache') &&
-              !error.message.includes('FileSystemCache') &&
-              !error.message.includes('use-cache')
+            stats.compilation.errors = stats.compilation.errors.filter(
+              (error) =>
+                !error.message.includes("IncrementalCache") &&
+                !error.message.includes("FileSystemCache") &&
+                !error.message.includes("use-cache"),
             );
           });
-        }
+        },
       });
 
       // Disable source maps in development to reduce overhead
@@ -297,7 +309,7 @@ const config = {
               value: "camera=(), microphone=(), geolocation=()",
             },
           ],
-        }
+        },
       );
     }
 

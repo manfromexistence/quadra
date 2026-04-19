@@ -13,7 +13,9 @@ const buildCommand = process.platform === "win32" ? "bun.exe" : "bun";
 const buildArgs = ["x", "next", "build", "--webpack"];
 
 console.log("🚀 BEAST MODE PRODUCTION BUILD INITIATED");
-console.log("🛠 Using webpack for production build to avoid Turbopack monorepo symlink packaging bugs on Vercel...");
+console.log(
+  "🛠 Using webpack for production build to avoid Turbopack monorepo symlink packaging bugs on Vercel...",
+);
 
 if (fs.existsSync(nextDir)) {
   console.log("🧹 Cleaning previous build...");
