@@ -6,6 +6,36 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [Unreleased]
 
 ### Fixed
+
+- Fixed dashboard image loader to properly serve local logo files in development (removed hardcoded midday.ai CDN URL)
+- Extracted and configured favicon files in both website and dashboard from root favicon.zip
+- Added missing "Quadra" preset to theme presets so theme name field displays correctly in theme editor
+- Replaced hardcoded SVG icon with BrandLogo component in EdmsDashboardSidebar header (note: EdmsDashboardSidebar is not currently active; the main Sidebar component already uses BrandLogo correctly)
+- Fixed ChunkLoadError in GlobalSheetsProvider by adding loading fallback to dynamic import
+- Fixed theme preset helper to import from correct presets file (was importing from old theme-presets.ts instead of new presets.ts with Quadra theme)
+
+### Added
+
+- Enhanced theme preview panel with comprehensive Midday UI components showcase:
+  - Form components: Input, Select, Textarea, Checkbox, Switch, RadioGroup
+  - Navigation: Tabs component with multiple sections
+  - Data display: Enhanced table with more rows and badge variants
+  - Typography & color swatches for visual theme verification
+  - Additional button variants (Ghost)
+  - Separator components for visual hierarchy
+- **Logo and favicon assets configured for both websites**
+  - Copied `logo-dark.png` and `logo-light.png` to `apps/website/public/`
+  - Extracted favicon bundle to `apps/website/public/`
+  - Both dashboard and website now have complete branding assets
+  
+- **Theme presets from construction app**
+  - Copied complete theme presets file (3597 lines, 50+ themes) from `apps/construction/utils/theme-presets.ts`
+  - Added to `packages/ui/src/theme/presets.ts` for shared access
+  - Exported from `packages/ui/src/theme/index.ts`
+  - Themes include: Modern Minimal, Violet Bloom, T3 Chat, Twitter, Mocha Mousse, Bubblegum, Amethyst Haze, Notebook, Doom 64, Catppuccin, Graphite, and 40+ more
+  - All themes available in dashboard theme editor preset selector
+
+### Fixed
 - **apps/dashboard — Turbopack panic on old editor/theme route**
   - Removed leftover `apps/dashboard/src/app/[locale]/(app)/editor/theme/[[...themeId]]/` directory from construction app migration
   - Updated dashboard sidebar to use new `/theme` route instead of `/editor/theme`

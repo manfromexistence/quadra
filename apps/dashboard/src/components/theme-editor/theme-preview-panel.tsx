@@ -9,7 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@midday/ui/card";
+import { Checkbox } from "@midday/ui/checkbox";
+import { Input } from "@midday/ui/input";
+import { Label } from "@midday/ui/label";
 import { Progress } from "@midday/ui/progress";
+import { RadioGroup, RadioGroupItem } from "@midday/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@midday/ui/select";
+import { Separator } from "@midday/ui/separator";
+import { Switch } from "@midday/ui/switch";
 import {
   Table,
   TableBody,
@@ -18,6 +25,8 @@ import {
   TableHeader,
   TableRow,
 } from "@midday/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@midday/ui/tabs";
+import { Textarea } from "@midday/ui/textarea";
 import { useThemeEditorStore } from "@/store/theme-editor-store";
 
 export function ThemePreviewPanel() {
@@ -38,7 +47,8 @@ export function ThemePreviewPanel() {
         </p>
       </div>
 
-      <div className="grid flex-1 gap-4 p-4 xl:grid-cols-[1.3fr_0.9fr]">
+      <div className="grid flex-1 gap-4 p-4 xl:grid-cols-2">
+        {/* Left Column */}
         <div className="space-y-4">
           <Card>
             <CardHeader>
@@ -86,8 +96,80 @@ export function ThemePreviewPanel() {
                 <Button>Primary Action</Button>
                 <Button variant="secondary">Secondary</Button>
                 <Button variant="outline">Outline</Button>
+                <Button variant="ghost">Ghost</Button>
                 <Button variant="destructive">Destructive</Button>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Form Components</CardTitle>
+              <CardDescription>
+                Input fields, selects, checkboxes, and switches.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="preview-input">Project Name</Label>
+                <Input id="preview-input" placeholder="Enter project name..." />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="preview-select">Document Type</Label>
+                <Select defaultValue="drawing">
+                  <SelectTrigger id="preview-select">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="drawing">Drawing</SelectItem>
+                    <SelectItem value="specification">Specification</SelectItem>
+                    <SelectItem value="report">Report</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="preview-textarea">Description</Label>
+                <Textarea 
+                  id="preview-textarea" 
+                  placeholder="Enter description..." 
+                  rows={3}
+                />
+              </div>
+
+              <Separator />
+
+              <div className="flex items-center space-x-2">
+                <Checkbox id="preview-checkbox" />
+                <Label htmlFor="preview-checkbox" className="text-sm font-normal">
+                  Send notification on approval
+                </Label>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <Label htmlFor="preview-switch" className="text-sm font-normal">
+                  Enable auto-archive
+                </Label>
+                <Switch id="preview-switch" />
+              </div>
+
+              <Separator />
+
+              <RadioGroup defaultValue="option-1">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="option-1" id="option-1" />
+                  <Label htmlFor="option-1" className="text-sm font-normal">
+                    Option 1
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="option-2" id="option-2" />
+                  <Label htmlFor="option-2" className="text-sm font-normal">
+                    Option 2
+                  </Label>
+                </div>
+              </RadioGroup>
             </CardContent>
           </Card>
 
@@ -129,12 +211,23 @@ export function ThemePreviewPanel() {
                     </TableCell>
                     <TableCell className="px-6">A</TableCell>
                   </TableRow>
+                  <TableRow>
+                    <TableCell className="px-6 font-mono text-xs">
+                      MEC-HVAC-SPEC-0012
+                    </TableCell>
+                    <TableCell>Mechanical</TableCell>
+                    <TableCell>
+                      <Badge variant="destructive">Rejected</Badge>
+                    </TableCell>
+                    <TableCell className="px-6">C</TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
         </div>
 
+        {/* Right Column */}
         <div className="space-y-4">
           <div className="rounded-3xl border border-sidebar-border/80 bg-sidebar p-4 text-sidebar-foreground shadow-sm">
             <div className="rounded-2xl border border-sidebar-border/80 bg-sidebar-accent/50 p-4">
@@ -148,27 +241,109 @@ export function ThemePreviewPanel() {
                 </div>
                 <div className="rounded-xl px-3 py-2">Documents</div>
                 <div className="rounded-xl px-3 py-2">Workflows</div>
+                <div className="rounded-xl px-3 py-2">Transmittals</div>
               </div>
             </div>
           </div>
 
           <Card>
             <CardHeader>
-              <CardTitle>Typography</CardTitle>
+              <CardTitle>Tabs Component</CardTitle>
+              <CardDescription>
+                Tab navigation with different content sections.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="overview">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="details">Details</TabsTrigger>
+                  <TabsTrigger value="history">History</TabsTrigger>
+                </TabsList>
+                <TabsContent value="overview" className="space-y-2 pt-4">
+                  <p className="text-sm text-muted-foreground">
+                    Overview content with project summary and key metrics.
+                  </p>
+                  <div className="flex gap-2">
+                    <Badge>Active</Badge>
+                    <Badge variant="secondary">On Track</Badge>
+                  </div>
+                </TabsContent>
+                <TabsContent value="details" className="space-y-2 pt-4">
+                  <p className="text-sm text-muted-foreground">
+                    Detailed information about the project scope and deliverables.
+                  </p>
+                </TabsContent>
+                <TabsContent value="history" className="space-y-2 pt-4">
+                  <p className="text-sm text-muted-foreground">
+                    Timeline of all project activities and changes.
+                  </p>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Typography & Colors</CardTitle>
               <CardDescription>
                 Fonts and spacing update live through the shared theme store.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <p className="text-sm text-muted-foreground">
-                Construction dashboard themes now share the same Quadra token
-                source and apply through the dashboard provider without breaking
-                dark mode.
-              </p>
-              <p className="font-mono text-xs text-muted-foreground">
-                font-sans / font-serif / font-mono variables are editable in the
-                control panel.
-              </p>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  Construction dashboard themes now share the same Quadra token
+                  source and apply through the dashboard provider without breaking
+                  dark mode.
+                </p>
+                <p className="font-mono text-xs text-muted-foreground">
+                  font-sans / font-serif / font-mono variables are editable in the
+                  control panel.
+                </p>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="size-4 rounded bg-primary" />
+                  <span className="text-xs">Primary</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="size-4 rounded bg-secondary" />
+                  <span className="text-xs">Secondary</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="size-4 rounded bg-accent" />
+                  <span className="text-xs">Accent</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="size-4 rounded bg-muted" />
+                  <span className="text-xs">Muted</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="size-4 rounded bg-destructive" />
+                  <span className="text-xs">Destructive</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Badge Variants</CardTitle>
+              <CardDescription>
+                Different badge styles for status indicators.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                <Badge>Default</Badge>
+                <Badge variant="secondary">Secondary</Badge>
+                <Badge variant="outline">Outline</Badge>
+                <Badge variant="destructive">Destructive</Badge>
+              </div>
             </CardContent>
           </Card>
         </div>

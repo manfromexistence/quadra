@@ -21,6 +21,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { BrandLogo } from "@/components/brand-logo";
 import { authClient } from "@/lib/auth-client";
 import type { DashboardUser } from "@/lib/edms/dashboard";
 import { Avatar, AvatarFallback, AvatarImage } from "@midday/ui/avatar";
@@ -106,62 +107,8 @@ export function EdmsDashboardSidebar({ user }: { user: DashboardUser }) {
             href="/dashboard"
             className="flex items-center gap-3 rounded-2xl border border-sidebar-border/80 bg-sidebar-accent/40 p-3"
           >
-            <div className="flex size-10 items-center justify-center rounded-2xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" className="size-6">
-                <rect width="256" height="256" fill="none" />
-                <line
-                  x1="208"
-                  y1="128"
-                  x2="207.8"
-                  y2="128.2"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeWidth="24"
-                />
-                <line
-                  x1="168.2"
-                  y1="167.8"
-                  x2="128"
-                  y2="208"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeWidth="24"
-                />
-                <line
-                  x1="192"
-                  y1="40"
-                  x2="115.8"
-                  y2="116.2"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeWidth="24"
-                />
-                <line
-                  x1="76.2"
-                  y1="155.8"
-                  x2="40"
-                  y2="192"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeWidth="24"
-                />
-                <circle
-                  cx="188"
-                  cy="148"
-                  r="24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="24"
-                />
-                <circle
-                  cx="96"
-                  cy="136"
-                  r="24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="24"
-                />
-              </svg>
+            <div className="flex size-10 items-center justify-center rounded-2xl bg-sidebar-accent shadow-sm overflow-hidden">
+              <BrandLogo size={40} priority />
             </div>
             <div className="min-w-0 space-y-1">
               <p className="truncate text-lg font-bold">QUADRA</p>

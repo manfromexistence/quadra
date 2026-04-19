@@ -1,6 +1,14 @@
 import { ThemePreset } from "../types/theme";
+import { defaultLightThemeStyles, defaultDarkThemeStyles } from "./config/theme";
 
 export const defaultPresets: Record<string, ThemePreset> = {
+  quadra: {
+    label: "Quadra",
+    styles: {
+      light: defaultLightThemeStyles,
+      dark: defaultDarkThemeStyles,
+    },
+  },
   "modern-minimal": {
     label: "Modern Minimal",
     styles: {

@@ -4,39 +4,63 @@ interface ImageLoaderParams {
   quality?: number;
 }
 
-const CDN_URL = "https://midday.ai";
+// Use environment variable for CDN URL, fallback to empty string
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || "";
 
 export default function imageLoader({
   src,
   width,
   quality = 80,
 }: ImageLoaderParams): string {
+  // Skip CDN optimization for localhost (local development)
+  if (src.includes("localhost") || src.includes("127.0.0.1")) {
+    return src;
+  }
+
+  // In development, serve local images without CDN
+  if (process.env.NODE_ENV === "development") {
+    if (src.startsWith("/")) {
+      return `${src}?w=${width}&q=${quality}`;
+    }
+    return src;
+  }
+
+  // For local images (starting with /), serve from current domain
+  if (src.startsWith("/")) {
+    // If no CDN_URL is set, serve from current domain
+    if (!CDN_URL) {
+      return `${src}?w=${width}&q=${quality}`;
+    }
+    // If CDN is configured, use Cloudflare image optimization
+    return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}${src}`;
+  }
+
   // Handle authenticated API URLs (preserve query parameters like fk token)
   if (src.includes("/files/proxy")) {
     // Parse URL to preserve query parameters
     try {
       const url = new URL(src);
-
-      // Skip CDN optimization for localhost (local development)
-      if (url.hostname === "localhost" || url.hostname === "127.0.0.1") {
-        return src; // Return URL as-is for local development
-      }
-
       const params = url.searchParams.toString();
       const baseUrl = url.origin + url.pathname;
+      
+      if (!CDN_URL) {
+        return src;
+      }
+      
       return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/${baseUrl}${params ? `?${params}` : ""}`;
     } catch {
-      // Fallback if URL parsing fails - check if it's localhost
-      if (src.includes("localhost") || src.includes("127.0.0.1")) {
-        return src; // Return URL as-is for local development
-      }
-      return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/${src}`;
+      return src;
     }
   }
 
-  // Existing logic for other URLs
+  // For _next static files
   if (src.startsWith("/_next")) {
-    return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/https://app.midday.ai${src}`;
+    if (!CDN_URL) {
+      return src;
+    }
+    return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}${src}`;
   }
-  return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/${src}`;
+
+  // For external URLs, pass through
+  return src;
 }

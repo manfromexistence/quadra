@@ -3,7 +3,7 @@ import {
   defaultLightThemeStyles,
 } from "../config/theme";
 import type { ThemeStyles } from "../types/theme";
-import { defaultPresets } from "./theme-presets";
+import { defaultPresets } from "../presets";
 
 export function getPresetThemeStyles(name = "quadra"): ThemeStyles {
   const preset = defaultPresets[name] ?? defaultPresets.quadra;
