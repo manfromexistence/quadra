@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@midday/ui/cn";
+import { ScrollArea } from "@midday/ui/scroll-area";
 import { Skeleton } from "@midday/ui/skeleton";
 import Link from "next/link";
 import { Suspense, useState } from "react";
@@ -38,9 +39,11 @@ export function Sidebar() {
         onMouseEnter={() => setIsExpanded(true)}
         onMouseLeave={() => setIsExpanded(false)}
       >
-        <div className="flex flex-col w-full pt-[70px] flex-1 border-b border-border mb-3">
-          <MainMenu isExpanded={isExpanded} />
-        </div>
+        <ScrollArea className="flex-1 w-full pt-[70px]">
+          <div className="flex flex-col w-full pb-3 border-b border-border mb-3">
+            <MainMenu isExpanded={isExpanded} />
+          </div>
+        </ScrollArea>
 
         <Suspense fallback={<TeamDropdownSkeleton isExpanded={isExpanded} />}>
           <TeamDropdown isExpanded={isExpanded} />

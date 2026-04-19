@@ -35,6 +35,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
   - Only allowed markdown files: TODO.md, CHANGELOG.md, HELP.md (when blocked)
   - No README, SUMMARY, IMPLEMENTATION, ANALYSIS, or other documentation files
   - Focus on code implementation, not documentation
+- **Sidebar ScrollArea** - Added ScrollArea component to sidebar navigation
+  - Sidebar menu items now scrollable in both expanded and collapsed states
+  - Proper overflow handling for long menu lists
+  - Smooth scrolling experience
 
 ### Fixed
 
