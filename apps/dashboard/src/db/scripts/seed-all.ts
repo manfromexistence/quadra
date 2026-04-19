@@ -829,6 +829,341 @@ async function seedAll() {
   console.log("  - 7 databook sections with 8 documents");
   console.log("  - 5 databook rules");
   console.log("  - 1 databook metadata");
+
+  // Seed Incoming Transmittals
+  const { incomingTransmittals, incomingTransmittalDocuments } = await import(
+    "../schema/incoming-transmittals"
+  );
+
+  await db
+    .insert(incomingTransmittals)
+    .values([
+      {
+        id: "in-tm-001",
+        transmittalNumber: "TM-IN-CLT-0089",
+        date: new Date("2026-04-17"),
+        receivedDate: new Date("2026-04-17"),
+        from: "CLT",
+        fromOrg: "Gulf National Petroleum",
+        subject: "Design Basis Document Rev C — Approved with Comments",
+        purpose: "IFC",
+        theirRef: "GNPC/AHR/ENG/0124",
+        responseRequired: true,
+        responseDue: new Date("2026-04-27"),
+        responseStatus: "Pending",
+        assignedTo: userId,
+        priority: "High",
+        attachments: 3,
+        projectId: "PRJ-AHR-2026",
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: "in-tm-002",
+        transmittalNumber: "TM-IN-VND-0034",
+        date: new Date("2026-04-16"),
+        receivedDate: new Date("2026-04-16"),
+        from: "VND",
+        fromOrg: "Siemens Energy",
+        subject: "Transformer Technical Submittals — Package 1",
+        purpose: "IFR",
+        theirRef: "SE/AHR/SUB/TR-01/001",
+        responseRequired: true,
+        responseDue: new Date("2026-04-30"),
+        responseStatus: "In Progress",
+        assignedTo: userId,
+        priority: "High",
+        attachments: 5,
+        projectId: "PRJ-AHR-2026",
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
+    .onConflictDoNothing();
+
+  await db
+    .insert(incomingTransmittalDocuments)
+    .values([
+      {
+        id: "in-tm-doc-001",
+        transmittalId: "in-tm-001",
+        documentCode: "AHR-PRO-RPT-0001",
+        title: "Design Basis Document",
+        revision: "C",
+        status: "Approved with Comments",
+        ourAction: "Review comments and update",
+        createdAt: now,
+      },
+      {
+        id: "in-tm-doc-002",
+        transmittalId: "in-tm-002",
+        documentCode: "AHR-ELE-DAT-0012",
+        title: "Transformer Datasheet",
+        revision: "A",
+        status: "For Review",
+        ourAction: "Technical review required",
+        createdAt: now,
+      },
+    ])
+    .onConflictDoNothing();
+  console.log("✅ Incoming transmittals seeded");
+
+  // Seed Technical Queries
+  const { technicalQueries, siteTechQueries, rfis } = await import(
+    "../schema/queries"
+  );
+
+  await db
+    .insert(technicalQueries)
+    .values([
+      {
+        id: "tq-001",
+        queryNumber: "TQ-AHR-0012",
+        date: new Date("2026-04-10"),
+        raisedBy: userId,
+        discipline: "STR",
+        subject: "Foundation Design Clarification — Column C-24",
+        description:
+          "Require clarification on foundation depth for column C-24 due to soil conditions",
+        status: "Open",
+        priority: "High",
+        assignedTo: "CLT",
+        dueDate: new Date("2026-04-20"),
+        projectId: "PRJ-AHR-2026",
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: "tq-002",
+        queryNumber: "TQ-AHR-0011",
+        date: new Date("2026-04-08"),
+        raisedBy: userId,
+        discipline: "MEC",
+        subject: "Heat Exchanger Material Specification",
+        description:
+          "Clarification needed on material grade for heat exchanger tubes",
+        status: "Responded",
+        priority: "Medium",
+        assignedTo: "CLT",
+        dueDate: new Date("2026-04-18"),
+        responseDate: new Date("2026-04-15"),
+        response: "Use 316L stainless steel as per specification section 5.2",
+        projectId: "PRJ-AHR-2026",
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
+    .onConflictDoNothing();
+
+  await db
+    .insert(siteTechQueries)
+    .values([
+      {
+        id: "stq-001",
+        queryNumber: "STQ-AHR-0005",
+        date: new Date("2026-04-12"),
+        raisedBy: "Site Team",
+        discipline: "CIV",
+        subject: "Concrete Pour Sequence — Grid A-B",
+        description: "Clarification on concrete pour sequence for foundation",
+        location: "Grid A-B, Foundation Level",
+        status: "Open",
+        priority: "High",
+        assignedTo: userId,
+        dueDate: new Date("2026-04-19"),
+        projectId: "PRJ-AHR-2026",
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
+    .onConflictDoNothing();
+
+  await db
+    .insert(rfis)
+    .values([
+      {
+        id: "rfi-001",
+        rfiNumber: "RFI-AHR-0008",
+        date: new Date("2026-04-14"),
+        raisedBy: "Construction Team",
+        from: "SUB",
+        subject: "Piping Support Details — Area 100",
+        description:
+          "Request details for pipe support installation in Area 100",
+        category: "Design",
+        status: "Under Review",
+        priority: "Medium",
+        assignedTo: userId,
+        dueDate: new Date("2026-04-24"),
+        projectId: "PRJ-AHR-2026",
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
+    .onConflictDoNothing();
+  console.log("✅ Queries and RFIs seeded");
+
+  // Seed Correspondence
+  const { letters, memos, minutesOfMeeting, momAttendees, momActionItems } =
+    await import("../schema/correspondence");
+
+  await db
+    .insert(letters)
+    .values([
+      {
+        id: "letter-001",
+        letterNumber: "LTR-AHR-OUT-0042",
+        date: new Date("2026-04-15"),
+        direction: "Outgoing",
+        from: "Quadra EDMS",
+        to: "Gulf National Petroleum",
+        toType: "Client",
+        subject: "Monthly Progress Report — March 2026",
+        category: "Progress Report",
+        ref: "GNPC/AHR/2026/042",
+        author: userId,
+        attachments: 2,
+        status: "Sent",
+        urgent: false,
+        projectId: "PRJ-AHR-2026",
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: "letter-002",
+        letterNumber: "LTR-AHR-IN-0028",
+        date: new Date("2026-04-10"),
+        direction: "Incoming",
+        from: "Gulf National Petroleum",
+        to: "Quadra EDMS",
+        toType: "Client",
+        subject: "Approval of Procurement Package 3",
+        category: "Approval",
+        ref: "GNPC/AHR/APP/0028",
+        author: userId,
+        attachments: 1,
+        status: "Received",
+        urgent: true,
+        projectId: "PRJ-AHR-2026",
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
+    .onConflictDoNothing();
+
+  await db
+    .insert(memos)
+    .values([
+      {
+        id: "memo-001",
+        memoNumber: "MEM-AHR-0015",
+        date: new Date("2026-04-16"),
+        from: "Project Manager",
+        to: "All Engineering Team",
+        subject: "Design Review Meeting — Week 16",
+        category: "Internal",
+        content:
+          "Design review meeting scheduled for April 20, 2026 at 10:00 AM. All discipline leads must attend.",
+        urgent: false,
+        status: "Distributed",
+        projectId: "PRJ-AHR-2026",
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
+    .onConflictDoNothing();
+
+  await db
+    .insert(minutesOfMeeting)
+    .values([
+      {
+        id: "mom-001",
+        momNumber: "MOM-AHR-0012",
+        meetingDate: new Date("2026-04-10"),
+        issuedDate: new Date("2026-04-11"),
+        meetingType: "Weekly Progress",
+        title: "Weekly Progress Meeting — Week 15",
+        location: "Project Office, Conference Room A",
+        chairperson: "John Smith",
+        minuteTaker: userId,
+        agenda: JSON.stringify([
+          "Review of previous action items",
+          "Engineering progress update",
+          "Procurement status",
+          "Construction activities",
+        ]),
+        decisions: JSON.stringify([
+          "Approved design change for foundation depth",
+          "Extended deadline for procurement package 4",
+        ]),
+        nextMeeting: new Date("2026-04-17"),
+        status: "Issued",
+        distribution: JSON.stringify(["CLT", "SUP", "EPC"]),
+        projectId: "PRJ-AHR-2026",
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
+    .onConflictDoNothing();
+
+  await db
+    .insert(momAttendees)
+    .values([
+      {
+        id: "attendee-001",
+        momId: "mom-001",
+        name: "John Smith",
+        organization: "Quadra EDMS",
+        role: "Project Manager",
+        createdAt: now,
+      },
+      {
+        id: "attendee-002",
+        momId: "mom-001",
+        name: "Sarah Johnson",
+        organization: "Gulf National Petroleum",
+        role: "Client Representative",
+        createdAt: now,
+      },
+      {
+        id: "attendee-003",
+        momId: "mom-001",
+        name: "Ahmed Al-Rashid",
+        organization: "KBR Supervision",
+        role: "Lead Engineer",
+        createdAt: now,
+      },
+    ])
+    .onConflictDoNothing();
+
+  await db
+    .insert(momActionItems)
+    .values([
+      {
+        id: "action-001",
+        momId: "mom-001",
+        item: "Submit revised foundation drawings",
+        assignedTo: "Engineering Team",
+        dueDate: new Date("2026-04-20"),
+        status: "Open",
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: "action-002",
+        momId: "mom-001",
+        item: "Finalize procurement package 4",
+        assignedTo: "Procurement Team",
+        dueDate: new Date("2026-04-25"),
+        status: "In Progress",
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
+    .onConflictDoNothing();
+  console.log("✅ Correspondence seeded");
+
+  console.log("🎉 All database tables seeded successfully!");
 }
 
 seedAll()

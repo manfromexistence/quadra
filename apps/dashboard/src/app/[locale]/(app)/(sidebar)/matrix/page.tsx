@@ -6,12 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@midday/ui/card";
-import { ArrowRight, Grid3X3, Info, Plus } from "lucide-react";
+import { ArrowRight, Grid3X3, Info } from "lucide-react";
 import type { Metadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import Link from "next/link";
 import { Suspense } from "react";
 import { CollapsibleSummary } from "@/components/collapsible-summary";
+import { AddMatrixRuleForm } from "@/components/edms/add-matrix-rule-form";
 import { EdmsDataState } from "@/components/edms/data-state";
 import { DistributionMatrixTable } from "@/components/edms/distribution-matrix-table";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
@@ -215,80 +216,7 @@ export default async function MatrixPage() {
                       </CardContent>
                     </Card>
 
-                    <Card className="border-border bg-card shadow-sm">
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <Plus className="size-4" />
-                          Add distribution rule
-                        </CardTitle>
-                        <CardDescription>
-                          Create new distribution rules for specific discipline,
-                          document type, and purpose combinations.
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                          <div className="space-y-2">
-                            <label
-                              htmlFor="discipline-select"
-                              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-                            >
-                              Discipline
-                            </label>
-                            <select
-                              id="discipline-select"
-                              className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm"
-                            >
-                              <option>CIVIL — Civil Engineering</option>
-                              <option>ELEC — Electrical</option>
-                              <option>MECH — Mechanical</option>
-                              <option>PROC — Process</option>
-                              <option>INST — Instrumentation</option>
-                            </select>
-                          </div>
-                          <div className="space-y-2">
-                            <label
-                              htmlFor="doctype-select"
-                              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-                            >
-                              Document Type
-                            </label>
-                            <select
-                              id="doctype-select"
-                              className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm"
-                            >
-                              <option>DWG — Drawing</option>
-                              <option>SPEC — Specification</option>
-                              <option>CALC — Calculation</option>
-                              <option>RPT — Report</option>
-                            </select>
-                          </div>
-                          <div className="space-y-2">
-                            <label
-                              htmlFor="purpose-select"
-                              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-                            >
-                              Purpose Code
-                            </label>
-                            <select
-                              id="purpose-select"
-                              className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm"
-                            >
-                              <option>IFR — Issued for Review</option>
-                              <option>IFA — Issued for Approval</option>
-                              <option>IFC — Issued for Construction</option>
-                              <option>IFI — Issued for Information</option>
-                            </select>
-                          </div>
-                          <div className="flex items-end">
-                            <Button className="w-full">
-                              <Plus className="size-4" />
-                              Add Rule
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <AddMatrixRuleForm />
                   </>
                 )}
               </section>

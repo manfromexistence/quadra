@@ -257,12 +257,15 @@ export const oauthToken = sqliteTable("oauth_token", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
+export * from "./schema/correspondence";
 export * from "./schema/databook";
 export * from "./schema/documents";
 export * from "./schema/edms-file-assets";
+export * from "./schema/incoming-transmittals";
 export * from "./schema/midday";
 export * from "./schema/notifications";
 export * from "./schema/projects";
+export * from "./schema/queries";
 export * from "./schema/schedule";
 export * from "./schema/transmittals";
 export * from "./schema/workflows";

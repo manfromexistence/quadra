@@ -11,9 +11,15 @@ import {
   FileStack,
   FolderKanban,
   Grid3X3,
+  HelpCircle,
+  Mail,
+  MailOpen,
+  MessageSquare,
   Palette,
   Send,
+  Users,
   Workflow,
+  Wrench,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -34,11 +40,19 @@ const icons = {
   "/documents": () => <FileStack size={20} />,
   "/workflows": () => <Workflow size={20} />,
   "/transmittals": () => <Send size={20} />,
+  "/incoming-transmittals": () => <MailOpen size={20} />,
+  "/technical-queries": () => <HelpCircle size={20} />,
+  "/site-tech-queries": () => <Wrench size={20} />,
+  "/rfis": () => <MessageSquare size={20} />,
+  "/letters": () => <Mail size={20} />,
+  "/memos": () => <MessageSquare size={20} />,
+  "/meetings": () => <Users size={20} />,
   "/notifications": () => <Activity size={20} />,
   "/schedule": () => <Calendar size={20} />,
   "/databook": () => <BookOpen size={20} />,
   "/matrix": () => <Grid3X3 size={20} />,
   "/audit": () => <ClipboardList size={20} />,
+  "/config": () => <Cog size={20} />,
   "/theme": () => <Palette size={20} />,
 } as const;
 
@@ -62,6 +76,70 @@ const items = [
   {
     path: "/transmittals",
     name: "Transmittals",
+    children: [
+      {
+        path: "/transmittals",
+        name: "Outgoing",
+      },
+      {
+        path: "/incoming-transmittals",
+        name: "Incoming",
+      },
+      {
+        path: "/transmittals/new",
+        name: "New Transmittal",
+      },
+    ],
+  },
+  {
+    path: "/technical-queries",
+    name: "Queries & RFIs",
+    children: [
+      {
+        path: "/technical-queries",
+        name: "Technical Queries",
+      },
+      {
+        path: "/site-tech-queries",
+        name: "Site Tech Queries",
+      },
+      {
+        path: "/rfis",
+        name: "RFIs",
+      },
+    ],
+  },
+  {
+    path: "/letters",
+    name: "Correspondence",
+    children: [
+      {
+        path: "/letters",
+        name: "Letters Register",
+      },
+      {
+        path: "/letters/new",
+        name: "New Letter",
+      },
+      {
+        path: "/memos",
+        name: "Memos",
+      },
+    ],
+  },
+  {
+    path: "/meetings",
+    name: "Meetings",
+    children: [
+      {
+        path: "/meetings",
+        name: "Minutes of Meeting",
+      },
+      {
+        path: "/meetings/new",
+        name: "New MoM",
+      },
+    ],
   },
   {
     path: "/notifications",
@@ -86,6 +164,10 @@ const items = [
   {
     path: "/audit",
     name: "Audit",
+  },
+  {
+    path: "/config",
+    name: "Project Setup",
   },
   {
     path: "/theme",

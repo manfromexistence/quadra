@@ -61,4 +61,8 @@ Now please connect all the edms pages with our database correctly - everything s
 
 And other non edms pages is not working - so like the mock-data please configure our turso databse using wsl inline turso database and connect it correctly so all pages loads!!!
 
+Bulk Import - Excel file documents list import option to be added
+Boxes to be made curve style for better appearance
+Matrix add rule is added but no action , just make it functional
+
 Please lint and format all files and folder in the apps/dashbnoard correctly - and check for errors - in lowend device way and fix all errors

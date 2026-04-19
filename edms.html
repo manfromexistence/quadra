@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Meridian EDMS — Engineering Document Management</title>
+<title>Quadra Demo EDMS — Engineering Document Management</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f4f2ed;
     --surface: #ffffff;
+    --surface-alt: #faf9f5;
     --ink: #1a1d1a;
     --ink-2: #4a4d48;
     --ink-3: #8a8d87;
@@ -22,7 +23,59 @@
     --warning: #b8691c;
     --danger: #a83224;
     --radius: 3px;
+    --badge-draft-bg: #eeeae0;
+    --badge-ifr-bg: #f4e6cd;
+    --badge-ifr-border: #e4c999;
+    --badge-ifa-bg: #d9e2e9;
+    --badge-ifa-border: #b0bfcc;
+    --badge-ifc-bg: #dfe8e0;
+    --badge-ifc-border: #b3c6b7;
+    --badge-void-bg: #f0dcd9;
+    --badge-void-border: #d9b4ae;
+    --delta-up-bg: #dfe8e0;
+    --delta-down-bg: #f0dcd9;
+    --delta-warn-bg: #f4e6cd;
+    --paper: #ffffff;
+    --shadow-modal: 0 20px 60px rgba(0,0,0,0.2);
+    --shadow-toast: 0 8px 24px rgba(0,0,0,0.2);
+    --shadow-subtle: 0 4px 20px rgba(0,0,0,0.04);
+    --overlay: rgba(26, 29, 26, 0.5);
   }
+  [data-theme="dark"] {
+    --bg: #15171a;
+    --surface: #1d2024;
+    --surface-alt: #24272c;
+    --ink: #e8e6df;
+    --ink-2: #b4b2ab;
+    --ink-3: #7a7d82;
+    --line: #2d3035;
+    --line-strong: #3d4046;
+    --accent: #e76a4d;
+    --accent-2: #5d8a77;
+    --amber: #e0a83e;
+    --blue: #6b93bf;
+    --success: #6ba572;
+    --warning: #d8934a;
+    --danger: #d45c4e;
+    --badge-draft-bg: #2a2d32;
+    --badge-ifr-bg: #3a2f1f;
+    --badge-ifr-border: #554528;
+    --badge-ifa-bg: #1f2d3a;
+    --badge-ifa-border: #2d435a;
+    --badge-ifc-bg: #1f3025;
+    --badge-ifc-border: #2f4a37;
+    --badge-void-bg: #3a2322;
+    --badge-void-border: #573432;
+    --delta-up-bg: #1f3025;
+    --delta-down-bg: #3a2322;
+    --delta-warn-bg: #3a2f1f;
+    --paper: #22252a;
+    --shadow-modal: 0 20px 60px rgba(0,0,0,0.6);
+    --shadow-toast: 0 8px 24px rgba(0,0,0,0.5);
+    --shadow-subtle: 0 4px 20px rgba(0,0,0,0.2);
+    --overlay: rgba(0, 0, 0, 0.7);
+  }
+  html { transition: background 0.2s ease; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body {
@@ -237,9 +290,9 @@
   .stat-value.mono { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 500; }
   .stat-meta { font-size: 11px; color: var(--ink-2); margin-top: 8px; display: flex; align-items: center; gap: 6px; }
   .delta { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 1px 5px; }
-  .delta.up { background: #dfe8e0; color: var(--success); }
-  .delta.down { background: #f0dcd9; color: var(--danger); }
-  .delta.warn { background: #f4e6cd; color: var(--warning); }
+  .delta.up { background: var(--delta-up-bg); color: var(--success); }
+  .delta.down { background: var(--delta-down-bg); color: var(--danger); }
+  .delta.warn { background: var(--delta-warn-bg); color: var(--warning); }
 
   /* Cards / Panels */
   .panel {
@@ -284,7 +337,7 @@
     border-bottom: 1px solid var(--line);
     vertical-align: middle;
   }
-  tbody tr:hover { background: #faf9f5; }
+  tbody tr:hover { background: var(--surface-alt); }
   tbody tr:last-child td { border-bottom: 0; }
   td .doc-code { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 500; }
   td .doc-title { color: var(--ink); font-weight: 500; }
@@ -303,11 +356,11 @@
     border: 1px solid transparent;
     white-space: nowrap;
   }
-  .badge.draft { background: #eeeae0; color: var(--ink-2); border-color: var(--line-strong); }
-  .badge.ifr { background: #f4e6cd; color: var(--warning); border-color: #e4c999; }
-  .badge.ifa { background: #d9e2e9; color: var(--blue); border-color: #b0bfcc; }
-  .badge.ifc { background: #dfe8e0; color: var(--success); border-color: #b3c6b7; }
-  .badge.void { background: #f0dcd9; color: var(--danger); border-color: #d9b4ae; }
+  .badge.draft { background: var(--badge-draft-bg); color: var(--ink-2); border-color: var(--line-strong); }
+  .badge.ifr { background: var(--badge-ifr-bg); color: var(--warning); border-color: var(--badge-ifr-border); }
+  .badge.ifa { background: var(--badge-ifa-bg); color: var(--blue); border-color: var(--badge-ifa-border); }
+  .badge.ifc { background: var(--badge-ifc-bg); color: var(--success); border-color: var(--badge-ifc-border); }
+  .badge.void { background: var(--badge-void-bg); color: var(--danger); border-color: var(--badge-void-border); }
   .badge::before { content: '●'; font-size: 6px; }
 
   /* Forms */
@@ -423,7 +476,7 @@
   /* Modal */
   .modal-overlay {
     position: fixed; inset: 0;
-    background: rgba(26, 29, 26, 0.5);
+    background: var(--overlay);
     backdrop-filter: blur(2px);
     display: none;
     align-items: center;
@@ -438,7 +491,7 @@
     border: 1px solid var(--line);
     display: flex;
     flex-direction: column;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow-modal);
   }
   .modal-head {
     padding: 18px 22px;
@@ -481,10 +534,11 @@
   .status-bar .dot { width: 6px; height: 6px; background: #6ab04c; border-radius: 50%; display: inline-block; margin-right: 6px; }
   .status-bar .sep { opacity: 0.3; }
   .status-bar .ml-auto { margin-left: auto; display: flex; gap: 16px; }
+  .status-bar .ml-auto span[onclick]:hover { opacity: 1 !important; color: var(--accent) !important; }
 
   /* Transmittal preview */
   .transmittal-paper {
-    background: white;
+    background: var(--paper);
     border: 1px solid var(--line-strong);
     padding: 36px 40px;
     font-family: 'Sora', sans-serif;
@@ -492,7 +546,7 @@
     color: var(--ink);
     max-width: 640px;
     margin: 0 auto;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    box-shadow: var(--shadow-subtle);
   }
   .tm-header { display: flex; justify-content: space-between; align-items: start; border-bottom: 2px solid var(--ink); padding-bottom: 14px; margin-bottom: 20px; }
   .tm-header h2 { font-family: 'Instrument Serif', serif; font-size: 26px; font-weight: 400; letter-spacing: -0.5px; }
@@ -543,7 +597,7 @@
     transform: translateY(20px);
     opacity: 0;
     transition: all 0.2s ease;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow-toast);
   }
   .toast.show { opacity: 1; transform: translateY(0); }
 
@@ -602,14 +656,14 @@
     text-align: center; background: var(--bg); cursor: pointer;
     transition: all 0.15s;
   }
-  .drop-zone:hover { border-color: var(--ink); background: #ece8dc; }
-  .drop-zone.active { border-color: var(--accent); background: #fbefeb; }
+  .drop-zone:hover { border-color: var(--ink); background: var(--surface-alt); }
+  .drop-zone.active { border-color: var(--accent); background: var(--badge-void-bg); }
 
   .preview-grid { max-height: 340px; overflow: auto; border: 1px solid var(--line); background: var(--surface); }
   .preview-grid table { font-size: 11.5px; }
   .preview-grid th { position: sticky; top: 0; z-index: 1; }
-  .preview-grid tr.err { background: #fbeeeb !important; }
-  .preview-grid tr.warn { background: #fcf6e6 !important; }
+  .preview-grid tr.err { background: var(--badge-void-bg) !important; }
+  .preview-grid tr.warn { background: var(--badge-ifr-bg) !important; }
   .preview-grid tr.ok td:first-child { border-left: 3px solid var(--success); }
   .preview-grid tr.err td:first-child { border-left: 3px solid var(--danger); }
   .preview-grid tr.warn td:first-child { border-left: 3px solid var(--warning); }
@@ -618,9 +672,9 @@
     font-family: 'JetBrains Mono', monospace; font-size: 10px;
     padding: 2px 6px;
   }
-  .validation-pill.ok { background: #dfe8e0; color: var(--success); }
-  .validation-pill.err { background: #f0dcd9; color: var(--danger); }
-  .validation-pill.warn { background: #f4e6cd; color: var(--warning); }
+  .validation-pill.ok { background: var(--delta-up-bg); color: var(--success); }
+  .validation-pill.err { background: var(--delta-down-bg); color: var(--danger); }
+  .validation-pill.warn { background: var(--delta-warn-bg); color: var(--warning); }
 
   textarea.csv-paste {
     width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
@@ -694,7 +748,7 @@
     padding: 18px 20px; cursor: pointer; transition: all 0.15s;
     display: flex; gap: 16px; align-items: flex-start;
   }
-  .report-card:hover { border-color: var(--ink); background: #fbfaf5; }
+  .report-card:hover { border-color: var(--ink); background: var(--surface-alt); }
   .report-card .ic-box {
     width: 40px; height: 40px; background: var(--bg);
     border: 1px solid var(--line-strong);
@@ -707,9 +761,9 @@
   .report-card .tag { font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-top: 6px; }
 
   .report-preview {
-    background: white; border: 1px solid var(--line-strong);
+    background: var(--paper); border: 1px solid var(--line-strong);
     padding: 32px 36px; font-size: 11.5px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    box-shadow: var(--shadow-subtle);
   }
   .report-preview h2 {
     font-family: 'Instrument Serif', serif; font-size: 28px;
@@ -739,7 +793,7 @@
     padding: 12px 18px; display: flex; align-items: center; gap: 12px;
     cursor: pointer; background: var(--bg);
   }
-  .db-section-head:hover { background: #ece8dc; }
+  .db-section-head:hover { background: var(--surface-alt); }
   .db-section-head .code {
     font-family: 'JetBrains Mono', monospace; font-size: 12px;
     font-weight: 600; color: var(--ink);
@@ -768,7 +822,7 @@
   .db-item .missing::before { content: '⚠'; }
 
   .db-toc-preview {
-    background: white; border: 1px solid var(--line-strong);
+    background: var(--paper); border: 1px solid var(--line-strong);
     padding: 40px 48px; font-family: 'Sora', sans-serif;
     min-height: 500px;
   }
@@ -798,6 +852,363 @@
   .coverage-ring .pct {
     font-family: 'Instrument Serif', serif; font-size: 26px;
   }
+
+  /* ---------- Search dropdown ---------- */
+  .search-wrap { position: relative; }
+  .search { position: relative; transition: border-color 0.15s; }
+  .search.focused { border-color: var(--ink); }
+  .search input::placeholder { color: var(--ink-3); }
+  .search .clear-x {
+    cursor: pointer; color: var(--ink-3); font-size: 14px;
+    padding: 0 4px; display: none; line-height: 1;
+  }
+  .search .clear-x:hover { color: var(--accent); }
+  .search.has-query .clear-x { display: inline; }
+  .search.has-query .kbd { display: none; }
+
+  .search-results {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    width: 420px;
+    max-height: 440px;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    box-shadow: var(--shadow-modal);
+    z-index: 150;
+    display: none;
+  }
+  .search-results.open { display: block; }
+  .sr-group-header {
+    padding: 8px 14px 6px;
+    font-size: 9.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .sr-group-header .sr-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+  .sr-item {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px;
+  }
+  .sr-item:last-child { border-bottom: 0; }
+  .sr-item:hover, .sr-item.active { background: var(--surface-alt); }
+  .sr-item .sr-ic {
+    width: 28px; height: 28px;
+    background: var(--bg); border: 1px solid var(--line);
+    display: grid; place-items: center;
+    font-family: 'Instrument Serif', serif; font-size: 14px;
+    color: var(--ink-2);
+    flex-shrink: 0;
+  }
+  .sr-item.active .sr-ic, .sr-item:hover .sr-ic {
+    background: var(--ink); color: var(--bg); border-color: var(--ink);
+  }
+  .sr-item .sr-body { flex: 1; min-width: 0; }
+  .sr-item .sr-title {
+    font-weight: 500; color: var(--ink);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .sr-item .sr-sub {
+    font-size: 10.5px; color: var(--ink-3);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 2px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .sr-item mark {
+    background: var(--badge-ifr-bg);
+    color: var(--ink);
+    padding: 0 2px;
+    font-weight: 600;
+  }
+  .sr-item .sr-meta {
+    font-size: 10px;
+    color: var(--ink-3);
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+  }
+  .sr-empty {
+    padding: 28px 20px;
+    text-align: center;
+    color: var(--ink-3);
+    font-size: 12px;
+  }
+  .sr-empty .serif {
+    font-size: 22px; display: block; margin-bottom: 6px; color: var(--ink-2);
+  }
+  .sr-footer {
+    padding: 8px 14px;
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+    font-size: 10px;
+    color: var(--ink-3);
+    font-family: 'JetBrains Mono', monospace;
+    display: flex; justify-content: space-between;
+    letter-spacing: 0.5px;
+    position: sticky; bottom: 0;
+  }
+  .sr-footer .kbd-hint { display: inline-flex; gap: 6px; align-items: center; }
+  .sr-footer .kbd-hint span {
+    padding: 1px 5px; border: 1px solid var(--line-strong);
+    background: var(--surface); border-radius: 2px;
+  }
+
+  /* ---------- Icon button / theme toggle ---------- */
+  .icon-btn {
+    width: 32px; height: 32px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--ink-2);
+    cursor: pointer;
+    display: grid; place-items: center;
+    font-size: 13px;
+    font-family: inherit;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .icon-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .icon-btn.active { border-color: var(--ink); color: var(--ink); background: var(--surface-alt); }
+  .icon-btn .badge-dot {
+    position: absolute;
+    top: -4px; right: -4px;
+    min-width: 14px; height: 14px; padding: 0 3px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    border-radius: 8px;
+    display: grid; place-items: center;
+    border: 2px solid var(--surface);
+    box-sizing: content-box;
+  }
+  .theme-toggle .sun { display: inline; }
+  .theme-toggle .moon { display: none; }
+  [data-theme="dark"] .theme-toggle .sun { display: none; }
+  [data-theme="dark"] .theme-toggle .moon { display: inline; }
+
+  /* ---------- Notifications panel ---------- */
+  .notif-wrap { position: relative; }
+  .notif-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    width: 360px;
+    max-height: 460px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    box-shadow: var(--shadow-modal);
+    z-index: 150;
+    display: none;
+    flex-direction: column;
+  }
+  .notif-panel.open { display: flex; }
+  .notif-head {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--bg);
+  }
+  .notif-head h4 { font-size: 12px; font-weight: 600; }
+  .notif-head .clear {
+    font-size: 10px; color: var(--ink-3); cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .notif-head .clear:hover { color: var(--accent); }
+  .notif-list { overflow-y: auto; flex: 1; }
+  .notif-item {
+    padding: 12px 16px 12px 20px;
+    border-bottom: 1px solid var(--line);
+    display: flex; gap: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    position: relative;
+  }
+  .notif-item:last-child { border-bottom: 0; }
+  .notif-item:hover { background: var(--surface-alt); }
+  .notif-item.unread { background: var(--surface-alt); }
+  .notif-item.unread::before {
+    content: ''; position: absolute; left: 8px; top: 18px;
+    width: 5px; height: 5px; background: var(--accent); border-radius: 50%;
+  }
+  .notif-item .n-ic {
+    width: 24px; height: 24px; flex-shrink: 0;
+    display: grid; place-items: center;
+    font-family: 'Instrument Serif', serif;
+    font-size: 14px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--ink-2);
+  }
+  .notif-item.info .n-ic { color: var(--blue); }
+  .notif-item.warn .n-ic { color: var(--warning); }
+  .notif-item.success .n-ic { color: var(--success); }
+  .notif-item.danger .n-ic { color: var(--danger); }
+  .notif-item .n-body { flex: 1; min-width: 0; }
+  .notif-item .n-title { font-weight: 500; color: var(--ink); margin-bottom: 2px; line-height: 1.3; }
+  .notif-item .n-sub { font-size: 10.5px; color: var(--ink-3); font-family: 'JetBrains Mono', monospace; }
+  .notif-empty {
+    padding: 40px 20px; text-align: center; color: var(--ink-3); font-size: 12px;
+  }
+  .notif-empty .serif { font-size: 28px; color: var(--ink-2); display: block; margin-bottom: 6px; }
+
+  /* Match highlight in tables */
+  .hl { background: var(--badge-ifr-bg); padding: 0 2px; color: var(--ink); font-weight: 600; }
+
+  /* Sortable column headers */
+  thead th.sortable:hover { color: var(--ink); background: var(--surface-alt); }
+
+  /* Clickable stat cards */
+  .stat.clickable { cursor: pointer; transition: background 0.15s; }
+  .stat.clickable:hover { background: var(--surface-alt); }
+  .stat.clickable::after {
+    content: '→'; position: absolute; top: 16px; right: 18px;
+    color: var(--ink-3); font-family: 'JetBrains Mono', monospace;
+    opacity: 0; transition: opacity 0.15s;
+  }
+  .stat.clickable:hover::after { opacity: 1; color: var(--accent); }
+
+  /* Discipline breakdown rows */
+  .disc-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 40px;
+    gap: 14px;
+    align-items: center;
+    padding: 8px 0;
+    cursor: pointer;
+    transition: background 0.12s;
+    border-radius: 2px;
+  }
+  .disc-row:hover { background: var(--surface-alt); margin: 0 -8px; padding: 8px; }
+  .disc-row + .disc-row { border-top: 1px solid var(--line); }
+  .disc-row:hover + .disc-row { border-top-color: transparent; }
+  .disc-bar-wrap {
+    height: 14px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .disc-bar {
+    height: 100%;
+    display: flex;
+    transition: width 0.3s ease;
+  }
+  .disc-seg { height: 100%; transition: width 0.3s ease; }
+  .disc-seg.ifc { background: var(--success); }
+  .disc-seg.pending { background: var(--warning); }
+  .disc-seg.draft { background: var(--line-strong); }
+  .disc-count {
+    font-size: 13px;
+    font-weight: 500;
+    text-align: right;
+    color: var(--ink);
+  }
+
+  /* Activity feed */
+  .activity-feed { max-height: 340px; overflow-y: auto; }
+  .act-item {
+    display: flex; gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+    align-items: flex-start;
+  }
+  .act-item:last-child { border-bottom: 0; }
+  .act-item:hover { background: var(--surface-alt); }
+  .act-ic {
+    width: 22px; height: 22px; flex-shrink: 0;
+    display: grid; place-items: center;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    font-size: 11px;
+    color: var(--ink-2);
+    font-family: 'Instrument Serif', serif;
+  }
+  .act-item.info .act-ic { color: var(--blue); }
+  .act-item.warn .act-ic { color: var(--warning); }
+  .act-item.success .act-ic { color: var(--success); }
+  .act-item.danger .act-ic { color: var(--danger); }
+  .act-body { flex: 1; min-width: 0; }
+  .act-line { line-height: 1.4; }
+  .act-line strong { font-weight: 500; }
+  .act-detail {
+    font-size: 10.5px; color: var(--ink-3);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 2px;
+    overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .act-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--ink-3);
+    flex-shrink: 0;
+  }
+
+  /* Saved indicator */
+  .saved-indicator {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.5px;
+  }
+  .saved-indicator.saving { color: var(--warning); }
+  .saved-indicator.saved { color: var(--success); }
+
+  /* Matrix check visual tweak */
+  .matrix-table .role-pill {
+    display: inline-block;
+    padding: 1px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--line-strong);
+    background: var(--bg);
+    color: var(--ink-3);
+    transition: all 0.12s;
+  }
+  .matrix-table .role-pill:hover { border-color: var(--ink); color: var(--ink); }
+  .matrix-table .role-pill.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .matrix-table .role-pill.a { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .matrix-table .role-pill.r { background: var(--blue); color: var(--bg); border-color: var(--blue); }
+  .matrix-table .role-pill.i { background: var(--amber); color: var(--bg); border-color: var(--amber); }
+
+  /* Keyboard hint footer */
+  .key-hint-bar {
+    position: fixed;
+    bottom: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 8px 16px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+    z-index: 180;
+    display: none;
+    gap: 14px;
+    align-items: center;
+    box-shadow: var(--shadow-toast);
+  }
+  .key-hint-bar.show { display: inline-flex; }
+  .key-hint-bar .k { background: rgba(255,255,255,0.12); padding: 2px 6px; border-radius: 2px; }
 </style>
 </head>
 <body>
@@ -807,7 +1218,7 @@
   <div class="brand">
     <div class="brand-mark">M</div>
     <div class="brand-text">
-      Meridian EDMS
+      Quadra Demo EDMS
       <small>v2.4 — MVP Demo</small>
     </div>
   </div>
@@ -823,17 +1234,34 @@
       <span style="color:var(--ink-3); font-size:11px;">▾</span>
     </div>
     <div class="topbar-spacer"></div>
-    <div class="search">
-      <span style="opacity:0.5">⌕</span>
-      <input placeholder="Search documents, transmittals, projects…" />
-      <span class="kbd">⌘K</span>
+    <div class="search-wrap">
+      <div class="search" id="searchBox">
+        <span style="opacity:0.5">⌕</span>
+        <input id="globalSearch" placeholder="Search documents, transmittals, projects…" autocomplete="off" />
+        <span class="clear-x" id="searchClear" title="Clear">×</span>
+        <span class="kbd">⌘K</span>
+      </div>
+      <div class="search-results" id="searchResults"></div>
     </div>
     <div class="topbar-actions">
-      <button class="btn ghost sm">Notifications</button>
+      <div class="notif-wrap">
+        <button class="icon-btn" id="notifBtn" title="Notifications" onclick="toggleNotif(event)">
+          <span>⌯</span>
+          <span class="badge-dot" id="notifBadge">3</span>
+        </button>
+        <div class="notif-panel" id="notifPanel"></div>
+      </div>
+      <button class="icon-btn theme-toggle" id="themeToggle" title="Toggle theme" onclick="toggleTheme()">
+        <span class="sun">☀</span>
+        <span class="moon">☾</span>
+      </button>
+      <button class="icon-btn" id="helpBtn" title="Keyboard shortcuts (?)" onclick="toggleHelp()">
+        <span style="font-family:'Instrument Serif', serif; font-size:16px;">?</span>
+      </button>
       <div class="user-chip">
         <div class="avatar">SK</div>
         <div>
-          <div style="font-weight:500; font-size:12px;">S. Kumar</div>
+          <div style="font-weight:500; font-size:12px;">Jennifer</div>
           <div style="font-size:10px; color:var(--ink-3)">Document Controller</div>
         </div>
       </div>
@@ -871,8 +1299,51 @@
         <span class="ic">✉</span> Outgoing
         <span class="count" id="tmCount">0</span>
       </div>
+      <div class="nav-item" data-nav="incomingTm" onclick="go('incomingTm')">
+        <span class="ic">⇄</span> Incoming
+        <span class="count" id="incomingTmCount">0</span>
+      </div>
       <div class="nav-item" data-nav="newTransmittal" onclick="go('newTransmittal')">
         <span class="ic">✎</span> New Transmittal
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-title">Queries &amp; RFIs</div>
+      <div class="nav-item" data-nav="tq" onclick="go('tq')">
+        <span class="ic">?</span> Technical Queries
+        <span class="count" id="tqCount">0</span>
+      </div>
+      <div class="nav-item" data-nav="stq" onclick="go('stq')">
+        <span class="ic">⚒</span> Site Tech Queries
+        <span class="count" id="stqCount">0</span>
+      </div>
+      <div class="nav-item" data-nav="rfi" onclick="go('rfi')">
+        <span class="ic">ⓘ</span> RFIs
+        <span class="count" id="rfiCount">0</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-title">Correspondence</div>
+      <div class="nav-item" data-nav="letters" onclick="go('letters')">
+        <span class="ic">✎</span> Letters Register
+        <span class="count" id="letterCount">0</span>
+      </div>
+      <div class="nav-item" data-nav="newLetter" onclick="go('newLetter')">
+        <span class="ic">✏</span> New Letter
+      </div>
+      <div class="nav-item" data-nav="memos" onclick="go('memos')">
+        <span class="ic">◐</span> Memos
+        <span class="count" id="memoCount">0</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-title">Meetings</div>
+      <div class="nav-item" data-nav="mom" onclick="go('mom')">
+        <span class="ic">◪</span> Minutes of Meeting
+        <span class="count" id="momCount">0</span>
+      </div>
+      <div class="nav-item" data-nav="newMom" onclick="go('newMom')">
+        <span class="ic">+</span> New MoM
       </div>
     </div>
     <div class="nav-group">
@@ -911,7 +1382,10 @@
     <span>PROJECT: PRJ-AHR-2026</span>
     <span class="sep">│</span>
     <span>ROLE: DOC_CONTROLLER</span>
+    <span class="sep">│</span>
+    <span id="savedIndicator" class="saved-indicator"></span>
     <span class="ml-auto">
+      <span style="cursor:pointer; opacity:0.7;" onclick="resetState()" title="Reset all demo data">↻ RESET</span>
       <span>LAST SYNC: <span id="syncTime">—</span></span>
       <span>BUILD: 2026.04.17</span>
     </span>
@@ -928,7 +1402,7 @@
 
 <script>
 /* ============================================================
-   MERIDIAN EDMS — DEMO DATA & STATE
+   QUADRA DEMO EDMS — DEMO DATA & STATE
    ============================================================ */
 const state = {
   activeNav: 'dashboard',
@@ -936,7 +1410,7 @@ const state = {
     code: 'PRJ-AHR-2026',
     name: 'Al Hamra Refinery Expansion',
     client: 'Gulf National Petroleum Co.',
-    contractor: 'Meridian Engineering Ltd.',
+    contractor: 'Quadra Demo Engineering Ltd.',
     location: 'Muscat, Oman',
     startDate: '2026-01-15',
     endDate: '2028-06-30',
@@ -964,7 +1438,7 @@ const state = {
   ],
   stakeholders: [
     { id: 'CLT', name: 'Gulf National Petroleum', role: 'Client', contact: 'ahmed.alwahaibi@gnpc.om' },
-    { id: 'EPC', name: 'Meridian Engineering', role: 'EPC Contractor', contact: 'pm@meridian-eng.com' },
+    { id: 'EPC', name: 'Quadra Demo Engineering', role: 'EPC Contractor', contact: 'pm@quadrademo-eng.com' },
     { id: 'SUP', name: 'KBR Supervision Ltd.', role: 'Supervisor', contact: 'site@kbr-sup.com' },
     { id: 'VND', name: 'Siemens Energy', role: 'Vendor', contact: 'projects@siemens-energy.com' },
     { id: 'THP', name: 'Bureau Veritas', role: 'Third Party', contact: 'inspection@bv.com' },
@@ -995,7 +1469,7 @@ const state = {
       subject: 'Issue for Approval — Mechanical Specifications Package',
       purpose: 'IFA',
       docs: ['AHR-MEC-SPC-0023', 'AHR-PIP-DWG-0067'],
-      issuedBy: 'S. Kumar',
+      issuedBy: 'Jennifer',
       status: 'Sent',
       dueDate: '2026-04-20',
     },
@@ -1006,11 +1480,149 @@ const state = {
       subject: 'Issue for Construction — Instrumentation Datasheets',
       purpose: 'IFC',
       docs: ['AHR-INS-DAT-0008'],
-      issuedBy: 'S. Kumar',
+      issuedBy: 'Jennifer',
       status: 'Acknowledged',
       dueDate: '2026-04-12',
     },
   ],
+
+  /* -------- Incoming Transmittals -------- */
+  incomingTransmittals: [
+    {
+      id: 'TM-IN-CLT-0089',
+      date: '2026-04-17',
+      receivedDate: '2026-04-17',
+      from: 'CLT',
+      fromOrg: 'Gulf National Petroleum',
+      subject: 'Design Basis Document Rev C — Approved with Comments',
+      purpose: 'IFC',
+      theirRef: 'GNPC/AHR/ENG/0124',
+      receivedDocs: [
+        { code: 'AHR-PRO-RPT-0003', title: 'Design Basis Document', rev: 'C', status: 'Approved with Comments', ourAction: 'Address comments in Rev D' }
+      ],
+      responseRequired: true,
+      responseDue: '2026-04-27',
+      responseStatus: 'Pending',
+      assignedTo: 'Jennifer',
+      priority: 'High',
+      notes: 'Client comments attached. Structural team to review item 3.2 foundation loads.',
+      attachments: 2,
+      responseBy: null,
+      responseDate: null,
+    },
+    {
+      id: 'TM-IN-VND-0034',
+      date: '2026-04-16',
+      receivedDate: '2026-04-16',
+      from: 'VND',
+      fromOrg: 'Siemens Energy',
+      subject: 'Transformer Technical Submittals — Package 1',
+      purpose: 'IFR',
+      theirRef: 'SE/AHR/SUB/TR-01/001',
+      receivedDocs: [
+        { code: 'VND-SE-DWG-TR01-GA', title: 'Transformer TR-01 General Arrangement', rev: 'A', status: 'For Review', ourAction: 'Review foundation interface' },
+        { code: 'VND-SE-DAT-TR01', title: 'Transformer TR-01 Datasheet', rev: 'A', status: 'For Review', ourAction: 'Review electrical parameters' },
+        { code: 'VND-SE-MAN-TR01', title: 'Transformer TR-01 O&M Manual (Draft)', rev: 'A', status: 'For Information', ourAction: 'Review for Data Book' }
+      ],
+      responseRequired: true,
+      responseDue: '2026-04-30',
+      responseStatus: 'In Progress',
+      assignedTo: 'L. Nakamura',
+      priority: 'High',
+      notes: 'Electrical team reviewing. Civil to check foundation bolt pattern against our dwg AHR-CIV-DWG-0024.',
+      attachments: 5,
+      responseBy: 'L. Nakamura',
+      responseDate: null,
+    },
+    {
+      id: 'TM-IN-CLT-0088',
+      date: '2026-04-14',
+      receivedDate: '2026-04-14',
+      from: 'CLT',
+      fromOrg: 'Gulf National Petroleum',
+      subject: 'Monthly HSE Report Acknowledgement',
+      purpose: 'IFI',
+      theirRef: 'GNPC/AHR/HSE/0045',
+      receivedDocs: [],
+      responseRequired: false,
+      responseDue: null,
+      responseStatus: 'No Response Required',
+      assignedTo: 'Jennifer',
+      priority: 'Low',
+      notes: 'Client acknowledged receipt of our March 2026 HSE report. No action required.',
+      attachments: 1,
+      responseBy: null,
+      responseDate: null,
+    },
+    {
+      id: 'TM-IN-SUB-0021',
+      date: '2026-04-12',
+      receivedDate: '2026-04-13',
+      from: 'SUB',
+      fromOrg: 'ABC Fabricators LLC',
+      subject: 'Structural Steel Shop Drawings — Phase 1',
+      purpose: 'IFR',
+      theirRef: 'ABC/AHR/SHOP/STR/001',
+      receivedDocs: [
+        { code: 'SUB-ABC-DWG-ST-001', title: 'Steel Frame Grid A-D Shop Drawing', rev: 'A', status: 'Approved', ourAction: 'Proceed with fabrication' },
+        { code: 'SUB-ABC-DWG-ST-002', title: 'Steel Frame Grid E-H Shop Drawing', rev: 'A', status: 'Approved as Noted', ourAction: 'Minor markup corrections noted' },
+        { code: 'SUB-ABC-DWG-ST-003', title: 'Stair S-01 Shop Drawing', rev: 'A', status: 'Revise & Resubmit', ourAction: 'Handrail detail non-compliant' }
+      ],
+      responseRequired: true,
+      responseDue: '2026-04-19',
+      responseStatus: 'Responded',
+      assignedTo: 'M. Chen',
+      priority: 'High',
+      notes: 'Response issued via TM-AHR-0045. Subcontractor to revise stair detail per markup.',
+      attachments: 8,
+      responseBy: 'M. Chen',
+      responseDate: '2026-04-18',
+    },
+    {
+      id: 'TM-IN-VND-0033',
+      date: '2026-04-10',
+      receivedDate: '2026-04-11',
+      from: 'VND',
+      fromOrg: 'Atlas Valves & Fittings',
+      subject: 'Material Test Certificates — Valve Package VP-01',
+      purpose: 'IFI',
+      theirRef: 'AVF/AHR/MTC/VP01/REV0',
+      receivedDocs: [
+        { code: 'VND-AVF-MTC-VP01-001', title: 'MTC - Gate Valves (10 nos)', rev: '0', status: 'For Information', ourAction: 'File in Data Book SEC-05' },
+        { code: 'VND-AVF-MTC-VP01-002', title: 'MTC - Ball Valves (15 nos)', rev: '0', status: 'For Information', ourAction: 'File in Data Book SEC-05' }
+      ],
+      responseRequired: false,
+      responseDue: null,
+      responseStatus: 'Acknowledged',
+      assignedTo: 'J. Okafor',
+      priority: 'Medium',
+      notes: 'MTCs filed in Data Book. QA verified certificates against purchase order.',
+      attachments: 12,
+      responseBy: null,
+      responseDate: '2026-04-12',
+    },
+    {
+      id: 'TM-IN-CLT-0087',
+      date: '2026-04-08',
+      receivedDate: '2026-04-08',
+      from: 'CLT',
+      fromOrg: 'Gulf National Petroleum',
+      subject: 'Response to TQ-AHR-0011 — Heat Exchanger Material',
+      purpose: 'IFI',
+      theirRef: 'GNPC/AHR/TQ/0011/RESP',
+      receivedDocs: [],
+      responseRequired: false,
+      responseDue: null,
+      responseStatus: 'Closed',
+      assignedTo: 'J. Okafor',
+      priority: 'Medium',
+      notes: 'Client confirmed SS316L is correct spec for HX-101. P&ID to be updated in next revision. TQ-AHR-0011 closed.',
+      attachments: 1,
+      responseBy: null,
+      responseDate: '2026-04-09',
+    },
+  ],
+
   distributionMatrix: {
     // key: "DISC-DOCTYPE-PURPOSE" -> { stakeholderId: role } where role = 'R' (review), 'I' (info), 'A' (approve)
     'MEC-SPC-IFA': { CLT: 'A', SUP: 'R', EPC: 'I' },
@@ -1022,12 +1634,12 @@ const state = {
     'PRO-RPT-IFR': { CLT: 'I', EPC: 'R' },
   },
   audit: [
-    { t: '2026-04-17 09:14', actor: 'S. Kumar', action: 'Created transmittal', detail: 'TM-AHR-0042 issued to Client' },
+    { t: '2026-04-17 09:14', actor: 'Jennifer', action: 'Created transmittal', detail: 'TM-AHR-0042 issued to Client' },
     { t: '2026-04-17 08:42', actor: 'R. Patel', action: 'Uploaded revision', detail: 'AHR-CIV-DWG-0001 Rev B superseded Rev A' },
     { t: '2026-04-16 16:28', actor: 'M. Chen', action: 'Status change', detail: 'AHR-STR-CAL-0012 → IFC (Approved)' },
     { t: '2026-04-16 11:03', actor: 'J. Okafor', action: 'Uploaded document', detail: 'AHR-MEC-SPC-0023 Rev C' },
     { t: '2026-04-15 14:51', actor: 'System', action: 'Reminder sent', detail: 'Client review pending: AHR-ELE-DWG-0045' },
-    { t: '2026-04-15 09:30', actor: 'S. Kumar', action: 'Updated dist. matrix', detail: 'Added THP to STR-CAL-IFA' },
+    { t: '2026-04-15 09:30', actor: 'Jennifer', action: 'Updated dist. matrix', detail: 'Added THP to STR-CAL-IFA' },
   ],
 
   /* -------- Planning Schedule -------- */
@@ -1054,7 +1666,7 @@ const state = {
   databook: {
     title: 'Final Project Data Book — Al Hamra Refinery Expansion',
     revision: 'DRAFT 02',
-    compiler: 'S. Kumar',
+    compiler: 'Jennifer',
     targetDate: '2026-12-15',
     sections: [
       { code: 'SEC-01', title: 'Project Overview & General Arrangement', required: 8, collected: 6, docs: [
@@ -1094,7 +1706,62 @@ const state = {
         { code: 'OM-HTX-001', title: 'Heat Exchanger O&M Manual', status: 'collected' },
       ]},
     ],
-  }
+  },
+
+  /* -------- Notifications -------- */
+  notifications: [
+    { id: 'n1', type: 'warn', icon: '!', title: 'Client review overdue', sub: 'AHR-ELE-DWG-0045 · 7 days pending', target: { type: 'doc', code: 'AHR-ELE-DWG-0045' }, unread: true },
+    { id: 'n2', type: 'info', icon: '✉', title: 'Transmittal acknowledged', sub: 'TM-AHR-0041 · KBR Supervision', target: { type: 'tm', code: 'TM-AHR-0041' }, unread: true },
+    { id: 'n3', type: 'success', icon: '✓', title: 'Document approved (IFC)', sub: 'AHR-STR-CAL-0012 · M. Chen', target: { type: 'doc', code: 'AHR-STR-CAL-0012' }, unread: true },
+    { id: 'n4', type: 'danger', icon: '⚠', title: 'Data Book section behind target', sub: 'SEC-06 · 0 of 18 collected', target: { type: 'nav', code: 'databook' }, unread: false },
+    { id: 'n5', type: 'info', icon: 'i', title: 'Schedule sync from Primavera', sub: 'Completed · 10 activities updated', target: { type: 'nav', code: 'schedule' }, unread: false },
+    { id: 'n6', type: 'warn', icon: '⟳', title: 'Instrumentation trending 7% behind', sub: 'Vendor data delays · FT-series', target: { type: 'nav', code: 'schedule' }, unread: false },
+  ],
+
+  /* -------- Technical Queries (TQ) -------- */
+  technicalQueries: [
+    { id: 'TQ-AHR-0012', date: '2026-04-10', raisedBy: 'M. Chen', discipline: 'STR', subject: 'Foundation Design Clarification — Column C-24', description: 'Request clarification on foundation depth requirements for Column C-24 as shown in Drawing AHR-CIV-DWG-0001 Rev B. Soil test report indicates bearing capacity variance.', linkedDocs: ['AHR-CIV-DWG-0001', 'AHR-STR-CAL-0012'], status: 'Open', priority: 'High', assignedTo: 'CLT', dueDate: '2026-04-20', responseDate: null, response: null },
+    { id: 'TQ-AHR-0011', date: '2026-04-08', raisedBy: 'J. Okafor', discipline: 'MEC', subject: 'Heat Exchanger Material Specification', description: 'Discrepancy between P&ID and datasheet for Heat Exchanger HX-101 material grade. P&ID shows CS while datasheet specifies SS316L.', linkedDocs: ['AHR-MEC-SPC-0023'], status: 'Responded', priority: 'Medium', assignedTo: 'CLT', dueDate: '2026-04-18', responseDate: '2026-04-12', response: 'Client confirmed SS316L is correct. P&ID to be updated in next revision.' },
+    { id: 'TQ-AHR-0010', date: '2026-04-05', raisedBy: 'L. Nakamura', discipline: 'ELE', subject: 'Substation Cable Routing Path', description: 'Request approval for alternative cable routing path due to clash with civil foundation. Proposed route detailed in attached sketch.', linkedDocs: ['AHR-ELE-DWG-0045'], status: 'Closed', priority: 'Low', assignedTo: 'CLT', dueDate: '2026-04-15', responseDate: '2026-04-10', response: 'Alternative route approved. Proceed with revised routing as per submitted sketch.' },
+  ],
+
+  /* -------- Site Technical Queries (STQ) -------- */
+  siteTechQueries: [
+    { id: 'STQ-AHR-0008', date: '2026-04-15', raisedBy: 'Site Team', discipline: 'CIV', subject: 'Foundation Level Discrepancy — Grid A-3', description: 'As-built excavation level at Grid A-3 is 150mm deeper than design level due to unexpected soft soil layer. Request instruction on backfill or revised foundation level.', linkedDocs: ['AHR-CIV-DWG-0001'], status: 'Open', priority: 'High', assignedTo: 'M. Chen', dueDate: '2026-04-17', responseDate: null, response: null, location: 'Grid A-3, Foundation Area' },
+    { id: 'STQ-AHR-0007', date: '2026-04-12', raisedBy: 'Site Team', discipline: 'PIP', subject: 'Pipe Support Clashing with Structural Steel', description: 'Pipe support PS-204 location clashes with structural beam ST-B12 as per site measurement. Request revised support location or beam modification approval.', linkedDocs: ['AHR-PIP-DWG-0067'], status: 'Responded', priority: 'Medium', assignedTo: 'D. Silva', dueDate: '2026-04-19', responseDate: '2026-04-14', response: 'Relocate support 300mm east. Updated detail issued as Rev C.', location: 'Unit 100, Elevation +12.5m' },
+  ],
+
+  /* -------- RFIs (Request for Information) -------- */
+  rfis: [
+    { id: 'RFI-AHR-0024', date: '2026-04-14', raisedBy: 'KBR Supervision', from: 'SUP', subject: 'Concrete Mix Design Approval', description: 'Request review and approval of concrete mix design for foundation pours. Lab test results attached.', category: 'Materials', linkedDocs: [], status: 'Under Review', priority: 'High', assignedTo: 'Jennifer', dueDate: '2026-04-21', responseDate: null, response: null },
+    { id: 'RFI-AHR-0023', date: '2026-04-11', raisedBy: 'Bureau Veritas', from: 'THP', subject: 'Welding Procedure Qualification Records', description: 'Request submission of WPQRs for all structural steel welding procedures before commencement of fabrication.', category: 'QA/QC', linkedDocs: [], status: 'Responded', priority: 'High', assignedTo: 'Jennifer', dueDate: '2026-04-18', responseDate: '2026-04-13', response: 'WPQRs submitted via transmittal TM-AHR-0043. All procedures pre-qualified.' },
+    { id: 'RFI-AHR-0022', date: '2026-04-09', raisedBy: 'Siemens Energy', from: 'VND', subject: 'Transformer Foundation Bolt Details', description: 'Request transformer foundation bolt arrangement drawing and embedment details for transformer TR-01.', category: 'Design', linkedDocs: ['AHR-CIV-DWG-0002'], status: 'Closed', priority: 'Medium', assignedTo: 'R. Patel', dueDate: '2026-04-16', responseDate: '2026-04-12', response: 'Foundation bolt drawing issued as AHR-CIV-DWG-0024 Rev A via TM-AHR-0044.' },
+  ],
+
+  /* -------- Letters Register -------- */
+  letters: [
+    { id: 'LTR-OUT-AHR-0156', date: '2026-04-16', direction: 'Outgoing', from: 'Quadra Demo Engineering', to: 'Gulf National Petroleum', toType: 'Client', subject: 'Monthly Progress Report — March 2026', category: 'Progress Report', ref: 'PRJ-AHR-2026/MPR/003', author: 'Jennifer', attachments: 3, status: 'Sent', relatedDocs: [], urgent: false },
+    { id: 'LTR-OUT-AHR-0155', date: '2026-04-15', direction: 'Outgoing', from: 'Quadra Demo Engineering', to: 'Siemens Energy', toType: 'Vendor', subject: 'Transformer Delivery Schedule Confirmation', category: 'Procurement', ref: 'PRJ-AHR-2026/PROC/045', author: 'Jennifer', attachments: 1, status: 'Sent', relatedDocs: [], urgent: true },
+    { id: 'LTR-IN-AHR-0089', date: '2026-04-14', direction: 'Incoming', from: 'Gulf National Petroleum', to: 'Quadra Demo Engineering', toType: 'Client', subject: 'Approval of Design Basis Document Rev B', category: 'Approval', ref: 'GNPC/AHR/2026/124', author: 'Ahmed Al-Wahaibi', attachments: 2, status: 'Received', relatedDocs: ['AHR-PRO-RPT-0003'], urgent: false },
+    { id: 'LTR-OUT-AHR-0154', date: '2026-04-12', direction: 'Outgoing', from: 'Quadra Demo Engineering', to: 'ABC Subcontractor', toType: 'Subcontractor', subject: 'Variation Order VO-003 — Additional Civil Works', category: 'Variation', ref: 'PRJ-AHR-2026/VO/003', author: 'Jennifer', attachments: 4, status: 'Awaiting Response', relatedDocs: [], urgent: false },
+    { id: 'LTR-IN-AHR-0088', date: '2026-04-10', direction: 'Incoming', from: 'KBR Supervision', to: 'Quadra Demo Engineering', toType: 'Consultant', subject: 'Site Safety Audit Findings — Week 14', category: 'Safety', ref: 'KBR/AHR/SA/014', author: 'Site Safety Manager', attachments: 1, status: 'Received', relatedDocs: [], urgent: true },
+  ],
+
+  /* -------- Internal Memos -------- */
+  memos: [
+    { id: 'MEM-AHR-0034', date: '2026-04-15', from: 'Project Manager', to: 'All Discipline Leads', subject: 'Weekly Coordination Meeting — Action Items', category: 'Internal', content: 'Following up on action items from weekly coordination meeting held 2026-04-14. All discipline leads to submit updated progress reports by EOD Friday.', urgent: false, status: 'Distributed' },
+    { id: 'MEM-AHR-0033', date: '2026-04-12', from: 'Document Controller', to: 'Engineering Team', subject: 'Document Numbering System Update', category: 'Administrative', content: 'New document numbering convention effective immediately. All new documents to follow updated pattern as per Project Setup. Training session scheduled for 2026-04-18.', urgent: false, status: 'Distributed' },
+    { id: 'MEM-AHR-0032', date: '2026-04-10', from: 'QA/QC Manager', to: 'Site Team', subject: 'Updated Inspection Test Plan Requirements', category: 'Quality', content: 'Revised ITP requirements for concrete works. All concrete pours now require 24hr advance notice and third-party witness. Effective immediately.', urgent: true, status: 'Distributed' },
+  ],
+
+  /* -------- Minutes of Meeting (MoM) -------- */
+  minutesOfMeeting: [
+    { id: 'MOM-AHR-0018', meetingDate: '2026-04-14', issuedDate: '2026-04-15', meetingType: 'Weekly Progress', title: 'Weekly Project Coordination Meeting', attendees: ['Jennifer (Quadra)', 'Ahmed Al-Wahaibi (GNPC)', 'Site Manager (KBR)', 'M. Chen (Quadra)', 'J. Okafor (Quadra)'], location: 'Site Office', chairperson: 'Jennifer', minuteTaker: 'Jennifer', agenda: ['Progress review', 'Open TQs status', 'Procurement updates', 'Safety review'], decisions: ['Approve schedule revision for civil works', 'Close TQ-AHR-0010', 'Vendor mobilization postponed to May'], actionItems: [{ item: 'Submit revised civil schedule', assignedTo: 'M. Chen', dueDate: '2026-04-21' }, { item: 'Issue updated procurement tracker', assignedTo: 'Jennifer', dueDate: '2026-04-18' }], nextMeeting: '2026-04-21', status: 'Issued', distribution: ['CLT', 'SUP', 'EPC'] },
+    { id: 'MOM-AHR-0017', meetingDate: '2026-04-10', issuedDate: '2026-04-11', meetingType: 'Design Review', title: 'Electrical Design Review Meeting', attendees: ['L. Nakamura (Quadra)', 'Ahmed Al-Wahaibi (GNPC)', 'Electrical Lead (GNPC)', 'Siemens Rep'], location: 'Client Office', chairperson: 'Ahmed Al-Wahaibi', minuteTaker: 'L. Nakamura', agenda: ['SLD review', 'Cable routing conflicts', 'Protection scheme'], decisions: ['SLD approved with minor comments', 'Alternative cable route accepted'], actionItems: [{ item: 'Issue SLD Rev B with markup comments', assignedTo: 'L. Nakamura', dueDate: '2026-04-17' }], nextMeeting: '2026-05-10', status: 'Issued', distribution: ['CLT', 'VND', 'EPC'] },
+    { id: 'MOM-AHR-0016', meetingDate: '2026-04-07', issuedDate: '2026-04-08', meetingType: 'Safety', title: 'Monthly HSE Committee Meeting', attendees: ['HSE Manager', 'Site Manager', 'Jennifer', 'Safety Reps (3)'], location: 'Site Office', chairperson: 'HSE Manager', minuteTaker: 'Safety Officer', agenda: ['Incident review', 'Safety statistics', 'Training status', 'Upcoming shutdowns'], decisions: ['No LTIs this month', 'Approve additional PPE procurement', 'Mandatory confined space training for all'], actionItems: [{ item: 'Schedule confined space training', assignedTo: 'HSE Manager', dueDate: '2026-04-30' }, { item: 'Procure additional safety harnesses', assignedTo: 'Procurement', dueDate: '2026-04-25' }], nextMeeting: '2026-05-07', status: 'Issued', distribution: ['All'] },
+  ],
+
+  theme: 'light',
 };
 
 /* ============================================================
@@ -1119,7 +1786,16 @@ function render() {
   else if (nav === 'upload') main.innerHTML = viewUpload();
   else if (nav === 'bulkImport') main.innerHTML = viewBulkImport();
   else if (nav === 'transmittals') main.innerHTML = viewTransmittals();
+  else if (nav === 'incomingTm') main.innerHTML = viewIncomingTransmittals();
   else if (nav === 'newTransmittal') main.innerHTML = viewNewTransmittal();
+  else if (nav === 'tq') main.innerHTML = viewTQ();
+  else if (nav === 'stq') main.innerHTML = viewSTQ();
+  else if (nav === 'rfi') main.innerHTML = viewRFI();
+  else if (nav === 'letters') main.innerHTML = viewLetters();
+  else if (nav === 'newLetter') main.innerHTML = viewNewLetter();
+  else if (nav === 'memos') main.innerHTML = viewMemos();
+  else if (nav === 'mom') main.innerHTML = viewMoM();
+  else if (nav === 'newMom') main.innerHTML = viewNewMoM();
   else if (nav === 'schedule') main.innerHTML = viewSchedule();
   else if (nav === 'databook') main.innerHTML = viewDatabook();
   else if (nav === 'reports') main.innerHTML = viewReports();
@@ -1134,6 +1810,20 @@ function render() {
 function updateCounts() {
   document.getElementById('docCount').textContent = state.documents.length;
   document.getElementById('tmCount').textContent = state.transmittals.length;
+  const incomingTmEl = document.getElementById('incomingTmCount');
+  const tqEl = document.getElementById('tqCount');
+  const stqEl = document.getElementById('stqCount');
+  const rfiEl = document.getElementById('rfiCount');
+  const letterEl = document.getElementById('letterCount');
+  const memoEl = document.getElementById('memoCount');
+  const momEl = document.getElementById('momCount');
+  if (incomingTmEl) incomingTmEl.textContent = state.incomingTransmittals.length;
+  if (tqEl) tqEl.textContent = state.technicalQueries.length;
+  if (stqEl) stqEl.textContent = state.siteTechQueries.length;
+  if (rfiEl) rfiEl.textContent = state.rfis.length;
+  if (letterEl) letterEl.textContent = state.letters.length;
+  if (memoEl) memoEl.textContent = state.memos.length;
+  if (momEl) momEl.textContent = state.minutesOfMeeting.length;
 }
 
 /* ============================================================
@@ -1145,9 +1835,10 @@ function viewDashboard() {
   const pendingReview = state.documents.filter(d => d.status === 'IFA' || d.status === 'IFR').length;
   const draftCount = state.documents.filter(d => d.status === 'DRAFT').length;
   const tmTotal = state.transmittals.length;
+  const ifcPct = totalDocs ? Math.round((ifc / totalDocs) * 100) : 0;
 
   const recentDocs = state.documents.slice(0, 5).map(d => `
-    <tr>
+    <tr style="cursor:pointer" onclick="viewDoc('${d.code}')">
       <td><div class="doc-code">${d.code}</div></td>
       <td><div class="doc-title">${d.title}</div><div class="doc-sub">${getDiscName(d.discipline)} · ${getTypeName(d.type)}</div></td>
       <td class="mono" style="font-size:11px">${d.rev}</td>
@@ -1156,8 +1847,8 @@ function viewDashboard() {
     </tr>
   `).join('');
 
-  const tmRows = state.transmittals.map(t => `
-    <tr>
+  const tmRows = state.transmittals.slice(0, 5).map(t => `
+    <tr style="cursor:pointer" onclick="viewTransmittal('${t.id}')">
       <td><div class="doc-code">${t.id}</div><div class="doc-sub">${t.date}</div></td>
       <td>${t.subject}</td>
       <td>${getStakeholderName(t.to)}</td>
@@ -1165,6 +1856,64 @@ function viewDashboard() {
       <td class="muted">${t.status}</td>
     </tr>
   `).join('');
+
+  // Discipline breakdown
+  const discBreakdown = state.disciplines.map(disc => {
+    const docs = state.documents.filter(d => d.discipline === disc.code);
+    const ifcCount = docs.filter(d => d.status === 'IFC').length;
+    const pendingCount = docs.filter(d => d.status === 'IFA' || d.status === 'IFR').length;
+    const draftCount = docs.filter(d => d.status === 'DRAFT').length;
+    return { code: disc.code, name: disc.name, total: docs.length, ifc: ifcCount, pending: pendingCount, draft: draftCount };
+  }).filter(d => d.total > 0).sort((a, b) => b.total - a.total);
+
+  const maxDisc = Math.max(1, ...discBreakdown.map(d => d.total));
+
+  const discRows = discBreakdown.map(d => {
+    const pct = (d.total / maxDisc) * 100;
+    const ifcW = d.total ? (d.ifc / d.total) * 100 : 0;
+    const pendW = d.total ? (d.pending / d.total) * 100 : 0;
+    const draftW = d.total ? (d.draft / d.total) * 100 : 0;
+    return `
+      <div class="disc-row" onclick="goToRegisterFiltered('${d.code}')" title="Click to view ${d.name} documents">
+        <div class="disc-label">
+          <div style="font-weight:500; font-size:12px;">${d.name}</div>
+          <div class="muted mono" style="font-size:10px;">${d.code}</div>
+        </div>
+        <div class="disc-bar-wrap">
+          <div class="disc-bar" style="width:${pct}%;">
+            <div class="disc-seg ifc" style="width:${ifcW}%;" title="${d.ifc} IFC"></div>
+            <div class="disc-seg pending" style="width:${pendW}%;" title="${d.pending} pending"></div>
+            <div class="disc-seg draft" style="width:${draftW}%;" title="${d.draft} draft"></div>
+          </div>
+        </div>
+        <div class="disc-count mono">${d.total}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Activity feed — pull from audit, take latest 6
+  const activity = state.audit.slice(0, 6).map(a => {
+    // Pick an icon based on action
+    let ic = '●', cls = '';
+    const act = a.action.toLowerCase();
+    if (act.includes('upload') || act.includes('register')) { ic = '↑'; cls = 'info'; }
+    else if (act.includes('transmittal')) { ic = '✉'; cls = 'success'; }
+    else if (act.includes('status') || act.includes('approve')) { ic = '✓'; cls = 'success'; }
+    else if (act.includes('reminder') || act.includes('escalate')) { ic = '!'; cls = 'warn'; }
+    else if (act.includes('export')) { ic = '↓'; cls = 'info'; }
+    else if (act.includes('theme')) { ic = '◐'; cls = 'info'; }
+    else if (act.includes('import')) { ic = '⇪'; cls = 'info'; }
+    return `
+      <div class="act-item ${cls}">
+        <div class="act-ic">${ic}</div>
+        <div class="act-body">
+          <div class="act-line"><strong>${escapeHtml(a.actor)}</strong> <span class="muted">${escapeHtml(a.action.toLowerCase())}</span></div>
+          <div class="act-detail">${escapeHtml(a.detail)}</div>
+        </div>
+        <div class="act-time">${escapeHtml(a.t.split(' ')[1] || '')}</div>
+      </div>
+    `;
+  }).join('');
 
   return `
     <div class="breadcrumb">WORKSPACE <span> / DASHBOARD</span></div>
@@ -1180,22 +1929,22 @@ function viewDashboard() {
     </div>
 
     <div class="stats">
-      <div class="stat">
+      <div class="stat clickable" onclick="goToRegisterFiltered()" title="View all documents">
         <div class="stat-label">Total Documents</div>
         <div class="stat-value mono">${String(totalDocs).padStart(3,'0')}</div>
         <div class="stat-meta"><span class="delta up">+3</span> this week</div>
       </div>
-      <div class="stat">
+      <div class="stat clickable" onclick="goToRegisterFiltered(null, 'IFC')" title="View approved documents">
         <div class="stat-label">Approved (IFC)</div>
         <div class="stat-value mono">${String(ifc).padStart(3,'0')}</div>
-        <div class="stat-meta"><span class="delta up">+1</span> 37% of total</div>
+        <div class="stat-meta"><span class="delta up">+1</span> ${ifcPct}% of total</div>
       </div>
-      <div class="stat">
+      <div class="stat clickable" onclick="goToRegisterFiltered(null, 'IFR')" title="View pending review">
         <div class="stat-label">Pending Review</div>
         <div class="stat-value mono">${String(pendingReview).padStart(3,'0')}</div>
-        <div class="stat-meta"><span class="delta warn">2 overdue</span></div>
+        <div class="stat-meta"><span class="delta warn">${pendingReview > 0 ? '2 overdue' : 'none overdue'}</span></div>
       </div>
-      <div class="stat">
+      <div class="stat clickable" onclick="go('transmittals')" title="View transmittals">
         <div class="stat-label">Transmittals Issued</div>
         <div class="stat-value mono">${String(tmTotal).padStart(3,'0')}</div>
         <div class="stat-meta">MTD: 12</div>
@@ -1204,6 +1953,32 @@ function viewDashboard() {
 
     <div class="two-col">
       <div class="panel">
+        <div class="panel-header">
+          <h3>Documents by Discipline <span class="num">${discBreakdown.length} ACTIVE</span></h3>
+          <div style="display:flex; gap:12px; font-size:10px; font-family:'JetBrains Mono', monospace; color:var(--ink-3); letter-spacing:0.5px;">
+            <span><span style="display:inline-block; width:8px; height:8px; background:var(--success); vertical-align:middle; margin-right:4px;"></span>IFC</span>
+            <span><span style="display:inline-block; width:8px; height:8px; background:var(--warning); vertical-align:middle; margin-right:4px;"></span>PENDING</span>
+            <span><span style="display:inline-block; width:8px; height:8px; background:var(--line-strong); vertical-align:middle; margin-right:4px;"></span>DRAFT</span>
+          </div>
+        </div>
+        <div class="panel-body">
+          ${discBreakdown.length ? discRows : '<div class="muted" style="font-size:12px; text-align:center; padding: 20px;">No documents yet</div>'}
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Recent Activity <span class="num">LIVE</span></h3>
+          <button class="btn ghost sm" onclick="go('audit')">Full log →</button>
+        </div>
+        <div class="panel-body tight">
+          <div class="activity-feed">${activity || '<div class="muted" style="padding: 20px; text-align:center;">No activity yet</div>'}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col mt">
+      <div class="panel" style="margin-bottom: 0;">
         <div class="panel-header">
           <h3>Recent Documents <span class="num">LATEST 5</span></h3>
           <button class="btn ghost sm" onclick="go('register')">View all →</button>
@@ -1218,15 +1993,15 @@ function viewDashboard() {
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel" style="margin-bottom: 0;">
         <div class="panel-header">
-          <h3>Transmittal Log <span class="num">OUTGOING</span></h3>
+          <h3>Transmittal Log <span class="num">LATEST 5</span></h3>
           <button class="btn ghost sm" onclick="go('transmittals')">View all →</button>
         </div>
         <div class="panel-body tight">
           <table>
             <thead><tr><th>ID</th><th>Subject</th><th>To</th><th>Purpose</th><th>Status</th></tr></thead>
-            <tbody>${tmRows}</tbody>
+            <tbody>${tmRows || '<tr><td colspan="5" class="muted" style="text-align:center; padding:20px;">No transmittals yet</td></tr>'}</tbody>
           </table>
         </div>
       </div>
@@ -1248,6 +2023,14 @@ function viewDashboard() {
       </div>
     </div>
   `;
+}
+
+function goToRegisterFiltered(discipline, status) {
+  if (!state.registerFilter) state.registerFilter = { q: '', discipline: '', status: '', sortKey: 'date', sortDir: 'desc' };
+  state.registerFilter.discipline = discipline || '';
+  state.registerFilter.status = status || '';
+  state.registerFilter.q = '';
+  go('register');
 }
 
 function viewProjects() {
@@ -1287,22 +2070,10 @@ function viewProjects() {
 }
 
 function viewRegister() {
-  const rows = state.documents.map(d => `
-    <tr>
-      <td><input type="checkbox" class="doc-select" data-code="${d.code}" /></td>
-      <td><div class="doc-code">${d.code}</div></td>
-      <td>
-        <div class="doc-title">${d.title}</div>
-        <div class="doc-sub">${getDiscName(d.discipline)} · ${getTypeName(d.type)} · ${d.size}</div>
-      </td>
-      <td class="mono" style="font-size:12px">${d.rev}</td>
-      <td><span class="badge ${d.status.toLowerCase()}">${d.status}</span></td>
-      <td class="muted" style="font-size:11.5px;">${d.author}</td>
-      <td class="muted mono" style="font-size:11px;">${d.date}</td>
-      <td><button class="btn ghost sm" onclick="viewDoc('${d.code}')">Open</button></td>
-    </tr>
-  `).join('');
-
+  // Initialize filter state on first render
+  if (!state.registerFilter) {
+    state.registerFilter = { q: '', discipline: '', status: '', sortKey: 'date', sortDir: 'desc' };
+  }
   return `
     <div class="breadcrumb">DOCUMENTS <span> / REGISTER</span></div>
     <div class="page-header">
@@ -1311,7 +2082,7 @@ function viewRegister() {
         <p class="muted" style="margin-top:6px;">Central index of all project documents with revision control, status, and metadata.</p>
       </div>
       <div class="row">
-        <button class="btn ghost" onclick="toast('Export queued')">Export CSV</button>
+        <button class="btn ghost" onclick="exportRegisterCSV()">↓ Export CSV</button>
         <button class="btn" onclick="go('upload')">+ New Document</button>
       </div>
     </div>
@@ -1321,38 +2092,191 @@ function viewRegister() {
         <div class="row grow">
           <div class="search" style="width:280px">
             <span style="opacity:0.5">⌕</span>
-            <input placeholder="Filter by code, title, author…" />
+            <input id="regFilterQ" placeholder="Filter by code, title, author…" oninput="updateRegFilter('q', this.value)" value="${escapeHtml(state.registerFilter.q)}" />
           </div>
-          <select class="mono" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px;">
-            <option>All Disciplines</option>
-            ${state.disciplines.map(d => `<option>${d.code} — ${d.name}</option>`).join('')}
+          <select id="regFilterDisc" class="mono" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);" onchange="updateRegFilter('discipline', this.value)">
+            <option value="">All Disciplines</option>
+            ${state.disciplines.map(d => `<option value="${d.code}" ${state.registerFilter.discipline===d.code?'selected':''}>${d.code} — ${d.name}</option>`).join('')}
           </select>
-          <select class="mono" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px;">
-            <option>All Statuses</option>
-            <option>DRAFT</option><option>IFR</option><option>IFA</option><option>IFC</option>
+          <select id="regFilterStatus" class="mono" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);" onchange="updateRegFilter('status', this.value)">
+            <option value="">All Statuses</option>
+            <option value="DRAFT" ${state.registerFilter.status==='DRAFT'?'selected':''}>DRAFT</option>
+            <option value="IFR" ${state.registerFilter.status==='IFR'?'selected':''}>IFR</option>
+            <option value="IFA" ${state.registerFilter.status==='IFA'?'selected':''}>IFA</option>
+            <option value="IFC" ${state.registerFilter.status==='IFC'?'selected':''}>IFC</option>
           </select>
+          ${(state.registerFilter.q || state.registerFilter.discipline || state.registerFilter.status) ? `<button class="btn ghost sm" onclick="clearRegFilters()">× Clear filters</button>` : ''}
         </div>
-        <button class="btn secondary sm" onclick="transmitSelected()">Transmit Selected →</button>
+        <div class="row">
+          <span id="regSelectionInfo" style="font-size:11px; color:var(--ink-3); font-family:'JetBrains Mono', monospace;"></span>
+          <button class="btn secondary sm" onclick="transmitSelected()">Transmit Selected →</button>
+        </div>
       </div>
       <div class="panel-body tight">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:32px"><input type="checkbox" onchange="toggleAllDocs(this)" /></th>
-              <th>Document Code</th>
-              <th>Title</th>
-              <th>Rev</th>
-              <th>Status</th>
-              <th>Author</th>
-              <th>Modified</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
+        <div id="regTableWrap">${renderRegisterTable()}</div>
       </div>
     </div>
   `;
+}
+
+function renderRegisterTable() {
+  const f = state.registerFilter;
+  const q = (f.q || '').trim().toLowerCase();
+  let docs = state.documents.filter(d => {
+    if (f.discipline && d.discipline !== f.discipline) return false;
+    if (f.status && d.status !== f.status) return false;
+    if (q) {
+      const hay = `${d.code} ${d.title} ${d.author} ${getDiscName(d.discipline)} ${getTypeName(d.type)} ${d.status}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  const dir = f.sortDir === 'asc' ? 1 : -1;
+  docs = docs.slice().sort((a, b) => {
+    const key = f.sortKey || 'date';
+    const av = (a[key] || '').toString().toLowerCase();
+    const bv = (b[key] || '').toString().toLowerCase();
+    if (av < bv) return -1 * dir;
+    if (av > bv) return 1 * dir;
+    return 0;
+  });
+
+  const sortArrow = (k) => f.sortKey === k ? (f.sortDir === 'asc' ? ' ↑' : ' ↓') : '';
+  const hl = (text) => q ? String(text).replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig'), '<span class="hl">$1</span>') : escapeHtml(text);
+
+  const rows = docs.length ? docs.map(d => `
+    <tr>
+      <td><input type="checkbox" class="doc-select" data-code="${d.code}" onchange="updateSelectionInfo()" /></td>
+      <td><div class="doc-code">${hl(d.code)}</div></td>
+      <td>
+        <div class="doc-title">${hl(d.title)}</div>
+        <div class="doc-sub">${escapeHtml(getDiscName(d.discipline))} · ${escapeHtml(getTypeName(d.type))} · ${escapeHtml(d.size)}</div>
+      </td>
+      <td class="mono" style="font-size:12px">${escapeHtml(d.rev)}</td>
+      <td><span class="badge ${d.status.toLowerCase()}">${d.status}</span></td>
+      <td class="muted" style="font-size:11.5px;">${hl(d.author)}</td>
+      <td class="muted mono" style="font-size:11px;">${escapeHtml(d.date)}</td>
+      <td><button class="btn ghost sm" onclick="viewDoc('${d.code}')">Open</button></td>
+    </tr>
+  `).join('') : `
+    <tr><td colspan="8">
+      <div class="empty">
+        <span class="serif">◯</span>
+        <div>No documents match the current filters</div>
+        <div style="font-size:11px; margin-top:6px;">Try clearing filters or adjusting your search.</div>
+      </div>
+    </td></tr>
+  `;
+
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th style="width:32px"><input type="checkbox" onchange="toggleAllDocs(this)" /></th>
+          <th class="sortable" onclick="sortRegister('code')" style="cursor:pointer; user-select:none;">Document Code${sortArrow('code')}</th>
+          <th class="sortable" onclick="sortRegister('title')" style="cursor:pointer; user-select:none;">Title${sortArrow('title')}</th>
+          <th class="sortable" onclick="sortRegister('rev')" style="cursor:pointer; user-select:none;">Rev${sortArrow('rev')}</th>
+          <th class="sortable" onclick="sortRegister('status')" style="cursor:pointer; user-select:none;">Status${sortArrow('status')}</th>
+          <th class="sortable" onclick="sortRegister('author')" style="cursor:pointer; user-select:none;">Author${sortArrow('author')}</th>
+          <th class="sortable" onclick="sortRegister('date')" style="cursor:pointer; user-select:none;">Modified${sortArrow('date')}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="padding: 10px 14px; border-top: 1px solid var(--line); font-size: 10.5px; color: var(--ink-3); font-family: 'JetBrains Mono', monospace; display:flex; justify-content:space-between; background: var(--bg);">
+      <span>Showing ${docs.length} of ${state.documents.length} documents</span>
+      <span>Click column headers to sort</span>
+    </div>
+  `;
+}
+
+function updateRegFilter(key, val) {
+  state.registerFilter[key] = val;
+  queueSave();
+  const wrap = document.getElementById('regTableWrap');
+  if (wrap) wrap.innerHTML = renderRegisterTable();
+  updateSelectionInfo();
+  // Re-render only if filter buttons need to appear/disappear
+  const hasAnyFilter = state.registerFilter.q || state.registerFilter.discipline || state.registerFilter.status;
+  const existingClearBtn = document.querySelector('.panel-header .btn.ghost.sm');
+  if ((!!existingClearBtn) !== (!!hasAnyFilter)) {
+    // Full re-render to toggle the clear button, preserving focus
+    const focused = document.activeElement && document.activeElement.id;
+    const caret = document.activeElement && document.activeElement.selectionStart;
+    render();
+    if (focused) {
+      const el = document.getElementById(focused);
+      if (el) { el.focus(); if (caret != null && el.setSelectionRange) try { el.setSelectionRange(caret, caret); } catch(e){} }
+    }
+  }
+}
+
+function clearRegFilters() {
+  state.registerFilter = { q: '', discipline: '', status: '', sortKey: state.registerFilter.sortKey, sortDir: state.registerFilter.sortDir };
+  render();
+}
+
+function sortRegister(key) {
+  const f = state.registerFilter;
+  if (f.sortKey === key) {
+    f.sortDir = f.sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    f.sortKey = key;
+    f.sortDir = 'asc';
+  }
+  const wrap = document.getElementById('regTableWrap');
+  if (wrap) wrap.innerHTML = renderRegisterTable();
+  updateSelectionInfo();
+}
+
+function updateSelectionInfo() {
+  const info = document.getElementById('regSelectionInfo');
+  if (!info) return;
+  const n = document.querySelectorAll('.doc-select:checked').length;
+  info.textContent = n > 0 ? `${n} SELECTED` : '';
+}
+
+function exportRegisterCSV() {
+  const f = state.registerFilter || { q:'', discipline:'', status:'' };
+  const q = (f.q || '').trim().toLowerCase();
+  const docs = state.documents.filter(d => {
+    if (f.discipline && d.discipline !== f.discipline) return false;
+    if (f.status && d.status !== f.status) return false;
+    if (q) {
+      const hay = `${d.code} ${d.title} ${d.author} ${getDiscName(d.discipline)} ${getTypeName(d.type)} ${d.status}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  const esc = (s) => {
+    const v = String(s == null ? '' : s);
+    if (/[",\n]/.test(v)) return '"' + v.replace(/"/g, '""') + '"';
+    return v;
+  };
+  const headers = ['Code','Revision','Title','Discipline','Type','Status','Author','Modified','Size'];
+  const lines = [headers.join(',')];
+  docs.forEach(d => {
+    lines.push([
+      d.code, d.rev, d.title, getDiscName(d.discipline), getTypeName(d.type),
+      d.status, d.author, d.date, d.size
+    ].map(esc).join(','));
+  });
+  const csv = lines.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `${state.project.code}_document_register_${dateStr}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  addAudit('Exported register', `${docs.length} documents → CSV`);
+  toast(`Exported ${docs.length} documents to CSV`);
 }
 
 function viewUpload() {
@@ -1409,7 +2333,7 @@ function viewUpload() {
           </div>
           <div class="field">
             <label>Author / Originator <span class="req">*</span></label>
-            <input id="upAuthor" value="S. Kumar" />
+            <input id="upAuthor" value="Jennifer" />
           </div>
           <div class="field">
             <label>Initial Status</label>
@@ -1458,21 +2382,9 @@ function viewUpload() {
 }
 
 function viewTransmittals() {
-  const rows = state.transmittals.map(t => {
-    const docs = t.docs.map(c => `<span class="chip mono" style="font-size:10px">${c}</span>`).join(' ');
-    return `
-      <tr>
-        <td><div class="doc-code">${t.id}</div><div class="doc-sub">${t.date}</div></td>
-        <td><div class="doc-title">${t.subject}</div><div style="margin-top:4px">${docs}</div></td>
-        <td>${getStakeholderName(t.to)}</td>
-        <td><span class="badge ${t.purpose.toLowerCase()}">${t.purpose}</span></td>
-        <td class="muted mono" style="font-size:11px">${t.dueDate}</td>
-        <td class="muted">${t.status}</td>
-        <td><button class="btn ghost sm" onclick="viewTransmittal('${t.id}')">View</button></td>
-      </tr>
-    `;
-  }).join('');
-
+  if (!state.tmFilter) {
+    state.tmFilter = { q: '', purpose: '', recipient: '', status: '', sortKey: 'date', sortDir: 'desc' };
+  }
   return `
     <div class="breadcrumb">TRANSMITTALS <span> / OUTGOING</span></div>
     <div class="page-header">
@@ -1480,20 +2392,404 @@ function viewTransmittals() {
         <h1>Transmittals</h1>
         <p class="muted" style="margin-top:6px;">Formal document issue records with recipients, purpose codes, and acknowledgement tracking.</p>
       </div>
-      <button class="btn" onclick="go('newTransmittal')">+ New Transmittal</button>
+      <div class="row">
+        <button class="btn ghost" onclick="exportTransmittalsCSV()">↓ Export CSV</button>
+        <button class="btn" onclick="go('newTransmittal')">+ New Transmittal</button>
+      </div>
     </div>
 
     <div class="panel">
+      <div class="panel-header">
+        <div class="row grow">
+          <div class="search" style="width:280px">
+            <span style="opacity:0.5">⌕</span>
+            <input id="tmFilterQ" placeholder="Filter by ID, subject, document…" oninput="updateTmFilter('q', this.value)" value="${escapeHtml(state.tmFilter.q)}" />
+          </div>
+          <select class="mono" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);" onchange="updateTmFilter('purpose', this.value)">
+            <option value="">All Purposes</option>
+            <option value="IFR" ${state.tmFilter.purpose==='IFR'?'selected':''}>IFR</option>
+            <option value="IFA" ${state.tmFilter.purpose==='IFA'?'selected':''}>IFA</option>
+            <option value="IFC" ${state.tmFilter.purpose==='IFC'?'selected':''}>IFC</option>
+          </select>
+          <select class="mono" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);" onchange="updateTmFilter('recipient', this.value)">
+            <option value="">All Recipients</option>
+            ${state.stakeholders.map(s => `<option value="${s.id}" ${state.tmFilter.recipient===s.id?'selected':''}>${s.name}</option>`).join('')}
+          </select>
+          <select class="mono" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);" onchange="updateTmFilter('status', this.value)">
+            <option value="">All Statuses</option>
+            <option value="Sent" ${state.tmFilter.status==='Sent'?'selected':''}>Sent</option>
+            <option value="Acknowledged" ${state.tmFilter.status==='Acknowledged'?'selected':''}>Acknowledged</option>
+          </select>
+          ${(state.tmFilter.q || state.tmFilter.purpose || state.tmFilter.recipient || state.tmFilter.status) ? `<button class="btn ghost sm" onclick="clearTmFilters()">× Clear filters</button>` : ''}
+        </div>
+      </div>
       <div class="panel-body tight">
-        <table>
-          <thead>
-            <tr><th>Transmittal ID</th><th>Subject & Documents</th><th>Recipient</th><th>Purpose</th><th>Due Date</th><th>Status</th><th></th></tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
+        <div id="tmTableWrap">${renderTransmittalsTable()}</div>
       </div>
     </div>
   `;
+}
+
+function renderTransmittalsTable() {
+  const f = state.tmFilter;
+  const q = (f.q || '').trim().toLowerCase();
+  let tms = state.transmittals.filter(t => {
+    if (f.purpose && t.purpose !== f.purpose) return false;
+    if (f.recipient && t.to !== f.recipient) return false;
+    if (f.status && t.status !== f.status) return false;
+    if (q) {
+      const hay = `${t.id} ${t.subject} ${getStakeholderName(t.to)} ${t.purpose} ${t.status} ${t.docs.join(' ')}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  const dir = f.sortDir === 'asc' ? 1 : -1;
+  tms = tms.slice().sort((a, b) => {
+    const key = f.sortKey || 'date';
+    let av, bv;
+    if (key === 'recipient') { av = getStakeholderName(a.to); bv = getStakeholderName(b.to); }
+    else { av = a[key]; bv = b[key]; }
+    av = (av || '').toString().toLowerCase();
+    bv = (bv || '').toString().toLowerCase();
+    if (av < bv) return -1 * dir;
+    if (av > bv) return 1 * dir;
+    return 0;
+  });
+
+  const arrow = (k) => f.sortKey === k ? (f.sortDir === 'asc' ? ' ↑' : ' ↓') : '';
+  const hl = (text) => q ? String(text).replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig'), '<span class="hl">$1</span>') : escapeHtml(text);
+
+  const rows = tms.length ? tms.map(t => {
+    const docs = t.docs.map(c => `<span class="chip mono" style="font-size:10px">${hl(c)}</span>`).join(' ');
+    return `
+      <tr>
+        <td><div class="doc-code">${hl(t.id)}</div><div class="doc-sub">${escapeHtml(t.date)}</div></td>
+        <td><div class="doc-title">${hl(t.subject)}</div><div style="margin-top:4px">${docs}</div></td>
+        <td>${hl(getStakeholderName(t.to))}</td>
+        <td><span class="badge ${t.purpose.toLowerCase()}">${t.purpose}</span></td>
+        <td class="muted mono" style="font-size:11px">${escapeHtml(t.dueDate)}</td>
+        <td class="muted">${escapeHtml(t.status)}</td>
+        <td><button class="btn ghost sm" onclick="viewTransmittal('${t.id}')">View</button></td>
+      </tr>
+    `;
+  }).join('') : `
+    <tr><td colspan="7">
+      <div class="empty">
+        <span class="serif">◯</span>
+        <div>No transmittals match the current filters</div>
+      </div>
+    </td></tr>
+  `;
+
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th class="sortable" onclick="sortTm('id')" style="cursor:pointer; user-select:none;">Transmittal ID${arrow('id')}</th>
+          <th class="sortable" onclick="sortTm('subject')" style="cursor:pointer; user-select:none;">Subject &amp; Documents${arrow('subject')}</th>
+          <th class="sortable" onclick="sortTm('recipient')" style="cursor:pointer; user-select:none;">Recipient${arrow('recipient')}</th>
+          <th class="sortable" onclick="sortTm('purpose')" style="cursor:pointer; user-select:none;">Purpose${arrow('purpose')}</th>
+          <th class="sortable" onclick="sortTm('dueDate')" style="cursor:pointer; user-select:none;">Due Date${arrow('dueDate')}</th>
+          <th class="sortable" onclick="sortTm('status')" style="cursor:pointer; user-select:none;">Status${arrow('status')}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="padding: 10px 14px; border-top: 1px solid var(--line); font-size: 10.5px; color: var(--ink-3); font-family: 'JetBrains Mono', monospace; display:flex; justify-content:space-between; background: var(--bg);">
+      <span>Showing ${tms.length} of ${state.transmittals.length} transmittals</span>
+      <span>Click column headers to sort</span>
+    </div>
+  `;
+}
+
+function updateTmFilter(key, val) {
+  state.tmFilter[key] = val;
+  queueSave();
+  const wrap = document.getElementById('tmTableWrap');
+  if (wrap) wrap.innerHTML = renderTransmittalsTable();
+  const hasAny = state.tmFilter.q || state.tmFilter.purpose || state.tmFilter.recipient || state.tmFilter.status;
+  const existingClearBtn = document.querySelector('.panel-header .btn.ghost.sm');
+  if ((!!existingClearBtn) !== (!!hasAny)) {
+    const focused = document.activeElement && document.activeElement.id;
+    const caret = document.activeElement && document.activeElement.selectionStart;
+    render();
+    if (focused) {
+      const el = document.getElementById(focused);
+      if (el) { el.focus(); if (caret != null && el.setSelectionRange) try { el.setSelectionRange(caret, caret); } catch(e){} }
+    }
+  }
+}
+
+function clearTmFilters() {
+  state.tmFilter = { q: '', purpose: '', recipient: '', status: '', sortKey: state.tmFilter.sortKey, sortDir: state.tmFilter.sortDir };
+  render();
+}
+
+function sortTm(key) {
+  const f = state.tmFilter;
+  if (f.sortKey === key) {
+    f.sortDir = f.sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    f.sortKey = key;
+    f.sortDir = 'asc';
+  }
+  const wrap = document.getElementById('tmTableWrap');
+  if (wrap) wrap.innerHTML = renderTransmittalsTable();
+}
+
+function exportTransmittalsCSV() {
+  const f = state.tmFilter || { q:'', purpose:'', recipient:'', status:'' };
+  const q = (f.q || '').trim().toLowerCase();
+  const tms = state.transmittals.filter(t => {
+    if (f.purpose && t.purpose !== f.purpose) return false;
+    if (f.recipient && t.to !== f.recipient) return false;
+    if (f.status && t.status !== f.status) return false;
+    if (q) {
+      const hay = `${t.id} ${t.subject} ${getStakeholderName(t.to)} ${t.purpose} ${t.status} ${t.docs.join(' ')}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  const esc = (s) => {
+    const v = String(s == null ? '' : s);
+    if (/[",\n]/.test(v)) return '"' + v.replace(/"/g, '""') + '"';
+    return v;
+  };
+  const headers = ['Transmittal ID','Date','Recipient','Purpose','Subject','Documents','Due Date','Status','Issued By'];
+  const lines = [headers.join(',')];
+  tms.forEach(t => {
+    lines.push([
+      t.id, t.date, getStakeholderName(t.to), t.purpose, t.subject,
+      t.docs.join('; '), t.dueDate, t.status, t.issuedBy
+    ].map(esc).join(','));
+  });
+  const csv = lines.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `${state.project.code}_transmittals_${dateStr}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  addAudit('Exported transmittals', `${tms.length} transmittals → CSV`);
+  toast(`Exported ${tms.length} transmittals to CSV`);
+}
+
+function viewIncomingTransmittals() {
+  if (!state.incomingTmFilter) state.incomingTmFilter = { q: '', from: '', purpose: '', responseStatus: '', priority: '', sortKey: 'date', sortDir: 'desc' };
+  const f = state.incomingTmFilter;
+  const q = f.q.toLowerCase();
+
+  const filtered = state.incomingTransmittals.filter(t => {
+    if (f.from && t.from !== f.from) return false;
+    if (f.purpose && t.purpose !== f.purpose) return false;
+    if (f.responseStatus && t.responseStatus !== f.responseStatus) return false;
+    if (f.priority && t.priority !== f.priority) return false;
+    if (q) {
+      const hay = `${t.id} ${t.subject} ${t.fromOrg} ${t.theirRef} ${t.notes}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  // Sort
+  const sorted = [...filtered].sort((a, b) => {
+    let aVal, bVal;
+    if (f.sortKey === 'id') { aVal = a.id; bVal = b.id; }
+    else if (f.sortKey === 'subject') { aVal = a.subject; bVal = b.subject; }
+    else if (f.sortKey === 'from') { aVal = a.fromOrg; bVal = b.fromOrg; }
+    else if (f.sortKey === 'date') { aVal = a.date; bVal = b.date; }
+    else if (f.sortKey === 'responseDue') { aVal = a.responseDue || '9999'; bVal = b.responseDue || '9999'; }
+    else if (f.sortKey === 'responseStatus') { aVal = a.responseStatus; bVal = b.responseStatus; }
+    else { aVal = a.date; bVal = b.date; }
+    
+    if (aVal < bVal) return f.sortDir === 'asc' ? -1 : 1;
+    if (aVal > bVal) return f.sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  // Stats
+  const totalCount = state.incomingTransmittals.length;
+  const pendingCount = state.incomingTransmittals.filter(t => t.responseStatus === 'Pending').length;
+  const overdueCount = state.incomingTransmittals.filter(t => t.responseRequired && t.responseDue && new Date(t.responseDue) < new Date() && t.responseStatus === 'Pending').length;
+  const inProgressCount = state.incomingTransmittals.filter(t => t.responseStatus === 'In Progress').length;
+
+  const arrow = (key) => {
+    if (f.sortKey !== key) return '';
+    return f.sortDir === 'asc' ? ' ▴' : ' ▾';
+  };
+
+  const rows = sorted.map(t => {
+    const isOverdue = t.responseRequired && t.responseDue && new Date(t.responseDue) < new Date() && t.responseStatus === 'Pending';
+    const statusBadge = t.responseStatus === 'Pending' ? 'ifr' : t.responseStatus === 'In Progress' ? 'ifa' : t.responseStatus === 'Responded' ? 'ifc' : t.responseStatus === 'Acknowledged' ? 'ifc' : 'draft';
+    return `
+      <tr onclick="viewIncomingTransmittal('${t.id}')" style="cursor:pointer; ${isOverdue ? 'background: rgba(var(--danger-rgb), 0.05);' : ''}">
+        <td>
+          <div class="doc-code">${t.id}</div>
+          <div class="doc-sub">${t.date} · ${t.theirRef}</div>
+        </td>
+        <td>
+          <div class="doc-title">${escapeHtml(t.subject)}</div>
+          <div class="doc-sub">${t.receivedDocs.length} doc(s) · ${t.attachments} attachment(s)</div>
+        </td>
+        <td>
+          <div style="font-weight:500;">${getStakeholderName(t.from)}</div>
+          <div class="doc-sub">${escapeHtml(t.fromOrg)}</div>
+        </td>
+        <td><span class="badge ${t.purpose.toLowerCase()}">${t.purpose}</span></td>
+        <td><span class="badge ${t.priority === 'High' ? 'void' : t.priority === 'Medium' ? 'ifr' : 'draft'}" style="font-size:10px;">${t.priority}</span></td>
+        <td>
+          <div><span class="badge ${statusBadge}">${t.responseStatus}</span></div>
+          ${t.responseRequired && t.responseDue ? `<div class="doc-sub" style="${isOverdue ? 'color:var(--danger); font-weight:600;' : ''}">Due: ${t.responseDue}</div>` : ''}
+        </td>
+        <td class="muted" style="font-size:11px;">${escapeHtml(t.assignedTo)}</td>
+      </tr>
+    `;
+  }).join('');
+
+  const hasFilters = f.q || f.from || f.purpose || f.responseStatus || f.priority;
+
+  return `
+    <div class="breadcrumb">TRANSMITTALS <span> / INCOMING</span></div>
+    <div class="page-header">
+      <div>
+        <h1>Incoming Transmittals</h1>
+        <p class="muted" style="margin-top:6px;">Track documents received from Client, Vendors, and Subcontractors. Manage review cycles, responses, and close-out.</p>
+      </div>
+      <div class="row">
+        <button class="btn ghost" onclick="exportIncomingTmCSV()">↓ Export CSV</button>
+        <button class="btn" onclick="openModal('registerIncomingTm')">+ Register Incoming</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Total Incoming</div>
+        <div class="stat-value mono">${String(totalCount).padStart(3,'0')}</div>
+        <div class="stat-meta">This month: ${totalCount}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Pending Response</div>
+        <div class="stat-value mono">${String(pendingCount).padStart(3,'0')}</div>
+        <div class="stat-meta">${pendingCount > 0 ? 'Requires action' : 'All clear'}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Overdue</div>
+        <div class="stat-value mono" style="color:var(--danger)">${String(overdueCount).padStart(3,'0')}</div>
+        <div class="stat-meta">${overdueCount > 0 ? '<span class="delta down">Urgent action needed</span>' : 'None overdue'}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">In Progress</div>
+        <div class="stat-value mono">${String(inProgressCount).padStart(3,'0')}</div>
+        <div class="stat-meta">Under review</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="row grow">
+          <div class="search" style="width:280px">
+            <span style="opacity:0.5">⌕</span>
+            <input id="incomingTmFilterQ" placeholder="Search incoming transmittals…" oninput="updateIncomingTmFilter('q', this.value)" value="${escapeHtml(f.q)}" />
+          </div>
+          <select onchange="updateIncomingTmFilter('from', this.value)" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);">
+            <option value="">All Senders</option>
+            <option value="CLT" ${f.from==='CLT'?'selected':''}>Client</option>
+            <option value="VND" ${f.from==='VND'?'selected':''}>Vendor</option>
+            <option value="SUB" ${f.from==='SUB'?'selected':''}>Subcontractor</option>
+            <option value="THP" ${f.from==='THP'?'selected':''}>Third Party</option>
+          </select>
+          <select onchange="updateIncomingTmFilter('purpose', this.value)" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);">
+            <option value="">All Purposes</option>
+            <option value="IFR" ${f.purpose==='IFR'?'selected':''}>IFR</option>
+            <option value="IFA" ${f.purpose==='IFA'?'selected':''}>IFA</option>
+            <option value="IFC" ${f.purpose==='IFC'?'selected':''}>IFC</option>
+            <option value="IFI" ${f.purpose==='IFI'?'selected':''}>IFI</option>
+          </select>
+          <select onchange="updateIncomingTmFilter('responseStatus', this.value)" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);">
+            <option value="">All Status</option>
+            <option value="Pending" ${f.responseStatus==='Pending'?'selected':''}>Pending</option>
+            <option value="In Progress" ${f.responseStatus==='In Progress'?'selected':''}>In Progress</option>
+            <option value="Responded" ${f.responseStatus==='Responded'?'selected':''}>Responded</option>
+            <option value="Acknowledged" ${f.responseStatus==='Acknowledged'?'selected':''}>Acknowledged</option>
+            <option value="No Response Required" ${f.responseStatus==='No Response Required'?'selected':''}>No Response Required</option>
+            <option value="Closed" ${f.responseStatus==='Closed'?'selected':''}>Closed</option>
+          </select>
+          <select onchange="updateIncomingTmFilter('priority', this.value)" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);">
+            <option value="">All Priorities</option>
+            <option value="High" ${f.priority==='High'?'selected':''}>High</option>
+            <option value="Medium" ${f.priority==='Medium'?'selected':''}>Medium</option>
+            <option value="Low" ${f.priority==='Low'?'selected':''}>Low</option>
+          </select>
+          ${hasFilters ? '<button class="btn ghost sm" onclick="clearIncomingTmFilters()">× Clear filters</button>' : ''}
+        </div>
+      </div>
+      <div class="panel-body tight" id="incomingTmTableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="sortable" onclick="sortIncomingTm('id')" style="cursor:pointer; user-select:none;">TM ID & Ref${arrow('id')}</th>
+              <th class="sortable" onclick="sortIncomingTm('subject')" style="cursor:pointer; user-select:none;">Subject${arrow('subject')}</th>
+              <th class="sortable" onclick="sortIncomingTm('from')" style="cursor:pointer; user-select:none;">From${arrow('from')}</th>
+              <th class="sortable" onclick="sortIncomingTm('purpose')" style="cursor:pointer; user-select:none;">Purpose${arrow('purpose')}</th>
+              <th>Priority</th>
+              <th class="sortable" onclick="sortIncomingTm('responseStatus')" style="cursor:pointer; user-select:none;">Response Status${arrow('responseStatus')}</th>
+              <th>Assigned To</th>
+            </tr>
+          </thead>
+          <tbody>${rows || '<tr><td colspan="7" class="muted" style="text-align:center; padding:20px;">No incoming transmittals match filters</td></tr>'}</tbody>
+        </table>
+      </div>
+      <div style="padding: 10px 14px; border-top: 1px solid var(--line); font-size: 10.5px; color: var(--ink-3); font-family: 'JetBrains Mono', monospace; display:flex; justify-content:space-between; background: var(--bg);">
+        <span>SHOWING ${sorted.length} OF ${totalCount} INCOMING TRANSMITTALS</span>
+        ${hasFilters ? `<span style="color: var(--accent);">FILTERED</span>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function updateIncomingTmFilter(key, val) {
+  state.incomingTmFilter[key] = val;
+  queueSave();
+  const wrap = document.getElementById('incomingTmTableWrap');
+  if (wrap) {
+    const focused = document.activeElement && document.activeElement.id;
+    const caret = document.activeElement && document.activeElement.selectionStart;
+    render();
+    if (focused) {
+      const el = document.getElementById(focused);
+      if (el) { el.focus(); if (caret != null && el.setSelectionRange) try { el.setSelectionRange(caret, caret); } catch(e){} }
+    }
+  } else {
+    render();
+  }
+}
+
+function sortIncomingTm(key) {
+  if (state.incomingTmFilter.sortKey === key) {
+    state.incomingTmFilter.sortDir = state.incomingTmFilter.sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    state.incomingTmFilter.sortKey = key;
+    state.incomingTmFilter.sortDir = 'desc';
+  }
+  queueSave();
+  render();
+}
+
+function clearIncomingTmFilters() {
+  state.incomingTmFilter = { q: '', from: '', purpose: '', responseStatus: '', priority: '', sortKey: 'date', sortDir: 'desc' };
+  queueSave();
+  render();
+}
+
+function exportIncomingTmCSV() {
+  toast('Incoming transmittals export — demo');
 }
 
 function viewNewTransmittal() {
@@ -1844,51 +3140,63 @@ function configWorkflow() {
 
 function viewMatrix() {
   const purposes = ['IFR', 'IFA', 'IFC'];
+  const keys = Object.keys(state.distributionMatrix);
   return `
     <div class="breadcrumb">CONFIGURATION <span> / DISTRIBUTION MATRIX</span></div>
     <div class="page-header">
       <div>
         <h1>Distribution Matrix</h1>
-        <p class="muted" style="margin-top:6px;">Define who receives which documents and in what role (Approve / Review / Information) based on discipline, doc type, and purpose code.</p>
+        <p class="muted" style="margin-top:6px;">Define who receives which documents and in what role (Approve / Review / Information) based on discipline, doc type, and purpose code. Click any cell to cycle through roles.</p>
       </div>
-      <button class="btn" onclick="toast('Matrix saved')">Save Matrix</button>
+      <button class="btn" onclick="saveMatrix()">Save Matrix</button>
     </div>
 
     <div class="panel">
       <div class="panel-header">
-        <h3>Distribution Rules <span class="num">DISC × TYPE × PURPOSE</span></h3>
+        <h3>Distribution Rules <span class="num">${keys.length} RULE${keys.length!==1?'S':''}</span></h3>
         <div class="row">
-          <span class="muted" style="font-size:11px">Legend:</span>
-          <span class="chip"><strong class="mono">A</strong> Approve</span>
-          <span class="chip"><strong class="mono">R</strong> Review</span>
-          <span class="chip"><strong class="mono">I</strong> Information</span>
+          <span class="muted" style="font-size:11px">Click cell to cycle:</span>
+          <span class="role-pill a">A</span><span class="muted" style="font-size:10px;">Approve</span>
+          <span class="role-pill r">R</span><span class="muted" style="font-size:10px;">Review</span>
+          <span class="role-pill i">I</span><span class="muted" style="font-size:10px;">Info</span>
+          <span class="role-pill">—</span><span class="muted" style="font-size:10px;">None</span>
         </div>
       </div>
       <div class="panel-body tight" style="overflow-x:auto;">
-        <table class="matrix-table">
+        <table class="matrix-table" id="matrixTable">
           <thead>
             <tr>
               <th style="min-width:180px">Category</th>
               <th>Purpose</th>
-              ${state.stakeholders.map(s => `<th class="rot">${s.name}</th>`).join('')}
+              ${state.stakeholders.map(s => `<th class="rot">${escapeHtml(s.name)}</th>`).join('')}
+              <th style="width:40px"></th>
             </tr>
           </thead>
           <tbody>
-            ${Object.keys(state.distributionMatrix).map(key => {
+            ${keys.length ? keys.map(key => {
               const [disc, type, purpose] = key.split('-');
               const row = state.distributionMatrix[key];
               return `
                 <tr>
-                  <td class="lbl">${getDiscName(disc)} · ${getTypeName(type)}</td>
+                  <td class="lbl">${escapeHtml(getDiscName(disc))} · ${escapeHtml(getTypeName(type))}</td>
                   <td><span class="badge ${purpose.toLowerCase()}">${purpose}</span></td>
                   ${state.stakeholders.map(s => {
                     const role = row[s.id] || '';
-                    const color = role === 'A' ? 'var(--accent)' : role === 'R' ? 'var(--blue)' : role === 'I' ? 'var(--ink-3)' : '';
-                    return `<td style="color:${color}; font-weight:600; font-family:'JetBrains Mono', monospace;">${role || '—'}</td>`;
+                    const cls = role ? 'active ' + role.toLowerCase() : '';
+                    return `<td><span class="role-pill ${cls}" onclick="cycleMatrixRole('${key}', '${s.id}')">${role || '—'}</span></td>`;
                   }).join('')}
+                  <td><button class="btn ghost sm" onclick="deleteMatrixRule('${key}')" style="padding:2px 6px; font-size:11px;" title="Delete rule">×</button></td>
                 </tr>
               `;
-            }).join('')}
+            }).join('') : `
+              <tr><td colspan="${state.stakeholders.length + 3}">
+                <div class="empty">
+                  <span class="serif">◯</span>
+                  <div>No distribution rules defined yet</div>
+                  <div style="font-size:11px; margin-top:6px;">Use the form below to add your first rule.</div>
+                </div>
+              </td></tr>
+            `}
           </tbody>
         </table>
       </div>
@@ -1900,18 +3208,18 @@ function viewMatrix() {
         <div class="form-grid">
           <div class="field">
             <label>Discipline</label>
-            <select>${state.disciplines.map(d => `<option>${d.code} — ${d.name}</option>`).join('')}</select>
+            <select id="mxDisc">${state.disciplines.map(d => `<option value="${d.code}">${d.code} — ${d.name}</option>`).join('')}</select>
           </div>
           <div class="field">
             <label>Document Type</label>
-            <select>${state.docTypes.map(t => `<option>${t.code} — ${t.name}</option>`).join('')}</select>
+            <select id="mxType">${state.docTypes.map(t => `<option value="${t.code}">${t.code} — ${t.name}</option>`).join('')}</select>
           </div>
           <div class="field">
             <label>Purpose Code</label>
-            <select><option>IFR</option><option>IFA</option><option>IFC</option><option>IFI</option></select>
+            <select id="mxPurpose"><option value="IFR">IFR</option><option value="IFA">IFA</option><option value="IFC">IFC</option></select>
           </div>
           <div class="field" style="display:flex; justify-content:flex-end; align-items:flex-end;">
-            <button class="btn" onclick="toast('Rule added')">+ Add Rule</button>
+            <button class="btn" onclick="addMatrixRule()">+ Add Rule</button>
           </div>
         </div>
       </div>
@@ -1919,31 +3227,152 @@ function viewMatrix() {
   `;
 }
 
+function cycleMatrixRole(key, stakeholderId) {
+  const row = state.distributionMatrix[key];
+  if (!row) return;
+  const cur = row[stakeholderId] || '';
+  // Cycle order: '' → A → R → I → ''
+  const next = cur === '' ? 'A' : cur === 'A' ? 'R' : cur === 'R' ? 'I' : '';
+  if (next) row[stakeholderId] = next;
+  else delete row[stakeholderId];
+  queueSave();
+  // Re-render just the matrix table
+  const active = document.activeElement;
+  render();
+}
+
+function addMatrixRule() {
+  const disc = document.getElementById('mxDisc').value;
+  const type = document.getElementById('mxType').value;
+  const purpose = document.getElementById('mxPurpose').value;
+  const key = `${disc}-${type}-${purpose}`;
+  if (state.distributionMatrix[key]) {
+    toast(`Rule ${key} already exists`, true);
+    return;
+  }
+  state.distributionMatrix[key] = {};
+  addAudit('Added matrix rule', `New distribution rule: ${key}`);
+  toast(`Rule ${key} added — click cells to assign roles`);
+  render();
+}
+
+function deleteMatrixRule(key) {
+  if (!confirm(`Delete distribution rule ${key}?`)) return;
+  delete state.distributionMatrix[key];
+  addAudit('Deleted matrix rule', `Removed distribution rule: ${key}`);
+  toast(`Rule ${key} deleted`);
+  render();
+}
+
+function saveMatrix() {
+  queueSave();
+  addAudit('Saved distribution matrix', `${Object.keys(state.distributionMatrix).length} rules saved`);
+  toast('Distribution matrix saved');
+}
+
 function viewAudit() {
-  const items = state.audit.map(a => `
+  if (!state.auditFilter) state.auditFilter = { q: '', actor: '' };
+  const f = state.auditFilter;
+  const q = (f.q || '').trim().toLowerCase();
+
+  const filtered = state.audit.filter(a => {
+    if (f.actor && a.actor !== f.actor) return false;
+    if (q) {
+      const hay = `${a.t} ${a.actor} ${a.action} ${a.detail}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  const hl = (text) => q ? String(text).replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig'), '<span class="hl">$1</span>') : escapeHtml(text);
+
+  const items = filtered.length ? filtered.map(a => `
     <div class="audit-item">
-      <div class="tm">${a.t}</div>
+      <div class="tm">${escapeHtml(a.t)}</div>
       <div>
-        <div class="ac">${a.actor} <span class="muted" style="font-weight:400">— ${a.action}</span></div>
-        <div class="dt">${a.detail}</div>
+        <div class="ac">${hl(a.actor)} <span class="muted" style="font-weight:400">— ${hl(a.action)}</span></div>
+        <div class="dt">${hl(a.detail)}</div>
       </div>
     </div>
-  `).join('');
+  `).join('') : `
+    <div class="empty">
+      <span class="serif">◯</span>
+      <div>No audit entries match the current filter</div>
+    </div>
+  `;
+
+  const uniqueActors = [...new Set(state.audit.map(a => a.actor))];
 
   return `
     <div class="breadcrumb">CONFIGURATION <span> / AUDIT TRAIL</span></div>
     <div class="page-header">
       <div>
         <h1>Audit Trail</h1>
-        <p class="muted" style="margin-top:6px;">Immutable log of all document and configuration actions. Supports ISO 19650 & contract compliance reviews.</p>
+        <p class="muted" style="margin-top:6px;">Immutable log of all document and configuration actions. Supports ISO 19650 &amp; contract compliance reviews.</p>
       </div>
-      <button class="btn ghost" onclick="toast('Audit log exported')">Export Log</button>
+      <button class="btn ghost" onclick="exportAuditCSV()">↓ Export Log</button>
     </div>
 
     <div class="panel">
-      <div class="panel-body tight">${items}</div>
+      <div class="panel-header">
+        <div class="row grow">
+          <div class="search" style="width:280px">
+            <span style="opacity:0.5">⌕</span>
+            <input id="auditFilterQ" placeholder="Filter by action, actor, detail…" oninput="updateAuditFilter('q', this.value)" value="${escapeHtml(f.q)}" />
+          </div>
+          <select class="mono" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);" onchange="updateAuditFilter('actor', this.value)">
+            <option value="">All Actors</option>
+            ${uniqueActors.map(a => `<option value="${escapeHtml(a)}" ${f.actor===a?'selected':''}>${escapeHtml(a)}</option>`).join('')}
+          </select>
+          ${(f.q || f.actor) ? `<button class="btn ghost sm" onclick="clearAuditFilters()">× Clear filters</button>` : ''}
+        </div>
+        <span style="font-size:11px; color:var(--ink-3); font-family:'JetBrains Mono', monospace;">${filtered.length} / ${state.audit.length} ENTRIES</span>
+      </div>
+      <div class="panel-body tight" id="auditListWrap">${items}</div>
     </div>
   `;
+}
+
+function updateAuditFilter(key, val) {
+  state.auditFilter[key] = val;
+  queueSave();
+  const focused = document.activeElement && document.activeElement.id;
+  const caret = document.activeElement && document.activeElement.selectionStart;
+  render();
+  if (focused) {
+    const el = document.getElementById(focused);
+    if (el) { el.focus(); if (caret != null && el.setSelectionRange) try { el.setSelectionRange(caret, caret); } catch(e){} }
+  }
+}
+
+function clearAuditFilters() {
+  state.auditFilter = { q: '', actor: '' };
+  render();
+}
+
+function exportAuditCSV() {
+  const esc = (s) => {
+    const v = String(s == null ? '' : s);
+    if (/[",\n]/.test(v)) return '"' + v.replace(/"/g, '""') + '"';
+    return v;
+  };
+  const headers = ['Timestamp','Actor','Action','Detail'];
+  const lines = [headers.join(',')];
+  state.audit.forEach(a => {
+    lines.push([a.t, a.actor, a.action, a.detail].map(esc).join(','));
+  });
+  const csv = lines.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `${state.project.code}_audit_log_${dateStr}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast(`Exported ${state.audit.length} audit entries to CSV`);
 }
 
 /* ============================================================
@@ -2181,12 +3610,17 @@ function commitImport() {
       size: (Math.random() * 8 + 0.5).toFixed(1) + ' MB'
     });
   });
-  state.audit.unshift({
-    t: new Date().toISOString().slice(0,16).replace('T',' '),
-    actor: 'S. Kumar',
-    action: 'Bulk import',
-    detail: `${toAdd.length} documents registered via CSV import`
+  addAudit('Bulk import', `${toAdd.length} documents registered via CSV import`);
+  state.notifications.unshift({
+    id: 'n-imp-' + Date.now(),
+    type: 'success',
+    icon: '⇪',
+    title: `Bulk import complete`,
+    sub: `${toAdd.length} documents added to register`,
+    target: { type: 'nav', code: 'register' },
+    unread: true,
   });
+  renderNotifications();
   toast(`${toAdd.length} documents imported successfully`);
   importRows = [];
   go('register');
@@ -2570,10 +4004,10 @@ function viewReports() {
         <table>
           <thead><tr><th>Report</th><th>Generated By</th><th>Format</th><th>Date</th><th>Size</th><th></th></tr></thead>
           <tbody>
-            <tr><td>Master Document Register</td><td>S. Kumar</td><td class="mono">XLSX</td><td class="mono muted" style="font-size:11px">2026-04-16 14:22</td><td class="mono">342 KB</td><td><button class="btn ghost sm" onclick="toast('Downloaded')">↓</button></td></tr>
+            <tr><td>Master Document Register</td><td>Jennifer</td><td class="mono">XLSX</td><td class="mono muted" style="font-size:11px">2026-04-16 14:22</td><td class="mono">342 KB</td><td><button class="btn ghost sm" onclick="toast('Downloaded')">↓</button></td></tr>
             <tr><td>Weekly Progress Report</td><td>System (scheduled)</td><td class="mono">PDF</td><td class="mono muted" style="font-size:11px">2026-04-15 06:00</td><td class="mono">1.2 MB</td><td><button class="btn ghost sm" onclick="toast('Downloaded')">↓</button></td></tr>
-            <tr><td>Overdue &amp; Pending Report</td><td>S. Kumar</td><td class="mono">PDF</td><td class="mono muted" style="font-size:11px">2026-04-14 09:45</td><td class="mono">218 KB</td><td><button class="btn ghost sm" onclick="toast('Downloaded')">↓</button></td></tr>
-            <tr><td>Transmittal Log (March)</td><td>S. Kumar</td><td class="mono">XLSX</td><td class="mono muted" style="font-size:11px">2026-04-01 10:12</td><td class="mono">89 KB</td><td><button class="btn ghost sm" onclick="toast('Downloaded')">↓</button></td></tr>
+            <tr><td>Overdue &amp; Pending Report</td><td>Jennifer</td><td class="mono">PDF</td><td class="mono muted" style="font-size:11px">2026-04-14 09:45</td><td class="mono">218 KB</td><td><button class="btn ghost sm" onclick="toast('Downloaded')">↓</button></td></tr>
+            <tr><td>Transmittal Log (March)</td><td>Jennifer</td><td class="mono">XLSX</td><td class="mono muted" style="font-size:11px">2026-04-01 10:12</td><td class="mono">89 KB</td><td><button class="btn ghost sm" onclick="toast('Downloaded')">↓</button></td></tr>
           </tbody>
         </table>
       </div>
@@ -2596,6 +4030,16 @@ function runReport(id) {
 function getDiscName(code) { const d = state.disciplines.find(x => x.code === code); return d ? d.name : code; }
 function getTypeName(code) { const t = state.docTypes.find(x => x.code === code); return t ? t.name : code; }
 function getStakeholderName(id) { const s = state.stakeholders.find(x => x.id === id); return s ? s.name : id; }
+
+function addAudit(action, detail, actor) {
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  state.audit.unshift({ t: ts, actor: actor || 'Jennifer', action, detail });
+  queueSave();
+  // Re-render the audit view if it's the active one
+  if (state.activeNav === 'audit') render();
+}
 
 function updateCodePreview() {
   const disc = document.getElementById('upDisc')?.value || 'CIV';
@@ -2623,18 +4067,24 @@ function saveDocument() {
     size: (Math.random() * 10 + 0.5).toFixed(1) + ' MB'
   };
   state.documents.unshift(newDoc);
-  state.audit.unshift({
-    t: new Date().toISOString().slice(0,16).replace('T',' '),
-    actor: 'S. Kumar',
-    action: 'Uploaded document',
-    detail: `${newDoc.code} Rev ${rev} registered`
+  addAudit('Uploaded document', `${newDoc.code} Rev ${rev} registered`);
+  state.notifications.unshift({
+    id: 'n-doc-' + Date.now(),
+    type: 'success',
+    icon: '↑',
+    title: `Document registered`,
+    sub: `${newDoc.code} Rev ${rev} · ${getDiscName(disc)}`,
+    target: { type: 'doc', code: newDoc.code },
+    unread: true,
   });
+  renderNotifications();
   toast(`Document ${newDoc.code} registered`);
   go('register');
 }
 
 function toggleAllDocs(cb) {
   document.querySelectorAll('.doc-select').forEach(x => x.checked = cb.checked);
+  if (typeof updateSelectionInfo === 'function') updateSelectionInfo();
 }
 
 function transmitSelected() {
@@ -2688,7 +4138,7 @@ function updateTransmittalPreview() {
     <div class="transmittal-paper">
       <div class="tm-header">
         <div>
-          <div style="font-size:9px; text-transform:uppercase; letter-spacing:2px; color:var(--ink-3); font-weight:600; margin-bottom:2px;">Meridian EDMS</div>
+          <div style="font-size:9px; text-transform:uppercase; letter-spacing:2px; color:var(--ink-3); font-weight:600; margin-bottom:2px;">Quadra Demo EDMS</div>
           <h2>Document Transmittal</h2>
           <div style="font-size:10px; color:var(--ink-3); margin-top:2px;">${state.project.code} · ${state.project.name}</div>
         </div>
@@ -2703,7 +4153,7 @@ function updateTransmittalPreview() {
         <div>
           <div class="lbl">From</div>
           <div>${state.project.contractor}</div>
-          <div class="muted" style="font-size:10.5px;">S. Kumar — Document Controller</div>
+          <div class="muted" style="font-size:10.5px;">Jennifer — Document Controller</div>
         </div>
         <div>
           <div class="lbl">To</div>
@@ -2732,7 +4182,7 @@ function updateTransmittalPreview() {
       <div class="tm-sign">
         <div>
           <div class="lbl">Issued By</div>
-          <div class="sig-box">S. Kumar<br/><span class="muted">Document Controller</span></div>
+          <div class="sig-box">Jennifer<br/><span class="muted">Document Controller</span></div>
         </div>
         <div>
           <div class="lbl">Received By</div>
@@ -2756,16 +4206,22 @@ function sendTransmittal() {
   state.transmittals.unshift({
     id, date, to: toId, subject, purpose,
     docs: selectedCodes,
-    issuedBy: 'S. Kumar',
+    issuedBy: 'Jennifer',
     status: 'Sent',
     dueDate: due
   });
-  state.audit.unshift({
-    t: new Date().toISOString().slice(0,16).replace('T',' '),
-    actor: 'S. Kumar',
-    action: 'Created transmittal',
-    detail: `${id} issued to ${getStakeholderName(toId)} (${selectedCodes.length} documents)`
+  addAudit('Created transmittal', `${id} issued to ${getStakeholderName(toId)} (${selectedCodes.length} documents)`);
+  // Add a success notification
+  state.notifications.unshift({
+    id: 'n-tm-' + Date.now(),
+    type: 'success',
+    icon: '✉',
+    title: `Transmittal ${id} sent`,
+    sub: `${getStakeholderName(toId)} · ${selectedCodes.length} docs · ${purpose}`,
+    target: { type: 'tm', code: id },
+    unread: true,
   });
+  renderNotifications();
   toast(`Transmittal ${id} issued to ${getStakeholderName(toId)}`);
   go('transmittals');
 }
@@ -2780,6 +4236,92 @@ function viewTransmittal(id) {
   const t = state.transmittals.find(x => x.id === id);
   if (!t) return;
   openModal('transmittal', t);
+}
+
+function viewIncomingTransmittal(id) {
+  openModal('incomingTm', id);
+}
+
+function changeDocStatus(code, newStatus) {
+  const d = state.documents.find(x => x.code === code);
+  if (!d) return;
+  const oldStatus = d.status;
+  if (oldStatus === newStatus) return;
+  d.status = newStatus;
+  d.date = new Date().toISOString().slice(0, 10);
+  addAudit('Status change', `${code} ${oldStatus} → ${newStatus}`);
+  state.notifications.unshift({
+    id: 'n-status-' + Date.now(),
+    type: newStatus === 'IFC' ? 'success' : newStatus === 'VOID' ? 'danger' : 'info',
+    icon: newStatus === 'IFC' ? '✓' : newStatus === 'VOID' ? '⊘' : '◐',
+    title: `Status updated: ${newStatus}`,
+    sub: `${code} · ${oldStatus} → ${newStatus}`,
+    target: { type: 'doc', code },
+    unread: true,
+  });
+  renderNotifications();
+  // Update UI inside the open modal
+  const badge = document.getElementById('docCurStatus');
+  if (badge) {
+    badge.className = 'badge ' + newStatus.toLowerCase();
+    badge.textContent = newStatus;
+  }
+  toast(`${code} status changed to ${newStatus}`);
+}
+
+function bumpRevision(code) {
+  const d = state.documents.find(x => x.code === code);
+  if (!d) return;
+  const oldRev = d.rev;
+  // Push current state into history
+  if (!d.revHistory) d.revHistory = [];
+  d.revHistory.unshift({
+    rev: oldRev,
+    date: d.date,
+    by: d.author,
+    status: d.status,
+    note: `Superseded by Rev ${nextRevision(oldRev)}`,
+  });
+  // Bump
+  d.rev = nextRevision(oldRev);
+  d.date = new Date().toISOString().slice(0, 10);
+  d.status = /^[A-Z]$/.test(d.rev) ? 'IFR' : 'IFC';
+  addAudit('Uploaded revision', `${code} Rev ${d.rev} supersedes Rev ${oldRev}`);
+  state.notifications.unshift({
+    id: 'n-rev-' + Date.now(),
+    type: 'info',
+    icon: '↑',
+    title: `New revision: Rev ${d.rev}`,
+    sub: `${code} · superseded Rev ${oldRev}`,
+    target: { type: 'doc', code },
+    unread: true,
+  });
+  renderNotifications();
+  closeModal();
+  openModal('doc', d);
+  toast(`${code} revised to Rev ${d.rev}`);
+}
+
+function nextRevision(current) {
+  // ISO 19650-ish: A/B/C during IFR/IFA, then 0/1/2 once issued for construction.
+  // A→B, B→C, C→D; if letter is >= 'C', next is '0' (first IFC rev); 0→1, 1→2 etc.
+  if (/^[A-Z]$/.test(current)) {
+    if (current >= 'C') return '0';
+    return String.fromCharCode(current.charCodeAt(0) + 1);
+  }
+  if (/^\d+$/.test(current)) return String(parseInt(current, 10) + 1);
+  return 'A';
+}
+
+function deleteDocument(code) {
+  const d = state.documents.find(x => x.code === code);
+  if (!d) return;
+  if (!confirm(`Delete document ${code}?\n\nThis will remove the document from the register. This action is logged in the audit trail.`)) return;
+  state.documents = state.documents.filter(x => x.code !== code);
+  addAudit('Deleted document', `${code} Rev ${d.rev} · "${d.title}"`);
+  closeModal();
+  render();
+  toast(`${code} deleted`, true);
 }
 
 function switchConfigTab(tab, el) {
@@ -2797,45 +4339,422 @@ function switchConfigTab(tab, el) {
 /* ============================================================
    MODAL
    ============================================================ */
+/* ============================================================
+   NEW MODULES — TQ / STQ / RFI / LETTERS / MEMOS / MOM
+   ============================================================ */
+
+function viewTQ() {
+  if (!state.tqFilter) state.tqFilter = { q: '', status: '', priority: '', discipline: '' };
+  const f = state.tqFilter;
+  const q = f.q.toLowerCase();
+  const tqs = state.technicalQueries.filter(t => {
+    if (f.status && t.status !== f.status) return false;
+    if (f.priority && t.priority !== f.priority) return false;
+    if (f.discipline && t.discipline !== f.discipline) return false;
+    if (q && !`${t.id} ${t.subject} ${t.description} ${t.raisedBy}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  
+  const openCount = state.technicalQueries.filter(t => t.status === 'Open').length;
+  const overdueCount = state.technicalQueries.filter(t => t.status === 'Open' && new Date(t.dueDate) < new Date()).length;
+  
+  const rows = tqs.map(t => {
+    const isOverdue = t.status === 'Open' && new Date(t.dueDate) < new Date();
+    return `
+      <tr onclick="openModal('tq', '${t.id}')" style="cursor:pointer;">
+        <td><div class="doc-code">${t.id}</div><div class="doc-sub">${t.date}</div></td>
+        <td><div class="doc-title">${escapeHtml(t.subject)}</div><div class="doc-sub">${getDiscName(t.discipline)} · ${t.raisedBy}</div></td>
+        <td><span class="badge ${t.status === 'Open' ? 'ifr' : t.status === 'Responded' ? 'ifa' : 'ifc'}">${t.status}</span></td>
+        <td><span class="badge ${t.priority === 'High' ? 'void' : t.priority === 'Medium' ? 'ifr' : 'draft'}">${t.priority}</span></td>
+        <td class="muted mono" style="font-size:11px; ${isOverdue ? 'color:var(--danger); font-weight:600;' : ''}">${t.dueDate}</td>
+        <td class="muted">${getStakeholderName(t.assignedTo)}</td>
+        <td>${t.linkedDocs.length} docs</td>
+      </tr>
+    `;
+  }).join('');
+
+  return `
+    <div class="breadcrumb">QUERIES &amp; RFIs <span> / TECHNICAL QUERIES</span></div>
+    <div class="page-header">
+      <div>
+        <h1>Technical Queries (TQ)</h1>
+        <p class="muted" style="margin-top:6px;">Engineering clarifications and design questions raised during execution phase requiring client or consultant response.</p>
+      </div>
+      <div class="row">
+        <button class="btn ghost" onclick="exportTQCSV()">↓ Export CSV</button>
+        <button class="btn" onclick="openModal('newTQ')">+ New TQ</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Total TQs</div><div class="stat-value mono">${String(state.technicalQueries.length).padStart(3,'0')}</div></div>
+      <div class="stat"><div class="stat-label">Open</div><div class="stat-value mono">${String(openCount).padStart(3,'0')}</div></div>
+      <div class="stat"><div class="stat-label">Overdue</div><div class="stat-value mono" style="color:var(--danger)">${String(overdueCount).padStart(3,'0')}</div><div class="stat-meta">${overdueCount > 0 ? '<span class="delta down">Action needed</span>' : 'None'}</div></div>
+      <div class="stat"><div class="stat-label">Avg Response Time</div><div class="stat-value mono">4.2<span style="font-size:16px">d</span></div><div class="stat-meta">This month</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="row grow">
+          <div class="search" style="width:240px"><span style="opacity:0.5">⌕</span><input id="tqFilterQ" placeholder="Search TQs…" oninput="updateTQFilter('q', this.value)" value="${escapeHtml(f.q)}" /></div>
+          <select onchange="updateTQFilter('status', this.value)" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);">
+            <option value="">All Statuses</option>
+            <option value="Open" ${f.status==='Open'?'selected':''}>Open</option>
+            <option value="Responded" ${f.status==='Responded'?'selected':''}>Responded</option>
+            <option value="Closed" ${f.status==='Closed'?'selected':''}>Closed</option>
+          </select>
+          <select onchange="updateTQFilter('priority', this.value)" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);">
+            <option value="">All Priorities</option>
+            <option value="High" ${f.priority==='High'?'selected':''}>High</option>
+            <option value="Medium" ${f.priority==='Medium'?'selected':''}>Medium</option>
+            <option value="Low" ${f.priority==='Low'?'selected':''}>Low</option>
+          </select>
+          <select onchange="updateTQFilter('discipline', this.value)" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);">
+            <option value="">All Disciplines</option>
+            ${state.disciplines.map(d => `<option value="${d.code}" ${f.discipline===d.code?'selected':''}>${d.code}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="panel-body tight">
+        <table><thead><tr><th>TQ ID</th><th>Subject</th><th>Status</th><th>Priority</th><th>Due Date</th><th>Assigned To</th><th>Linked</th></tr></thead>
+        <tbody>${rows || '<tr><td colspan="7" class="muted" style="text-align:center; padding:20px;">No TQs match filters</td></tr>'}</tbody></table>
+      </div>
+    </div>
+  `;
+}
+
+function updateTQFilter(key, val) { state.tqFilter[key] = val; queueSave(); render(); }
+function exportTQCSV() { toast('TQ export — demo'); }
+
+function viewSTQ() {
+  const stqs = state.siteTechQueries;
+  const openCount = stqs.filter(t => t.status === 'Open').length;
+  
+  const rows = stqs.map(t => `
+    <tr onclick="openModal('stq', '${t.id}')" style="cursor:pointer;">
+      <td><div class="doc-code">${t.id}</div><div class="doc-sub">${t.date}</div></td>
+      <td><div class="doc-title">${escapeHtml(t.subject)}</div><div class="doc-sub">${t.location || 'Site'}</div></td>
+      <td><span class="badge ${t.status === 'Open' ? 'ifr' : t.status === 'Responded' ? 'ifc' : 'draft'}">${t.status}</span></td>
+      <td><span class="badge ${t.priority === 'High' ? 'void' : 'ifr'}">${t.priority}</span></td>
+      <td class="muted mono" style="font-size:11px">${t.dueDate}</td>
+      <td class="muted">${t.assignedTo}</td>
+    </tr>
+  `).join('');
+
+  return `
+    <div class="breadcrumb">QUERIES &amp; RFIs <span> / SITE TECHNICAL QUERIES</span></div>
+    <div class="page-header">
+      <div><h1>Site Technical Queries (STQ)</h1><p class="muted" style="margin-top:6px;">Construction-phase technical queries raised from site due to clashes, discrepancies, or site conditions.</p></div>
+      <button class="btn" onclick="openModal('newSTQ')">+ New STQ</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Total STQs</div><div class="stat-value mono">${String(stqs.length).padStart(3,'0')}</div></div>
+      <div class="stat"><div class="stat-label">Open</div><div class="stat-value mono">${String(openCount).padStart(3,'0')}</div></div>
+    </div>
+    <div class="panel"><div class="panel-body tight">
+      <table><thead><tr><th>STQ ID</th><th>Subject &amp; Location</th><th>Status</th><th>Priority</th><th>Due Date</th><th>Assigned To</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+    </div></div>
+  `;
+}
+
+function viewRFI() {
+  const rfis = state.rfis;
+  const openCount = rfis.filter(r => r.status === 'Under Review').length;
+  
+  const rows = rfis.map(r => `
+    <tr onclick="openModal('rfi', '${r.id}')" style="cursor:pointer;">
+      <td><div class="doc-code">${r.id}</div><div class="doc-sub">${r.date}</div></td>
+      <td><div class="doc-title">${escapeHtml(r.subject)}</div><div class="doc-sub">${r.category} · ${r.raisedBy}</div></td>
+      <td>${getStakeholderName(r.from)}</td>
+      <td><span class="badge ${r.status === 'Under Review' ? 'ifr' : r.status === 'Responded' ? 'ifa' : 'ifc'}">${r.status}</span></td>
+      <td><span class="badge ${r.priority === 'High' ? 'void' : 'ifr'}">${r.priority}</span></td>
+      <td class="muted mono" style="font-size:11px">${r.dueDate}</td>
+    </tr>
+  `).join('');
+
+  return `
+    <div class="breadcrumb">QUERIES &amp; RFIs <span> / REQUESTS FOR INFORMATION</span></div>
+    <div class="page-header">
+      <div><h1>RFIs (Request for Information)</h1><p class="muted" style="margin-top:6px;">Formal information requests from client, consultants, vendors, or third-party inspectors.</p></div>
+      <button class="btn" onclick="openModal('newRFI')">+ New RFI</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Total RFIs</div><div class="stat-value mono">${String(rfis.length).padStart(3,'0')}</div></div>
+      <div class="stat"><div class="stat-label">Under Review</div><div class="stat-value mono">${String(openCount).padStart(3,'0')}</div></div>
+    </div>
+    <div class="panel"><div class="panel-body tight">
+      <table><thead><tr><th>RFI ID</th><th>Subject</th><th>From</th><th>Status</th><th>Priority</th><th>Due Date</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+    </div></div>
+  `;
+}
+
+function viewLetters() {
+  if (!state.letterFilter) state.letterFilter = { q: '', direction: '', toType: '', urgent: '' };
+  const f = state.letterFilter;
+  const q = f.q.toLowerCase();
+  const letters = state.letters.filter(l => {
+    if (f.direction && l.direction !== f.direction) return false;
+    if (f.toType && l.toType !== f.toType) return false;
+    if (f.urgent && l.urgent.toString() !== f.urgent) return false;
+    if (q && !`${l.id} ${l.subject} ${l.from} ${l.to} ${l.category}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  
+  const incoming = state.letters.filter(l => l.direction === 'Incoming').length;
+  const outgoing = state.letters.filter(l => l.direction === 'Outgoing').length;
+  const urgent = state.letters.filter(l => l.urgent).length;
+  
+  const rows = letters.map(l => {
+    const isOut = l.direction === 'Outgoing';
+    return `
+      <tr onclick="openModal('letter', '${l.id}')" style="cursor:pointer;">
+        <td><div class="doc-code">${l.id}</div><div class="doc-sub">${l.date}</div></td>
+        <td><span class="badge ${isOut ? 'ifa' : 'ifc'}" style="font-size:9px; padding:1px 6px;">${l.direction === 'Outgoing' ? '→ OUT' : '← IN'}</span></td>
+        <td><div class="doc-title">${escapeHtml(l.subject)}</div><div class="doc-sub">${l.category}${l.urgent ? ' <span style="color:var(--danger); font-weight:600;">● URGENT</span>' : ''}</div></td>
+        <td>${isOut ? l.to : l.from}</td>
+        <td><span class="chip" style="font-size:10px;">${l.toType}</span></td>
+        <td class="muted">${l.author}</td>
+        <td class="muted mono" style="font-size:11px">${l.attachments} files</td>
+      </tr>
+    `;
+  }).join('');
+
+  return `
+    <div class="breadcrumb">CORRESPONDENCE <span> / LETTERS REGISTER</span></div>
+    <div class="page-header">
+      <div><h1>Letters Register</h1><p class="muted" style="margin-top:6px;">Project correspondence with client, vendors, subcontractors, and consultants. All formal letters tracked in a single register.</p></div>
+      <div class="row">
+        <button class="btn ghost" onclick="exportLettersCSV()">↓ Export CSV</button>
+        <button class="btn" onclick="go('newLetter')">+ New Letter</button>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Total Letters</div><div class="stat-value mono">${String(state.letters.length).padStart(3,'0')}</div></div>
+      <div class="stat"><div class="stat-label">Incoming</div><div class="stat-value mono">${String(incoming).padStart(3,'0')}</div></div>
+      <div class="stat"><div class="stat-label">Outgoing</div><div class="stat-value mono">${String(outgoing).padStart(3,'0')}</div></div>
+      <div class="stat"><div class="stat-label">Urgent</div><div class="stat-value mono" style="color:var(--danger)">${String(urgent).padStart(3,'0')}</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="row grow">
+          <div class="search" style="width:240px"><span style="opacity:0.5">⌕</span><input placeholder="Search letters…" oninput="updateLetterFilter('q', this.value)" value="${escapeHtml(f.q)}" /></div>
+          <select onchange="updateLetterFilter('direction', this.value)" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);">
+            <option value="">In + Out</option>
+            <option value="Incoming" ${f.direction==='Incoming'?'selected':''}>Incoming</option>
+            <option value="Outgoing" ${f.direction==='Outgoing'?'selected':''}>Outgoing</option>
+          </select>
+          <select onchange="updateLetterFilter('toType', this.value)" style="padding:6px 10px; border:1px solid var(--line-strong); background:var(--bg); font-size:12px; color:var(--ink);">
+            <option value="">All Parties</option>
+            <option value="Client" ${f.toType==='Client'?'selected':''}>Client</option>
+            <option value="Vendor" ${f.toType==='Vendor'?'selected':''}>Vendor</option>
+            <option value="Subcontractor" ${f.toType==='Subcontractor'?'selected':''}>Subcontractor</option>
+            <option value="Consultant" ${f.toType==='Consultant'?'selected':''}>Consultant</option>
+          </select>
+        </div>
+      </div>
+      <div class="panel-body tight">
+        <table><thead><tr><th>Letter ID</th><th>Dir</th><th>Subject</th><th>${f.direction === 'Outgoing' ? 'To' : f.direction === 'Incoming' ? 'From' : 'To/From'}</th><th>Type</th><th>Author</th><th>Attach</th></tr></thead>
+        <tbody>${rows || '<tr><td colspan="7" class="muted" style="text-align:center; padding:20px;">No letters match filters</td></tr>'}</tbody></table>
+      </div>
+    </div>
+  `;
+}
+
+function updateLetterFilter(key, val) { state.letterFilter[key] = val; queueSave(); render(); }
+function exportLettersCSV() { toast('Letters export — demo'); }
+
+function viewNewLetter() {
+  return `
+    <div class="breadcrumb">CORRESPONDENCE <span> / NEW LETTER</span></div>
+    <div class="page-header"><div><h1>Compose Letter</h1></div></div>
+    <div class="panel"><div class="panel-header"><h3>Letter Details</h3></div>
+      <div class="panel-body">
+        <div class="form-grid">
+          <div class="field"><label>Direction</label><select><option>Outgoing</option><option>Incoming</option></select></div>
+          <div class="field"><label>Letter ID</label><input class="mono" placeholder="Auto-generated" disabled /></div>
+          <div class="field"><label>From</label><input value="Quadra Demo Engineering" /></div>
+          <div class="field"><label>To</label><input placeholder="Recipient name" /></div>
+          <div class="field"><label>Party Type</label><select><option>Client</option><option>Vendor</option><option>Subcontractor</option><option>Consultant</option></select></div>
+          <div class="field"><label>Category</label><select><option>General</option><option>Progress Report</option><option>Procurement</option><option>Approval</option><option>Safety</option><option>Variation</option></select></div>
+          <div class="field" style="grid-column:1/-1"><label>Subject</label><input placeholder="Letter subject" /></div>
+          <div class="field" style="grid-column:1/-1"><label>Reference</label><input class="mono" placeholder="PRJ-AHR-2026/XXX/NNN" /></div>
+          <div class="field" style="grid-column:1/-1"><label>Urgent</label><input type="checkbox" /> <span class="muted" style="font-size:11px">Flag as urgent/priority</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel"><div class="panel-header"><h3>Attachments</h3></div>
+      <div class="panel-body"><div class="muted" style="font-size:12px">Attachment upload — demo placeholder</div></div>
+    </div>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn ghost" onclick="go('letters')">Cancel</button>
+      <button class="btn" onclick="toast('Letter registered — demo'); go('letters');">Register Letter</button>
+    </div>
+  `;
+}
+
+function viewMemos() {
+  const memos = state.memos;
+  const urgent = memos.filter(m => m.urgent).length;
+  
+  const rows = memos.map(m => `
+    <tr onclick="openModal('memo', '${m.id}')" style="cursor:pointer;">
+      <td><div class="doc-code">${m.id}</div><div class="doc-sub">${m.date}</div></td>
+      <td><div class="doc-title">${escapeHtml(m.subject)}</div><div class="doc-sub">${m.category}${m.urgent ? ' <span style="color:var(--danger); font-weight:600;">● URGENT</span>' : ''}</div></td>
+      <td>${m.from}</td>
+      <td>${m.to}</td>
+      <td><span class="badge ifc">${m.status}</span></td>
+    </tr>
+  `).join('');
+
+  return `
+    <div class="breadcrumb">CORRESPONDENCE <span> / MEMOS</span></div>
+    <div class="page-header">
+      <div><h1>Internal Memos</h1><p class="muted" style="margin-top:6px;">Internal project communications and announcements distributed to team members.</p></div>
+      <button class="btn" onclick="openModal('newMemo')">+ New Memo</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Total Memos</div><div class="stat-value mono">${String(memos.length).padStart(3,'0')}</div></div>
+      <div class="stat"><div class="stat-label">This Month</div><div class="stat-value mono">${String(memos.length).padStart(3,'0')}</div></div>
+      <div class="stat"><div class="stat-label">Urgent</div><div class="stat-value mono" style="color:var(--danger)">${String(urgent).padStart(3,'0')}</div></div>
+    </div>
+    <div class="panel"><div class="panel-body tight">
+      <table><thead><tr><th>Memo ID</th><th>Subject</th><th>From</th><th>To</th><th>Status</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+    </div></div>
+  `;
+}
+
+function viewMoM() {
+  const moms = state.minutesOfMeeting;
+  const thisMonth = moms.filter(m => m.meetingDate.startsWith('2026-04')).length;
+  
+  const rows = moms.map(m => `
+    <tr onclick="openModal('mom', '${m.id}')" style="cursor:pointer;">
+      <td><div class="doc-code">${m.id}</div><div class="doc-sub">Meeting: ${m.meetingDate}</div></td>
+      <td><div class="doc-title">${escapeHtml(m.title)}</div><div class="doc-sub">${m.meetingType} · ${m.location}</div></td>
+      <td>${m.attendees.length} attendees</td>
+      <td>${m.actionItems.length} actions</td>
+      <td><span class="badge ifc">${m.status}</span></td>
+      <td class="muted mono" style="font-size:11px">${m.issuedDate}</td>
+    </tr>
+  `).join('');
+
+  return `
+    <div class="breadcrumb">MEETINGS <span> / MINUTES OF MEETING</span></div>
+    <div class="page-header">
+      <div><h1>Minutes of Meeting (MoM)</h1><p class="muted" style="margin-top:6px;">Formal meeting minutes with decisions, action items, and distribution tracking.</p></div>
+      <button class="btn" onclick="go('newMom')">+ New MoM</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Total MoMs</div><div class="stat-value mono">${String(moms.length).padStart(3,'0')}</div></div>
+      <div class="stat"><div class="stat-label">This Month</div><div class="stat-value mono">${String(thisMonth).padStart(3,'0')}</div></div>
+      <div class="stat"><div class="stat-label">Pending Actions</div><div class="stat-value mono">${String(moms.reduce((s,m) => s + m.actionItems.length, 0)).padStart(3,'0')}</div></div>
+    </div>
+    <div class="panel"><div class="panel-body tight">
+      <table><thead><tr><th>MoM ID</th><th>Title &amp; Type</th><th>Attendees</th><th>Actions</th><th>Status</th><th>Issued</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+    </div></div>
+  `;
+}
+
+function viewNewMoM() {
+  return `
+    <div class="breadcrumb">MEETINGS <span> / NEW MOM</span></div>
+    <div class="page-header"><div><h1>Create Minutes of Meeting</h1></div></div>
+    <div class="two-col">
+      <div class="panel"><div class="panel-header"><h3>Meeting Details</h3></div>
+        <div class="panel-body">
+          <div class="form-grid full">
+            <div class="field"><label>Meeting Type</label><select><option>Weekly Progress</option><option>Design Review</option><option>Safety</option><option>Coordination</option><option>Technical</option></select></div>
+            <div class="field"><label>Meeting Title</label><input placeholder="e.g., Weekly Project Coordination" /></div>
+            <div class="field"><label>Meeting Date</label><input type="date" /></div>
+            <div class="field"><label>Location</label><input placeholder="Site Office / Client Office / Online" /></div>
+            <div class="field"><label>Chairperson</label><input /></div>
+            <div class="field"><label>Minute Taker</label><input value="Jennifer" /></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel"><div class="panel-header"><h3>Attendees</h3></div>
+        <div class="panel-body"><textarea placeholder="Enter attendees (one per line)" style="width:100%; min-height:140px;"></textarea></div>
+      </div>
+    </div>
+    <div class="panel"><div class="panel-header"><h3>Agenda Items</h3></div>
+      <div class="panel-body"><textarea placeholder="Agenda items (one per line)" style="width:100%; min-height:80px;"></textarea></div>
+    </div>
+    <div class="panel"><div class="panel-header"><h3>Decisions</h3></div>
+      <div class="panel-body"><textarea placeholder="Key decisions made during meeting" style="width:100%; min-height:80px;"></textarea></div>
+    </div>
+    <div class="panel"><div class="panel-header"><h3>Action Items</h3></div>
+      <div class="panel-body"><div class="muted" style="font-size:12px">Action item tracker — demo placeholder</div></div>
+    </div>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn ghost" onclick="go('mom')">Cancel</button>
+      <button class="btn" onclick="toast('MoM created — demo'); go('mom');">Issue MoM</button>
+    </div>
+  `;
+}
+
 function openModal(kind, payload) {
   const modal = document.getElementById('modal');
   const overlay = document.getElementById('modalOverlay');
   let html = '';
   if (kind === 'doc') {
     const d = payload;
+    // Build a plausible revision history if none exists
+    if (!d.revHistory) {
+      const histRevs = [];
+      if (d.rev !== 'A') histRevs.push({ rev: 'A', date: '2026-03-01', by: d.author, status: 'IFR', note: 'First issue' });
+      d.revHistory = histRevs;
+    }
+    const statusOptions = ['DRAFT', 'IFR', 'IFA', 'IFC', 'VOID'];
     html = `
       <div class="modal-head">
         <div>
           <div style="font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-3); font-weight:600;">Document</div>
-          <h2>${d.title}</h2>
-          <div class="mono muted" style="font-size:11.5px; margin-top:4px;">${d.code} / Rev ${d.rev}</div>
+          <h2>${escapeHtml(d.title)}</h2>
+          <div class="mono muted" style="font-size:11.5px; margin-top:4px;">${escapeHtml(d.code)} / Rev ${escapeHtml(d.rev)}</div>
         </div>
         <button class="close-btn" onclick="closeModal()">×</button>
       </div>
       <div class="modal-body">
         <div class="form-grid">
-          <div class="field"><label>Status</label><div><span class="badge ${d.status.toLowerCase()}">${d.status}</span></div></div>
-          <div class="field"><label>Discipline</label><div>${getDiscName(d.discipline)} (${d.discipline})</div></div>
-          <div class="field"><label>Type</label><div>${getTypeName(d.type)}</div></div>
-          <div class="field"><label>Author</label><div>${d.author}</div></div>
-          <div class="field"><label>Modified</label><div class="mono">${d.date}</div></div>
-          <div class="field"><label>File Size</label><div class="mono">${d.size}</div></div>
+          <div class="field">
+            <label>Status</label>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="badge ${d.status.toLowerCase()}" id="docCurStatus">${d.status}</span>
+              <select id="docStatusSelect" onchange="changeDocStatus('${d.code}', this.value)" style="padding:4px 8px; border:1px solid var(--line-strong); background:var(--bg); font-size:11px; color:var(--ink); font-family:'JetBrains Mono', monospace;">
+                ${statusOptions.map(s => `<option value="${s}" ${s===d.status?'selected':''}>${s}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <div class="field"><label>Discipline</label><div>${escapeHtml(getDiscName(d.discipline))} (${escapeHtml(d.discipline)})</div></div>
+          <div class="field"><label>Type</label><div>${escapeHtml(getTypeName(d.type))}</div></div>
+          <div class="field"><label>Author</label><div>${escapeHtml(d.author)}</div></div>
+          <div class="field"><label>Modified</label><div class="mono">${escapeHtml(d.date)}</div></div>
+          <div class="field"><label>File Size</label><div class="mono">${escapeHtml(d.size)}</div></div>
         </div>
 
         <div class="divider"></div>
 
-        <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Revision History</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600;">Revision History</div>
+          <button class="btn ghost sm" onclick="bumpRevision('${d.code}')">⇪ Bump revision</button>
+        </div>
         <table>
           <thead><tr><th>Rev</th><th>Date</th><th>By</th><th>Purpose</th><th>Note</th></tr></thead>
-          <tbody>
-            <tr><td class="mono">${d.rev}</td><td class="mono muted" style="font-size:11px">${d.date}</td><td>${d.author}</td><td><span class="badge ${d.status.toLowerCase()}">${d.status}</span></td><td class="muted">Current revision</td></tr>
-            <tr><td class="mono">A</td><td class="mono muted" style="font-size:11px">2026-03-01</td><td>${d.author}</td><td><span class="badge ifr">IFR</span></td><td class="muted">First issue</td></tr>
+          <tbody id="docRevBody">
+            <tr><td class="mono">${escapeHtml(d.rev)}</td><td class="mono muted" style="font-size:11px">${escapeHtml(d.date)}</td><td>${escapeHtml(d.author)}</td><td><span class="badge ${d.status.toLowerCase()}">${d.status}</span></td><td class="muted">Current revision</td></tr>
+            ${d.revHistory.map(r => `<tr><td class="mono">${escapeHtml(r.rev)}</td><td class="mono muted" style="font-size:11px">${escapeHtml(r.date)}</td><td>${escapeHtml(r.by)}</td><td><span class="badge ${r.status.toLowerCase()}">${r.status}</span></td><td class="muted">${escapeHtml(r.note)}</td></tr>`).join('')}
           </tbody>
         </table>
       </div>
       <div class="modal-foot">
+        <button class="btn ghost" onclick="deleteDocument('${d.code}')" style="color:var(--danger); border-color:transparent;">Delete</button>
+        <div style="flex:1"></div>
         <button class="btn ghost" onclick="closeModal()">Close</button>
-        <button class="btn secondary" onclick="toast('Download queued')">Download</button>
+        <button class="btn secondary" onclick="toast('Download queued — demo')">Download</button>
         <button class="btn" onclick="closeModal(); go('newTransmittal'); setTimeout(()=>{ const cb=document.querySelector('.tm-doc[value=\\'${d.code}\\']'); if(cb){cb.checked=true; updateTransmittalPreview();} }, 50);">Include in Transmittal →</button>
       </div>
     `;
@@ -2873,6 +4792,68 @@ function openModal(kind, payload) {
         <button class="btn ghost" onclick="closeModal()">Close</button>
         <button class="btn secondary" onclick="toast('PDF generated')">Download PDF</button>
         <button class="btn" onclick="toast('Reminder sent')">Send Reminder</button>
+      </div>
+    `;
+  } else if (kind === 'incomingTm') {
+    const tm = state.incomingTransmittals.find(t => t.id === payload);
+    if (!tm) return;
+    const isOverdue = tm.responseRequired && tm.responseDue && new Date(tm.responseDue) < new Date() && tm.responseStatus === 'Pending';
+    html = `
+      <div class="modal-head">
+        <div>
+          <div style="font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-3); font-weight:600;">Incoming Transmittal</div>
+          <h2>${escapeHtml(tm.subject)}</h2>
+          <div class="mono muted" style="font-size:11.5px; margin-top:4px;">${tm.id} · FROM ${getStakeholderName(tm.from)}</div>
+        </div>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>Received Date</label><div class="mono">${tm.receivedDate}</div></div>
+          <div class="field"><label>From Organization</label><div>${escapeHtml(tm.fromOrg)}</div></div>
+          <div class="field"><label>Their Reference</label><div class="mono">${escapeHtml(tm.theirRef)}</div></div>
+          <div class="field"><label>Purpose</label><div><span class="badge ${tm.purpose.toLowerCase()}">${tm.purpose}</span></div></div>
+          <div class="field"><label>Priority</label><div><span class="badge ${tm.priority === 'High' ? 'void' : tm.priority === 'Medium' ? 'ifr' : 'draft'}">${tm.priority}</span></div></div>
+          <div class="field"><label>Assigned To</label><div>${escapeHtml(tm.assignedTo)}</div></div>
+          <div class="field"><label>Response Required</label><div>${tm.responseRequired ? '<span style="color:var(--warning); font-weight:600;">● YES</span>' : 'No'}</div></div>
+          ${tm.responseRequired ? `<div class="field"><label>Response Due</label><div class="mono" style="${isOverdue ? 'color:var(--danger); font-weight:600;' : ''}">${tm.responseDue}${isOverdue ? ' <span style="font-size:10px;">OVERDUE</span>' : ''}</div></div>` : ''}
+          <div class="field"><label>Response Status</label><div><span class="badge ${tm.responseStatus === 'Pending' ? 'ifr' : tm.responseStatus === 'In Progress' ? 'ifa' : 'ifc'}">${tm.responseStatus}</span></div></div>
+          ${tm.responseBy ? `<div class="field"><label>Response By</label><div>${escapeHtml(tm.responseBy)}</div></div>` : ''}
+          ${tm.responseDate ? `<div class="field"><label>Response Date</label><div class="mono">${tm.responseDate}</div></div>` : ''}
+          <div class="field"><label>Attachments</label><div class="mono">${tm.attachments} file(s)</div></div>
+        </div>
+
+        ${tm.notes ? `
+          <div class="divider"></div>
+          <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Notes</div>
+          <p style="line-height:1.6; font-size:12px; color:var(--ink-2);">${escapeHtml(tm.notes)}</p>
+        ` : ''}
+
+        ${tm.receivedDocs.length > 0 ? `
+          <div class="divider"></div>
+          <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Received Documents (${tm.receivedDocs.length})</div>
+          <table>
+            <thead><tr><th>Code</th><th>Title</th><th>Rev</th><th>Status</th><th>Our Action</th></tr></thead>
+            <tbody>
+              ${tm.receivedDocs.map(d => `
+                <tr>
+                  <td class="mono" style="font-size:11px;">${escapeHtml(d.code)}</td>
+                  <td style="font-size:11.5px;">${escapeHtml(d.title)}</td>
+                  <td class="mono" style="font-size:11px;">${escapeHtml(d.rev)}</td>
+                  <td><span class="badge ${d.status.includes('Approved') ? 'ifc' : d.status.includes('Review') ? 'ifr' : d.status.includes('Revise') ? 'void' : 'draft'}" style="font-size:10px;">${escapeHtml(d.status)}</span></td>
+                  <td class="muted" style="font-size:11px;">${escapeHtml(d.ourAction)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        ` : ''}
+      </div>
+      <div class="modal-foot">
+        ${tm.responseStatus === 'Pending' || tm.responseStatus === 'In Progress' ? '<button class="btn ghost" onclick="toast(\'Status updated — demo\'); closeModal();">Mark as Responded</button>' : ''}
+        <div style="flex:1"></div>
+        <button class="btn ghost" onclick="closeModal()">Close</button>
+        <button class="btn secondary" onclick="toast('Downloaded — demo')">↓ Download</button>
+        ${tm.responseRequired && (tm.responseStatus === 'Pending' || tm.responseStatus === 'In Progress') ? '<button class="btn" onclick="closeModal(); go(\'newTransmittal\'); toast(\'Response transmittal created — demo\');">Create Response →</button>' : ''}
       </div>
     `;
   } else if (kind === 'scheduleSync') {
@@ -3073,7 +5054,7 @@ function openModal(kind, payload) {
             </tbody>
           </table>
           <div style="margin-top:24px; font-size:10px; color:var(--ink-3); border-top:1px solid var(--line); padding-top:10px; display:flex; justify-content:space-between;">
-            <span>Generated by Meridian EDMS · Document Controller: S. Kumar</span>
+            <span>Generated by Quadra Demo EDMS · Document Controller: Jennifer</span>
             <span class="mono">Page 1 of 1</span>
           </div>
         </div>
@@ -3281,6 +5262,245 @@ function openModal(kind, payload) {
         <button class="btn" onclick="toast('Exported to PDF')">↓ PDF</button>
       </div>
     `;
+  } else if (kind === 'tq') {
+    const tq = state.technicalQueries.find(t => t.id === payload);
+    if (!tq) return;
+    html = `
+      <div class="modal-head">
+        <div>
+          <div style="font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-3); font-weight:600;">Technical Query</div>
+          <h2>${escapeHtml(tq.subject)}</h2>
+          <div class="mono muted" style="font-size:11.5px; margin-top:4px;">${tq.id} · ${tq.date}</div>
+        </div>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>Raised By</label><div>${escapeHtml(tq.raisedBy)}</div></div>
+          <div class="field"><label>Discipline</label><div>${getDiscName(tq.discipline)}</div></div>
+          <div class="field"><label>Priority</label><div><span class="badge ${tq.priority === 'High' ? 'void' : tq.priority === 'Medium' ? 'ifr' : 'draft'}">${tq.priority}</span></div></div>
+          <div class="field"><label>Status</label><div><span class="badge ${tq.status === 'Open' ? 'ifr' : tq.status === 'Responded' ? 'ifa' : 'ifc'}">${tq.status}</span></div></div>
+          <div class="field"><label>Assigned To</label><div>${getStakeholderName(tq.assignedTo)}</div></div>
+          <div class="field"><label>Due Date</label><div class="mono">${tq.dueDate}</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Query Description</div>
+        <p style="line-height:1.6; font-size:12px; color:var(--ink-2);">${escapeHtml(tq.description)}</p>
+        ${tq.linkedDocs.length ? `
+          <div class="divider"></div>
+          <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Linked Documents</div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            ${tq.linkedDocs.map(code => `<span class="chip mono" style="cursor:pointer; font-size:11px;" onclick="closeModal(); setTimeout(() => viewDoc('${code}'), 100);">${code}</span>`).join('')}
+          </div>
+        ` : ''}
+        ${tq.response ? `
+          <div class="divider"></div>
+          <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Response · ${tq.responseDate}</div>
+          <p style="line-height:1.6; font-size:12px; color:var(--ink-2);">${escapeHtml(tq.response)}</p>
+        ` : ''}
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" onclick="closeModal()">Close</button>
+        ${tq.status === 'Open' ? '<button class="btn secondary" onclick="toast(\'Response added — demo\')">Add Response</button>' : ''}
+        <button class="btn" onclick="toast('Downloaded — demo')">↓ Download</button>
+      </div>
+    `;
+  } else if (kind === 'stq') {
+    const stq = state.siteTechQueries.find(t => t.id === payload);
+    if (!stq) return;
+    html = `
+      <div class="modal-head">
+        <div>
+          <div style="font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-3); font-weight:600;">Site Technical Query</div>
+          <h2>${escapeHtml(stq.subject)}</h2>
+          <div class="mono muted" style="font-size:11.5px; margin-top:4px;">${stq.id} · ${stq.location}</div>
+        </div>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>Raised By</label><div>${escapeHtml(stq.raisedBy)}</div></div>
+          <div class="field"><label>Discipline</label><div>${getDiscName(stq.discipline)}</div></div>
+          <div class="field"><label>Priority</label><div><span class="badge ${stq.priority === 'High' ? 'void' : 'ifr'}">${stq.priority}</span></div></div>
+          <div class="field"><label>Status</label><div><span class="badge ${stq.status === 'Open' ? 'ifr' : 'ifc'}">${stq.status}</span></div></div>
+          <div class="field"><label>Assigned To</label><div>${escapeHtml(stq.assignedTo)}</div></div>
+          <div class="field"><label>Due Date</label><div class="mono">${stq.dueDate}</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Site Query Description</div>
+        <p style="line-height:1.6; font-size:12px; color:var(--ink-2);">${escapeHtml(stq.description)}</p>
+        ${stq.response ? `
+          <div class="divider"></div>
+          <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Response · ${stq.responseDate}</div>
+          <p style="line-height:1.6; font-size:12px; color:var(--ink-2);">${escapeHtml(stq.response)}</p>
+        ` : ''}
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" onclick="closeModal()">Close</button>
+        ${stq.status === 'Open' ? '<button class="btn secondary" onclick="toast(\'Response added — demo\')">Add Response</button>' : ''}
+        <button class="btn" onclick="toast('Downloaded — demo')">↓ Download</button>
+      </div>
+    `;
+  } else if (kind === 'rfi') {
+    const rfi = state.rfis.find(r => r.id === payload);
+    if (!rfi) return;
+    html = `
+      <div class="modal-head">
+        <div>
+          <div style="font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-3); font-weight:600;">Request for Information</div>
+          <h2>${escapeHtml(rfi.subject)}</h2>
+          <div class="mono muted" style="font-size:11.5px; margin-top:4px;">${rfi.id} · ${rfi.date}</div>
+        </div>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>Raised By</label><div>${escapeHtml(rfi.raisedBy)}</div></div>
+          <div class="field"><label>From</label><div>${getStakeholderName(rfi.from)}</div></div>
+          <div class="field"><label>Category</label><div><span class="chip">${rfi.category}</span></div></div>
+          <div class="field"><label>Status</label><div><span class="badge ${rfi.status === 'Under Review' ? 'ifr' : rfi.status === 'Responded' ? 'ifa' : 'ifc'}">${rfi.status}</span></div></div>
+          <div class="field"><label>Priority</label><div><span class="badge ${rfi.priority === 'High' ? 'void' : 'ifr'}">${rfi.priority}</span></div></div>
+          <div class="field"><label>Due Date</label><div class="mono">${rfi.dueDate}</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">RFI Description</div>
+        <p style="line-height:1.6; font-size:12px; color:var(--ink-2);">${escapeHtml(rfi.description)}</p>
+        ${rfi.response ? `
+          <div class="divider"></div>
+          <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Response · ${rfi.responseDate}</div>
+          <p style="line-height:1.6; font-size:12px; color:var(--ink-2);">${escapeHtml(rfi.response)}</p>
+        ` : ''}
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" onclick="closeModal()">Close</button>
+        ${rfi.status !== 'Closed' ? '<button class="btn secondary" onclick="toast(\'Response added — demo\')">Add Response</button>' : ''}
+        <button class="btn" onclick="toast('Downloaded — demo')">↓ Download</button>
+      </div>
+    `;
+  } else if (kind === 'letter') {
+    const letter = state.letters.find(l => l.id === payload);
+    if (!letter) return;
+    html = `
+      <div class="modal-head">
+        <div>
+          <div style="font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-3); font-weight:600;">Letter ${letter.direction === 'Outgoing' ? '→ Outgoing' : '← Incoming'}</div>
+          <h2>${escapeHtml(letter.subject)}</h2>
+          <div class="mono muted" style="font-size:11.5px; margin-top:4px;">${letter.id} · ${letter.ref}</div>
+        </div>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>Date</label><div class="mono">${letter.date}</div></div>
+          <div class="field"><label>Direction</label><div><span class="badge ${letter.direction === 'Outgoing' ? 'ifa' : 'ifc'}">${letter.direction}</span></div></div>
+          <div class="field"><label>From</label><div>${escapeHtml(letter.from)}</div></div>
+          <div class="field"><label>To</label><div>${escapeHtml(letter.to)}</div></div>
+          <div class="field"><label>Party Type</label><div><span class="chip">${letter.toType}</span></div></div>
+          <div class="field"><label>Category</label><div>${letter.category}</div></div>
+          <div class="field"><label>Author</label><div>${escapeHtml(letter.author)}</div></div>
+          <div class="field"><label>Status</label><div>${letter.status}</div></div>
+          <div class="field"><label>Attachments</label><div class="mono">${letter.attachments} file(s)</div></div>
+          <div class="field"><label>Urgent</label><div>${letter.urgent ? '<span style="color:var(--danger); font-weight:600;">● YES</span>' : 'No'}</div></div>
+        </div>
+        ${letter.relatedDocs.length ? `
+          <div class="divider"></div>
+          <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Related Documents</div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            ${letter.relatedDocs.map(code => `<span class="chip mono" style="font-size:11px;">${code}</span>`).join('')}
+          </div>
+        ` : ''}
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" onclick="closeModal()">Close</button>
+        <button class="btn secondary" onclick="toast('Replied — demo')">Reply</button>
+        <button class="btn" onclick="toast('Downloaded — demo')">↓ Download</button>
+      </div>
+    `;
+  } else if (kind === 'memo') {
+    const memo = state.memos.find(m => m.id === payload);
+    if (!memo) return;
+    html = `
+      <div class="modal-head">
+        <div>
+          <div style="font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-3); font-weight:600;">Internal Memo</div>
+          <h2>${escapeHtml(memo.subject)}</h2>
+          <div class="mono muted" style="font-size:11.5px; margin-top:4px;">${memo.id} · ${memo.date}</div>
+        </div>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>From</label><div>${escapeHtml(memo.from)}</div></div>
+          <div class="field"><label>To</label><div>${escapeHtml(memo.to)}</div></div>
+          <div class="field"><label>Category</label><div><span class="chip">${memo.category}</span></div></div>
+          <div class="field"><label>Status</label><div><span class="badge ifc">${memo.status}</span></div></div>
+          <div class="field"><label>Urgent</label><div>${memo.urgent ? '<span style="color:var(--danger); font-weight:600;">● YES</span>' : 'No'}</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Memo Content</div>
+        <p style="line-height:1.6; font-size:12px; color:var(--ink-2);">${escapeHtml(memo.content)}</p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" onclick="closeModal()">Close</button>
+        <button class="btn" onclick="toast('Downloaded — demo')">↓ Download</button>
+      </div>
+    `;
+  } else if (kind === 'mom') {
+    const mom = state.minutesOfMeeting.find(m => m.id === payload);
+    if (!mom) return;
+    html = `
+      <div class="modal-head">
+        <div>
+          <div style="font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-3); font-weight:600;">Minutes of Meeting</div>
+          <h2>${escapeHtml(mom.title)}</h2>
+          <div class="mono muted" style="font-size:11.5px; margin-top:4px;">${mom.id} · ${mom.meetingDate}</div>
+        </div>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>Meeting Type</label><div>${mom.meetingType}</div></div>
+          <div class="field"><label>Location</label><div>${escapeHtml(mom.location)}</div></div>
+          <div class="field"><label>Chairperson</label><div>${escapeHtml(mom.chairperson)}</div></div>
+          <div class="field"><label>Minute Taker</label><div>${escapeHtml(mom.minuteTaker)}</div></div>
+          <div class="field"><label>Issued Date</label><div class="mono">${mom.issuedDate}</div></div>
+          <div class="field"><label>Next Meeting</label><div class="mono">${mom.nextMeeting || 'TBD'}</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Attendees (${mom.attendees.length})</div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;">
+          ${mom.attendees.map(a => `<span class="chip" style="font-size:11px;">${escapeHtml(a)}</span>`).join('')}
+        </div>
+        <div class="divider"></div>
+        <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Agenda</div>
+        <ul style="margin-left:18px; line-height:1.8; font-size:12px; color:var(--ink-2);">
+          ${mom.agenda.map(item => `<li>${escapeHtml(item)}</li>`).join('')}
+        </ul>
+        <div class="divider"></div>
+        <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Decisions</div>
+        <ul style="margin-left:18px; line-height:1.8; font-size:12px; color:var(--ink-2);">
+          ${mom.decisions.map(item => `<li>${escapeHtml(item)}</li>`).join('')}
+        </ul>
+        <div class="divider"></div>
+        <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Action Items (${mom.actionItems.length})</div>
+        <table>
+          <thead><tr><th>Action</th><th>Assigned To</th><th>Due Date</th></tr></thead>
+          <tbody>
+            ${mom.actionItems.map(a => `<tr><td>${escapeHtml(a.item)}</td><td>${escapeHtml(a.assignedTo)}</td><td class="mono" style="font-size:11px">${a.dueDate}</td></tr>`).join('')}
+          </tbody>
+        </table>
+        <div class="divider"></div>
+        <div class="lbl" style="font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">Distribution</div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          ${mom.distribution.map(d => `<span class="chip" style="font-size:11px;">${getStakeholderName(d)}</span>`).join('')}
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" onclick="closeModal()">Close</button>
+        <button class="btn secondary" onclick="toast('Redistributed — demo')">Redistribute</button>
+        <button class="btn" onclick="toast('Downloaded — demo')">↓ Download PDF</button>
+      </div>
+    `;
   } else if (kind === 'newProject') {
     html = `
       <div class="modal-head">
@@ -3316,6 +5536,359 @@ function closeModal() {
 }
 
 /* ============================================================
+   THEME TOGGLE
+   ============================================================ */
+function applyTheme(theme) {
+  state.theme = theme;
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+  try { localStorage.setItem('edms-theme', theme); } catch (e) {}
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.title = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+}
+
+function toggleTheme() {
+  applyTheme(state.theme === 'dark' ? 'light' : 'dark');
+  addAudit('Theme changed', `Switched to ${state.theme} mode`, 'Jennifer');
+  toast(`${state.theme === 'dark' ? 'Dark' : 'Light'} mode enabled`);
+}
+
+function initTheme() {
+  let stored = null;
+  try { stored = localStorage.getItem('edms-theme'); } catch (e) {}
+  if (stored === 'dark' || stored === 'light') {
+    applyTheme(stored);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    applyTheme('dark');
+  } else {
+    applyTheme('light');
+  }
+}
+
+/* ============================================================
+   GLOBAL SEARCH
+   ============================================================ */
+const searchCtx = { activeIndex: -1, results: [], query: '' };
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+function highlight(text, q) {
+  if (!q) return escapeHtml(text);
+  const escaped = escapeHtml(text);
+  const qEsc = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp('(' + qEsc + ')', 'ig');
+  return escaped.replace(re, '<mark>$1</mark>');
+}
+
+function runSearch(rawQuery) {
+  const q = (rawQuery || '').trim();
+  searchCtx.query = q;
+  searchCtx.activeIndex = -1;
+  const box = document.getElementById('searchBox');
+  const panel = document.getElementById('searchResults');
+  if (!box || !panel) return;
+
+  box.classList.toggle('has-query', q.length > 0);
+
+  if (!q) {
+    panel.classList.remove('open');
+    panel.innerHTML = '';
+    searchCtx.results = [];
+    return;
+  }
+
+  const needle = q.toLowerCase();
+
+  // DOCUMENTS
+  const docs = state.documents.filter(d =>
+    d.code.toLowerCase().includes(needle) ||
+    d.title.toLowerCase().includes(needle) ||
+    d.author.toLowerCase().includes(needle) ||
+    (getDiscName(d.discipline) || '').toLowerCase().includes(needle) ||
+    (getTypeName(d.type) || '').toLowerCase().includes(needle) ||
+    d.status.toLowerCase().includes(needle)
+  ).slice(0, 6);
+
+  // TRANSMITTALS
+  const tms = state.transmittals.filter(t =>
+    t.id.toLowerCase().includes(needle) ||
+    t.subject.toLowerCase().includes(needle) ||
+    (getStakeholderName(t.to) || '').toLowerCase().includes(needle) ||
+    t.purpose.toLowerCase().includes(needle) ||
+    t.status.toLowerCase().includes(needle) ||
+    t.docs.some(c => c.toLowerCase().includes(needle))
+  ).slice(0, 4);
+
+  // PROJECTS (static list also used in Projects view)
+  const projectList = [
+    { code: 'PRJ-AHR-2026', name: 'Al Hamra Refinery Expansion', client: 'Gulf National Petroleum' },
+    { code: 'PRJ-DWS-2025', name: 'Dune Solar Farm — Phase II', client: 'SolarMed Utilities' },
+    { code: 'PRJ-KRB-2025', name: 'Karbala Water Treatment Plant', client: 'Ministry of Water Resources' },
+  ];
+  const projects = projectList.filter(p =>
+    p.code.toLowerCase().includes(needle) ||
+    p.name.toLowerCase().includes(needle) ||
+    p.client.toLowerCase().includes(needle)
+  );
+
+  // NAV PAGES
+  const pages = [
+    { nav: 'dashboard', title: 'Dashboard', sub: 'Workspace · Project overview' },
+    { nav: 'projects', title: 'Projects', sub: 'Workspace · All projects' },
+    { nav: 'register', title: 'Document Register', sub: 'Documents · Central index' },
+    { nav: 'upload', title: 'New Document', sub: 'Documents · Register a document' },
+    { nav: 'bulkImport', title: 'Bulk Import', sub: 'Documents · Import CSV/Excel' },
+    { nav: 'transmittals', title: 'Outgoing Transmittals', sub: 'Transmittals · Log' },
+    { nav: 'newTransmittal', title: 'New Transmittal', sub: 'Transmittals · Compose' },
+    { nav: 'schedule', title: 'Schedule & Progress', sub: 'Planning · Gantt & activities' },
+    { nav: 'databook', title: 'Data Book', sub: 'Planning · Compilation tree' },
+    { nav: 'reports', title: 'Reports', sub: 'Planning · Exports' },
+    { nav: 'config', title: 'Project Setup', sub: 'Configuration · Numbering, workflow' },
+    { nav: 'matrix', title: 'Distribution Matrix', sub: 'Configuration · Review roles' },
+    { nav: 'audit', title: 'Audit Trail', sub: 'Configuration · Activity log' },
+  ].filter(p =>
+    p.title.toLowerCase().includes(needle) ||
+    p.sub.toLowerCase().includes(needle)
+  ).slice(0, 4);
+
+  // Flatten into ordered list for keyboard nav
+  const flat = [];
+  docs.forEach(d => flat.push({ group: 'doc', item: d }));
+  tms.forEach(t => flat.push({ group: 'tm', item: t }));
+  projects.forEach(p => flat.push({ group: 'project', item: p }));
+  pages.forEach(p => flat.push({ group: 'page', item: p }));
+  searchCtx.results = flat;
+
+  // Render
+  let html = '';
+  const totalCount = flat.length;
+
+  if (totalCount === 0) {
+    html = `
+      <div class="sr-empty">
+        <span class="serif">◯</span>
+        <div>No matches for <strong>"${escapeHtml(q)}"</strong></div>
+        <div style="font-size:10.5px; margin-top:6px; color:var(--ink-3);">Try a document code, title, author, or transmittal ID</div>
+      </div>
+    `;
+  } else {
+    let idx = 0;
+    if (docs.length) {
+      html += `<div class="sr-group-header">Documents <span class="sr-count">${docs.length}</span></div>`;
+      docs.forEach(d => {
+        html += `
+          <div class="sr-item" data-idx="${idx}" onclick="selectSearchResult(${idx})">
+            <div class="sr-ic">▤</div>
+            <div class="sr-body">
+              <div class="sr-title">${highlight(d.title, q)}</div>
+              <div class="sr-sub">${highlight(d.code, q)} · Rev ${escapeHtml(d.rev)} · ${escapeHtml(d.author)}</div>
+            </div>
+            <span class="badge ${d.status.toLowerCase()}">${d.status}</span>
+          </div>
+        `;
+        idx++;
+      });
+    }
+    if (tms.length) {
+      html += `<div class="sr-group-header">Transmittals <span class="sr-count">${tms.length}</span></div>`;
+      tms.forEach(t => {
+        html += `
+          <div class="sr-item" data-idx="${idx}" onclick="selectSearchResult(${idx})">
+            <div class="sr-ic">✉</div>
+            <div class="sr-body">
+              <div class="sr-title">${highlight(t.subject, q)}</div>
+              <div class="sr-sub">${highlight(t.id, q)} · ${escapeHtml(getStakeholderName(t.to))} · ${escapeHtml(t.date)}</div>
+            </div>
+            <span class="badge ${t.purpose.toLowerCase()}">${t.purpose}</span>
+          </div>
+        `;
+        idx++;
+      });
+    }
+    if (projects.length) {
+      html += `<div class="sr-group-header">Projects <span class="sr-count">${projects.length}</span></div>`;
+      projects.forEach(p => {
+        html += `
+          <div class="sr-item" data-idx="${idx}" onclick="selectSearchResult(${idx})">
+            <div class="sr-ic">◈</div>
+            <div class="sr-body">
+              <div class="sr-title">${highlight(p.name, q)}</div>
+              <div class="sr-sub">${highlight(p.code, q)} · ${escapeHtml(p.client)}</div>
+            </div>
+          </div>
+        `;
+        idx++;
+      });
+    }
+    if (pages.length) {
+      html += `<div class="sr-group-header">Pages <span class="sr-count">${pages.length}</span></div>`;
+      pages.forEach(p => {
+        html += `
+          <div class="sr-item" data-idx="${idx}" onclick="selectSearchResult(${idx})">
+            <div class="sr-ic">→</div>
+            <div class="sr-body">
+              <div class="sr-title">${highlight(p.title, q)}</div>
+              <div class="sr-sub">${escapeHtml(p.sub)}</div>
+            </div>
+          </div>
+        `;
+        idx++;
+      });
+    }
+
+    html += `
+      <div class="sr-footer">
+        <span>${totalCount} result${totalCount !== 1 ? 's' : ''}</span>
+        <span class="kbd-hint"><span>↑</span><span>↓</span> navigate <span>↵</span> open <span>esc</span> close</span>
+      </div>
+    `;
+  }
+
+  panel.innerHTML = html;
+  panel.classList.add('open');
+}
+
+function setSearchActive(i) {
+  const items = document.querySelectorAll('#searchResults .sr-item');
+  if (!items.length) return;
+  const n = items.length;
+  let next = i;
+  if (next < 0) next = n - 1;
+  if (next >= n) next = 0;
+  items.forEach((el, k) => el.classList.toggle('active', k === next));
+  searchCtx.activeIndex = next;
+  // Scroll into view
+  const active = items[next];
+  if (active) active.scrollIntoView({ block: 'nearest' });
+}
+
+function selectSearchResult(idx) {
+  const r = searchCtx.results[idx];
+  if (!r) return;
+  closeSearch();
+  if (r.group === 'doc') {
+    viewDoc(r.item.code);
+  } else if (r.group === 'tm') {
+    viewTransmittal(r.item.id);
+  } else if (r.group === 'project') {
+    go('projects');
+    toast(`Opened Projects — showing ${r.item.code}`);
+  } else if (r.group === 'page') {
+    go(r.item.nav);
+  }
+}
+
+function closeSearch() {
+  const panel = document.getElementById('searchResults');
+  const box = document.getElementById('searchBox');
+  const input = document.getElementById('globalSearch');
+  if (panel) panel.classList.remove('open');
+  if (box) box.classList.remove('focused');
+  if (input) input.blur();
+}
+
+function clearSearch() {
+  const input = document.getElementById('globalSearch');
+  if (input) { input.value = ''; input.focus(); }
+  runSearch('');
+}
+
+function focusSearch() {
+  const input = document.getElementById('globalSearch');
+  if (input) { input.focus(); input.select(); }
+}
+
+/* ============================================================
+   NOTIFICATIONS
+   ============================================================ */
+function renderNotifications() {
+  const panel = document.getElementById('notifPanel');
+  const badge = document.getElementById('notifBadge');
+  if (!panel) return;
+  const unread = state.notifications.filter(n => n.unread).length;
+  if (badge) {
+    if (unread > 0) {
+      badge.textContent = unread;
+      badge.style.display = 'grid';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+  const list = state.notifications.length ? state.notifications.map(n => `
+    <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" onclick="openNotif('${n.id}')">
+      <div class="n-ic">${n.icon}</div>
+      <div class="n-body">
+        <div class="n-title">${escapeHtml(n.title)}</div>
+        <div class="n-sub">${escapeHtml(n.sub)}</div>
+      </div>
+    </div>
+  `).join('') : `
+    <div class="notif-empty">
+      <span class="serif">◯</span>
+      <div>No notifications</div>
+    </div>
+  `;
+
+  panel.innerHTML = `
+    <div class="notif-head">
+      <h4>Notifications ${unread > 0 ? `<span style="color:var(--ink-3); font-weight:500; font-family:'JetBrains Mono', monospace; font-size:10px; margin-left:4px;">${unread} UNREAD</span>` : ''}</h4>
+      ${unread > 0 ? '<span class="clear" onclick="markAllRead(event)">Mark all read</span>' : '<span class="clear" onclick="clearNotifs(event)">Clear all</span>'}
+    </div>
+    <div class="notif-list">${list}</div>
+  `;
+}
+
+function toggleNotif(e) {
+  if (e) e.stopPropagation();
+  const panel = document.getElementById('notifPanel');
+  const btn = document.getElementById('notifBtn');
+  if (!panel) return;
+  const willOpen = !panel.classList.contains('open');
+  panel.classList.toggle('open');
+  if (btn) btn.classList.toggle('active', willOpen);
+  if (willOpen) renderNotifications();
+}
+
+function closeNotif() {
+  const panel = document.getElementById('notifPanel');
+  const btn = document.getElementById('notifBtn');
+  if (panel) panel.classList.remove('open');
+  if (btn) btn.classList.remove('active');
+}
+
+function openNotif(id) {
+  const n = state.notifications.find(x => x.id === id);
+  if (!n) return;
+  n.unread = false;
+  queueSave();
+  closeNotif();
+  if (n.target.type === 'doc') viewDoc(n.target.code);
+  else if (n.target.type === 'tm') viewTransmittal(n.target.code);
+  else if (n.target.type === 'nav') go(n.target.code);
+}
+
+function markAllRead(e) {
+  if (e) e.stopPropagation();
+  state.notifications.forEach(n => n.unread = false);
+  renderNotifications();
+  queueSave();
+  toast('All notifications marked as read');
+}
+
+function clearNotifs(e) {
+  if (e) e.stopPropagation();
+  state.notifications = [];
+  renderNotifications();
+  queueSave();
+  toast('Notifications cleared');
+}
+
+/* ============================================================
    TOAST
    ============================================================ */
 function toast(msg, isError) {
@@ -3338,6 +5911,289 @@ function hookEvents() {
 }
 
 /* ============================================================
+   GLOBAL KEY + CLICK BINDINGS  (bound once, on load)
+   ============================================================ */
+function bindGlobalUI() {
+  const input = document.getElementById('globalSearch');
+  const box = document.getElementById('searchBox');
+  const panel = document.getElementById('searchResults');
+  const clearBtn = document.getElementById('searchClear');
+
+  if (input) {
+    input.addEventListener('input', (e) => runSearch(e.target.value));
+    input.addEventListener('focus', () => {
+      if (box) box.classList.add('focused');
+      if (input.value.trim()) runSearch(input.value);
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (panel && !panel.classList.contains('open') && input.value.trim()) runSearch(input.value);
+        setSearchActive(searchCtx.activeIndex + 1);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSearchActive(searchCtx.activeIndex - 1);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (searchCtx.activeIndex >= 0) {
+          selectSearchResult(searchCtx.activeIndex);
+        } else if (searchCtx.results.length > 0) {
+          selectSearchResult(0);
+        }
+      } else if (e.key === 'Escape') {
+        if (input.value) {
+          clearSearch();
+        } else {
+          closeSearch();
+        }
+      }
+    });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      clearSearch();
+    });
+  }
+
+  // Click outside closes dropdowns
+  document.addEventListener('click', (e) => {
+    const sw = document.querySelector('.search-wrap');
+    if (sw && !sw.contains(e.target)) closeSearch();
+    const nw = document.querySelector('.notif-wrap');
+    if (nw && !nw.contains(e.target)) closeNotif();
+  });
+
+  // Keyboard: ⌘K / Ctrl+K to focus search, / as well, Esc to close, g+letter for nav
+  let gPrefix = false;
+  let gTimer = null;
+  document.addEventListener('keydown', (e) => {
+    const isMod = e.metaKey || e.ctrlKey;
+    const inField = ['INPUT','TEXTAREA','SELECT'].includes((document.activeElement||{}).tagName);
+
+    if (isMod && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      focusSearch();
+      return;
+    }
+    if (e.key === '/' && !inField) {
+      e.preventDefault();
+      focusSearch();
+      return;
+    }
+    if (e.key === 'Escape') {
+      closeSearch();
+      closeNotif();
+      hideHelp();
+      gPrefix = false;
+      return;
+    }
+    if (e.key === '?' && !inField) {
+      e.preventDefault();
+      toggleHelp();
+      return;
+    }
+    // Vim-style "g" prefix
+    if (!inField) {
+      if (gPrefix) {
+        const map = { d:'dashboard', p:'projects', r:'register', u:'upload', b:'bulkImport', t:'transmittals', f:'incomingTm', n:'newTransmittal', q:'tq', w:'stq', i:'rfi', l:'letters', e:'memos', o:'mom', s:'schedule', k:'databook', x:'reports', c:'config', m:'matrix', a:'audit' };
+        const target = map[e.key.toLowerCase()];
+        if (target) {
+          e.preventDefault();
+          go(target);
+        }
+        gPrefix = false;
+        clearTimeout(gTimer);
+        return;
+      }
+      if (e.key === 'g') {
+        gPrefix = true;
+        clearTimeout(gTimer);
+        gTimer = setTimeout(() => { gPrefix = false; }, 1200);
+        return;
+      }
+      // Standalone shortcuts (shift+letter to avoid false triggers)
+      if (e.shiftKey && e.key === 'T') {
+        e.preventDefault();
+        toggleTheme();
+        return;
+      }
+    }
+  });
+}
+
+function toggleHelp() {
+  const existing = document.getElementById('keyHelpOverlay');
+  if (existing) { existing.remove(); return; }
+  const overlay = document.createElement('div');
+  overlay.id = 'keyHelpOverlay';
+  overlay.style.cssText = 'position:fixed; inset:0; background:var(--overlay); backdrop-filter:blur(2px); z-index:300; display:flex; align-items:center; justify-content:center;';
+  overlay.onclick = (e) => { if (e.target === overlay) hideHelp(); };
+  const rows = [
+    ['Global', [
+      ['⌘K / Ctrl+K', 'Focus search'],
+      ['/', 'Focus search'],
+      ['?', 'Toggle this help'],
+      ['Esc', 'Close panels / clear'],
+      ['Shift + T', 'Toggle theme'],
+    ]],
+    ['Search', [
+      ['↑ / ↓', 'Navigate results'],
+      ['↵ Enter', 'Open active result'],
+    ]],
+    ['Navigate — press "g" then', [
+      ['d', 'Dashboard'],
+      ['p', 'Projects'],
+      ['r', 'Register'],
+      ['u', 'New Document'],
+      ['b', 'Bulk Import'],
+      ['t', 'Transmittals (Out)'],
+      ['f', 'Incoming Transmittals'],
+      ['n', 'New Transmittal'],
+      ['q', 'Technical Queries'],
+      ['w', 'Site Tech Queries'],
+      ['i', 'RFIs'],
+      ['l', 'Letters'],
+      ['e', 'Memos'],
+      ['o', 'Minutes of Meeting'],
+      ['s', 'Schedule'],
+      ['k', 'Data Book'],
+      ['x', 'Reports'],
+      ['c', 'Project Setup'],
+      ['m', 'Distribution Matrix'],
+      ['a', 'Audit Trail'],
+    ]],
+  ];
+  overlay.innerHTML = `
+    <div style="background:var(--surface); border:1px solid var(--line-strong); box-shadow:var(--shadow-modal); width:min(540px, 92vw); max-height:80vh; overflow:auto;">
+      <div style="padding:16px 22px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-3); font-weight:600;">Reference</div>
+          <h2 style="font-family:'Instrument Serif', serif; font-size:22px; font-weight:400; margin-top:2px;">Keyboard Shortcuts</h2>
+        </div>
+        <button onclick="hideHelp()" style="width:28px; height:28px; display:grid; place-items:center; cursor:pointer; border:0; background:transparent; font-size:18px; color:var(--ink-3);">×</button>
+      </div>
+      <div style="padding:20px 22px;">
+        ${rows.map(([group, items]) => `
+          <div style="margin-bottom:18px;">
+            <div style="font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-3); font-weight:600; margin-bottom:10px;">${group}</div>
+            <div style="display:grid; grid-template-columns: 130px 1fr; gap:6px 12px;">
+              ${items.map(([k, d]) => `
+                <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--ink);"><span style="background:var(--bg); border:1px solid var(--line-strong); padding:2px 6px;">${escapeHtml(k)}</span></div>
+                <div style="font-size:12px; color:var(--ink-2); align-self:center;">${escapeHtml(d)}</div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div style="padding:12px 22px; border-top:1px solid var(--line); background:var(--bg); font-size:10.5px; color:var(--ink-3); font-family:'JetBrains Mono', monospace; letter-spacing:0.5px;">
+        Press <span style="padding:1px 5px; border:1px solid var(--line-strong); background:var(--surface);">?</span> again or <span style="padding:1px 5px; border:1px solid var(--line-strong); background:var(--surface);">Esc</span> to close
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+function hideHelp() {
+  const o = document.getElementById('keyHelpOverlay');
+  if (o) o.remove();
+}
+
+/* ============================================================
+   STATE PERSISTENCE
+   ============================================================ */
+const STORAGE_KEY = 'edms-state-v1';
+let saveTimer = null;
+
+function saveState() {
+  const payload = {
+    documents: state.documents,
+    transmittals: state.transmittals,
+    incomingTransmittals: state.incomingTransmittals,
+    technicalQueries: state.technicalQueries,
+    siteTechQueries: state.siteTechQueries,
+    rfis: state.rfis,
+    letters: state.letters,
+    memos: state.memos,
+    minutesOfMeeting: state.minutesOfMeeting,
+    audit: state.audit.slice(0, 100), // cap audit history
+    notifications: state.notifications.slice(0, 50),
+    distributionMatrix: state.distributionMatrix,
+    registerFilter: state.registerFilter,
+    tmFilter: state.tmFilter,
+    incomingTmFilter: state.incomingTmFilter,
+    auditFilter: state.auditFilter,
+    tqFilter: state.tqFilter,
+    letterFilter: state.letterFilter,
+    savedAt: new Date().toISOString(),
+  };
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    showSavedIndicator();
+  } catch (e) {
+    console.warn('Failed to save state', e);
+  }
+}
+
+function showSavedIndicator() {
+  const el = document.getElementById('savedIndicator');
+  if (!el) return;
+  el.textContent = '● SAVING...';
+  el.className = 'saved-indicator saving';
+  setTimeout(() => {
+    el.textContent = '● SAVED';
+    el.className = 'saved-indicator saved';
+  }, 200);
+  setTimeout(() => {
+    el.textContent = '';
+    el.className = 'saved-indicator';
+  }, 2400);
+}
+
+// Debounced save — called after any state mutation
+function queueSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveState, 400);
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const payload = JSON.parse(raw);
+    if (payload.documents) state.documents = payload.documents;
+    if (payload.transmittals) state.transmittals = payload.transmittals;
+    if (payload.incomingTransmittals) state.incomingTransmittals = payload.incomingTransmittals;
+    if (payload.technicalQueries) state.technicalQueries = payload.technicalQueries;
+    if (payload.siteTechQueries) state.siteTechQueries = payload.siteTechQueries;
+    if (payload.rfis) state.rfis = payload.rfis;
+    if (payload.letters) state.letters = payload.letters;
+    if (payload.memos) state.memos = payload.memos;
+    if (payload.minutesOfMeeting) state.minutesOfMeeting = payload.minutesOfMeeting;
+    if (payload.audit) state.audit = payload.audit;
+    if (payload.notifications) state.notifications = payload.notifications;
+    if (payload.distributionMatrix) state.distributionMatrix = payload.distributionMatrix;
+    if (payload.registerFilter) state.registerFilter = payload.registerFilter;
+    if (payload.tmFilter) state.tmFilter = payload.tmFilter;
+    if (payload.incomingTmFilter) state.incomingTmFilter = payload.incomingTmFilter;
+    if (payload.auditFilter) state.auditFilter = payload.auditFilter;
+    if (payload.tqFilter) state.tqFilter = payload.tqFilter;
+    if (payload.letterFilter) state.letterFilter = payload.letterFilter;
+    return true;
+  } catch (e) {
+    console.warn('Failed to load state', e);
+    return false;
+  }
+}
+
+function resetState() {
+  if (!confirm('Reset all demo data to the initial state? This cannot be undone.')) return;
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  location.reload();
+}
+
+/* ============================================================
    INIT
    ============================================================ */
 function updateSyncTime() {
@@ -3349,7 +6205,15 @@ function updateSyncTime() {
 updateSyncTime();
 setInterval(updateSyncTime, 30000);
 
+const restored = loadState();
+initTheme();
 render();
+bindGlobalUI();
+renderNotifications();
+if (restored) {
+  // Subtle cue only; don't spam
+  setTimeout(() => toast('Session restored from local storage'), 400);
+}
 </script>
 
 </body>

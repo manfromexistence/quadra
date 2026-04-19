@@ -29,6 +29,13 @@
       "when": 1776609124863,
       "tag": "0003_big_korg",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1776616597601,
+      "tag": "0004_fearless_randall_flagg",
+      "breakpoints": true
     }
   ]
 }

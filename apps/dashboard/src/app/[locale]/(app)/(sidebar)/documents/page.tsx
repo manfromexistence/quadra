@@ -16,6 +16,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { CollapsibleSummary } from "@/components/collapsible-summary";
 import { EdmsDataState } from "@/components/edms/data-state";
+import { DocumentBulkImportSheet } from "@/components/edms/document-bulk-import-sheet";
 import { DocumentBulkUploadSheet } from "@/components/edms/document-bulk-upload-sheet";
 import { ExportButton } from "@/components/edms/export-button";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
@@ -143,6 +144,7 @@ export default async function DocumentsPage({
                   <Button asChild>
                     <Link href="/documents/new">+ New Document</Link>
                   </Button>
+                  <DocumentBulkImportSheet projects={data.projects} />
                   <DocumentBulkUploadSheet projects={data.projects} />
                 </>
               ) : null}
