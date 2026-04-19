@@ -1,5 +1,5 @@
 import { like, or } from "drizzle-orm";
-import type { Database } from "@/db/client";
+import type { LibSQLDatabase } from "drizzle-orm/libsql";
 import { documents } from "@/db/schema/documents";
 import { notifications } from "@/db/schema/notifications";
 import { projects } from "@/db/schema/projects";
@@ -17,7 +17,7 @@ export interface GlobalSearchResult {
 }
 
 export async function globalSearch(
-  db: Database,
+  db: LibSQLDatabase,
   query: string,
   limit = 50,
 ): Promise<GlobalSearchResult[]> {

@@ -7,6 +7,21 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Fixed
 
+- **Database Import Path Issue** ✅
+  - Fixed incorrect import paths in all database query files
+  - Changed `import { db } from "@/db/client"` to `import { db } from "@/db"`
+  - Changed `import type { Database } from "@/db/client"` to `import type { LibSQLDatabase } from "drizzle-orm/libsql"`
+  - **Files Fixed:**
+    - `apps/dashboard/src/lib/edms/incoming-transmittals.ts`
+    - `apps/dashboard/src/lib/edms/queries.ts`
+    - `apps/dashboard/src/lib/edms/correspondence.ts`
+    - `apps/dashboard/src/lib/search/global-search.ts`
+  - Verified no remaining `@/db/client` references in entire codebase
+  - Build now succeeds without module resolution errors
+  - All query functions correctly import the database client
+
+### Fixed
+
 - **Final Comprehensive Quality Check (Round 5)** ✅
   - Ran comprehensive Biome lint and format on all source directories
   - **Fixed 4 files:**

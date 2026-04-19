@@ -6,6 +6,20 @@
 
 ## Completed ✅
 
+- [x] ~~Fixed Database Import Path Issue~~ ✅ 2026-04-19
+  - Fixed incorrect import path `@/db/client` to `@/db` in all query libraries
+  - Fixed incorrect type import `Database` to `LibSQLDatabase` in global-search
+  - **Files Fixed:**
+    - `incoming-transmittals.ts` - Changed db import path
+    - `queries.ts` - Changed db import path
+    - `correspondence.ts` - Changed db import path
+    - `global-search.ts` - Changed type import from `@/db/client` to `drizzle-orm/libsql`
+  - All files now import from correct paths
+  - Build errors resolved
+  - Verified no remaining `@/db/client` references in codebase
+
+## Completed ✅
+
 - [x] ~~Final Comprehensive Lint and Format Check (Round 5)~~ ✅ 2026-04-19
   - Ran comprehensive Biome check on all source directories
   - **Fixed 4 files:**
