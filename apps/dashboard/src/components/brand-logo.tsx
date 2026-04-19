@@ -16,13 +16,10 @@ interface BrandLogoProps {
  *
  * No Next.js Image component, no image loader, no network requests.
  */
-export function BrandLogo({
-  size = 36,
-  className,
-}: BrandLogoProps) {
+export function BrandLogo({ size = 36, className }: BrandLogoProps) {
   return (
-    <span 
-      className={cn("relative inline-block shrink-0", className)} 
+    <span
+      className={cn("relative inline-block shrink-0", className)}
       style={{ width: size, height: size }}
     >
       {/* Light mode logo */}
@@ -32,7 +29,7 @@ export function BrandLogo({
         width={size}
         height={size}
         className="dark:hidden object-contain"
-        style={{ width: size, height: size, position: 'absolute', inset: 0 }}
+        style={{ width: size, height: size, position: "absolute", inset: 0 }}
         loading="eager"
       />
       {/* Dark mode logo */}
@@ -42,7 +39,7 @@ export function BrandLogo({
         width={size}
         height={size}
         className="hidden dark:block object-contain"
-        style={{ width: size, height: size, position: 'absolute', inset: 0 }}
+        style={{ width: size, height: size, position: "absolute", inset: 0 }}
         loading="eager"
       />
     </span>

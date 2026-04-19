@@ -1,13 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FilePlus2, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { createDocument } from "@/actions/documents";
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@midday/ui/button";
 import {
   Form,
@@ -19,7 +12,13 @@ import {
   FormMessage,
 } from "@midday/ui/form";
 import { Input } from "@midday/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@midday/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -29,6 +28,13 @@ import {
   SheetTrigger,
 } from "@midday/ui/sheet";
 import { Textarea } from "@midday/ui/textarea";
+import { FilePlus2, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { createDocument } from "@/actions/documents";
+import { toast } from "@/hooks/use-toast";
 import { DocumentFileUpload } from "./document-file-upload";
 import { ImageCardUpload } from "./image-card-upload";
 
@@ -115,7 +121,8 @@ export function DocumentCreateSheet({
 
       toast({
         title: "Document added",
-        description: "The document record is now available in control with its initial version.",
+        description:
+          "The document record is now available in control with its initial version.",
       });
 
       setIsOpen(false);
@@ -136,14 +143,18 @@ export function DocumentCreateSheet({
           <div className="px-6 pt-6">
             <SheetTitle>Register document</SheetTitle>
             <SheetDescription>
-              Capture the first controlled revision now with direct upload support and a URL
-              fallback for environments where storage is still being finalized.
+              Capture the first controlled revision now with direct upload
+              support and a URL fallback for environments where storage is still
+              being finalized.
             </SheetDescription>
           </div>
         </SheetHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-6 px-6 pb-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="mt-8 space-y-6 px-6 pb-6"
+          >
             <div className="grid gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
@@ -179,11 +190,14 @@ export function DocumentCreateSheet({
                   <FormItem>
                     <FormLabel>Document number</FormLabel>
                     <FormControl>
-                      <Input placeholder="Leave blank to auto-generate" {...field} />
+                      <Input
+                        placeholder="Leave blank to auto-generate"
+                        {...field}
+                      />
                     </FormControl>
                     <FormDescription>
-                      If omitted, the EDMS will generate the next number from the project,
-                      discipline, and category.
+                      If omitted, the EDMS will generate the next number from
+                      the project, discipline, and category.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -198,7 +212,10 @@ export function DocumentCreateSheet({
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Podium slab reinforcement details" {...field} />
+                    <Input
+                      placeholder="Podium slab reinforcement details"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -332,10 +349,18 @@ export function DocumentCreateSheet({
               folder="documents"
               helperText="Upload the controlled file directly to EDMS storage. If object storage is not configured in this environment yet, you can still paste an external file URL below."
               onUploaded={(file) => {
-                form.setValue("fileName", file.fileName, { shouldValidate: true });
-                form.setValue("fileType", file.fileType, { shouldValidate: true });
-                form.setValue("fileUrl", file.fileUrl, { shouldValidate: true });
-                form.setValue("fileSize", file.fileSize, { shouldValidate: true });
+                form.setValue("fileName", file.fileName, {
+                  shouldValidate: true,
+                });
+                form.setValue("fileType", file.fileType, {
+                  shouldValidate: true,
+                });
+                form.setValue("fileUrl", file.fileUrl, {
+                  shouldValidate: true,
+                });
+                form.setValue("fileSize", file.fileSize, {
+                  shouldValidate: true,
+                });
               }}
             />
 
@@ -352,7 +377,8 @@ export function DocumentCreateSheet({
                     />
                   </FormControl>
                   <FormDescription>
-                    Direct upload is preferred. External URLs remain supported as a fallback path.
+                    Direct upload is preferred. External URLs remain supported
+                    as a fallback path.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -366,9 +392,14 @@ export function DocumentCreateSheet({
                 <FormItem>
                   <FormLabel>Tags</FormLabel>
                   <FormControl>
-                    <Input placeholder="podium, structural, issue-for-review" {...field} />
+                    <Input
+                      placeholder="podium, structural, issue-for-review"
+                      {...field}
+                    />
                   </FormControl>
-                  <FormDescription>Comma-separated tags for quick retrieval.</FormDescription>
+                  <FormDescription>
+                    Comma-separated tags for quick retrieval.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -392,7 +423,11 @@ export function DocumentCreateSheet({
             />
 
             <div className="flex items-center justify-end gap-3 border-t pt-6">
-              <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setIsOpen(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={isPending}>
@@ -415,5 +450,3 @@ export function DocumentCreateSheet({
     </Sheet>
   );
 }
-
-

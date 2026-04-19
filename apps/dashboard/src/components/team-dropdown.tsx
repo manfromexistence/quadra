@@ -184,7 +184,10 @@ export function TeamDropdown({ isExpanded = false }: Props) {
                             }}
                           >
                             <AvatarImageNext
-                              src={team?.logoUrl || "https://github.com/evilrabbit.png"}
+                              src={
+                                team?.logoUrl ||
+                                "https://github.com/evilrabbit.png"
+                              }
                               alt={team?.name ?? ""}
                               width={32}
                               height={32}
@@ -218,7 +221,9 @@ export function TeamDropdown({ isExpanded = false }: Props) {
                         }}
                       >
                         <AvatarImageNext
-                          src={team?.logoUrl || "https://github.com/evilrabbit.png"}
+                          src={
+                            team?.logoUrl || "https://github.com/evilrabbit.png"
+                          }
                           alt={team?.name ?? ""}
                           width={32}
                           height={32}

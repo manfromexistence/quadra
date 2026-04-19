@@ -1,13 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GitBranchPlus, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { createDocumentVersion } from "@/actions/documents";
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@midday/ui/button";
 import {
   Form,
@@ -19,7 +12,13 @@ import {
   FormMessage,
 } from "@midday/ui/form";
 import { Input } from "@midday/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@midday/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -29,6 +28,13 @@ import {
   SheetTrigger,
 } from "@midday/ui/sheet";
 import { Textarea } from "@midday/ui/textarea";
+import { GitBranchPlus, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { createDocumentVersion } from "@/actions/documents";
+import { toast } from "@/hooks/use-toast";
 import { DocumentFileUpload } from "./document-file-upload";
 
 const documentStatuses = [
@@ -48,7 +54,10 @@ const documentVersionSchema = z.object({
   fileSize: z.number().nonnegative().optional(),
   fileType: z.string().trim(),
   fileUrl: z.string().trim().url("Enter a valid file URL."),
-  changeDescription: z.string().trim().min(2, "Change description is required."),
+  changeDescription: z
+    .string()
+    .trim()
+    .min(2, "Change description is required."),
 });
 
 type DocumentVersionValues = z.infer<typeof documentVersionSchema>;
@@ -138,7 +147,8 @@ export function DocumentVersionSheet({
 
       toast({
         title: "New version issued",
-        description: "The latest controlled revision is now available in the EDMS.",
+        description:
+          "The latest controlled revision is now available in the EDMS.",
       });
 
       setIsOpen(false);
@@ -158,12 +168,16 @@ export function DocumentVersionSheet({
         <SheetHeader className="space-y-1">
           <SheetTitle>Issue new revision</SheetTitle>
           <SheetDescription>
-            Promote a new controlled file version and update the document register in one step.
+            Promote a new controlled file version and update the document
+            register in one step.
           </SheetDescription>
         </SheetHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="mt-8 space-y-6"
+          >
             <div className="grid gap-4 md:grid-cols-3">
               <FormField
                 control={form.control}
@@ -251,10 +265,18 @@ export function DocumentVersionSheet({
               folder="versions"
               helperText="Upload the next controlled revision directly to EDMS storage, or keep the external URL workflow as fallback."
               onUploaded={(file) => {
-                form.setValue("fileName", file.fileName, { shouldValidate: true });
-                form.setValue("fileType", file.fileType, { shouldValidate: true });
-                form.setValue("fileUrl", file.fileUrl, { shouldValidate: true });
-                form.setValue("fileSize", file.fileSize, { shouldValidate: true });
+                form.setValue("fileName", file.fileName, {
+                  shouldValidate: true,
+                });
+                form.setValue("fileType", file.fileType, {
+                  shouldValidate: true,
+                });
+                form.setValue("fileUrl", file.fileUrl, {
+                  shouldValidate: true,
+                });
+                form.setValue("fileSize", file.fileSize, {
+                  shouldValidate: true,
+                });
               }}
             />
 
@@ -268,7 +290,8 @@ export function DocumentVersionSheet({
                     <Input {...field} />
                   </FormControl>
                   <FormDescription>
-                    Direct upload is preferred. External URLs remain supported as fallback.
+                    Direct upload is preferred. External URLs remain supported
+                    as fallback.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -294,7 +317,11 @@ export function DocumentVersionSheet({
             />
 
             <div className="flex items-center justify-end gap-3 border-t pt-6">
-              <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setIsOpen(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={isPending}>
@@ -317,5 +344,3 @@ export function DocumentVersionSheet({
     </Sheet>
   );
 }
-
-

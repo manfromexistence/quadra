@@ -12,6 +12,6 @@ export async function getSession() {
       email: "mock@example.com",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-    }
+    },
   };
 }

@@ -1,7 +1,7 @@
 import "server-only";
 
-import { randomUUID } from "node:crypto";
 import { Buffer } from "node:buffer";
+import { randomUUID } from "node:crypto";
 import { db } from "@/db";
 import { edmsFileAssets } from "@/db/schema/edms-file-assets";
 import { getServerAppUrl } from "@/utils/app-url";
@@ -32,7 +32,9 @@ export async function uploadEdmsFileToTurso(input: {
   }
 
   const assetId = randomUUID();
-  const dataBase64 = Buffer.from(await input.file.arrayBuffer()).toString("base64");
+  const dataBase64 = Buffer.from(await input.file.arrayBuffer()).toString(
+    "base64",
+  );
   const fileType = input.file.type || getExtensionFromFileName(input.file.name);
 
   await db.insert(edmsFileAssets).values({

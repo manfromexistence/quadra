@@ -1,11 +1,17 @@
 "use client";
 
-import { Building2, Calendar, ExternalLink, Image as ImageIcon, MapPin } from "lucide-react";
+import { Button } from "@midday/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
+import {
+  Building2,
+  Calendar,
+  ExternalLink,
+  Image as ImageIcon,
+  MapPin,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { expandImageArray } from "@/lib/storage-utils";
-import { Button } from "@midday/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
 import { EdmsStatusBadge } from "./status-badge";
 
 interface ProjectPreviewPopoverProps {
@@ -23,7 +29,10 @@ interface ProjectPreviewPopoverProps {
   children: React.ReactNode;
 }
 
-export function ProjectPreviewPopover({ project, children }: ProjectPreviewPopoverProps) {
+export function ProjectPreviewPopover({
+  project,
+  children,
+}: ProjectPreviewPopoverProps) {
   const images = expandImageArray(project.images);
 
   return (
@@ -37,7 +46,9 @@ export function ProjectPreviewPopover({ project, children }: ProjectPreviewPopov
               <div className="flex-1 space-y-1">
                 <h4 className="font-semibold leading-tight">{project.name}</h4>
                 {project.projectNumber && (
-                  <p className="font-mono text-xs text-muted-foreground">{project.projectNumber}</p>
+                  <p className="font-mono text-xs text-muted-foreground">
+                    {project.projectNumber}
+                  </p>
                 )}
               </div>
               <EdmsStatusBadge status={project.status} />
@@ -93,7 +104,9 @@ export function ProjectPreviewPopover({ project, children }: ProjectPreviewPopov
               <div className="flex aspect-video items-center justify-center rounded-lg border border-dashed border-border bg-card">
                 <div className="flex flex-col items-center gap-2 text-center">
                   <Building2 className="size-8 text-muted-foreground/50" />
-                  <p className="text-xs text-muted-foreground">No project images</p>
+                  <p className="text-xs text-muted-foreground">
+                    No project images
+                  </p>
                 </div>
               </div>
             )}
@@ -101,7 +114,9 @@ export function ProjectPreviewPopover({ project, children }: ProjectPreviewPopov
             {/* Description */}
             {project.description && (
               <div className="mt-3">
-                <p className="text-sm text-muted-foreground line-clamp-3">{project.description}</p>
+                <p className="text-sm text-muted-foreground line-clamp-3">
+                  {project.description}
+                </p>
               </div>
             )}
           </div>
@@ -112,10 +127,12 @@ export function ProjectPreviewPopover({ project, children }: ProjectPreviewPopov
               {project.location && (
                 <div className="flex items-center gap-2">
                   <MapPin className="size-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">{project.location}</span>
+                  <span className="text-sm font-medium">
+                    {project.location}
+                  </span>
                 </div>
               )}
-              
+
               {(project.startDate || project.endDate) && (
                 <div className="flex items-center gap-2">
                   <Calendar className="size-4 text-muted-foreground" />
@@ -123,10 +140,10 @@ export function ProjectPreviewPopover({ project, children }: ProjectPreviewPopov
                     {project.startDate && project.endDate
                       ? `${new Date(project.startDate).toLocaleDateString()} - ${new Date(project.endDate).toLocaleDateString()}`
                       : project.startDate
-                      ? `Started ${new Date(project.startDate).toLocaleDateString()}`
-                      : project.endDate
-                      ? `Due ${new Date(project.endDate).toLocaleDateString()}`
-                      : ""}
+                        ? `Started ${new Date(project.startDate).toLocaleDateString()}`
+                        : project.endDate
+                          ? `Due ${new Date(project.endDate).toLocaleDateString()}`
+                          : ""}
                   </span>
                 </div>
               )}

@@ -23,7 +23,7 @@ export function exportToPDF(
     filename?: string;
     orientation?: "portrait" | "landscape";
     metadata?: { label: string; value: string }[];
-  }
+  },
 ) {
   const doc = new jsPDF({
     orientation: options.orientation || "landscape",
@@ -51,7 +51,7 @@ export function exportToPDF(
     columns.map((col) => {
       const value = row[col.key];
       return value !== null && value !== undefined ? String(value) : "";
-    })
+    }),
   );
 
   // Add table
@@ -71,12 +71,15 @@ export function exportToPDF(
     alternateRowStyles: {
       fillColor: [250, 250, 250],
     },
-    columnStyles: columns.reduce((acc, col, index) => {
-      if (col.width) {
-        acc[index] = { cellWidth: col.width };
-      }
-      return acc;
-    }, {} as Record<number, { cellWidth: number }>),
+    columnStyles: columns.reduce(
+      (acc, col, index) => {
+        if (col.width) {
+          acc[index] = { cellWidth: col.width };
+        }
+        return acc;
+      },
+      {} as Record<number, { cellWidth: number }>,
+    ),
   });
 
   // Add footer with date
@@ -87,12 +90,13 @@ export function exportToPDF(
     doc.text(
       `Generated: ${new Date().toLocaleString()} | Page ${i} of ${pageCount}`,
       14,
-      doc.internal.pageSize.height - 10
+      doc.internal.pageSize.height - 10,
     );
   }
 
   // Download
-  const filename = options.filename || `${options.title.replace(/\s+/g, "_")}.pdf`;
+  const filename =
+    options.filename || `${options.title.replace(/\s+/g, "_")}.pdf`;
   doc.save(filename);
 }
 
@@ -106,7 +110,7 @@ export function exportToExcel(
     title: string;
     filename?: string;
     sheetName?: string;
-  }
+  },
 ) {
   // Create workbook
   const wb = XLSX.utils.book_new();
@@ -117,7 +121,7 @@ export function exportToExcel(
     columns.map((col) => {
       const value = row[col.key];
       return value !== null && value !== undefined ? value : "";
-    })
+    }),
   );
 
   // Create worksheet
@@ -132,7 +136,8 @@ export function exportToExcel(
   XLSX.utils.book_append_sheet(wb, ws, options.sheetName || "Data");
 
   // Download
-  const filename = options.filename || `${options.title.replace(/\s+/g, "_")}.xlsx`;
+  const filename =
+    options.filename || `${options.title.replace(/\s+/g, "_")}.xlsx`;
   XLSX.writeFile(wb, filename);
 }
 
@@ -170,6 +175,7 @@ export function exportPageToPDF(options: {
   doc.text(lines, 14, 30);
 
   // Download
-  const filename = options.filename || `${options.title.replace(/\s+/g, "_")}.pdf`;
+  const filename =
+    options.filename || `${options.title.replace(/\s+/g, "_")}.pdf`;
   doc.save(filename);
 }

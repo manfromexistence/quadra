@@ -1,11 +1,11 @@
 "use client";
 
+import { Button } from "@midday/ui/button";
 import { Loader2, MailCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { acknowledgeTransmittal } from "@/actions/transmittals";
 import { toast } from "@/hooks/use-toast";
-import { Button } from "@midday/ui/button";
 
 export function TransmittalAcknowledgeButton({
   transmittalId,
@@ -36,7 +36,8 @@ export function TransmittalAcknowledgeButton({
 
           toast({
             title: "Transmittal acknowledged",
-            description: "The package status has been updated for the project team.",
+            description:
+              "The package status has been updated for the project team.",
           });
 
           router.refresh();
@@ -57,5 +58,3 @@ export function TransmittalAcknowledgeButton({
     </Button>
   );
 }
-
-

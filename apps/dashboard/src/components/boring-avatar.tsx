@@ -20,19 +20,17 @@ function generateColors(name: string): string[] {
     ["#00B894", "#00CEC9", "#74B9FF", "#A29BFE", "#6C5CE7"],
     ["#E17055", "#FDCB6E", "#FFEAA7", "#55EFC4", "#81ECEC"],
   ];
-  
+
   // Use name to deterministically select a color palette
-  const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const hash = name
+    .split("")
+    .reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return colors[hash % colors.length]!;
 }
 
-export function BoringAvatar({
-  name,
-  size = 40,
-  square = false,
-}: Props) {
+export function BoringAvatar({ name, size = 40, square = false }: Props) {
   const colors = generateColors(name);
-  
+
   return (
     <div className="w-full h-full flex items-center justify-center">
       <Avatar

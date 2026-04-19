@@ -1,9 +1,9 @@
 "use client";
 
-import { Clock, ExternalLink, FileText, User } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@midday/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
+import { Clock, ExternalLink, FileText, User } from "lucide-react";
+import Link from "next/link";
 import { EdmsStatusBadge, formatEdmsLabel } from "./status-badge";
 
 interface WorkflowPreviewPopoverProps {
@@ -20,7 +20,10 @@ interface WorkflowPreviewPopoverProps {
   children: React.ReactNode;
 }
 
-export function WorkflowPreviewPopover({ workflow, children }: WorkflowPreviewPopoverProps) {
+export function WorkflowPreviewPopover({
+  workflow,
+  children,
+}: WorkflowPreviewPopoverProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -30,8 +33,12 @@ export function WorkflowPreviewPopover({ workflow, children }: WorkflowPreviewPo
           <div className="border-b border-border bg-muted/30 p-4">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 space-y-1">
-                <h4 className="font-semibold leading-tight">{workflow.stepName}</h4>
-                <p className="text-sm text-muted-foreground">{workflow.title}</p>
+                <h4 className="font-semibold leading-tight">
+                  {workflow.stepName}
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  {workflow.title}
+                </p>
               </div>
               <EdmsStatusBadge status={workflow.status} />
             </div>
@@ -41,7 +48,9 @@ export function WorkflowPreviewPopover({ workflow, children }: WorkflowPreviewPo
           <div className="p-4 space-y-4">
             <div className="flex items-center gap-2">
               <FileText className="size-4 text-muted-foreground" />
-              <span className="font-mono text-sm">{workflow.documentNumber}</span>
+              <span className="font-mono text-sm">
+                {workflow.documentNumber}
+              </span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -52,7 +61,9 @@ export function WorkflowPreviewPopover({ workflow, children }: WorkflowPreviewPo
             {workflow.assignedRole && (
               <div className="flex items-center gap-2">
                 <User className="size-4 text-muted-foreground" />
-                <span className="text-sm">{formatEdmsLabel(workflow.assignedRole)}</span>
+                <span className="text-sm">
+                  {formatEdmsLabel(workflow.assignedRole)}
+                </span>
               </div>
             )}
 

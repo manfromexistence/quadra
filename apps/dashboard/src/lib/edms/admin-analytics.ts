@@ -83,7 +83,7 @@ interface MonthCountRow {
 }
 
 export async function getAdminAnalyticsData(
-  sessionUser: DashboardSessionUser
+  sessionUser: DashboardSessionUser,
 ): Promise<AdminAnalyticsData> {
   try {
     const rangeStart = getMonthRangeStart(11);
@@ -102,7 +102,10 @@ export async function getAdminAnalyticsData(
         db.select({ value: count() }).from(projects),
         db.select({ value: count() }).from(documents),
         db.select({ value: count() }).from(documentWorkflows),
-        db.select({ value: count() }).from(userTable).where(eq(userTable.isActive, true)),
+        db
+          .select({ value: count() })
+          .from(userTable)
+          .where(eq(userTable.isActive, true)),
         db.select({ value: count() }).from(userTable),
         db
           .select({ value: count() })
@@ -111,7 +114,12 @@ export async function getAdminAnalyticsData(
         db
           .select({ value: count() })
           .from(documentWorkflows)
-          .where(and(eq(documentWorkflows.status, "pending"), isNotNull(documentWorkflows.id))),
+          .where(
+            and(
+              eq(documentWorkflows.status, "pending"),
+              isNotNull(documentWorkflows.id),
+            ),
+          ),
         db
           .select({ value: count() })
           .from(documentWorkflows)
@@ -228,25 +236,32 @@ export async function getAdminAnalyticsData(
     ]);
 
     const [userActivityRows, userDocumentRows, userWorkflowRows] = userRows;
-    const [projectActivityRows, projectDocumentRows, projectWorkflowRows] = projectRows;
+    const [projectActivityRows, projectDocumentRows, projectWorkflowRows] =
+      projectRows;
 
     const summary = mapSummaryCounts(summaryRows as CountRow[][]);
     const documentsByMonth = mapMonthSeries(
       documentMonthRows as MonthCountRow[],
       rangeStart,
-      "Documents"
+      "Documents",
     );
-    const userGrowthByMonth = mapMonthSeries(userMonthRows as MonthCountRow[], rangeStart, "Users");
-    const workflowsByStatus = normalizeStatusRows(workflowStatusRows as WorkflowStatusRow[]);
+    const userGrowthByMonth = mapMonthSeries(
+      userMonthRows as MonthCountRow[],
+      rangeStart,
+      "Users",
+    );
+    const workflowsByStatus = normalizeStatusRows(
+      workflowStatusRows as WorkflowStatusRow[],
+    );
     const mostActiveUsers = mergeRankedRows(
       userActivityRows as CountByUserRow[],
       userDocumentRows as CountByUserRow[],
-      userWorkflowRows as CountByUserRow[]
+      userWorkflowRows as CountByUserRow[],
     );
     const mostActiveProjects = mergeProjectRows(
       projectActivityRows as CountByProjectRow[],
       projectDocumentRows as CountByProjectRow[],
-      projectWorkflowRows as CountByProjectRow[]
+      projectWorkflowRows as CountByProjectRow[],
     );
 
     return {
@@ -281,7 +296,9 @@ function mapSummaryCounts(summaryRows: CountRow[][]) {
   const totalWorkflows = toCount(workflowsRow?.[0]?.value);
   const approvedWorkflows = toCount(approvedRow?.[0]?.value);
   const rejectionRate =
-    totalWorkflows > 0 ? Math.round((toCount(rejectedRow?.[0]?.value) / totalWorkflows) * 100) : 0;
+    totalWorkflows > 0
+      ? Math.round((toCount(rejectedRow?.[0]?.value) / totalWorkflows) * 100)
+      : 0;
 
   return {
     totalProjects: toCount(projectsRow?.[0]?.value),
@@ -296,7 +313,9 @@ function mapSummaryCounts(summaryRows: CountRow[][]) {
   };
 }
 
-function buildSummaryMetrics(summary: AdminAnalyticsData["summary"]): AnalyticsSummaryMetric[] {
+function buildSummaryMetrics(
+  summary: AdminAnalyticsData["summary"],
+): AnalyticsSummaryMetric[] {
   return [
     {
       label: "Documents uploaded",
@@ -326,8 +345,14 @@ function buildSummaryMetrics(summary: AdminAnalyticsData["summary"]): AnalyticsS
   ];
 }
 
-function mapMonthSeries(rows: MonthCountRow[], rangeStart: Date, label: string) {
-  const lookup = new Map(rows.map((row) => [row.period ?? "", toCount(row.count)]));
+function mapMonthSeries(
+  rows: MonthCountRow[],
+  rangeStart: Date,
+  label: string,
+) {
+  const lookup = new Map(
+    rows.map((row) => [row.period ?? "", toCount(row.count)]),
+  );
   const series: AnalyticsTimeSeriesPoint[] = [];
 
   for (let index = 0; index < 12; index += 1) {
@@ -351,7 +376,13 @@ function normalizeStatusRows(rows: WorkflowStatusRow[]) {
     }))
     .sort((left, right) => right.count - left.count);
 
-  const preferredOrder = ["pending", "in_progress", "approved", "rejected", "cancelled"];
+  const preferredOrder = [
+    "pending",
+    "in_progress",
+    "approved",
+    "rejected",
+    "cancelled",
+  ];
   normalized.sort((left, right) => {
     const leftIndex = preferredOrder.indexOf(left.status);
     const rightIndex = preferredOrder.indexOf(right.status);
@@ -371,7 +402,7 @@ function normalizeStatusRows(rows: WorkflowStatusRow[]) {
 function mergeRankedRows(
   activityRows: CountByUserRow[],
   documentRows: CountByUserRow[],
-  workflowRows: CountByUserRow[]
+  workflowRows: CountByUserRow[],
 ) {
   const merged = new Map<string, AnalyticsRankedPoint>();
 
@@ -387,17 +418,20 @@ function mergeRankedRows(
       subtitle: row.email ?? null,
     };
 
-    existing.value += toCount(row.count) * getUserWeight(row, activityRows, documentRows);
+    existing.value +=
+      toCount(row.count) * getUserWeight(row, activityRows, documentRows);
     merged.set(row.userId, existing);
   }
 
-  return [...merged.values()].sort((left, right) => right.value - left.value).slice(0, 6);
+  return [...merged.values()]
+    .sort((left, right) => right.value - left.value)
+    .slice(0, 6);
 }
 
 function mergeProjectRows(
   activityRows: CountByProjectRow[],
   documentRows: CountByProjectRow[],
-  workflowRows: CountByProjectRow[]
+  workflowRows: CountByProjectRow[],
 ) {
   const merged = new Map<string, AnalyticsRankedPoint>();
 
@@ -413,17 +447,20 @@ function mergeProjectRows(
       subtitle: row.projectNumber ?? null,
     };
 
-    existing.value += toCount(row.count) * getProjectWeight(row, activityRows, documentRows);
+    existing.value +=
+      toCount(row.count) * getProjectWeight(row, activityRows, documentRows);
     merged.set(row.projectId, existing);
   }
 
-  return [...merged.values()].sort((left, right) => right.value - left.value).slice(0, 6);
+  return [...merged.values()]
+    .sort((left, right) => right.value - left.value)
+    .slice(0, 6);
 }
 
 function getUserWeight(
   row: CountByUserRow,
   activityRows: CountByUserRow[],
-  documentRows: CountByUserRow[]
+  documentRows: CountByUserRow[],
 ) {
   const isActivity = activityRows.includes(row);
   const isDocument = documentRows.includes(row);
@@ -442,7 +479,7 @@ function getUserWeight(
 function getProjectWeight(
   row: CountByProjectRow,
   activityRows: CountByProjectRow[],
-  documentRows: CountByProjectRow[]
+  documentRows: CountByProjectRow[],
 ) {
   const isActivity = activityRows.includes(row);
   const isDocument = documentRows.includes(row);
@@ -465,7 +502,7 @@ function getProjectWeight(
 
 function createFallbackAnalyticsData(
   sessionUser: DashboardSessionUser,
-  statusMessage: string
+  statusMessage: string,
 ): AdminAnalyticsData {
   const summary = {
     totalProjects: 7,
@@ -496,8 +533,18 @@ function createFallbackAnalyticsData(
         value: 34,
         subtitle: sessionUser.email,
       },
-      { id: "fallback-user-2", label: "Ayesha Karim", value: 28, subtitle: "ayesha@quadra.edms" },
-      { id: "fallback-user-3", label: "Imran Hossain", value: 22, subtitle: "imran@quadra.edms" },
+      {
+        id: "fallback-user-2",
+        label: "Ayesha Karim",
+        value: 28,
+        subtitle: "ayesha@quadra.edms",
+      },
+      {
+        id: "fallback-user-3",
+        label: "Imran Hossain",
+        value: 22,
+        subtitle: "imran@quadra.edms",
+      },
     ],
     mostActiveProjects: [
       {
@@ -536,7 +583,9 @@ function buildFallbackSeries(label: string): AnalyticsTimeSeriesPoint[] {
 
 function getMonthRangeStart(monthsBack: number) {
   const current = new Date();
-  const start = new Date(Date.UTC(current.getUTCFullYear(), current.getUTCMonth(), 1));
+  const start = new Date(
+    Date.UTC(current.getUTCFullYear(), current.getUTCMonth(), 1),
+  );
   start.setUTCMonth(start.getUTCMonth() - monthsBack);
   return start;
 }
@@ -571,7 +620,10 @@ function formatBytes(bytes: number) {
   }
 
   const units = ["B", "KB", "MB", "GB", "TB"];
-  const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+  const index = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    units.length - 1,
+  );
   const size = bytes / 1024 ** index;
   return `${size.toFixed(size >= 10 || index === 0 ? 0 : 1)} ${units[index]}`;
 }

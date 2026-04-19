@@ -9,8 +9,8 @@ import { canAccessProject } from "@/lib/edms/access";
 import { logEdmsActivity } from "@/lib/edms/notifications";
 import type { DashboardSessionUser } from "@/lib/edms/session";
 import {
-  actionFromError,
   actionError,
+  actionFromError,
   actionOk,
   createEdmsId,
   normalizeOptionalString,
@@ -28,7 +28,13 @@ interface CreateDocumentInput {
   category?: string;
   version: string;
   revision?: string;
-  status: "draft" | "submitted" | "under_review" | "approved" | "rejected" | "superseded";
+  status:
+    | "draft"
+    | "submitted"
+    | "under_review"
+    | "approved"
+    | "rejected"
+    | "superseded";
   fileName: string;
   fileSize?: number;
   fileType?: string;
@@ -60,7 +66,13 @@ interface CreateDocumentVersionInput {
   documentId: string;
   version: string;
   revision?: string;
-  status: "draft" | "submitted" | "under_review" | "approved" | "rejected" | "superseded";
+  status:
+    | "draft"
+    | "submitted"
+    | "under_review"
+    | "approved"
+    | "rejected"
+    | "superseded";
   fileName: string;
   fileSize?: number;
   fileType?: string;
@@ -78,7 +90,10 @@ export async function createDocument(input: CreateDocumentInput) {
       .from(documents)
       .where(eq(documents.projectId, input.projectId));
 
-    const projectSummary = await requireProjectAccessSummary(sessionUser, input.projectId);
+    const projectSummary = await requireProjectAccessSummary(
+      sessionUser,
+      input.projectId,
+    );
     const created = await insertDocumentRecord({
       sessionUser,
       projectId: input.projectId,
@@ -105,17 +120,26 @@ export async function createDocumentsBatch(input: CreateDocumentsBatchInput) {
     requireManageEdmsContent(sessionUser.role);
 
     if (input.files.length === 0) {
-      return actionError("Add at least one uploaded file before submitting the batch.");
+      return actionError(
+        "Add at least one uploaded file before submitting the batch.",
+      );
     }
 
-    const projectSummary = await requireProjectAccessSummary(sessionUser, input.projectId);
+    const projectSummary = await requireProjectAccessSummary(
+      sessionUser,
+      input.projectId,
+    );
 
     const [documentCount] = await db
       .select({ value: count() })
       .from(documents)
       .where(eq(documents.projectId, input.projectId));
 
-    const created: Array<{ id: string; documentNumber: string; fileName: string }> = [];
+    const created: Array<{
+      id: string;
+      documentNumber: string;
+      fileName: string;
+    }> = [];
     const failed: Array<{ fileName: string; message: string }> = [];
     const startingSequence = Number(documentCount?.value ?? 0);
 
@@ -197,7 +221,10 @@ export async function createDocumentVersion(input: CreateDocumentVersionInput) {
       throw new Error("Document not found.");
     }
 
-    const hasProjectAccess = await canAccessProject(sessionUser, String(documentSummary.projectId));
+    const hasProjectAccess = await canAccessProject(
+      sessionUser,
+      String(documentSummary.projectId),
+    );
 
     if (!hasProjectAccess) {
       throw new Error("You do not have access to this document.");
@@ -284,7 +311,7 @@ function abbreviateSegment(value: string | null | undefined, fallback: string) {
 
 async function requireProjectAccessSummary(
   sessionUser: DashboardSessionUser,
-  projectId: string
+  projectId: string,
 ) {
   const hasProjectAccess = await canAccessProject(sessionUser, projectId);
 
@@ -343,7 +370,9 @@ async function insertDocumentRecord(input: {
     fileUrl: input.input.fileUrl.trim(),
     status: input.input.status,
     tags: JSON.stringify(parseTagList(input.input.tags)),
-    images: input.input.images?.length ? JSON.stringify(input.input.images) : null,
+    images: input.input.images?.length
+      ? JSON.stringify(input.input.images)
+      : null,
     uploadedAt: now,
     uploadedBy: input.sessionUser.id,
     updatedAt: now,

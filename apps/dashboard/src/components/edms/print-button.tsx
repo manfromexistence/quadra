@@ -1,11 +1,17 @@
 "use client";
 
-import { FileDown, Printer } from "lucide-react";
 import { Button } from "@midday/ui/button";
+import { FileDown, Printer } from "lucide-react";
 
 interface PrintButtonProps {
   label?: string;
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
   className?: string;
   /** "print" = Printer icon, "download" = FileDown icon (both call window.print). Default: "print" */
   icon?: "print" | "download";

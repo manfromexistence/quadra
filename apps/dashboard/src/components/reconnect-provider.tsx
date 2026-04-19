@@ -13,9 +13,9 @@ import { useMutation } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { usePlaidLink } from "@/lib/mocks/plaid-link";
 import { useScript } from "usehooks-ts";
 import { useTeamQuery } from "@/hooks/use-team";
+import { usePlaidLink } from "@/lib/mocks/plaid-link";
 import { useTRPC } from "@/trpc/client";
 import { getUrl } from "@/utils/environment";
 

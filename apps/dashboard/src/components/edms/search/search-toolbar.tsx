@@ -1,6 +1,14 @@
 "use client";
 
-import { Bookmark, Clock3, Filter, History, Search, SquarePen, X } from "lucide-react";
+import {
+  Bookmark,
+  Clock3,
+  Filter,
+  History,
+  Search,
+  SquarePen,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   type Dispatch,
@@ -12,7 +20,13 @@ import {
 } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -30,7 +44,12 @@ interface SearchToolbarProps {
   uploaders: SearchOption[];
 }
 
-type SearchCategory = "project" | "document" | "workflow" | "transmittal" | "notification";
+type SearchCategory =
+  | "project"
+  | "document"
+  | "workflow"
+  | "transmittal"
+  | "notification";
 
 interface GlobalSearchFilters {
   query: string;
@@ -87,7 +106,11 @@ const STATUS_OPTIONS = [
   "unread",
 ] as const;
 
-export function SearchToolbar({ initialFilters, projects, uploaders }: SearchToolbarProps) {
+export function SearchToolbar({
+  initialFilters,
+  projects,
+  uploaders,
+}: SearchToolbarProps) {
   const router = useRouter();
   const [filters, setFilters] = useState(initialFilters);
   const [recentSearches, setRecentSearches] = useState<SavedSearchEntry[]>([]);
@@ -104,7 +127,10 @@ export function SearchToolbar({ initialFilters, projects, uploaders }: SearchToo
 
   const summaryLabel = useMemo(() => buildSummaryLabel(filters), [filters]);
 
-  const updateFilter = (key: keyof GlobalSearchFilters, value: string | string[]) => {
+  const updateFilter = (
+    key: keyof GlobalSearchFilters,
+    value: string | string[],
+  ) => {
     setFilters((current) => ({
       ...current,
       [key]: value,
@@ -113,20 +139,35 @@ export function SearchToolbar({ initialFilters, projects, uploaders }: SearchToo
 
   const submitSearch = () => {
     const nextUrl = buildSearchUrl(filters);
-    pushSearchEntry(LOCAL_STORAGE_HISTORY_KEY, filters, summaryLabel, setRecentSearches);
+    pushSearchEntry(
+      LOCAL_STORAGE_HISTORY_KEY,
+      filters,
+      summaryLabel,
+      setRecentSearches,
+    );
     router.push(nextUrl);
   };
 
   const savePreset = () => {
-    if (!filters.query && filters.categories.length === GLOBAL_SEARCH_CATEGORIES.length) {
+    if (
+      !filters.query &&
+      filters.categories.length === GLOBAL_SEARCH_CATEGORIES.length
+    ) {
       toast({
         title: "Nothing new to save",
-        description: "Add a query or at least one filter before saving a preset.",
+        description:
+          "Add a query or at least one filter before saving a preset.",
       });
       return;
     }
 
-    pushSearchEntry(LOCAL_STORAGE_SAVED_KEY, filters, summaryLabel, setSavedSearches, true);
+    pushSearchEntry(
+      LOCAL_STORAGE_SAVED_KEY,
+      filters,
+      summaryLabel,
+      setSavedSearches,
+      true,
+    );
     toast({
       title: "Search preset saved",
       description: "Your search setup is now available in this browser.",
@@ -158,8 +199,8 @@ export function SearchToolbar({ initialFilters, projects, uploaders }: SearchToo
       <CardHeader className="space-y-1">
         <CardTitle>Search workspace</CardTitle>
         <CardDescription>
-          Filter by category, status, project, uploader, and date range. Searches are remembered in
-          this browser for quick reuse.
+          Filter by category, status, project, uploader, and date range.
+          Searches are remembered in this browser for quick reuse.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -208,7 +249,10 @@ export function SearchToolbar({ initialFilters, projects, uploaders }: SearchToo
               spacing={1}
               value={filters.categories}
               onValueChange={(value) =>
-                updateFilter("categories", value.length > 0 ? value : [...GLOBAL_SEARCH_CATEGORIES])
+                updateFilter(
+                  "categories",
+                  value.length > 0 ? value : [...GLOBAL_SEARCH_CATEGORIES],
+                )
               }
               className="flex flex-wrap justify-start"
             >
@@ -262,18 +306,25 @@ export function SearchToolbar({ initialFilters, projects, uploaders }: SearchToo
               onValueChange={(value) => updateFilter("uploaderId", value)}
             />
             <div className="grid gap-3">
-              <label className="text-sm font-medium">Date range</label>
+              <label htmlFor="date-from" className="text-sm font-medium">
+                Date range
+              </label>
               <div className="grid gap-2 sm:grid-cols-2">
                 <Input
+                  id="date-from"
                   type="date"
                   value={filters.fromDate}
-                  onChange={(event) => updateFilter("fromDate", event.target.value)}
+                  onChange={(event) =>
+                    updateFilter("fromDate", event.target.value)
+                  }
                   aria-label="Search from date"
                 />
                 <Input
                   type="date"
                   value={filters.toDate}
-                  onChange={(event) => updateFilter("toDate", event.target.value)}
+                  onChange={(event) =>
+                    updateFilter("toDate", event.target.value)
+                  }
                   aria-label="Search to date"
                 />
               </div>
@@ -325,7 +376,8 @@ export function SearchToolbar({ initialFilters, projects, uploaders }: SearchToo
         </div>
 
         <p className="text-xs leading-5 text-muted-foreground">
-          Searches persist locally in this browser only. They do not create new database records.
+          Searches persist locally in this browser only. They do not create new
+          database records.
         </p>
       </CardContent>
     </Card>
@@ -345,9 +397,13 @@ function FieldSelect({
   options: Array<{ value: string; label: string }>;
   onValueChange: (value: string) => void;
 }) {
+  const selectId = `select-${label.toLowerCase().replace(/\s+/g, "-")}`;
+
   return (
     <div className="grid gap-2">
-      <label className="text-sm font-medium">{label}</label>
+      <label htmlFor={selectId} className="text-sm font-medium">
+        {label}
+      </label>
       <Select
         value={value || ALL_OPTION_VALUE}
         onValueChange={(nextValue) =>
@@ -390,7 +446,9 @@ function PresetPanel({
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
         {entries.length === 0 ? (
-          <p className="text-sm leading-6 text-muted-foreground">{emptyMessage}</p>
+          <p className="text-sm leading-6 text-muted-foreground">
+            {emptyMessage}
+          </p>
         ) : (
           entries.map((entry) => (
             <Button
@@ -454,7 +512,7 @@ function pushSearchEntry(
   filters: GlobalSearchFilters,
   label: string,
   setEntries: Dispatch<SetStateAction<SavedSearchEntry[]>>,
-  dedupeByFilters = false
+  dedupeByFilters = false,
 ) {
   const entry: SavedSearchEntry = {
     id: `${storageKey}-${Date.now()}`,
@@ -463,7 +521,11 @@ function pushSearchEntry(
     createdAt: new Date().toISOString(),
   };
 
-  const nextEntries = mergeSearchEntries(readSearchEntries(storageKey), entry, dedupeByFilters);
+  const nextEntries = mergeSearchEntries(
+    readSearchEntries(storageKey),
+    entry,
+    dedupeByFilters,
+  );
   window.localStorage.setItem(storageKey, JSON.stringify(nextEntries));
   setEntries(nextEntries);
 }
@@ -489,10 +551,13 @@ function readSearchEntries(storageKey: string) {
 function mergeSearchEntries(
   entries: SavedSearchEntry[],
   nextEntry: SavedSearchEntry,
-  dedupeByFilters: boolean
+  dedupeByFilters: boolean,
 ) {
   const filtered = dedupeByFilters
-    ? entries.filter((entry) => JSON.stringify(entry.filters) !== JSON.stringify(nextEntry.filters))
+    ? entries.filter(
+        (entry) =>
+          JSON.stringify(entry.filters) !== JSON.stringify(nextEntry.filters),
+      )
     : entries.filter((entry) => entry.label !== nextEntry.label);
 
   return [nextEntry, ...filtered].slice(0, 8);
@@ -528,9 +593,13 @@ function buildSummaryLabel(filters: GlobalSearchFilters) {
 }
 
 function formatCategory(category: string) {
-  return category.replace(/[_-]+/g, " ").replace(/^\w/, (letter) => letter.toUpperCase());
+  return category
+    .replace(/[_-]+/g, " ")
+    .replace(/^\w/, (letter) => letter.toUpperCase());
 }
 
 function formatStatus(status: string) {
-  return status.replace(/[_-]+/g, " ").replace(/^\w/, (letter) => letter.toUpperCase());
+  return status
+    .replace(/[_-]+/g, " ")
+    .replace(/^\w/, (letter) => letter.toUpperCase());
 }

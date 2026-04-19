@@ -1,5 +1,5 @@
 // Mock Stripe React components for build compatibility
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export const Elements = ({ children }: { children: ReactNode }) => children;
 

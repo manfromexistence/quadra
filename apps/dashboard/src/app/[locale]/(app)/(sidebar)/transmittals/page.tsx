@@ -1,6 +1,3 @@
-import type { Metadata } from "next";
-import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import { Suspense } from "react";
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import {
@@ -12,16 +9,19 @@ import {
   TableRow,
 } from "@midday/ui/table";
 import { ArrowRight } from "lucide-react";
+import type { Metadata } from "next";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import Link from "next/link";
+import { Suspense } from "react";
 import { CollapsibleSummary } from "@/components/collapsible-summary";
 import { EdmsDataState } from "@/components/edms/data-state";
+import { ExportButton } from "@/components/edms/export-button";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
+import { PrintButton } from "@/components/edms/print-button";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
+import { TransmittalCreateSheet } from "@/components/edms/transmittal-create-sheet";
 import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
-import { ExportButton } from "@/components/edms/export-button";
-import { PrintButton } from "@/components/edms/print-button";
-import { TransmittalCreateSheet } from "@/components/edms/transmittal-create-sheet";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { canManageEdmsContent } from "@/lib/edms/rbac";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
@@ -68,9 +68,18 @@ export default async function TransmittalsPage() {
           <CollapsibleSummary>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-6">
               {data.metrics.map((metric, index) => {
-                const links = ["/transmittals", "/documents", "/workflows", "/notifications"];
+                const links = [
+                  "/transmittals",
+                  "/documents",
+                  "/workflows",
+                  "/notifications",
+                ];
                 return (
-                  <Link key={metric.label} href={links[index] || "/transmittals"} className="block h-full">
+                  <Link
+                    key={metric.label}
+                    href={links[index] || "/transmittals"}
+                    className="block h-full"
+                  >
                     <div className="group cursor-pointer transition-all hover:scale-[1.02] h-full">
                       <EdmsMetricCard metric={metric} />
                     </div>
@@ -87,8 +96,9 @@ export default async function TransmittalsPage() {
                   Transmittals
                 </h1>
                 <p className="text-sm leading-6 text-muted-foreground md:text-base">
-                  Delivery-package tracking for outbound submissions and acknowledgements 
-                  with comprehensive transmittal management and review workflow.
+                  Delivery-package tracking for outbound submissions and
+                  acknowledgements with comprehensive transmittal management and
+                  review workflow.
                 </p>
               </div>
             </div>
@@ -101,17 +111,21 @@ export default async function TransmittalsPage() {
                 filename="transmittals_export"
                 variant="secondary"
                 metadata={[
-                  { label: "Generated", value: new Date().toLocaleDateString() },
-                  { label: "Total Records", value: String(data.transmittals.length) },
+                  {
+                    label: "Generated",
+                    value: new Date().toLocaleDateString(),
+                  },
+                  {
+                    label: "Total Records",
+                    value: String(data.transmittals.length),
+                  },
                 ]}
               />
               <PrintButton label="Print" variant="outline" icon="print" />
               {canManageContent ? (
                 <>
                   <Button asChild>
-                    <Link href="/transmittals/new">
-                      New Transmittal
-                    </Link>
+                    <Link href="/transmittals/new">New Transmittal</Link>
                   </Button>
                   <TransmittalCreateSheet
                     projects={data.projects}
@@ -141,86 +155,129 @@ export default async function TransmittalsPage() {
           />
 
           <ErrorBoundary errorComponent={ErrorFallback}>
-            <Suspense fallback={<div className="text-sm text-muted-foreground">Loading transmittals...</div>}>
-              <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
-        <Card className="border-border bg-card shadow-sm">
-          <CardHeader>
-            <CardTitle>Issued packages</CardTitle>
-          </CardHeader>
-          <CardContent className="px-0">
-            {data.transmittals.length === 0 ? (
-              <div className="px-6 pb-6 text-sm text-muted-foreground">
-                No transmittals found.
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="px-6">Package</TableHead>
-                    <TableHead>Project</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Recipient</TableHead>
-                    <TableHead>Documents</TableHead>
-                    <TableHead className="px-6">Updated</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.transmittals.map((item) => (
-                    <TableRow key={item.id} className="group cursor-pointer transition-colors hover:bg-accent">
-                      <TableCell className="px-6">
-                        <Link href={`/transmittals/${item.id}`} className="block">
-                          <div className="space-y-1">
-                            <p className="font-medium group-hover:text-primary">{item.subject}</p>
-                            <p className="font-mono text-xs text-muted-foreground">
-                              {item.transmittalNumber}
-                            </p>
-                          </div>
-                        </Link>
-                      </TableCell>
-                      <TableCell>{item.projectName}</TableCell>
-                      <TableCell>
-                        <EdmsStatusBadge status={item.status} />
-                      </TableCell>
-                      <TableCell>{item.recipientName}</TableCell>
-                      <TableCell>{item.documentCount}</TableCell>
-                      <TableCell className="px-6 text-sm text-muted-foreground">
-                        {item.sentLabel}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="border-border bg-card shadow-sm">
-          <CardHeader>
-            <CardTitle>Workflow spillover</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {summaryData.workflowQueue.map((item) => (
-              <Link key={item.id} href={`/workflows/${item.id}`} className="block">
-                <div className="group cursor-pointer border border-border bg-card p-4 transition-all hover:bg-accent hover:shadow-md">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-medium group-hover:text-primary">{item.stepName}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {item.projectName}
-                      </p>
-                    </div>
-                    <EdmsStatusBadge status={item.status} />
-                  </div>
-                  <p className="mt-3 text-sm text-muted-foreground">
-                    {item.documentNumber} · {item.title}
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {item.dueLabel}
-                  </p>
+            <Suspense
+              fallback={
+                <div className="text-sm text-muted-foreground">
+                  Loading transmittals...
                 </div>
-              </Link>
-            ))}
-          </CardContent>
+              }
+            >
+              <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+                <Card className="border-border bg-card shadow-sm">
+                  <CardHeader>
+                    <CardTitle>Issued packages</CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-0">
+                    {data.transmittals.length === 0 ? (
+                      <div className="px-6 pb-6 text-sm text-muted-foreground">
+                        No transmittals found.
+                      </div>
+                    ) : (
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="px-6">
+                              Transmittal ID
+                            </TableHead>
+                            <TableHead>Subject & Documents</TableHead>
+                            <TableHead>Recipient</TableHead>
+                            <TableHead>Purpose</TableHead>
+                            <TableHead>Due Date</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="px-6"></TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {data.transmittals.map((item) => (
+                            <TableRow
+                              key={item.id}
+                              className="group transition-colors hover:bg-accent"
+                            >
+                              <TableCell className="px-6">
+                                <div className="space-y-1">
+                                  <p className="font-mono text-xs font-medium">
+                                    {item.transmittalNumber}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {item.sentLabel.replace("Updated ", "")}
+                                  </p>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="space-y-2">
+                                  <p className="font-medium">{item.subject}</p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {item.documentCodes?.map((code) => (
+                                      <span
+                                        key={code}
+                                        className="inline-flex items-center rounded-full border border-border bg-background px-2 py-0.5 font-mono text-[10px]"
+                                      >
+                                        {code}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell>{item.recipientName}</TableCell>
+                              <TableCell>
+                                <EdmsStatusBadge
+                                  status={item.purpose || "IFR"}
+                                />
+                              </TableCell>
+                              <TableCell className="font-mono text-xs text-muted-foreground">
+                                {item.dueDate || "—"}
+                              </TableCell>
+                              <TableCell className="text-muted-foreground">
+                                {item.status}
+                              </TableCell>
+                              <TableCell className="px-6">
+                                <Button variant="ghost" size="sm" asChild>
+                                  <Link href={`/transmittals/${item.id}`}>
+                                    View
+                                  </Link>
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card className="border-border bg-card shadow-sm">
+                  <CardHeader>
+                    <CardTitle>Workflow spillover</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {summaryData.workflowQueue.map((item) => (
+                      <Link
+                        key={item.id}
+                        href={`/workflows/${item.id}`}
+                        className="block"
+                      >
+                        <div className="group cursor-pointer border border-border bg-card p-4 transition-all hover:bg-accent hover:shadow-md">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="font-medium group-hover:text-primary">
+                                {item.stepName}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                {item.projectName}
+                              </p>
+                            </div>
+                            <EdmsStatusBadge status={item.status} />
+                          </div>
+                          <p className="mt-3 text-sm text-muted-foreground">
+                            {item.documentNumber} · {item.title}
+                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {item.dueLabel}
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+                  </CardContent>
                 </Card>
               </section>
             </Suspense>

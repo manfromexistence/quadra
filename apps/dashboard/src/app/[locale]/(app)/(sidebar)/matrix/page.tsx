@@ -6,21 +6,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
-import { ArrowRight, Grid3X3, Info } from "lucide-react";
+import { ArrowRight, Grid3X3, Info, Plus } from "lucide-react";
 import type { Metadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import Link from "next/link";
 import { Suspense } from "react";
 import { CollapsibleSummary } from "@/components/collapsible-summary";
 import { EdmsDataState } from "@/components/edms/data-state";
+import { DistributionMatrixTable } from "@/components/edms/distribution-matrix-table";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
 import { PrintButton } from "@/components/edms/print-button";
 import { ErrorFallback } from "@/components/error-fallback";
@@ -34,18 +27,6 @@ export const metadata: Metadata = {
   description:
     "Live distribution matrix derived from project stakeholders and transmittal issue history.",
 };
-
-function MatrixCountCell({ count }: { count: number }) {
-  if (count <= 0) {
-    return <span className="text-sm text-muted-foreground/40">—</span>;
-  }
-
-  return (
-    <span className="inline-flex min-w-8 items-center justify-center rounded-sm border border-border bg-muted px-2 py-0.5 text-xs font-semibold">
-      {count}
-    </span>
-  );
-}
 
 export default async function MatrixPage() {
   const sessionUser = await getRequiredDashboardSessionUser();
@@ -90,6 +71,20 @@ export default async function MatrixPage() {
       icon: "notifications" as const,
     },
   ];
+
+  // Convert matrix data to interactive format
+  const interactiveRows = matrixData.rows.map((row) => ({
+    key: row.key,
+    discipline: row.discipline,
+    docType: row.docType,
+    purpose: "IFC", // Default purpose for demo
+    distribution: Object.fromEntries(
+      matrixData.stakeholders.map((s) => [
+        s.id,
+        row.distribution[s.id] > 0 ? "I" : "",
+      ]),
+    ) as Record<string, "A" | "R" | "I" | "">,
+  }));
 
   return (
     <HydrateClient>
@@ -157,9 +152,11 @@ export default async function MatrixPage() {
                       Matrix rules
                     </CardTitle>
                     <CardDescription>
-                      Each cell shows how many documents of that class were
-                      issued to the stakeholder through real EDMS transmittals.
-                      Empty cells indicate no recorded issue.
+                      Click cells to cycle through roles: — → I (Information) →
+                      R (Review) → A (Approve) → —
+                      <br />
+                      Define who receives which documents and in what role based
+                      on discipline, document type, and purpose code.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -203,138 +200,93 @@ export default async function MatrixPage() {
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                           <Grid3X3 className="size-4" />
-                          Distribution matrix
+                          Interactive distribution matrix
                         </CardTitle>
                         <CardDescription>
-                          {matrixData.rows.length} document classes ·{" "}
-                          {matrixData.totalLinks} recipient links
+                          {matrixData.rows.length} document classes · Click
+                          cells to assign roles (A/R/I)
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="overflow-x-auto px-0">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead className="px-6">Discipline</TableHead>
-                              <TableHead>Doc Type</TableHead>
-                              <TableHead className="text-center">
-                                Issued
-                              </TableHead>
-                              {matrixData.stakeholders.map((stakeholder) => (
-                                <TableHead
-                                  key={stakeholder.id}
-                                  className="text-center"
-                                >
-                                  <span className="font-mono text-xs">
-                                    {stakeholder.short}
-                                  </span>
-                                  <span className="block text-[10px] font-normal text-muted-foreground">
-                                    {stakeholder.role}
-                                  </span>
-                                </TableHead>
-                              ))}
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {matrixData.rows.map((row) => (
-                              <TableRow
-                                key={row.key}
-                                className="hover:bg-accent transition-colors"
-                              >
-                                <TableCell className="px-6 font-medium">
-                                  {row.discipline}
-                                </TableCell>
-                                <TableCell className="text-sm text-muted-foreground">
-                                  {row.docType}
-                                </TableCell>
-                                <TableCell className="text-center font-mono text-xs">
-                                  {row.issuedDocuments}
-                                </TableCell>
-                                {matrixData.stakeholders.map((stakeholder) => (
-                                  <TableCell
-                                    key={stakeholder.id}
-                                    className="text-center"
-                                  >
-                                    <MatrixCountCell
-                                      count={
-                                        row.distribution[stakeholder.id] ?? 0
-                                      }
-                                    />
-                                  </TableCell>
-                                ))}
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                      <CardContent>
+                        <DistributionMatrixTable
+                          stakeholders={matrixData.stakeholders}
+                          rows={interactiveRows}
+                        />
                       </CardContent>
                     </Card>
 
                     <Card className="border-border bg-card shadow-sm">
                       <CardHeader>
-                        <CardTitle>Stakeholder summary</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                          <Plus className="size-4" />
+                          Add distribution rule
+                        </CardTitle>
                         <CardDescription>
-                          Number of matrix classes and total issued-document
-                          hits per stakeholder.
+                          Create new distribution rules for specific discipline,
+                          document type, and purpose combinations.
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="px-0">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead className="px-6">
-                                Stakeholder
-                              </TableHead>
-                              <TableHead>Role</TableHead>
-                              <TableHead className="text-center">
-                                Active Classes
-                              </TableHead>
-                              <TableHead className="px-6 text-center">
-                                Total Issues
-                              </TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {matrixData.stakeholders.map((stakeholder) => {
-                              const activeClasses = matrixData.rows.filter(
-                                (row) =>
-                                  (row.distribution[stakeholder.id] ?? 0) > 0,
-                              ).length;
-                              const totalIssuesForStakeholder =
-                                matrixData.rows.reduce((sum, row) => {
-                                  return (
-                                    sum +
-                                    (row.distribution[stakeholder.id] ?? 0)
-                                  );
-                                }, 0);
-
-                              return (
-                                <TableRow
-                                  key={stakeholder.id}
-                                  className="hover:bg-accent transition-colors"
-                                >
-                                  <TableCell className="px-6">
-                                    <div className="space-y-0.5">
-                                      <p className="font-medium">
-                                        {stakeholder.name}
-                                      </p>
-                                      <p className="font-mono text-xs text-muted-foreground">
-                                        {stakeholder.short}
-                                      </p>
-                                    </div>
-                                  </TableCell>
-                                  <TableCell className="text-sm capitalize text-muted-foreground">
-                                    {stakeholder.role}
-                                  </TableCell>
-                                  <TableCell className="text-center font-mono text-sm">
-                                    {activeClasses}
-                                  </TableCell>
-                                  <TableCell className="px-6 text-center font-mono text-sm font-semibold">
-                                    {totalIssuesForStakeholder}
-                                  </TableCell>
-                                </TableRow>
-                              );
-                            })}
-                          </TableBody>
-                        </Table>
+                      <CardContent>
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                          <div className="space-y-2">
+                            <label
+                              htmlFor="discipline-select"
+                              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                            >
+                              Discipline
+                            </label>
+                            <select
+                              id="discipline-select"
+                              className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                            >
+                              <option>CIVIL — Civil Engineering</option>
+                              <option>ELEC — Electrical</option>
+                              <option>MECH — Mechanical</option>
+                              <option>PROC — Process</option>
+                              <option>INST — Instrumentation</option>
+                            </select>
+                          </div>
+                          <div className="space-y-2">
+                            <label
+                              htmlFor="doctype-select"
+                              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                            >
+                              Document Type
+                            </label>
+                            <select
+                              id="doctype-select"
+                              className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                            >
+                              <option>DWG — Drawing</option>
+                              <option>SPEC — Specification</option>
+                              <option>CALC — Calculation</option>
+                              <option>RPT — Report</option>
+                            </select>
+                          </div>
+                          <div className="space-y-2">
+                            <label
+                              htmlFor="purpose-select"
+                              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                            >
+                              Purpose Code
+                            </label>
+                            <select
+                              id="purpose-select"
+                              className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                            >
+                              <option>IFR — Issued for Review</option>
+                              <option>IFA — Issued for Approval</option>
+                              <option>IFC — Issued for Construction</option>
+                              <option>IFI — Issued for Information</option>
+                            </select>
+                          </div>
+                          <div className="flex items-end">
+                            <Button className="w-full">
+                              <Plus className="size-4" />
+                              Add Rule
+                            </Button>
+                          </div>
+                        </div>
                       </CardContent>
                     </Card>
                   </>

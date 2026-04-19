@@ -1,8 +1,8 @@
 "use client";
 
-import { Calendar, MessageSquare, User } from "lucide-react";
 import { Button } from "@midday/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
+import { Calendar, MessageSquare } from "lucide-react";
 import { formatEdmsLabel } from "./status-badge";
 
 interface CommentPopoverProps {
@@ -27,7 +27,9 @@ export function CommentPopover({ comment, children }: CommentPopoverProps) {
             <div className="flex items-start gap-3">
               <MessageSquare className="size-5 text-muted-foreground mt-0.5" />
               <div className="flex-1 space-y-1">
-                <h4 className="font-semibold leading-tight">{comment.authorName}</h4>
+                <h4 className="font-semibold leading-tight">
+                  {comment.authorName}
+                </h4>
                 <p className="text-sm text-muted-foreground">
                   {formatEdmsLabel(comment.commentType)}
                 </p>

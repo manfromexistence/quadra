@@ -1,5 +1,6 @@
 "use client";
 
+import { Spinner } from "@midday/ui/spinner";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ExportStatus } from "@/components/export-status";
@@ -10,7 +11,6 @@ import { Sidebar } from "@/components/sidebar";
 import { TimezoneDetector } from "@/components/timezone-detector";
 import { TrialGuard } from "@/components/trial-guard";
 import { authClient } from "@/lib/auth-client";
-import { Spinner } from "@midday/ui/spinner";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -25,7 +25,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     const checkAuth = async () => {
       try {
         const { data: session } = await authClient.getSession();
-        
+
         if (!session) {
           router.push("/login");
           return;

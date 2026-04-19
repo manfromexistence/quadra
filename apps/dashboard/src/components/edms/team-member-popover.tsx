@@ -1,9 +1,9 @@
 "use client";
 
-import { Building2, Calendar, ExternalLink, Mail, User } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@midday/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
+import { Building2, Calendar, ExternalLink, Mail, User } from "lucide-react";
+import Link from "next/link";
 import { EdmsStatusBadge } from "./status-badge";
 
 interface TeamMemberPopoverProps {
@@ -18,7 +18,10 @@ interface TeamMemberPopoverProps {
   children: React.ReactNode;
 }
 
-export function TeamMemberPopover({ member, children }: TeamMemberPopoverProps) {
+export function TeamMemberPopover({
+  member,
+  children,
+}: TeamMemberPopoverProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -39,12 +42,14 @@ export function TeamMemberPopover({ member, children }: TeamMemberPopoverProps) 
           <div className="p-4 space-y-4">
             <div className="flex items-center gap-2">
               <User className="size-4 text-muted-foreground" />
-              <span className="text-sm capitalize">{member.role.replace('_', ' ')}</span>
+              <span className="text-sm capitalize">
+                {member.role.replace("_", " ")}
+              </span>
             </div>
 
             <div className="flex items-center gap-2">
               <Mail className="size-4 text-muted-foreground" />
-              <a 
+              <a
                 href={`mailto:${member.email}`}
                 className="text-sm text-primary hover:underline"
               >

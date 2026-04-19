@@ -41,7 +41,10 @@ export async function getRequiredDashboardSessionUser(): Promise<DashboardSessio
 
     const [user] = userRows;
 
-    const role = typeof user?.role === "string" && user.role.length > 0 ? user.role : "user";
+    const role =
+      typeof user?.role === "string" && user.role.length > 0
+        ? user.role
+        : "user";
     const organization =
       typeof user?.organization === "string" && user.organization.length > 0
         ? user.organization
@@ -55,21 +58,29 @@ export async function getRequiredDashboardSessionUser(): Promise<DashboardSessio
     // Use shadcn avatar as default if no image is set
     const defaultAvatar = "https://github.com/shadcn.png";
     const userImage =
-      typeof user?.image === "string" && user.image.length > 0 ? user.image : defaultAvatar;
+      typeof user?.image === "string" && user.image.length > 0
+        ? user.image
+        : defaultAvatar;
 
     return {
       id: String(user?.id ?? session.user.id),
-      name: typeof user?.name === "string" && user.name.length > 0 ? user.name : "Construction User",
+      name:
+        typeof user?.name === "string" && user.name.length > 0
+          ? user.name
+          : "Construction User",
       email: typeof user?.email === "string" ? user.email : "",
       image: userImage,
       role,
       organization,
     };
-  } catch (error) {
+  } catch (_error) {
     redirect("/login");
   }
 }
 
-function isEdmsProfileIncomplete(profile: { role: string; organization: string | null }) {
+function _isEdmsProfileIncomplete(profile: {
+  role: string;
+  organization: string | null;
+}) {
   return profile.role === "user" || profile.organization === null;
 }

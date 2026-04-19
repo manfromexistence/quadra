@@ -1,10 +1,10 @@
 "use client";
 
+import { Button } from "@midday/ui/button";
+import { Card, CardContent } from "@midday/ui/card";
 import { ImagePlus, Loader2, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
-import { Button } from "@midday/ui/button";
-import { Card, CardContent } from "@midday/ui/card";
 
 interface ImageCardUploadProps {
   value?: string[];
@@ -24,7 +24,9 @@ export function ImageCardUpload({
   const [isUploading, setIsUploading] = useState(false);
   const images = value || [];
 
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
@@ -70,7 +72,8 @@ export function ImageCardUpload({
     } catch (error) {
       toast({
         title: "Upload failed",
-        description: error instanceof Error ? error.message : "Failed to upload images",
+        description:
+          error instanceof Error ? error.message : "Failed to upload images",
         variant: "destructive",
       });
     } finally {
@@ -88,10 +91,15 @@ export function ImageCardUpload({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          <label
+            htmlFor={id}
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
             {label}
           </label>
-          {helperText ? <p className="mt-1 text-sm text-muted-foreground">{helperText}</p> : null}
+          {helperText ? (
+            <p className="mt-1 text-sm text-muted-foreground">{helperText}</p>
+          ) : null}
         </div>
         {images.length < maxImages ? (
           <Button
@@ -129,12 +137,15 @@ export function ImageCardUpload({
       {images.length > 0 ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
           {images.map((url, index) => (
-            <Card key={`${url}-${index}`} className="group relative overflow-hidden">
+            <Card
+              key={`${url}-${index}`}
+              className="group relative overflow-hidden"
+            >
               <CardContent className="p-0">
                 <div className="relative aspect-video">
                   <img
                     src={url}
-                    alt={`Image ${index + 1}`}
+                    alt={`Upload ${index + 1}`}
                     className="h-full w-full object-cover"
                   />
                   <Button
@@ -156,7 +167,9 @@ export function ImageCardUpload({
           <CardContent className="flex min-h-32 items-center justify-center p-6">
             <div className="text-center">
               <ImagePlus className="mx-auto size-8 text-muted-foreground" />
-              <p className="mt-2 text-sm text-muted-foreground">No images added yet</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                No images added yet
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -164,5 +177,3 @@ export function ImageCardUpload({
     </div>
   );
 }
-
-

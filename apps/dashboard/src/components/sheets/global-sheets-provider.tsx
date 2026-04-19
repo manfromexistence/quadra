@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 // By the time user clicks to open a sheet, it's already loaded
 const GlobalSheets = dynamic(
   () => import("./global-sheets").then((mod) => mod.GlobalSheets),
-  { 
+  {
     ssr: false,
     loading: () => null,
   },

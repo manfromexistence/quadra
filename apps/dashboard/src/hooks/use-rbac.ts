@@ -2,13 +2,13 @@
 
 import { useUserQuery } from "@/hooks/use-user";
 import {
-  type UserRole,
-  hasPermission,
-  hasAnyPermission,
-  hasAllPermissions,
-  isRoleAtLeast,
   canAccessRoute,
   getRoleDisplayName,
+  hasAllPermissions,
+  hasAnyPermission,
+  hasPermission,
+  isRoleAtLeast,
+  type UserRole,
 } from "@/lib/rbac";
 
 export function useRBAC() {
@@ -20,9 +20,12 @@ export function useRBAC() {
     roleDisplayName: userRole ? getRoleDisplayName(userRole) : undefined,
     isLoading,
     hasPermission: (permission: string) => hasPermission(userRole, permission),
-    hasAnyPermission: (permissions: string[]) => hasAnyPermission(userRole, permissions),
-    hasAllPermissions: (permissions: string[]) => hasAllPermissions(userRole, permissions),
-    isRoleAtLeast: (minimumRole: UserRole) => isRoleAtLeast(userRole, minimumRole),
+    hasAnyPermission: (permissions: string[]) =>
+      hasAnyPermission(userRole, permissions),
+    hasAllPermissions: (permissions: string[]) =>
+      hasAllPermissions(userRole, permissions),
+    isRoleAtLeast: (minimumRole: UserRole) =>
+      isRoleAtLeast(userRole, minimumRole),
     canAccessRoute: (route: string) => canAccessRoute(userRole, route),
     isAdmin: userRole === "admin",
     isPMC: userRole === "pmc",

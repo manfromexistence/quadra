@@ -1,15 +1,12 @@
 import { getLocationHeaders } from "@midday/location";
 import { cookies, headers } from "next/headers";
 import { cache } from "react";
+import { auth } from "@/lib/auth";
 import { Cookies } from "@/utils/constants";
 import { getRequestTraceHeaders } from "@/utils/request-trace";
-import { auth } from "@/lib/auth";
 
 export const getServerRequestContext = cache(async () => {
-  const [cookieStore, headersList] = await Promise.all([
-    cookies(),
-    headers(),
-  ]);
+  const [cookieStore, headersList] = await Promise.all([cookies(), headers()]);
 
   // Get Better Auth session
   const betterAuthSession = await auth.api.getSession({
@@ -18,9 +15,9 @@ export const getServerRequestContext = cache(async () => {
 
   // Convert Better Auth session to tRPC-compatible format
   const session = betterAuthSession
-    ? { 
+    ? {
         access_token: betterAuthSession.session.token,
-        user: betterAuthSession.user 
+        user: betterAuthSession.user,
       }
     : null;
 

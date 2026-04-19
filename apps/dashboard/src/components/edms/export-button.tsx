@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { FileDown, FileSpreadsheet, Loader2 } from "lucide-react";
 import { Button } from "@midday/ui/button";
 import {
   DropdownMenu,
@@ -9,7 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@midday/ui/dropdown-menu";
-import { exportToPDF, exportToExcel } from "@/lib/export-utils";
+import { FileDown, FileSpreadsheet, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { exportToExcel, exportToPDF } from "@/lib/export-utils";
 
 interface ExportColumn {
   header: string;
@@ -26,7 +26,13 @@ interface ExportButtonProps {
   columns: ExportColumn[];
   title: string;
   filename?: string;
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
   className?: string;
   metadata?: { label: string; value: string }[];
 }

@@ -11,6 +11,8 @@ export const transmittals = sqliteTable("transmittals", {
   transmittalNumber: text("transmittal_number").notNull().unique(),
   subject: text("subject").notNull(),
   description: text("description"),
+  purpose: text("purpose").notNull().default("IFR"),
+  dueDate: integer("due_date", { mode: "timestamp" }),
   sentFrom: text("sent_from").references(() => user.id, {
     onDelete: "set null",
   }),

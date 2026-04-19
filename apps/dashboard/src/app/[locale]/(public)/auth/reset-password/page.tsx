@@ -1,13 +1,14 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@midday/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@midday/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@midday/ui/card";
 import {
   Form,
   FormControl,
@@ -16,16 +17,23 @@ import {
   FormLabel,
   FormMessage,
 } from "@midday/ui/form";
-import { Input } from "@midday/ui/input";
 import { Icons } from "@midday/ui/icons";
+import { Input } from "@midday/ui/input";
 import { Spinner } from "@midday/ui/spinner";
 import { useToast } from "@midday/ui/use-toast";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { authClient } from "@/lib/auth-client";
 
 const resetPasswordSchema = z
   .object({
     password: z.string().min(8, "Password must be at least 8 characters."),
-    confirmPassword: z.string().min(8, "Password confirmation must be at least 8 characters."),
+    confirmPassword: z
+      .string()
+      .min(8, "Password confirmation must be at least 8 characters."),
   })
   .refine((value) => value.password === value.confirmPassword, {
     message: "Passwords do not match.",
@@ -108,7 +116,10 @@ export default function ResetPasswordPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="password"
@@ -116,7 +127,11 @@ export default function ResetPasswordPage() {
                     <FormItem>
                       <FormLabel>New password</FormLabel>
                       <FormControl>
-                        <Input type="password" placeholder="********" {...field} />
+                        <Input
+                          type="password"
+                          placeholder="********"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -129,14 +144,23 @@ export default function ResetPasswordPage() {
                     <FormItem>
                       <FormLabel>Confirm password</FormLabel>
                       <FormControl>
-                        <Input type="password" placeholder="********" {...field} />
+                        <Input
+                          type="password"
+                          placeholder="********"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <Button type="submit" size="lg" className="w-full" disabled={isPending || !token}>
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full"
+                  disabled={isPending || !token}
+                >
                   {isPending ? (
                     <Spinner className="size-4" />
                   ) : (

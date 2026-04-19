@@ -17,7 +17,10 @@ export function createClient() {
         verify: async () => ({ data: null, error: null }),
         unenroll: async () => ({ data: null, error: null }),
         listFactors: async () => ({ data: [], error: null }),
-        getAuthenticatorAssuranceLevel: async () => ({ data: null, error: null }),
+        getAuthenticatorAssuranceLevel: async () => ({
+          data: null,
+          error: null,
+        }),
       },
     },
     from: (table: string) => ({
@@ -51,7 +54,7 @@ export function createClient() {
         download: async () => ({ data: null, error: null }),
         remove: async () => ({ data: null, error: null }),
         list: async () => ({ data: [], error: null }),
-        getPublicUrl: () => ({ data: { publicUrl: '' } }),
+        getPublicUrl: () => ({ data: { publicUrl: "" } }),
         createSignedUrl: async () => ({ data: null, error: null }),
       }),
     },

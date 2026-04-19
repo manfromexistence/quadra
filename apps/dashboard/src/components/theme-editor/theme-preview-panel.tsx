@@ -14,7 +14,13 @@ import { Checkbox } from "@midday/ui/checkbox";
 import { Input } from "@midday/ui/input";
 import { Label } from "@midday/ui/label";
 import { RadioGroup, RadioGroupItem } from "@midday/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@midday/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
 import { Separator } from "@midday/ui/separator";
 import { Slider } from "@midday/ui/slider";
 import { Switch } from "@midday/ui/switch";
@@ -125,9 +131,9 @@ export function ThemePreviewPanel() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="preview-input">Project Name</Label>
-                <Input 
-                  id="preview-input" 
-                  placeholder="Enter project name..." 
+                <Input
+                  id="preview-input"
+                  placeholder="Enter project name..."
                   defaultValue="Quadra EDMS"
                 />
               </div>
@@ -141,7 +147,9 @@ export function ThemePreviewPanel() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="drawing">Drawing</SelectItem>
-                      <SelectItem value="specification">Specification</SelectItem>
+                      <SelectItem value="specification">
+                        Specification
+                      </SelectItem>
                       <SelectItem value="report">Report</SelectItem>
                       <SelectItem value="transmittal">Transmittal</SelectItem>
                     </SelectContent>
@@ -166,9 +174,9 @@ export function ThemePreviewPanel() {
 
               <div className="space-y-2">
                 <Label htmlFor="preview-textarea">Description</Label>
-                <Textarea 
-                  id="preview-textarea" 
-                  placeholder="Enter description..." 
+                <Textarea
+                  id="preview-textarea"
+                  placeholder="Enter description..."
                   rows={3}
                   defaultValue="This is a sample description for the theme preview."
                 />
@@ -179,26 +187,32 @@ export function ThemePreviewPanel() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="preview-checkbox" 
+                    <Checkbox
+                      id="preview-checkbox"
                       checked={checkboxChecked}
-                      onCheckedChange={(checked) => setCheckboxChecked(checked === true)}
+                      onCheckedChange={(checked) =>
+                        setCheckboxChecked(checked === true)
+                      }
                     />
-                    <Label htmlFor="preview-checkbox" className="text-sm font-normal">
+                    <Label
+                      htmlFor="preview-checkbox"
+                      className="text-sm font-normal"
+                    >
                       Send notification on approval
                     </Label>
                   </div>
-                  {checkboxChecked && (
-                    <Badge variant="outline">Enabled</Badge>
-                  )}
+                  {checkboxChecked && <Badge variant="outline">Enabled</Badge>}
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="preview-switch" className="text-sm font-normal">
+                  <Label
+                    htmlFor="preview-switch"
+                    className="text-sm font-normal"
+                  >
                     Enable auto-archive
                   </Label>
-                  <Switch 
-                    id="preview-switch" 
+                  <Switch
+                    id="preview-switch"
                     checked={switchChecked}
                     onCheckedChange={setSwitchChecked}
                   />
@@ -217,19 +231,28 @@ export function ThemePreviewPanel() {
                 <RadioGroup defaultValue="medium">
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="low" id="priority-low" />
-                    <Label htmlFor="priority-low" className="text-sm font-normal">
+                    <Label
+                      htmlFor="priority-low"
+                      className="text-sm font-normal"
+                    >
                       Low Priority
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="medium" id="priority-medium" />
-                    <Label htmlFor="priority-medium" className="text-sm font-normal">
+                    <Label
+                      htmlFor="priority-medium"
+                      className="text-sm font-normal"
+                    >
                       Medium Priority
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="high" id="priority-high" />
-                    <Label htmlFor="priority-high" className="text-sm font-normal">
+                    <Label
+                      htmlFor="priority-high"
+                      className="text-sm font-normal"
+                    >
                       High Priority
                     </Label>
                   </div>
@@ -383,9 +406,7 @@ export function ThemePreviewPanel() {
           <Card>
             <CardHeader>
               <CardTitle>Typography & Colors</CardTitle>
-              <CardDescription>
-                Font styles and color palette.
-              </CardDescription>
+              <CardDescription>Font styles and color palette.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">

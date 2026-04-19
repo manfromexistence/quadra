@@ -1,10 +1,13 @@
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
-import { notFound } from "next/navigation";
 import Link from "next/link";
-import { WorkflowActionSheet } from "@/components/edms/workflow-action-sheet";
-import { EdmsStatusBadge, formatEdmsLabel } from "@/components/edms/status-badge";
+import { notFound } from "next/navigation";
+import {
+  EdmsStatusBadge,
+  formatEdmsLabel,
+} from "@/components/edms/status-badge";
 import { TeamMemberPopover } from "@/components/edms/team-member-popover";
+import { WorkflowActionSheet } from "@/components/edms/workflow-action-sheet";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { getWorkflowDetailData } from "@/lib/edms/workflow-detail";
 
@@ -26,7 +29,9 @@ export default async function WorkflowDetailPage({
       <section className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-3xl font-semibold tracking-tight">{data.workflow.workflowName}</h1>
+            <h1 className="text-3xl font-semibold tracking-tight">
+              {data.workflow.workflowName}
+            </h1>
             <EdmsStatusBadge status={data.workflow.status} />
           </div>
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
@@ -42,7 +47,9 @@ export default async function WorkflowDetailPage({
 
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" asChild>
-            <Link href={`/documents/${data.workflow.documentId}`}>Open document</Link>
+            <Link href={`/documents/${data.workflow.documentId}`}>
+              Open document
+            </Link>
           </Button>
           <Button variant="outline" asChild>
             <Link href="/workflows">Back to workflows</Link>
@@ -61,7 +68,7 @@ export default async function WorkflowDetailPage({
               member={{
                 id: step.id,
                 name: step.assignedToName,
-                email: `${step.assignedToName.toLowerCase().replace(' ', '.')}@company.com`,
+                email: `${step.assignedToName.toLowerCase().replace(" ", ".")}@company.com`,
                 role: step.assignedRole || "reviewer",
                 organization: null,
                 assignedLabel: step.dueLabel,
@@ -78,12 +85,16 @@ export default async function WorkflowDetailPage({
                     </div>
                     <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                       <span>{step.assignedToName}</span>
-                      {step.assignedRole ? <span>{formatEdmsLabel(step.assignedRole)}</span> : null}
+                      {step.assignedRole ? (
+                        <span>{formatEdmsLabel(step.assignedRole)}</span>
+                      ) : null}
                       <span>{step.dueLabel}</span>
                       <span>{step.completedLabel}</span>
                     </div>
                     {step.comments ? (
-                      <p className="text-sm text-muted-foreground line-clamp-2">{step.comments}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {step.comments}
+                      </p>
                     ) : null}
                   </div>
 

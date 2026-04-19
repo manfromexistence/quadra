@@ -15,7 +15,7 @@ interface UseRealtimeProps<TN extends string> {
 
 /**
  * Hook for subscribing to database changes.
- * 
+ *
  * NOTE: Currently mocked for Turso/SQLite which doesn't have native realtime.
  * TODO: Implement using polling or websockets for real-time updates.
  */
@@ -44,8 +44,10 @@ export function useRealtime<TN extends string>({
     // 2. WebSockets: Set up a websocket server for push updates
     // 3. Server-Sent Events (SSE): Stream updates from server
     // 4. tRPC subscriptions: Use tRPC's subscription feature
-    
-    console.log(`[Realtime Mock] Would subscribe to ${table} with filter: ${filter}`);
+
+    console.log(
+      `[Realtime Mock] Would subscribe to ${table} with filter: ${filter}`,
+    );
 
     return () => {
       console.log(`[Realtime Mock] Would unsubscribe from ${table}`);

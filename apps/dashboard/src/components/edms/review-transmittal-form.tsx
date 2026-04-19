@@ -1,18 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, ShieldCheck, Upload, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { reviewTransmittal } from "@/actions/transmittals";
-import {
-  CLIENT_APPROVAL_OPTIONS,
-  getReviewStatusForApprovalCode,
-  type ClientApprovalCode,
-} from "@/lib/edms/client-approval-codes";
-import { useToast } from "@midday/ui/use-toast";
 import { Button } from "@midday/ui/button";
 import {
   Form,
@@ -23,9 +11,30 @@ import {
   FormLabel,
   FormMessage,
 } from "@midday/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@midday/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
 import { Textarea } from "@midday/ui/textarea";
-import { DocumentFileUpload, type UploadedDocumentFile } from "./document-file-upload";
+import { useToast } from "@midday/ui/use-toast";
+import { Loader2, ShieldCheck, Upload, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { reviewTransmittal } from "@/actions/transmittals";
+import {
+  CLIENT_APPROVAL_OPTIONS,
+  type ClientApprovalCode,
+  getReviewStatusForApprovalCode,
+} from "@/lib/edms/client-approval-codes";
+import {
+  DocumentFileUpload,
+  type UploadedDocumentFile,
+} from "./document-file-upload";
 
 const reviewSchema = z.object({
   approvalCode: z.enum(["Code-1", "Code-2", "Code-3", "Code-4"]),
@@ -60,7 +69,9 @@ export function ReviewTransmittalForm({
   const router = useRouter();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
-  const [uploadedFile, setUploadedFile] = useState<UploadedDocumentFile | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<UploadedDocumentFile | null>(
+    null,
+  );
 
   const form = useForm<ReviewValues>({
     resolver: zodResolver(reviewSchema),
@@ -69,7 +80,9 @@ export function ReviewTransmittalForm({
 
   const selectedApprovalCode = form.watch("approvalCode");
   const selectedOption =
-    CLIENT_APPROVAL_OPTIONS.find((option) => option.approvalCode === selectedApprovalCode) ?? null;
+    CLIENT_APPROVAL_OPTIONS.find(
+      (option) => option.approvalCode === selectedApprovalCode,
+    ) ?? null;
 
   useEffect(() => {
     if (uploadedFile) {
@@ -108,7 +121,8 @@ export function ReviewTransmittalForm({
 
       toast({
         title: "Review submitted",
-        description: "The workflow, transmittal status, and notifications have been updated.",
+        description:
+          "The workflow, transmittal status, and notifications have been updated.",
       });
 
       form.reset(defaultValues);
@@ -126,7 +140,12 @@ export function ReviewTransmittalForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Client approval code</FormLabel>
-              <Select value={field.value} onValueChange={(value) => field.onChange(value as ClientApprovalCode)}>
+              <Select
+                value={field.value}
+                onValueChange={(value) =>
+                  field.onChange(value as ClientApprovalCode)
+                }
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue />
@@ -134,7 +153,10 @@ export function ReviewTransmittalForm({
                 </FormControl>
                 <SelectContent>
                   {CLIENT_APPROVAL_OPTIONS.map((option) => (
-                    <SelectItem key={option.approvalCode} value={option.approvalCode}>
+                    <SelectItem
+                      key={option.approvalCode}
+                      value={option.approvalCode}
+                    >
                       {option.label}
                     </SelectItem>
                   ))}
@@ -170,7 +192,8 @@ export function ReviewTransmittalForm({
         <div className="space-y-3">
           <FormLabel>CSR attachment (optional)</FormLabel>
           <FormDescription>
-            Upload the client CSR sheet or any returned marked-up review document.
+            Upload the client CSR sheet or any returned marked-up review
+            document.
           </FormDescription>
 
           {!uploadedFile ? (
@@ -191,7 +214,12 @@ export function ReviewTransmittalForm({
                     : "Uploaded"}
                 </p>
               </div>
-              <Button type="button" variant="ghost" size="sm" onClick={() => setUploadedFile(null)}>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setUploadedFile(null)}
+              >
                 <X className="size-4" />
               </Button>
             </div>

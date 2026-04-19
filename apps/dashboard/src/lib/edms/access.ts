@@ -13,14 +13,14 @@ export interface ProjectAccessScope {
 }
 
 export async function getProjectAccessScope(
-  sessionUser: DashboardSessionUser
+  sessionUser: DashboardSessionUser,
 ): Promise<ProjectAccessScope> {
   return getProjectAccessScopeByUserId(sessionUser.id, sessionUser.role);
 }
 
 export async function getProjectAccessScopeByUserId(
   userId: string,
-  knownRole?: string | null
+  knownRole?: string | null,
 ): Promise<ProjectAccessScope> {
   let role = knownRole ?? null;
 
@@ -61,7 +61,7 @@ export async function getProjectAccessScopeByUserId(
       ...memberRows.map((row) => String(row.projectId)),
       ...ownedRows.map((row) => String(row.projectId)),
       ...clientRows.map((row) => String(row.projectId)),
-    ])
+    ]),
   );
 
   return {
@@ -72,7 +72,7 @@ export async function getProjectAccessScopeByUserId(
 
 export async function canAccessProject(
   sessionUser: DashboardSessionUser,
-  projectId: string
+  projectId: string,
 ): Promise<boolean> {
   const scope = await getProjectAccessScope(sessionUser);
 

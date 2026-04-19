@@ -1,23 +1,9 @@
 "use client";
 
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  Download,
-  Loader2,
-  MoreHorizontal,
-  Search,
-  Users2,
-} from "lucide-react";
-import Link from "next/link";
-import { useMemo, useState, useTransition } from "react";
-import { bulkDeleteUsers, bulkToggleUserStatus, bulkUpdateUserRoles } from "@/actions/admin-users";
-import { toast } from "@/hooks/use-toast";
-import { cn } from "@midday/ui/cn";
 import { Button } from "@midday/ui/button";
 import { Card, CardContent } from "@midday/ui/card";
 import { Checkbox } from "@midday/ui/checkbox";
+import { cn } from "@midday/ui/cn";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,12 +24,47 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@midday/ui/pagination";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@midday/ui/table";
-import { type AdminEditableUser, AdminUserEditSheet } from "./admin-user-edit-sheet";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@midday/ui/table";
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  Download,
+  Loader2,
+  MoreHorizontal,
+  Search,
+  Users2,
+} from "lucide-react";
+import Link from "next/link";
+import { useMemo, useState, useTransition } from "react";
+import {
+  bulkDeleteUsers,
+  bulkToggleUserStatus,
+  bulkUpdateUserRoles,
+} from "@/actions/admin-users";
+import { toast } from "@/hooks/use-toast";
+import {
+  type AdminEditableUser,
+  AdminUserEditSheet,
+} from "./admin-user-edit-sheet";
 import { EdmsStatusBadge, formatEdmsLabel } from "./status-badge";
 
 const PAGE_SIZE = 50;
-const editableRoles = ["admin", "client", "pmc", "vendor", "subcontractor", "user"] as const;
+const editableRoles = [
+  "admin",
+  "client",
+  "pmc",
+  "vendor",
+  "subcontractor",
+  "user",
+] as const;
 
 type SortKey = "name" | "email" | "role" | "organization" | "status";
 type SortDirection = "asc" | "desc";
@@ -53,7 +74,10 @@ interface AdminUsersTableProps {
   currentAdminId: string;
 }
 
-export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps) {
+export function AdminUsersTable({
+  users,
+  currentAdminId,
+}: AdminUsersTableProps) {
   const [query, setQuery] = useState("");
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,17 +100,22 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
           ]
             .join(" ")
             .toLowerCase()
-            .includes(normalizedQuery)
+            .includes(normalizedQuery),
         )
       : users;
 
-    return [...result].sort((left, right) => compareUsers(left, right, sortKey, sortDirection));
+    return [...result].sort((left, right) =>
+      compareUsers(left, right, sortKey, sortDirection),
+    );
   }, [query, sortDirection, sortKey, users]);
 
   const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE));
   const safePage = Math.min(currentPage, totalPages);
   const pageStart = (safePage - 1) * PAGE_SIZE;
-  const currentPageUsers = filteredUsers.slice(pageStart, pageStart + PAGE_SIZE);
+  const currentPageUsers = filteredUsers.slice(
+    pageStart,
+    pageStart + PAGE_SIZE,
+  );
   const allVisibleSelected =
     currentPageUsers.length > 0 &&
     currentPageUsers.every((user) => selectedUserIds.includes(user.id));
@@ -118,13 +147,17 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
     }
 
     setSelectedUserIds((current) =>
-      current.filter((userId) => !currentPageUsers.some((user) => user.id === userId))
+      current.filter(
+        (userId) => !currentPageUsers.some((user) => user.id === userId),
+      ),
     );
   };
 
   const toggleSelection = (userId: string, checked: boolean) => {
     setSelectedUserIds((current) =>
-      checked ? [...new Set([...current, userId])] : current.filter((item) => item !== userId)
+      checked
+        ? [...new Set([...current, userId])]
+        : current.filter((item) => item !== userId),
     );
   };
 
@@ -134,7 +167,7 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
         selectedUserIds.map((userId) => ({
           userId,
           role,
-        }))
+        })),
       );
 
       if (!result.success) {
@@ -214,7 +247,7 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
       "Job Title": user.jobTitle ?? "",
       Department: user.department ?? "",
       Phone: user.phone ?? "",
-      Status: Boolean(user.isActive ?? true) ? "Active" : "Inactive",
+      Status: (user.isActive ?? true) ? "Active" : "Inactive",
     }));
 
     const headers = Object.keys(
@@ -227,7 +260,7 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
         Department: "",
         Phone: "",
         Status: "",
-      }
+      },
     );
 
     const csvContent = [
@@ -235,9 +268,10 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
       ...rows.map((row) =>
         headers
           .map(
-            (header) => `"${String(row[header as keyof typeof row] ?? "").replaceAll('"', '""')}"`
+            (header) =>
+              `"${String(row[header as keyof typeof row] ?? "").replaceAll('"', '""')}"`,
           )
-          .join(",")
+          .join(","),
       ),
     ].join("\n");
 
@@ -276,7 +310,10 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" disabled={selectedCount === 0 || isPending}>
+                  <Button
+                    variant="outline"
+                    disabled={selectedCount === 0 || isPending}
+                  >
                     {isPending ? (
                       <>
                         <Loader2 className="size-4 animate-spin" />
@@ -292,14 +329,18 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>
-                    {selectedCount} user{selectedCount === 1 ? "" : "s"} selected
+                    {selectedCount} user{selectedCount === 1 ? "" : "s"}{" "}
+                    selected
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger>Change role</DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
                       {editableRoles.map((role) => (
-                        <DropdownMenuItem key={role} onClick={() => runBulkRoleUpdate(role)}>
+                        <DropdownMenuItem
+                          key={role}
+                          onClick={() => runBulkRoleUpdate(role)}
+                        >
                           {formatEdmsLabel(role)}
                         </DropdownMenuItem>
                       ))}
@@ -312,7 +353,10 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
                     Deactivate selected
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-destructive" onClick={runBulkDelete}>
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onClick={runBulkDelete}
+                  >
                     Delete selected
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -325,7 +369,9 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
               <Users2 className="size-4" />
               {filteredUsers.length} matching users
             </div>
-            {selectedCount > 0 ? <span>{selectedCount} selected for bulk actions</span> : null}
+            {selectedCount > 0 ? (
+              <span>{selectedCount} selected for bulk actions</span>
+            ) : null}
           </div>
         </div>
 
@@ -335,7 +381,9 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
               <TableHead className="w-12">
                 <Checkbox
                   checked={allVisibleSelected}
-                  onCheckedChange={(checked) => toggleVisibleRows(Boolean(checked))}
+                  onCheckedChange={(checked) =>
+                    toggleVisibleRows(Boolean(checked))
+                  }
                   aria-label="Select visible users"
                 />
               </TableHead>
@@ -375,7 +423,10 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
           <TableBody>
             {currentPageUsers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="px-6 py-16 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={7}
+                  className="px-6 py-16 text-center text-muted-foreground"
+                >
                   No users matched the current search.
                 </TableCell>
               </TableRow>
@@ -383,12 +434,16 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
               currentPageUsers.map((user) => (
                 <TableRow
                   key={user.id}
-                  data-state={selectedUserIds.includes(user.id) ? "selected" : undefined}
+                  data-state={
+                    selectedUserIds.includes(user.id) ? "selected" : undefined
+                  }
                 >
                   <TableCell>
                     <Checkbox
                       checked={selectedUserIds.includes(user.id)}
-                      onCheckedChange={(checked) => toggleSelection(user.id, Boolean(checked))}
+                      onCheckedChange={(checked) =>
+                        toggleSelection(user.id, Boolean(checked))
+                      }
                       aria-label={`Select ${user.name}`}
                     />
                   </TableCell>
@@ -400,21 +455,28 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
                       >
                         {user.name}
                       </Link>
-                      <p className="text-xs text-muted-foreground">{user.jobTitle || "No title"}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {user.jobTitle || "No title"}
+                      </p>
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">{user.email}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {user.email}
+                  </TableCell>
                   <TableCell>{formatEdmsLabel(user.role ?? "user")}</TableCell>
                   <TableCell className="whitespace-normal text-muted-foreground">
                     {user.organization || "Unassigned"}
                   </TableCell>
                   <TableCell>
                     <EdmsStatusBadge
-                      status={Boolean(user.isActive ?? true) ? "active" : "archived"}
+                      status={(user.isActive ?? true) ? "active" : "archived"}
                     />
                   </TableCell>
                   <TableCell className="text-right">
-                    <AdminUserEditSheet user={user} currentAdminId={currentAdminId} />
+                    <AdminUserEditSheet
+                      user={user}
+                      currentAdminId={currentAdminId}
+                    />
                   </TableCell>
                 </TableRow>
               ))
@@ -433,7 +495,9 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
                       event.preventDefault();
                       setCurrentPage((page) => Math.max(1, page - 1));
                     }}
-                    className={cn(safePage === 1 && "pointer-events-none opacity-50")}
+                    className={cn(
+                      safePage === 1 && "pointer-events-none opacity-50",
+                    )}
                   />
                 </PaginationItem>
               </PaginationContent>
@@ -461,7 +525,10 @@ export function AdminUsersTable({ users, currentAdminId }: AdminUsersTableProps)
                       event.preventDefault();
                       setCurrentPage((page) => Math.min(totalPages, page + 1));
                     }}
-                    className={cn(safePage === totalPages && "pointer-events-none opacity-50")}
+                    className={cn(
+                      safePage === totalPages &&
+                        "pointer-events-none opacity-50",
+                    )}
                   />
                 </PaginationItem>
               </PaginationContent>
@@ -510,7 +577,7 @@ function compareUsers(
   left: AdminEditableUser,
   right: AdminEditableUser,
   key: SortKey,
-  direction: SortDirection
+  direction: SortDirection,
 ) {
   const multiplier = direction === "asc" ? 1 : -1;
 
@@ -532,7 +599,9 @@ function compareUsers(
           ? (right.role ?? "")
           : right[key];
 
-  return String(leftValue ?? "").localeCompare(String(rightValue ?? "")) * multiplier;
+  return (
+    String(leftValue ?? "").localeCompare(String(rightValue ?? "")) * multiplier
+  );
 }
 
 function buildVisiblePages(totalPages: number, currentPage: number) {
@@ -544,7 +613,8 @@ function buildVisiblePages(totalPages: number, currentPage: number) {
   const end = Math.min(totalPages, start + 4);
   const normalizedStart = Math.max(1, end - 4);
 
-  return Array.from({ length: end - normalizedStart + 1 }, (_, index) => normalizedStart + index);
+  return Array.from(
+    { length: end - normalizedStart + 1 },
+    (_, index) => normalizedStart + index,
+  );
 }
-
-

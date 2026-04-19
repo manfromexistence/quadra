@@ -41,3 +41,24 @@ Encountered a script tag while rendering React component. Scripts inside React c
   8 |     />
 
 Next.js version: 16.2.3 (Turbopack)
+
+Please look at the edms.html file in the root and look at our apps/dashboard those edms related pages - our apps/dashboard edms related pages are just bunch of dummy stuffs - so lock in those pages and add all the features in those files not all half baked but learn from the root edms file and then fix all apps/dashboard edms pages - put action button make it look better with more response design using our apps/dashboard midday-ui design system correctly - as do it one by one - as report page should show popover to create, show and downlaod report using popover and do it for all other pages correctly - there is a hug gap between just the edms.html file with the apps/dashboard sidebar pages so please do it right this time!!!
+
+THIS IS A FREELANCE EDMS CLIENT PROJECT - NOW THE WHOLE DASHBOARD TOOK SO MUCH TIME AND EFFORT - NOW AS THIS IS A EDMS RELATED CLIENT ONLY THINGS MATTER TO HIM IS HIS FEATURES - THE UI IS GOOD - NOW PLEASE MAKE THE FEATURES AS THE EDMS.HTML FILE CORRECTLY IN OUR APPS/DASHBOARD FOLDER PROJECT!!!
+
+First look at the transmitter new page and the EDMS transmitter page. The EDMS transmitter page can create tables but our apps' dashboard can't do it. Also all the pages like metrics and audit report are just dummy; they don't show any reports or other stuff like the EDMS. Please learn from it and make all the EDMS pages correctly. Now I just take one single page; for now take the transmitter page and please fully make it functional with all the features in the edms.html file.
+
+And then instead of hallucinating a bunch of stuff, please study the edms.html file more closely as the client is saying that our app's dashboard EDMS-related pages have a use gap between the edms.html file. I really don't want to hear this anymore so don't try to check all the files at once. Just take one page of our EDMS dashboard page and fully make it functional. This is a very serious task so please study the edms.html file in the root very closely and strictly. Implement all the features it has in our app hdms dashboard edms pages. 
+
+IN the root edms.html file please look for these pages and update our apps/dashboard these pages correctly to have all features correctly
+▬Schedule & Progress
+❏Data Book
+
+IN the root edms.html file please look for these pages and update our apps/dashboard these pages correctly to have all features correctly
+transmittal - look close the edms new transmittla and its live generation and apply it our apps/dashboard correctly so that we have all features correclty - specially the table and the way the generation look in the live - please do it right time!!!
+
+Now please connect all the edms pages with our database correctly - everything shoudl connected to our turso database - all the admin database pages!!!
+
+And other non edms pages is not working - so like the mock-data please configure our turso databse using wsl inline turso database and connect it correctly so all pages loads!!!
+
+Please lint and format all files and folder in the apps/dashbnoard correctly - and check for errors - in lowend device way and fix all errors

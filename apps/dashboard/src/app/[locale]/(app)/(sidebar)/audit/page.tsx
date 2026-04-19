@@ -7,15 +7,7 @@ import {
   CardTitle,
 } from "@midday/ui/card";
 import { Input } from "@midday/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
-import { ArrowRight, Clock, History, Search } from "lucide-react";
+import { ArrowRight, History, Search } from "lucide-react";
 import type { Metadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import Link from "next/link";
@@ -148,87 +140,57 @@ export default async function AuditPage({
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <History className="size-4" />
-                      System event log
+                      Audit log
                     </CardTitle>
                     <CardDescription>
                       {auditData.entries.length} event
                       {auditData.entries.length !== 1 ? "s" : ""} shown
                       {params.query || params.entityType ? " (filtered)" : ""} ·
-                      Most recent first
+                      Immutable log of all document and configuration actions
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="px-0">
+                  <CardContent className="p-0">
                     {auditData.entries.length === 0 ? (
-                      <div className="px-6 pb-6 text-sm text-muted-foreground">
+                      <div className="px-6 pb-6 pt-2 text-sm text-muted-foreground">
                         No audit entries match your filter criteria.
                       </div>
                     ) : (
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="px-6">
-                              <span className="flex items-center gap-1.5">
-                                <Clock className="size-3" />
-                                Timestamp
+                      <div className="divide-y divide-border">
+                        {auditData.entries.map((entry) => (
+                          <div
+                            key={entry.id}
+                            className="flex gap-3 px-6 py-3 transition-colors hover:bg-accent/50"
+                          >
+                            <div className="min-w-[110px] shrink-0">
+                              <span className="font-mono text-[10.5px] text-muted-foreground">
+                                {entry.timestamp}
                               </span>
-                            </TableHead>
-                            <TableHead>Actor</TableHead>
-                            <TableHead>Action</TableHead>
-                            <TableHead>Entity</TableHead>
-                            <TableHead className="px-6">Detail</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {auditData.entries.map((entry) => (
-                            <TableRow
-                              key={entry.id}
-                              className="align-top transition-colors hover:bg-accent"
-                            >
-                              <TableCell className="px-6 py-4">
-                                <span className="whitespace-nowrap font-mono text-xs text-muted-foreground">
-                                  {entry.timestamp}
-                                </span>
-                              </TableCell>
-                              <TableCell className="py-4">
-                                <div className="flex items-center gap-2">
-                                  <div
-                                    className={`size-2 shrink-0 rounded-full ${
-                                      ACTION_COLORS[entry.action] ??
-                                      "bg-muted-foreground"
-                                    }`}
-                                  />
-                                  <div>
-                                    <p className="text-sm font-medium">
-                                      {entry.actor}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground">
-                                      {entry.actorRole}
-                                    </p>
-                                  </div>
-                                </div>
-                              </TableCell>
-                              <TableCell className="py-4 text-sm">
-                                {entry.actionLabel}
-                              </TableCell>
-                              <TableCell className="py-4">
-                                <div className="space-y-1">
-                                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                                    {entry.entityType}
-                                  </p>
-                                  <p className="font-mono text-xs text-muted-foreground">
-                                    {entry.entityCode}
-                                  </p>
-                                </div>
-                              </TableCell>
-                              <TableCell className="px-6 py-4">
-                                <p className="text-sm leading-relaxed text-muted-foreground">
-                                  {entry.detail}
+                            </div>
+                            <div className="min-w-0 flex-1 space-y-0.5">
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className={`size-1.5 shrink-0 rounded-full ${
+                                    ACTION_COLORS[entry.action] ??
+                                    "bg-muted-foreground"
+                                  }`}
+                                />
+                                <p className="text-sm">
+                                  <span className="font-medium">
+                                    {entry.actor}
+                                  </span>
+                                  <span className="text-muted-foreground">
+                                    {" "}
+                                    — {entry.actionLabel}
+                                  </span>
                                 </p>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
+                              </div>
+                              <p className="text-[11.5px] leading-relaxed text-muted-foreground">
+                                {entry.detail}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </CardContent>
                 </Card>

@@ -15,7 +15,13 @@ import { Spinner } from "@midday/ui/spinner";
 import { formatDate } from "@midday/utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { formatISO } from "date-fns";
-import { BellRing, FileStack, FolderKanban, Send, Workflow } from "lucide-react";
+import {
+  BellRing,
+  FileStack,
+  FolderKanban,
+  Send,
+  Workflow,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -546,7 +552,9 @@ const SearchResultItemDisplay = ({
       }
       case "edms_project": {
         onSelect = () => nav.navigateToPath(item.href || "/projects");
-        icon = <FolderKanban className="size-4 dark:text-[#666] text-primary" />;
+        icon = (
+          <FolderKanban className="size-4 dark:text-[#666] text-primary" />
+        );
         resultDisplay = (
           <div className="flex items-center justify-between w-full">
             <div className="min-w-0 flex-1">

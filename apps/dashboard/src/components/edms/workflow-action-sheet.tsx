@@ -1,13 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, MessageSquareMore, ShieldCheck, Upload, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { recordWorkflowDecision } from "@/actions/workflows";
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@midday/ui/button";
 import {
   Form,
@@ -18,7 +11,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@midday/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@midday/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -28,10 +27,29 @@ import {
   SheetTrigger,
 } from "@midday/ui/sheet";
 import { Textarea } from "@midday/ui/textarea";
+import {
+  Loader2,
+  MessageSquareMore,
+  ShieldCheck,
+  Upload,
+  X,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { recordWorkflowDecision } from "@/actions/workflows";
+import { toast } from "@/hooks/use-toast";
 import { DocumentFileUpload } from "./document-file-upload";
 
 const workflowDecisionSchema = z.object({
-  decision: z.enum(["approve", "approve_with_comments", "reject", "comment", "for_information"]),
+  decision: z.enum([
+    "approve",
+    "approve_with_comments",
+    "reject",
+    "comment",
+    "for_information",
+  ]),
   comments: z.string().trim(),
   attachmentUrl: z
     .string()
@@ -145,7 +163,10 @@ export function WorkflowActionSheet({
         </SheetHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="mt-8 space-y-6"
+          >
             <FormField
               control={form.control}
               name="decision"
@@ -166,8 +187,12 @@ export function WorkflowActionSheet({
                         Code-2: Approved with Comments
                       </SelectItem>
                       <SelectItem value="reject">Code-3: Reject</SelectItem>
-                      <SelectItem value="for_information">Code-4: For Information Only</SelectItem>
-                      <SelectItem value="comment">Comment only (doesn't complete step)</SelectItem>
+                      <SelectItem value="for_information">
+                        Code-4: For Information Only
+                      </SelectItem>
+                      <SelectItem value="comment">
+                        Comment only (doesn't complete step)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -196,7 +221,8 @@ export function WorkflowActionSheet({
             <div className="space-y-3">
               <FormLabel>CSR Attachment (Optional)</FormLabel>
               <FormDescription>
-                Upload a Comments Resolution Sheet (Excel/PDF) or other supporting documents
+                Upload a Comments Resolution Sheet (Excel/PDF) or other
+                supporting documents
               </FormDescription>
 
               {!uploadedFile && projectId && (
@@ -212,7 +238,9 @@ export function WorkflowActionSheet({
                 <div className="flex items-center gap-3 rounded-lg border p-3">
                   <Upload className="size-4 text-muted-foreground" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium">{uploadedFile.fileName}</p>
+                    <p className="text-sm font-medium">
+                      {uploadedFile.fileName}
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {uploadedFile.fileSize
                         ? `${(uploadedFile.fileSize / 1024).toFixed(1)} KB`
@@ -232,7 +260,11 @@ export function WorkflowActionSheet({
             </div>
 
             <div className="flex items-center justify-end gap-3 border-t pt-6">
-              <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setIsOpen(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={isPending}>
@@ -255,5 +287,3 @@ export function WorkflowActionSheet({
     </Sheet>
   );
 }
-
-

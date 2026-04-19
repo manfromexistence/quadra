@@ -34,7 +34,7 @@ export function useInboxUpload() {
       if (!files.length) return;
 
       const path = [user?.teamId, "inbox"] as string[];
-      const progress = files.map(() => 0);
+      const _progress = files.map(() => 0);
 
       const { id } = toastRef.current.toast({
         title: `Uploading ${files.length} ${files.length === 1 ? "file" : "files"}`,
@@ -49,7 +49,7 @@ export function useInboxUpload() {
       try {
         // Mock upload process - just simulate progress
         for (let i = 0; i <= 100; i += 10) {
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise((resolve) => setTimeout(resolve, 100));
           if (toastIdRef.current) {
             toastRef.current.update(toastIdRef.current, {
               id: toastIdRef.current,
@@ -112,13 +112,7 @@ export function useInboxUpload() {
         });
       }
     },
-    [
-      user?.teamId,
-      queryClient,
-      trpc,
-      createInboxItem,
-      processAttachments,
-    ],
+    [user?.teamId, queryClient, trpc, createInboxItem, processAttachments],
   );
 
   const openFilePicker = useCallback(() => {

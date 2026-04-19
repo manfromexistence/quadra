@@ -29,7 +29,14 @@ interface CreateProjectInput {
 interface AssignProjectMemberInput {
   projectId: string;
   userId: string;
-  role: "admin" | "client" | "pmc" | "vendor" | "contractor" | "subcontractor" | "user";
+  role:
+    | "admin"
+    | "client"
+    | "pmc"
+    | "vendor"
+    | "contractor"
+    | "subcontractor"
+    | "user";
 }
 
 export async function createProject(input: CreateProjectInput) {
@@ -99,7 +106,10 @@ export async function assignProjectMember(input: AssignProjectMemberInput) {
       })
       .from(projectMembers)
       .where(
-        and(eq(projectMembers.projectId, input.projectId), eq(projectMembers.userId, input.userId))
+        and(
+          eq(projectMembers.projectId, input.projectId),
+          eq(projectMembers.userId, input.userId),
+        ),
       )
       .limit(1);
 
@@ -146,7 +156,9 @@ export async function assignProjectMember(input: AssignProjectMemberInput) {
     await logEdmsActivity({
       userId: sessionUser.id,
       projectId: input.projectId,
-      action: existingMembership ? "project_member_updated" : "project_member_assigned",
+      action: existingMembership
+        ? "project_member_updated"
+        : "project_member_assigned",
       entityType: "project_member",
       entityId: existingMembership?.id ?? input.userId,
       entityName: projectSummary?.name ?? "Project member",

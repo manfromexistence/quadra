@@ -1,9 +1,9 @@
 "use client";
 
-import { Activity, Calendar, ExternalLink, User } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@midday/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
+import { Activity, Calendar, ExternalLink, User } from "lucide-react";
+import Link from "next/link";
 import { formatEdmsLabel } from "./status-badge";
 
 interface ActivityEntryPopoverProps {
@@ -20,7 +20,10 @@ interface ActivityEntryPopoverProps {
   children: React.ReactNode;
 }
 
-export function ActivityEntryPopover({ entry, children }: ActivityEntryPopoverProps) {
+export function ActivityEntryPopover({
+  entry,
+  children,
+}: ActivityEntryPopoverProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -35,7 +38,9 @@ export function ActivityEntryPopover({ entry, children }: ActivityEntryPopoverPr
                   {formatEdmsLabel(entry.action)}
                 </h4>
                 {entry.entityName && (
-                  <p className="text-sm text-muted-foreground">{entry.entityName}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {entry.entityName}
+                  </p>
                 )}
               </div>
             </div>
@@ -56,7 +61,9 @@ export function ActivityEntryPopover({ entry, children }: ActivityEntryPopoverPr
             {entry.entityType && (
               <div className="flex items-center gap-2">
                 <Activity className="size-4 text-muted-foreground" />
-                <span className="text-sm">{formatEdmsLabel(entry.entityType)}</span>
+                <span className="text-sm">
+                  {formatEdmsLabel(entry.entityType)}
+                </span>
               </div>
             )}
 

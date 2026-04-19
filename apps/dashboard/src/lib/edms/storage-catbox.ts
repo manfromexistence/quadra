@@ -45,7 +45,7 @@ export async function uploadEdmsFile(input: {
   // Catbox returns the direct URL as plain text
   const fileUrl = (await response.text()).trim();
 
-  if (!fileUrl || !fileUrl.startsWith("https://files.catbox.moe/")) {
+  if (!fileUrl?.startsWith("https://files.catbox.moe/")) {
     if (!userhash) {
       throw new Error(
         "Catbox rejected the upload. Anonymous Catbox uploads are unreliable right now; configure CATBOX_USERHASH or another storage provider.",

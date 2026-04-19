@@ -1,13 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, UserPlus2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { assignProjectMember } from "@/actions/projects";
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@midday/ui/button";
 import {
   Form,
@@ -18,7 +11,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@midday/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@midday/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -27,6 +26,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@midday/ui/sheet";
+import { Loader2, UserPlus2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { assignProjectMember } from "@/actions/projects";
+import { toast } from "@/hooks/use-toast";
 
 const projectMemberRoles = [
   "admin",
@@ -43,7 +49,9 @@ const assignProjectMemberFormSchema = z.object({
   role: z.enum(projectMemberRoles),
 });
 
-type AssignProjectMemberFormValues = z.infer<typeof assignProjectMemberFormSchema>;
+type AssignProjectMemberFormValues = z.infer<
+  typeof assignProjectMemberFormSchema
+>;
 
 const defaultValues: AssignProjectMemberFormValues = {
   userId: "",
@@ -61,7 +69,10 @@ interface ProjectMemberSheetProps {
   }[];
 }
 
-export function ProjectMemberSheet({ projectId, users }: ProjectMemberSheetProps) {
+export function ProjectMemberSheet({
+  projectId,
+  users,
+}: ProjectMemberSheetProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -117,7 +128,8 @@ export function ProjectMemberSheet({ projectId, users }: ProjectMemberSheetProps
           <div className="px-6 pt-6">
             <SheetTitle>Assign project member</SheetTitle>
             <SheetDescription>
-              Add a project participant and define the role they will hold inside this workspace.
+              Add a project participant and define the role they will hold
+              inside this workspace.
             </SheetDescription>
           </div>
         </SheetHeader>
@@ -130,7 +142,10 @@ export function ProjectMemberSheet({ projectId, users }: ProjectMemberSheetProps
           </div>
         ) : (
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-6 px-6 pb-6">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="mt-8 space-y-6 px-6 pb-6"
+            >
               <FormField
                 control={form.control}
                 name="userId"
@@ -152,7 +167,8 @@ export function ProjectMemberSheet({ projectId, users }: ProjectMemberSheetProps
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      Existing global users can be assigned immediately to the project team.
+                      Existing global users can be assigned immediately to the
+                      project team.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -180,8 +196,8 @@ export function ProjectMemberSheet({ projectId, users }: ProjectMemberSheetProps
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      This role controls how the user participates in reviews, approvals, and
-                      document submission on this project.
+                      This role controls how the user participates in reviews,
+                      approvals, and document submission on this project.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -189,7 +205,11 @@ export function ProjectMemberSheet({ projectId, users }: ProjectMemberSheetProps
               />
 
               <div className="flex items-center justify-end gap-3 border-t pt-6">
-                <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setIsOpen(false)}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isPending}>
@@ -213,5 +233,3 @@ export function ProjectMemberSheet({ projectId, users }: ProjectMemberSheetProps
     </Sheet>
   );
 }
-
-

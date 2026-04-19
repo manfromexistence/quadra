@@ -1,17 +1,23 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FilePlus2, Loader2, Upload, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { createDocumentsBatch } from "@/actions/documents";
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@midday/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@midday/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@midday/ui/form";
 import { Input } from "@midday/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@midday/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -20,6 +26,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@midday/ui/sheet";
+import { FilePlus2, Loader2, Upload, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { createDocumentsBatch } from "@/actions/documents";
+import { toast } from "@/hooks/use-toast";
 import { DocumentFileUpload } from "./document-file-upload";
 
 const documentStatuses = [
@@ -44,7 +57,7 @@ const bulkDocumentSchema = z.object({
         fileUrl: z.string().url(),
         fileSize: z.number().optional(),
         title: z.string().optional(),
-      })
+      }),
     )
     .min(1, "At least one file is required"),
 });
@@ -71,7 +84,13 @@ export function DocumentBulkUploadSheet({
 
   const form = useForm<BulkDocumentValues>({
     resolver: zodResolver(bulkDocumentSchema),
-    defaultValues: { projectId: "", discipline: "", category: "", status: "draft", files: [] },
+    defaultValues: {
+      projectId: "",
+      discipline: "",
+      category: "",
+      status: "draft",
+      files: [],
+    },
   });
 
   const selectedProjectId = form.watch("projectId");
@@ -110,7 +129,8 @@ export function DocumentBulkUploadSheet({
       const failCount = result.data.failed.length;
 
       toast({
-        title: successCount > 0 ? "Bulk upload completed" : "Bulk upload failed",
+        title:
+          successCount > 0 ? "Bulk upload completed" : "Bulk upload failed",
         description:
           successCount > 0
             ? `Successfully uploaded ${successCount} document(s)${failCount > 0 ? `, ${failCount} failed` : ""}.`
@@ -144,7 +164,10 @@ export function DocumentBulkUploadSheet({
         </SheetHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-6 px-6 pb-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="mt-8 space-y-6 px-6 pb-6"
+          >
             <div className="grid gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
@@ -161,7 +184,9 @@ export function DocumentBulkUploadSheet({
                       <SelectContent>
                         {projects.map((p) => (
                           <SelectItem key={p.id} value={p.id}>
-                            {p.projectNumber ? `${p.projectNumber} - ${p.name}` : p.name}
+                            {p.projectNumber
+                              ? `${p.projectNumber} - ${p.name}`
+                              : p.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -231,14 +256,19 @@ export function DocumentBulkUploadSheet({
                 projectId={selectedProjectId}
                 folder="documents"
                 helperText="Upload multiple files"
-                onUploaded={(file) => setUploadedFiles((prev) => [...prev, file])}
+                onUploaded={(file) =>
+                  setUploadedFiles((prev) => [...prev, file])
+                }
               />
 
               {uploadedFiles.length > 0 && (
                 <div className="space-y-3">
                   <FormLabel>Uploaded files ({uploadedFiles.length})</FormLabel>
                   {uploadedFiles.map((file, i) => (
-                    <div key={i} className="flex items-center gap-3 rounded-lg border p-3">
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 rounded-lg border p-3"
+                    >
                       <div className="flex-1 space-y-2">
                         <p className="text-sm font-medium">{file.fileName}</p>
                         <Input
@@ -247,8 +277,8 @@ export function DocumentBulkUploadSheet({
                           onChange={(e) =>
                             setUploadedFiles((prev) =>
                               prev.map((f, idx) =>
-                                idx === i ? { ...f, title: e.target.value } : f
-                              )
+                                idx === i ? { ...f, title: e.target.value } : f,
+                              ),
                             )
                           }
                           className="h-8"
@@ -259,7 +289,9 @@ export function DocumentBulkUploadSheet({
                         variant="ghost"
                         size="sm"
                         onClick={() =>
-                          setUploadedFiles((prev) => prev.filter((_, idx) => idx !== i))
+                          setUploadedFiles((prev) =>
+                            prev.filter((_, idx) => idx !== i),
+                          )
                         }
                       >
                         <X className="size-4" />
@@ -281,10 +313,17 @@ export function DocumentBulkUploadSheet({
             </div>
 
             <div className="flex items-center justify-end gap-3 border-t pt-6">
-              <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setIsOpen(false)}
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isPending || uploadedFiles.length === 0}>
+              <Button
+                type="submit"
+                disabled={isPending || uploadedFiles.length === 0}
+              >
                 {isPending ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
@@ -304,5 +343,3 @@ export function DocumentBulkUploadSheet({
     </Sheet>
   );
 }
-
-

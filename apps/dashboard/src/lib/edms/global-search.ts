@@ -43,7 +43,7 @@ export interface EdmsGlobalSearchItem {
 export async function searchEdms(
   userId: string,
   rawQuery: string,
-  limitPerCategory = 5
+  limitPerCategory = 5,
 ): Promise<EdmsSearchResult[]> {
   const query = rawQuery.trim();
 
@@ -70,138 +70,149 @@ export async function searchEdms(
       ? inArray(transmittals.projectId, accessScope.projectIds)
       : null;
 
-  const [projectRows, documentRows, workflowRows, transmittalRows, notificationRows] =
-    await Promise.all([
-      scopedProjectCondition === null
-        ? Promise.resolve([])
-        : db
-            .select({
-              id: projects.id,
-              name: projects.name,
-              projectNumber: projects.projectNumber,
-              description: projects.description,
-            })
-            .from(projects)
-            .where(
-              and(
-                scopedProjectCondition,
-                or(
-                  ilike(projects.name, searchPattern),
-                  ilike(projects.projectNumber, searchPattern),
-                  ilike(projects.description, searchPattern)
-                )
-              )
-            )
-            .orderBy(asc(projects.name))
-            .limit(limitPerCategory),
-      scopedDocumentCondition === null
-        ? Promise.resolve([])
-        : db
-            .select({
-              id: documents.id,
-              title: documents.title,
-              documentNumber: documents.documentNumber,
-              projectName: projects.name,
-              discipline: documents.discipline,
-              category: documents.category,
-            })
-            .from(documents)
-            .innerJoin(projects, eq(documents.projectId, projects.id))
-            .where(
-              and(
-                scopedDocumentCondition,
-                or(
-                  ilike(documents.title, searchPattern),
-                  ilike(documents.documentNumber, searchPattern),
-                  ilike(documents.description, searchPattern),
-                  ilike(projects.name, searchPattern)
-                )
-              )
-            )
-            .orderBy(desc(documents.uploadedAt))
-            .limit(limitPerCategory),
-      scopedDocumentCondition === null
-        ? Promise.resolve([])
-        : db
-            .select({
-              id: workflowSteps.id,
-              workflowId: documentWorkflows.id,
-              stepName: workflowSteps.stepName,
-              status: workflowSteps.status,
-              assignedToName: userTable.name,
-              documentNumber: documents.documentNumber,
-              documentTitle: documents.title,
-              projectName: projects.name,
-            })
-            .from(workflowSteps)
-            .innerJoin(documentWorkflows, eq(workflowSteps.workflowId, documentWorkflows.id))
-            .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
-            .innerJoin(projects, eq(documents.projectId, projects.id))
-            .leftJoin(userTable, eq(workflowSteps.assignedTo, userTable.id))
-            .where(
-              and(
-                scopedDocumentCondition,
-                or(
-                  ilike(workflowSteps.stepName, searchPattern),
-                  ilike(workflowSteps.status, searchPattern),
-                  ilike(documents.documentNumber, searchPattern),
-                  ilike(documents.title, searchPattern),
-                  ilike(projects.name, searchPattern)
-                )
-              )
-            )
-            .orderBy(asc(workflowSteps.dueDate), desc(documentWorkflows.startedAt))
-            .limit(limitPerCategory),
-      scopedTransmittalCondition === null
-        ? Promise.resolve([])
-        : db
-            .select({
-              id: transmittals.id,
-              transmittalNumber: transmittals.transmittalNumber,
-              subject: transmittals.subject,
-              description: transmittals.description,
-              projectName: projects.name,
-              status: transmittals.status,
-            })
-            .from(transmittals)
-            .innerJoin(projects, eq(transmittals.projectId, projects.id))
-            .where(
-              and(
-                scopedTransmittalCondition,
-                or(
-                  ilike(transmittals.transmittalNumber, searchPattern),
-                  ilike(transmittals.subject, searchPattern),
-                  ilike(transmittals.description, searchPattern),
-                  ilike(projects.name, searchPattern)
-                )
-              )
-            )
-            .orderBy(desc(transmittals.createdAt))
-            .limit(limitPerCategory),
-      db
-        .select({
-          id: notifications.id,
-          title: notifications.title,
-          message: notifications.message,
-          projectName: projects.name,
-          type: notifications.type,
-          actionUrl: notifications.actionUrl,
-        })
-        .from(notifications)
-        .leftJoin(projects, eq(notifications.projectId, projects.id))
-        .where(
-          and(
-            eq(notifications.userId, userId),
-            or(
-              ilike(notifications.title, searchPattern),
-              ilike(notifications.message, searchPattern),
-              ilike(projects.name, searchPattern)
-            )
+  const [
+    projectRows,
+    documentRows,
+    workflowRows,
+    transmittalRows,
+    notificationRows,
+  ] = await Promise.all([
+    scopedProjectCondition === null
+      ? Promise.resolve([])
+      : db
+          .select({
+            id: projects.id,
+            name: projects.name,
+            projectNumber: projects.projectNumber,
+            description: projects.description,
+          })
+          .from(projects)
+          .where(
+            and(
+              scopedProjectCondition,
+              or(
+                ilike(projects.name, searchPattern),
+                ilike(projects.projectNumber, searchPattern),
+                ilike(projects.description, searchPattern),
+              ),
+            ),
           )
-        )
-        .orderBy(desc(notifications.createdAt))
-        .limit(limitPerCategory),
-    ]);
+          .orderBy(asc(projects.name))
+          .limit(limitPerCategory),
+    scopedDocumentCondition === null
+      ? Promise.resolve([])
+      : db
+          .select({
+            id: documents.id,
+            title: documents.title,
+            documentNumber: documents.documentNumber,
+            projectName: projects.name,
+            discipline: documents.discipline,
+            category: documents.category,
+          })
+          .from(documents)
+          .innerJoin(projects, eq(documents.projectId, projects.id))
+          .where(
+            and(
+              scopedDocumentCondition,
+              or(
+                ilike(documents.title, searchPattern),
+                ilike(documents.documentNumber, searchPattern),
+                ilike(documents.description, searchPattern),
+                ilike(projects.name, searchPattern),
+              ),
+            ),
+          )
+          .orderBy(desc(documents.uploadedAt))
+          .limit(limitPerCategory),
+    scopedDocumentCondition === null
+      ? Promise.resolve([])
+      : db
+          .select({
+            id: workflowSteps.id,
+            workflowId: documentWorkflows.id,
+            stepName: workflowSteps.stepName,
+            status: workflowSteps.status,
+            assignedToName: userTable.name,
+            documentNumber: documents.documentNumber,
+            documentTitle: documents.title,
+            projectName: projects.name,
+          })
+          .from(workflowSteps)
+          .innerJoin(
+            documentWorkflows,
+            eq(workflowSteps.workflowId, documentWorkflows.id),
+          )
+          .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
+          .innerJoin(projects, eq(documents.projectId, projects.id))
+          .leftJoin(userTable, eq(workflowSteps.assignedTo, userTable.id))
+          .where(
+            and(
+              scopedDocumentCondition,
+              or(
+                ilike(workflowSteps.stepName, searchPattern),
+                ilike(workflowSteps.status, searchPattern),
+                ilike(documents.documentNumber, searchPattern),
+                ilike(documents.title, searchPattern),
+                ilike(projects.name, searchPattern),
+              ),
+            ),
+          )
+          .orderBy(
+            asc(workflowSteps.dueDate),
+            desc(documentWorkflows.startedAt),
+          )
+          .limit(limitPerCategory),
+    scopedTransmittalCondition === null
+      ? Promise.resolve([])
+      : db
+          .select({
+            id: transmittals.id,
+            transmittalNumber: transmittals.transmittalNumber,
+            subject: transmittals.subject,
+            description: transmittals.description,
+            projectName: projects.name,
+            status: transmittals.status,
+          })
+          .from(transmittals)
+          .innerJoin(projects, eq(transmittals.projectId, projects.id))
+          .where(
+            and(
+              scopedTransmittalCondition,
+              or(
+                ilike(transmittals.transmittalNumber, searchPattern),
+                ilike(transmittals.subject, searchPattern),
+                ilike(transmittals.description, searchPattern),
+                ilike(projects.name, searchPattern),
+              ),
+            ),
+          )
+          .orderBy(desc(transmittals.createdAt))
+          .limit(limitPerCategory),
+    db
+      .select({
+        id: notifications.id,
+        title: notifications.title,
+        message: notifications.message,
+        projectName: projects.name,
+        type: notifications.type,
+        actionUrl: notifications.actionUrl,
+      })
+      .from(notifications)
+      .leftJoin(projects, eq(notifications.projectId, projects.id))
+      .where(
+        and(
+          eq(notifications.userId, userId),
+          or(
+            ilike(notifications.title, searchPattern),
+            ilike(notifications.message, searchPattern),
+            ilike(projects.name, searchPattern),
+          ),
+        ),
+      )
+      .orderBy(desc(notifications.createdAt))
+      .limit(limitPerCategory),
+  ]);
 
   return [
     ...projectRows.map((project) => ({
@@ -218,7 +229,10 @@ export async function searchEdms(
       subtitle: document.documentNumber,
       category: "document" as const,
       href: `/documents/${document.id}`,
-      meta: [document.projectName, document.discipline || document.category || "Document"]
+      meta: [
+        document.projectName,
+        document.discipline || document.category || "Document",
+      ]
         .filter(Boolean)
         .join(" · "),
     })),
@@ -231,7 +245,9 @@ export async function searchEdms(
       meta: [
         workflow.projectName,
         workflow.documentTitle,
-        workflow.assignedToName ? `Assigned to ${workflow.assignedToName}` : workflow.status,
+        workflow.assignedToName
+          ? `Assigned to ${workflow.assignedToName}`
+          : workflow.status,
       ]
         .filter(Boolean)
         .join(" · "),
@@ -242,7 +258,9 @@ export async function searchEdms(
       subtitle: transmittal.transmittalNumber,
       category: "transmittal" as const,
       href: `/transmittals/${transmittal.id}`,
-      meta: [transmittal.projectName, transmittal.status].filter(Boolean).join(" · "),
+      meta: [transmittal.projectName, transmittal.status]
+        .filter(Boolean)
+        .join(" · "),
     })),
     ...notificationRows.map((notification) => ({
       id: String(notification.id),
@@ -258,7 +276,7 @@ export async function searchEdms(
 export async function searchEdmsForCommandPalette(
   userId: string,
   query: string,
-  limitPerCategory = 5
+  limitPerCategory = 5,
 ): Promise<EdmsGlobalSearchItem[]> {
   const results = await searchEdms(userId, query, limitPerCategory);
 
@@ -272,7 +290,9 @@ export async function searchEdmsForCommandPalette(
   }));
 }
 
-function mapResultCategoryToGlobalType(category: EdmsSearchCategory): EdmsGlobalSearchItem["type"] {
+function mapResultCategoryToGlobalType(
+  category: EdmsSearchCategory,
+): EdmsGlobalSearchItem["type"] {
   switch (category) {
     case "project":
       return "edms_project";
@@ -288,5 +308,8 @@ function mapResultCategoryToGlobalType(category: EdmsSearchCategory): EdmsGlobal
 }
 
 function escapeLikePattern(value: string) {
-  return value.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_");
+  return value
+    .replaceAll("\\", "\\\\")
+    .replaceAll("%", "\\%")
+    .replaceAll("_", "\\_");
 }

@@ -11,7 +11,8 @@ export const CLIENT_APPROVAL_OPTIONS = [
     reviewStatus: "approved_with_comments",
     label: "Code-2: Approved with Comments",
     shortLabel: "Approved with Comments",
-    description: "Client comments must be addressed through the revision cycle.",
+    description:
+      "Client comments must be addressed through the revision cycle.",
   },
   {
     approvalCode: "Code-3",
@@ -29,8 +30,10 @@ export const CLIENT_APPROVAL_OPTIONS = [
   },
 ] as const;
 
-export type ClientApprovalCode = (typeof CLIENT_APPROVAL_OPTIONS)[number]["approvalCode"];
-export type ClientReviewStatus = (typeof CLIENT_APPROVAL_OPTIONS)[number]["reviewStatus"];
+export type ClientApprovalCode =
+  (typeof CLIENT_APPROVAL_OPTIONS)[number]["approvalCode"];
+export type ClientReviewStatus =
+  (typeof CLIENT_APPROVAL_OPTIONS)[number]["reviewStatus"];
 
 export function getClientApprovalOptionByCode(code: string | null | undefined) {
   const normalizedCode = normalizeClientApprovalCode(code);
@@ -39,23 +42,37 @@ export function getClientApprovalOptionByCode(code: string | null | undefined) {
     return null;
   }
 
-  return CLIENT_APPROVAL_OPTIONS.find((option) => option.approvalCode === normalizedCode) ?? null;
+  return (
+    CLIENT_APPROVAL_OPTIONS.find(
+      (option) => option.approvalCode === normalizedCode,
+    ) ?? null
+  );
 }
 
-export function getClientApprovalOptionByStatus(status: string | null | undefined) {
+export function getClientApprovalOptionByStatus(
+  status: string | null | undefined,
+) {
   if (!status) {
     return null;
   }
 
-  return CLIENT_APPROVAL_OPTIONS.find((option) => option.reviewStatus === status) ?? null;
+  return (
+    CLIENT_APPROVAL_OPTIONS.find((option) => option.reviewStatus === status) ??
+    null
+  );
 }
 
-export function getReviewStatusForApprovalCode(code: ClientApprovalCode): ClientReviewStatus {
-  return getClientApprovalOptionByCode(code)?.reviewStatus ?? "approved_with_comments";
+export function getReviewStatusForApprovalCode(
+  code: ClientApprovalCode,
+): ClientReviewStatus {
+  return (
+    getClientApprovalOptionByCode(code)?.reviewStatus ??
+    "approved_with_comments"
+  );
 }
 
 export function normalizeClientApprovalCode(
-  code: string | null | undefined
+  code: string | null | undefined,
 ): ClientApprovalCode | null {
   if (!code) {
     return null;

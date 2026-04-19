@@ -20,7 +20,8 @@ export default async function ThemePage() {
             Theme Editor
           </h1>
           <p className="text-sm leading-6 text-muted-foreground md:text-base">
-            Customize colors, typography, and layout to match your brand identity.
+            Customize colors, typography, and layout to match your brand
+            identity.
           </p>
         </div>
 

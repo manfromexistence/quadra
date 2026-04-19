@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { transmittals, transmittalDocuments } from "@/db/schema";
-import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
+import { transmittalDocuments, transmittals } from "@/db/schema";
 import { canManageEdmsContent } from "@/lib/edms/rbac";
+import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
 interface CreateTransmittalData {
   transmittalNumber: string;
@@ -50,7 +50,7 @@ export async function createTransmittal(data: CreateTransmittalData) {
         data.selectedDocuments.map((documentId) => ({
           transmittalId: transmittal.id,
           documentId,
-        }))
+        })),
       );
     }
 

@@ -244,7 +244,8 @@ export function ThemeControlPanel() {
           <ScrollArea className="h-full px-4 py-3">
             <ControlSection title="HSL Adjustments" expanded>
               <p className="pb-3 text-sm text-muted-foreground">
-                Fine-tune hue, saturation, and lightness for precise color control.
+                Fine-tune hue, saturation, and lightness for precise color
+                control.
               </p>
               <HslAdjustmentControls />
             </ControlSection>

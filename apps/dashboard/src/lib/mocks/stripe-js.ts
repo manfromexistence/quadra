@@ -1,6 +1,6 @@
 // Mock Stripe JS for build compatibility
 export interface Appearance {
-  theme?: 'stripe' | 'night' | 'flat';
+  theme?: "stripe" | "night" | "flat";
   variables?: Record<string, string>;
 }
 

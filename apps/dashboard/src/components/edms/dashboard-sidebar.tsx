@@ -1,5 +1,21 @@
 "use client";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@midday/ui/avatar";
+import { Badge } from "@midday/ui/badge";
+import { Button } from "@midday/ui/button";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+} from "@midday/ui/sidebar";
 import {
   BarChart3,
   BellRing,
@@ -24,22 +40,6 @@ import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/brand-logo";
 import { authClient } from "@/lib/auth-client";
 import type { DashboardUser } from "@/lib/edms/dashboard";
-import { Avatar, AvatarFallback, AvatarImage } from "@midday/ui/avatar";
-import { Badge } from "@midday/ui/badge";
-import { Button } from "@midday/ui/button";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-} from "@midday/ui/sidebar";
 import { SearchCommand } from "./search-command";
 import { formatEdmsLabel } from "./status-badge";
 
@@ -54,7 +54,11 @@ const PRIMARY_NAVIGATION = [
 ] as const;
 
 const PLANNING_NAVIGATION = [
-  { title: "Schedule & Progress", href: "/dashboard/schedule", icon: CalendarDays },
+  {
+    title: "Schedule & Progress",
+    href: "/dashboard/schedule",
+    icon: CalendarDays,
+  },
   { title: "Data Book", href: "/dashboard/databook", icon: BookOpen },
   { title: "Reports", href: "/dashboard/reports", icon: BarChart3 },
 ] as const;
@@ -67,7 +71,11 @@ const CONFIG_NAVIGATION = [
 const ADMIN_NAVIGATION = [
   { title: "Admin Dashboard", href: "/dashboard/admin", icon: Settings },
   { title: "Users", href: "/dashboard/admin/users", icon: Building2 },
-  { title: "Analytics", href: "/dashboard/admin/analytics", icon: LayoutDashboard },
+  {
+    title: "Analytics",
+    href: "/dashboard/admin/analytics",
+    icon: LayoutDashboard,
+  },
 ] as const;
 
 const SECONDARY_NAVIGATION = [
@@ -125,7 +133,9 @@ export function EdmsDashboardSidebar({ user }: { user: DashboardUser }) {
             onClick={() => setSearchOpen(true)}
           >
             <Search className="size-4" />
-            <span className="flex-1 text-left text-sm">Search workspace...</span>
+            <span className="flex-1 text-left text-sm">
+              Search workspace...
+            </span>
             <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border border-sidebar-border bg-sidebar px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
               <span className="text-xs">⌘</span>K
             </kbd>
@@ -136,7 +146,10 @@ export function EdmsDashboardSidebar({ user }: { user: DashboardUser }) {
               {formatEdmsLabel(user.role)}
             </Badge>
             {user.organization ? (
-              <Badge variant="outline" className="rounded-full border-sidebar-border">
+              <Badge
+                variant="outline"
+                className="rounded-full border-sidebar-border"
+              >
                 {user.organization}
               </Badge>
             ) : null}
@@ -261,12 +274,17 @@ export function EdmsDashboardSidebar({ user }: { user: DashboardUser }) {
           <div className="rounded-2xl border border-sidebar-border/80 bg-sidebar-accent/40 p-3">
             <div className="flex items-center gap-3">
               <Avatar className="size-10 border border-sidebar-border/80 overflow-hidden">
-                <AvatarImage src={user.image || "https://github.com/shadcn.png"} alt={user.name} />
+                <AvatarImage
+                  src={user.image || "https://github.com/shadcn.png"}
+                  alt={user.name}
+                />
                 <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
               </Avatar>
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">{user.name}</p>
-                <p className="truncate text-xs text-sidebar-foreground/70">{user.email}</p>
+                <p className="truncate text-xs text-sidebar-foreground/70">
+                  {user.email}
+                </p>
               </div>
             </div>
             <Button
@@ -304,5 +322,3 @@ function getInitials(name: string) {
     .map((part) => part[0]?.toUpperCase())
     .join("");
 }
-
-

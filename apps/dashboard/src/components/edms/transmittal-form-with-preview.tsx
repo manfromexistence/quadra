@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Badge } from "@midday/ui/badge";
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
+import { Checkbox } from "@midday/ui/checkbox";
 import { Input } from "@midday/ui/input";
 import { Label } from "@midday/ui/label";
+import { ScrollArea } from "@midday/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -13,10 +15,8 @@ import {
   SelectValue,
 } from "@midday/ui/select";
 import { Textarea } from "@midday/ui/textarea";
-import { Checkbox } from "@midday/ui/checkbox";
-import { ScrollArea } from "@midday/ui/scroll-area";
-import { Badge } from "@midday/ui/badge";
 import { format } from "date-fns";
+import { useState } from "react";
 
 interface Document {
   id: string;
@@ -70,7 +70,10 @@ export function TransmittalFormWithPreview({
     recipientId: members[0]?.id || "",
     purpose: "IFR",
     subject: "",
-    dueDate: format(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), "yyyy-MM-dd"),
+    dueDate: format(
+      new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+      "yyyy-MM-dd",
+    ),
     remarks: "",
     selectedDocuments: [],
   });
@@ -80,7 +83,7 @@ export function TransmittalFormWithPreview({
   const selectedProject = projects.find((p) => p.id === formData.projectId);
   const selectedRecipient = members.find((m) => m.id === formData.recipientId);
   const selectedDocs = documents.filter((d) =>
-    formData.selectedDocuments.includes(d.id)
+    formData.selectedDocuments.includes(d.id),
   );
 
   const handleDocumentToggle = (docId: string) => {
@@ -111,20 +114,27 @@ export function TransmittalFormWithPreview({
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Transmittal Details</CardTitle>
+            <CardTitle>1. Transmittal Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="transmittalNumber">Transmittal Number</Label>
+                <Label htmlFor="transmittalNumber">Transmittal ID</Label>
                 <Input
                   id="transmittalNumber"
                   value={formData.transmittalNumber}
                   onChange={(e) =>
-                    setFormData({ ...formData, transmittalNumber: e.target.value })
+                    setFormData({
+                      ...formData,
+                      transmittalNumber: e.target.value,
+                    })
                   }
-                  className="font-mono"
+                  className="font-mono bg-muted"
+                  readOnly
                 />
+                <p className="text-xs text-muted-foreground">
+                  Auto-generated from project configuration
+                </p>
               </div>
 
               <div className="space-y-2">
@@ -133,7 +143,9 @@ export function TransmittalFormWithPreview({
                   id="date"
                   type="date"
                   value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, date: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -207,7 +219,9 @@ export function TransmittalFormWithPreview({
               <Input
                 id="subject"
                 value={formData.subject}
-                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, subject: e.target.value })
+                }
                 placeholder="Brief description of transmittal purpose"
               />
             </div>
@@ -218,7 +232,9 @@ export function TransmittalFormWithPreview({
                 id="dueDate"
                 type="date"
                 value={formData.dueDate}
-                onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, dueDate: e.target.value })
+                }
               />
             </div>
 
@@ -227,7 +243,9 @@ export function TransmittalFormWithPreview({
               <Textarea
                 id="remarks"
                 value={formData.remarks}
-                onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, remarks: e.target.value })
+                }
                 placeholder="Additional notes or instructions"
                 rows={3}
               />
@@ -238,10 +256,12 @@ export function TransmittalFormWithPreview({
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Select Documents</CardTitle>
-              <Badge variant="secondary">
-                {formData.selectedDocuments.length} selected
-              </Badge>
+              <CardTitle>
+                2. Select Documents{" "}
+                <span className="font-mono text-xs text-muted-foreground ml-2">
+                  {formData.selectedDocuments.length} SELECTED
+                </span>
+              </CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -261,8 +281,12 @@ export function TransmittalFormWithPreview({
                       htmlFor={`doc-${doc.id}`}
                       className="flex-1 cursor-pointer space-y-1"
                     >
-                      <p className="font-mono text-sm font-medium">{doc.code}</p>
-                      <p className="text-sm text-muted-foreground">{doc.title}</p>
+                      <p className="font-mono text-sm font-medium">
+                        {doc.code}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {doc.title}
+                      </p>
                       <div className="flex gap-2 text-xs text-muted-foreground">
                         <span>Rev {doc.revision}</span>
                         <span>·</span>
@@ -275,153 +299,236 @@ export function TransmittalFormWithPreview({
             </ScrollArea>
           </CardContent>
         </Card>
-
-        <div className="flex gap-2">
-          <Button
-            onClick={handleSubmit}
-            disabled={
-              isSubmitting ||
-              !formData.subject ||
-              formData.selectedDocuments.length === 0
-            }
-            className="flex-1"
-          >
-            {isSubmitting ? "Creating..." : "Create Transmittal"}
-          </Button>
-          <Button variant="outline" onClick={() => window.history.back()}>
-            Cancel
-          </Button>
-        </div>
       </div>
 
       {/* Right: Live Preview */}
       <div className="lg:sticky lg:top-6 lg:h-fit">
-        <Card className="bg-white text-black">
-          <CardHeader className="border-b-2 border-black">
-            <div className="flex items-start justify-between">
-              <div>
-                <h2 className="font-serif text-2xl font-normal">
-                  Document Transmittal
-                </h2>
-                <p className="mt-1 text-sm text-gray-600">
-                  {selectedProject?.name || "Select project"}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-xs uppercase tracking-wider text-gray-500">
-                  Transmittal No.
-                </p>
-                <p className="font-mono text-sm font-medium">
-                  {formData.transmittalNumber}
-                </p>
+        <Card>
+          <CardHeader className="border-b border-border">
+            <div className="flex items-center justify-between">
+              <CardTitle>
+                Live Preview{" "}
+                <span className="font-mono text-xs text-muted-foreground ml-2">
+                  FORMAL ISSUE
+                </span>
+              </CardTitle>
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => window.print()}
+                >
+                  Print
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleSubmit}
+                  disabled={
+                    isSubmitting ||
+                    !formData.subject ||
+                    formData.selectedDocuments.length === 0
+                  }
+                >
+                  {isSubmitting ? "Issuing..." : "Issue Transmittal →"}
+                </Button>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4 pt-6">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="text-xs uppercase tracking-wider text-gray-500">
-                  Issue Date
-                </p>
-                <p className="mt-1">
-                  {formData.date
-                    ? format(new Date(formData.date), "MMM dd, yyyy")
-                    : "-"}
-                </p>
+          <CardContent className="bg-muted p-6">
+            {/* Transmittal Paper */}
+            <div className="bg-white border border-border p-8 shadow-sm">
+              {/* Header */}
+              <div className="flex items-start justify-between border-b-2 border-black pb-3 mb-5">
+                <div>
+                  <div className="text-[9px] uppercase tracking-[2px] text-muted-foreground font-semibold mb-0.5">
+                    Quadra EDMS
+                  </div>
+                  <h2 className="font-serif text-2xl font-normal">
+                    Document Transmittal
+                  </h2>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">
+                    {selectedProject?.code || "PRJ-XXX"} ·{" "}
+                    {selectedProject?.name || "Select project"}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground mb-1">
+                    Transmittal №
+                  </div>
+                  <div className="font-mono text-sm font-medium">
+                    {formData.transmittalNumber}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground mt-1.5">
+                    {formData.date
+                      ? format(new Date(formData.date), "yyyy-MM-dd")
+                      : ""}
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider text-gray-500">
-                  Due Date
-                </p>
-                <p className="mt-1">
-                  {formData.dueDate
-                    ? format(new Date(formData.dueDate), "MMM dd, yyyy")
-                    : "-"}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider text-gray-500">To</p>
-                <p className="mt-1">{selectedRecipient?.name || "-"}</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider text-gray-500">
-                  Purpose
-                </p>
-                <p className="mt-1">{formData.purpose}</p>
-              </div>
-            </div>
 
-            <div>
-              <p className="text-xs uppercase tracking-wider text-gray-500">
-                Subject
-              </p>
-              <p className="mt-1 text-sm">
-                {formData.subject || "Enter subject..."}
-              </p>
-            </div>
-
-            {formData.remarks && (
-              <div>
-                <p className="text-xs uppercase tracking-wider text-gray-500">
-                  Remarks
-                </p>
-                <p className="mt-1 text-sm">{formData.remarks}</p>
+              {/* Metadata Grid */}
+              <div className="grid grid-cols-2 gap-4 mb-5 text-xs">
+                <div>
+                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                    From
+                  </div>
+                  <div className="font-medium">
+                    {selectedProject?.name || "—"}
+                  </div>
+                  <div className="text-muted-foreground text-[10.5px]">
+                    Document Controller
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                    To
+                  </div>
+                  <div className="font-medium">
+                    {selectedRecipient?.name || "—"}
+                  </div>
+                  <div className="text-muted-foreground text-[10.5px]">
+                    {selectedRecipient?.email || ""}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                    Purpose
+                  </div>
+                  <div>
+                    <Badge
+                      className={`text-[10px] font-mono ${
+                        formData.purpose === "IFR"
+                          ? "bg-amber-100 text-amber-800 border-amber-300"
+                          : formData.purpose === "IFA"
+                            ? "bg-blue-100 text-blue-800 border-blue-300"
+                            : formData.purpose === "IFC"
+                              ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                              : "bg-slate-100 text-slate-800 border-slate-300"
+                      }`}
+                    >
+                      ● {formData.purpose}
+                    </Badge>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                    Response Due
+                  </div>
+                  <div className="font-mono text-xs">
+                    {formData.dueDate || "—"}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                    Subject
+                  </div>
+                  <div className="font-medium">
+                    {formData.subject || "Enter subject..."}
+                  </div>
+                </div>
               </div>
-            )}
 
-            <div>
-              <p className="mb-2 text-xs uppercase tracking-wider text-gray-500">
-                Attached Documents ({selectedDocs.length})
-              </p>
-              {selectedDocs.length === 0 ? (
-                <p className="text-sm italic text-gray-400">
-                  No documents selected
-                </p>
-              ) : (
-                <div className="overflow-hidden rounded border border-gray-300">
-                  <table className="w-full text-xs">
-                    <thead className="bg-gray-100">
-                      <tr>
-                        <th className="border-b border-gray-300 px-2 py-1 text-left font-medium uppercase tracking-wider">
-                          Document No.
+              {/* Documents Table */}
+              <div className="mb-5">
+                <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1.5">
+                  Documents Transmitted
+                </div>
+                {selectedDocs.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <div className="font-serif text-lg mb-1">
+                      No documents selected
+                    </div>
+                    <div className="text-xs">
+                      Choose documents on the left to include in this
+                      transmittal.
+                    </div>
+                  </div>
+                ) : (
+                  <table className="w-full text-xs border border-border">
+                    <thead>
+                      <tr className="bg-muted">
+                        <th className="border border-border px-2 py-1.5 text-left text-[9px] uppercase tracking-wider font-semibold">
+                          #
                         </th>
-                        <th className="border-b border-gray-300 px-2 py-1 text-left font-medium uppercase tracking-wider">
+                        <th className="border border-border px-2 py-1.5 text-left text-[9px] uppercase tracking-wider font-semibold">
+                          Document Code
+                        </th>
+                        <th className="border border-border px-2 py-1.5 text-left text-[9px] uppercase tracking-wider font-semibold">
                           Title
                         </th>
-                        <th className="border-b border-gray-300 px-2 py-1 text-left font-medium uppercase tracking-wider">
+                        <th className="border border-border px-2 py-1.5 text-left text-[9px] uppercase tracking-wider font-semibold">
                           Rev
+                        </th>
+                        <th className="border border-border px-2 py-1.5 text-left text-[9px] uppercase tracking-wider font-semibold">
+                          Format
                         </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {selectedDocs.map((doc) => (
-                        <tr key={doc.id} className="border-b border-gray-200">
-                          <td className="px-2 py-1 font-mono">{doc.code}</td>
-                          <td className="px-2 py-1">{doc.title}</td>
-                          <td className="px-2 py-1">{doc.revision}</td>
+                      {selectedDocs.map((doc, index) => (
+                        <tr key={doc.id}>
+                          <td className="border border-border px-2 py-1.5">
+                            {index + 1}
+                          </td>
+                          <td className="border border-border px-2 py-1.5 font-mono text-[11px]">
+                            {doc.code}
+                          </td>
+                          <td className="border border-border px-2 py-1.5">
+                            {doc.title}
+                          </td>
+                          <td className="border border-border px-2 py-1.5 font-mono text-[11px]">
+                            {doc.revision}
+                          </td>
+                          <td className="border border-border px-2 py-1.5 font-mono text-[11px]">
+                            PDF
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
+                )}
+              </div>
+
+              {/* Remarks */}
+              {formData.remarks && (
+                <div className="mb-5">
+                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                    Remarks
+                  </div>
+                  <div className="text-xs leading-relaxed">
+                    {formData.remarks}
+                  </div>
                 </div>
               )}
-            </div>
 
-            <div className="mt-8 grid grid-cols-2 gap-8 border-t border-gray-300 pt-6">
-              <div>
-                <p className="text-xs uppercase tracking-wider text-gray-500">
-                  Prepared By
-                </p>
-                <div className="mt-8 border-t border-gray-400 pt-1">
-                  <p className="text-xs">Signature & Date</p>
+              {/* Signature Blocks */}
+              <div className="grid grid-cols-2 gap-8 mt-7 text-xs">
+                <div>
+                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                    Issued By
+                  </div>
+                  <div className="border-t border-black pt-1.5 mt-10">
+                    Document Controller
+                    <br />
+                    <span className="text-muted-foreground text-[10px]">
+                      Date:{" "}
+                      {formData.date
+                        ? format(new Date(formData.date), "yyyy-MM-dd")
+                        : "_______________"}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider text-gray-500">
-                  Received By
-                </p>
-                <div className="mt-8 border-t border-gray-400 pt-1">
-                  <p className="text-xs">Signature & Date</p>
+                <div>
+                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+                    Received By
+                  </div>
+                  <div className="border-t border-black pt-1.5 mt-10">
+                    {selectedRecipient?.name || "_______________"}
+                    <br />
+                    <span className="text-muted-foreground text-[10px]">
+                      Date: _______________
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

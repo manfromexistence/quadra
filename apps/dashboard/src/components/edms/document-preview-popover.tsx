@@ -1,11 +1,11 @@
 "use client";
 
+import { Button } from "@midday/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
 import { ExternalLink, FileText, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { expandImageArray } from "@/lib/storage-utils";
-import { Button } from "@midday/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
 import { EdmsStatusBadge } from "./status-badge";
 
 interface DocumentPreviewPopoverProps {
@@ -24,7 +24,10 @@ interface DocumentPreviewPopoverProps {
   children: React.ReactNode;
 }
 
-export function DocumentPreviewPopover({ document, children }: DocumentPreviewPopoverProps) {
+export function DocumentPreviewPopover({
+  document,
+  children,
+}: DocumentPreviewPopoverProps) {
   const images = expandImageArray(document.images);
   const isPdf = document.fileType?.toLowerCase() === "application/pdf";
 
@@ -37,8 +40,12 @@ export function DocumentPreviewPopover({ document, children }: DocumentPreviewPo
           <div className="border-b border-border bg-muted/30 p-4">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 space-y-1">
-                <h4 className="font-semibold leading-tight">{document.title}</h4>
-                <p className="font-mono text-xs text-muted-foreground">{document.documentNumber}</p>
+                <h4 className="font-semibold leading-tight">
+                  {document.title}
+                </h4>
+                <p className="font-mono text-xs text-muted-foreground">
+                  {document.documentNumber}
+                </p>
               </div>
               <EdmsStatusBadge status={document.status} />
             </div>
@@ -100,7 +107,9 @@ export function DocumentPreviewPopover({ document, children }: DocumentPreviewPo
               <div className="flex aspect-video items-center justify-center rounded-lg border border-dashed border-border bg-card">
                 <div className="flex flex-col items-center gap-2 text-center">
                   <FileText className="size-8 text-muted-foreground/50" />
-                  <p className="text-xs text-muted-foreground">No preview available</p>
+                  <p className="text-xs text-muted-foreground">
+                    No preview available
+                  </p>
                 </div>
               </div>
             )}
@@ -111,11 +120,15 @@ export function DocumentPreviewPopover({ document, children }: DocumentPreviewPo
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
                 <p className="text-xs text-muted-foreground">Project</p>
-                <p className="mt-1 truncate font-medium">{document.projectName}</p>
+                <p className="mt-1 truncate font-medium">
+                  {document.projectName}
+                </p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Discipline</p>
-                <p className="mt-1 font-medium">{document.discipline || "General"}</p>
+                <p className="mt-1 font-medium">
+                  {document.discipline || "General"}
+                </p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Revision</p>
@@ -147,5 +160,3 @@ export function DocumentPreviewPopover({ document, children }: DocumentPreviewPo
     </Popover>
   );
 }
-
-

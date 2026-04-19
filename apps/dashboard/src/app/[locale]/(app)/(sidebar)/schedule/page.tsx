@@ -1,12 +1,5 @@
 import { Badge } from "@midday/ui/badge";
-import { Button } from "@midday/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@midday/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import {
   Table,
   TableBody,
@@ -15,25 +8,30 @@ import {
   TableHeader,
   TableRow,
 } from "@midday/ui/table";
-import { ArrowRight, Calendar, TrendingUp } from "lucide-react";
 import type { Metadata } from "next";
-import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import Link from "next/link";
-import { Suspense } from "react";
-import { CollapsibleSummary } from "@/components/collapsible-summary";
-import { EdmsDataState } from "@/components/edms/data-state";
-import { EdmsMetricCard } from "@/components/edms/metric-card";
-import { PrintButton } from "@/components/edms/print-button";
-import { ErrorFallback } from "@/components/error-fallback";
-import { ScrollableContent } from "@/components/scrollable-content";
-import { getSchedulePageData } from "@/lib/edms/derived-pages";
+import { LinkDocumentsButton } from "@/components/edms/link-documents-button";
+import { ScheduleSyncButton } from "@/components/edms/schedule-sync-button";
+import { getSchedulePageData } from "@/lib/edms/schedule";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
-import { HydrateClient } from "@/trpc/server";
 
 export const metadata: Metadata = {
   title: "Schedule & Progress | Quadra EDMS",
   description:
-    "Live EDMS schedule and progress tracking derived from active project, workflow, and document data.",
+    "Integrated view of the project schedule merged with the document register.",
+};
+
+const PHASE_COLORS = {
+  engineering: "bg-blue-600",
+  procurement: "bg-amber-600",
+  construction: "bg-emerald-700",
+  commissioning: "bg-red-600",
+};
+
+const PHASE_LABELS = {
+  engineering: "Engineering",
+  procurement: "Procurement",
+  construction: "Construction",
+  commissioning: "Commissioning",
 };
 
 const MONTHS = [
@@ -51,403 +49,370 @@ const MONTHS = [
   "Dec",
 ];
 
-const PHASE_COLORS: Record<string, string> = {
-  engineering: "bg-blue-500",
-  procurement: "bg-amber-500",
-  construction: "bg-emerald-600",
-  commissioning: "bg-rose-500",
-};
+function calculatePosition(startDate: string, endDate: string) {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const yearStart = new Date("2026-01-01");
+  const totalDays = 365;
 
-const PHASE_BADGE_VARIANT: Record<
-  string,
-  "default" | "secondary" | "destructive" | "outline"
-> = {
-  engineering: "default",
-  procurement: "secondary",
-  construction: "outline",
-  commissioning: "destructive",
-};
+  const startDay = Math.max(
+    0,
+    Math.floor((start.getTime() - yearStart.getTime()) / (1000 * 60 * 60 * 24)),
+  );
+  const endDay = Math.floor(
+    (end.getTime() - yearStart.getTime()) / (1000 * 60 * 60 * 24),
+  );
 
-function getVarianceBadge(planned: number, actual: number) {
-  const diff = actual - planned;
+  const leftPct = (startDay / totalDays) * 100;
+  const widthPct = ((endDay - startDay) / totalDays) * 100;
 
-  if (planned === 0 && actual === 0) {
-    return (
-      <span className="font-mono text-xs text-muted-foreground">
-        Not started
-      </span>
-    );
-  }
-
-  if (diff >= 0) {
-    return <span className="font-mono text-xs text-emerald-600">On track</span>;
-  }
-
-  if (diff >= -10) {
-    return <span className="font-mono text-xs text-amber-600">{diff}%</span>;
-  }
-
-  return <span className="font-mono text-xs text-rose-600">{diff}%</span>;
+  return { leftPct, widthPct };
 }
 
 export default async function SchedulePage() {
-  const sessionUser = await getRequiredDashboardSessionUser();
-  const scheduleData = await getSchedulePageData(sessionUser);
+  const _sessionUser = await getRequiredDashboardSessionUser();
+
+  // Get the user's active project (first project for now)
+  const projectId = "PRJ-AHR-2026"; // TODO: Get from session user's active project
+
+  const scheduleData = await getSchedulePageData(projectId);
+
+  const totalPlanned =
+    scheduleData.activities.reduce((s, a) => s + a.planned, 0) /
+    scheduleData.activities.length;
+  const totalActual =
+    scheduleData.activities.reduce((s, a) => s + a.actual, 0) /
+    scheduleData.activities.length;
+  const variance = totalActual - totalPlanned;
+  const totalLinkedDocs = scheduleData.activities.reduce(
+    (s, a) => s + a.linkedDocs.length,
+    0,
+  );
+
+  // Prepare data for dialogs
+  const activities = scheduleData.activities.map((a) => ({
+    id: a.id,
+    name: a.name,
+    wbs: a.wbs,
+  }));
+
+  const documents = [
+    {
+      code: "AHR-CIV-DWG-0001",
+      title: "Site Grading Plan — Phase 1",
+      rev: "B",
+    },
+    {
+      code: "AHR-STR-CAL-0012",
+      title: "Primary Steel Structure Calculation",
+      rev: "0",
+    },
+    {
+      code: "AHR-MEC-SPC-0023",
+      title: "Heat Exchanger Technical Specification",
+      rev: "C",
+    },
+    {
+      code: "AHR-ELE-DWG-0045",
+      title: "Main Substation Single Line Diagram",
+      rev: "A",
+    },
+    {
+      code: "AHR-INS-DAT-0008",
+      title: "Control Valve Datasheet — Unit 100",
+      rev: "1",
+    },
+    { code: "AHR-PIP-ISO-0056", title: "Piping Isometric Drawing", rev: "A" },
+  ];
 
   return (
-    <HydrateClient>
-      <ScrollableContent>
-        <div className="flex flex-col gap-6">
-          <CollapsibleSummary>
-            <div className="grid grid-cols-1 gap-4 pt-6 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-              {scheduleData.metrics.map((metric) => (
-                <div key={metric.label}>
-                  <EdmsMetricCard metric={metric} />
-                </div>
+    <div className="flex flex-col gap-6 p-6">
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="max-w-3xl space-y-3">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+              Schedule & Progress
+            </h1>
+            <p className="text-sm leading-6 text-muted-foreground md:text-base">
+              Integrated view of the project schedule merged with the document
+              register. Link deliverables to WBS activities for earned-value
+              tracking.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <ScheduleSyncButton />
+          <LinkDocumentsButton activities={activities} documents={documents} />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 bg-border border border-border">
+        <div className="bg-card p-4">
+          <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+            Schedule Source
+          </div>
+          <div className="text-base font-mono font-medium mt-1.5">
+            Primavera P6
+          </div>
+          <div className="text-xs text-muted-foreground mt-2">
+            Last sync: {scheduleData.lastSync}
+          </div>
+        </div>
+        <div className="bg-card p-4">
+          <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+            Planned Progress
+          </div>
+          <div className="text-3xl font-serif font-normal">
+            {totalPlanned.toFixed(1)}
+            <span className="text-base">%</span>
+          </div>
+          <div className="text-xs text-muted-foreground mt-2">As of today</div>
+        </div>
+        <div className="bg-card p-4">
+          <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+            Actual Progress
+          </div>
+          <div className="text-3xl font-serif font-normal">
+            {totalActual.toFixed(1)}
+            <span className="text-base">%</span>
+          </div>
+          <div className="text-xs text-muted-foreground mt-2 flex items-center gap-2">
+            <Badge
+              variant={variance >= 0 ? "default" : "destructive"}
+              className="font-mono text-[10px]"
+            >
+              {variance >= 0 ? "+" : ""}
+              {variance.toFixed(1)}%
+            </Badge>
+            vs plan
+          </div>
+        </div>
+        <div className="bg-card p-4">
+          <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+            Linked Documents
+          </div>
+          <div className="text-3xl font-serif font-normal">
+            {totalLinkedDocs}{" "}
+            <span className="text-base text-muted-foreground">/ 50</span>
+          </div>
+          <div className="text-xs text-muted-foreground mt-2">
+            Across {scheduleData.activities.length} activities
+          </div>
+        </div>
+      </div>
+
+      <Card className="border-border bg-card shadow-sm">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Gantt Overview</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                {scheduleData.projectStart} → {scheduleData.projectEnd}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              {Object.entries(PHASE_LABELS).map(([key, label]) => (
+                <Badge
+                  key={key}
+                  className={`${PHASE_COLORS[key as keyof typeof PHASE_COLORS]} text-white border-0`}
+                >
+                  ● {label}
+                </Badge>
               ))}
             </div>
-          </CollapsibleSummary>
-
-          <div className="flex flex-col gap-4 print:hidden md:flex-row md:items-end md:justify-between">
-            <div className="max-w-3xl space-y-3">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-                  Schedule & Progress
-                </h1>
-                <p className="text-sm leading-6 text-muted-foreground md:text-base">
-                  Live delivery schedule derived from project dates,
-                  controlled-document progress, open workflow actions, and
-                  transmittal activity across the EDMS portfolio.
-                </p>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <div className="min-w-[800px]">
+              {/* Header */}
+              <div className="grid grid-cols-[320px_1fr] border-b border-border bg-muted">
+                <div className="p-3 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+                  Activity
+                </div>
+                <div className="relative p-3">
+                  <div className="grid grid-cols-12 gap-0">
+                    {MONTHS.map((month) => (
+                      <div
+                        key={month}
+                        className="text-xs text-muted-foreground font-mono text-center border-r border-border last:border-r-0"
+                      >
+                        {month}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <PrintButton label="Export to PDF" variant="secondary" />
-              <Button variant="outline" asChild>
-                <Link href="/projects">
-                  Projects
-                  <ArrowRight className="size-4" />
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/workflows">
-                  Workflow queue
-                  <ArrowRight className="size-4" />
-                </Link>
-              </Button>
+              {/* Gantt Rows */}
+              {scheduleData.activities.map((activity) => {
+                const { leftPct, widthPct } = calculatePosition(
+                  activity.start,
+                  activity.end,
+                );
+                const progress =
+                  activity.planned > 0
+                    ? (activity.actual / activity.planned) * 100
+                    : 0;
+
+                return (
+                  <div
+                    key={activity.id}
+                    className="grid grid-cols-[320px_1fr] border-b border-border hover:bg-accent/50 transition-colors"
+                  >
+                    <div className="p-3 border-r border-border">
+                      <div className="font-medium text-sm">{activity.name}</div>
+                      <div className="text-xs text-muted-foreground font-mono mt-1">
+                        {activity.id} · WBS {activity.wbs} ·{" "}
+                        {activity.linkedDocs.length} docs linked
+                      </div>
+                    </div>
+                    <div className="relative p-3">
+                      <div className="grid grid-cols-12 gap-0 h-full">
+                        {MONTHS.map((_, i) => (
+                          <div
+                            key={i}
+                            className="border-r border-border/30 last:border-r-0"
+                          />
+                        ))}
+                      </div>
+                      <div
+                        className={`absolute top-1/2 -translate-y-1/2 h-5 ${PHASE_COLORS[activity.phase as keyof typeof PHASE_COLORS]} text-white text-[10px] px-2 flex items-center font-mono overflow-hidden`}
+                        style={{ left: `${leftPct}%`, width: `${widthPct}%` }}
+                        title={`${activity.actual}% complete`}
+                      >
+                        <div
+                          className="absolute inset-0 bg-black/25"
+                          style={{
+                            width: `${100 - progress}%`,
+                            right: 0,
+                            left: "auto",
+                          }}
+                        />
+                        <span className="relative z-10 truncate">
+                          {activity.actual}% · {activity.name.slice(0, 20)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
+        </CardContent>
+      </Card>
 
-          <EdmsDataState
-            isUsingFallbackData={scheduleData.isUsingFallbackData}
-            message={scheduleData.statusMessage}
-          />
-
-          <ErrorBoundary errorComponent={ErrorFallback}>
-            <Suspense
-              fallback={
-                <div className="text-sm text-muted-foreground">
-                  Loading schedule...
-                </div>
-              }
-            >
-              <section className="flex flex-col gap-4">
-                {scheduleData.activities.length === 0 ? (
-                  <Card className="border-border bg-card shadow-sm">
-                    <CardContent className="pt-6 text-sm text-muted-foreground">
-                      No scheduled EDMS projects are available for the current
-                      access scope.
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <>
-                    <Card className="border-border bg-card shadow-sm">
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <Calendar className="size-4" />
-                          Live portfolio timeline
-                        </CardTitle>
-                        <CardDescription>
-                          Timeline positions come from project start and finish
-                          dates. Planned progress follows elapsed time; actual
-                          progress follows approved document completion.
-                        </CardDescription>
-                        <div className="flex flex-wrap gap-3 pt-2">
-                          {Object.entries(PHASE_COLORS).map(
-                            ([phase, color]) => (
-                              <div
-                                key={phase}
-                                className="flex items-center gap-1.5 text-xs text-muted-foreground"
-                              >
-                                <div
-                                  className={`size-2.5 rounded-sm ${color}`}
-                                />
-                                <span className="capitalize">{phase}</span>
-                              </div>
-                            ),
+      <Card className="border-border bg-card shadow-sm">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Activity ↔ Document Mapping</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Documents are progress indicators for WBS activities
+              </p>
+            </div>
+            <Badge variant="secondary" className="uppercase tracking-wider">
+              WBS Linkage
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="px-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="px-6">Activity</TableHead>
+                <TableHead>WBS</TableHead>
+                <TableHead>Phase</TableHead>
+                <TableHead>Planned %</TableHead>
+                <TableHead>Actual %</TableHead>
+                <TableHead>Variance</TableHead>
+                <TableHead className="px-6">Linked Docs</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {scheduleData.activities.map((activity) => {
+                const variance = activity.actual - activity.planned;
+                return (
+                  <TableRow key={activity.id} className="hover:bg-accent/50">
+                    <TableCell className="px-6">
+                      <div className="font-medium text-sm">{activity.name}</div>
+                      <div className="text-xs text-muted-foreground font-mono mt-1">
+                        {activity.id} · {activity.start} → {activity.end}
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {activity.wbs}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        className={`${PHASE_COLORS[activity.phase as keyof typeof PHASE_COLORS]} text-white border-0 text-[10px] uppercase tracking-wider`}
+                      >
+                        {activity.phase}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-mono">
+                      {activity.planned}%
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 h-1.5 bg-border relative overflow-hidden">
+                          <div
+                            className={`absolute inset-y-0 left-0 ${
+                              activity.actual < activity.planned - 5
+                                ? "bg-red-600"
+                                : activity.actual < activity.planned
+                                  ? "bg-amber-600"
+                                  : "bg-emerald-600"
+                            }`}
+                            style={{ width: `${activity.actual}%` }}
+                          />
+                        </div>
+                        <span className="font-mono text-xs">
+                          {activity.actual}%
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={variance >= 0 ? "default" : "destructive"}
+                        className="font-mono text-[10px]"
+                      >
+                        {variance >= 0 ? "+" : ""}
+                        {variance}%
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="px-6">
+                      {activity.linkedDocs.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {activity.linkedDocs.slice(0, 2).map((doc) => (
+                            <Badge
+                              key={doc}
+                              variant="outline"
+                              className="font-mono text-[10px]"
+                            >
+                              {doc}
+                            </Badge>
+                          ))}
+                          {activity.linkedDocs.length > 2 && (
+                            <span className="text-xs text-muted-foreground">
+                              +{activity.linkedDocs.length - 2}
+                            </span>
                           )}
                         </div>
-                      </CardHeader>
-                      <CardContent className="px-0 pb-0">
-                        <div className="overflow-x-auto">
-                          <div className="min-w-[960px]">
-                            <div
-                              className="grid border-b border-border"
-                              style={{ gridTemplateColumns: "320px 1fr" }}
-                            >
-                              <div className="border-r border-border bg-muted/50 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                Project
-                              </div>
-                              <div className="grid grid-cols-12 bg-muted/50">
-                                {MONTHS.map((month) => (
-                                  <div
-                                    key={month}
-                                    className="border-r border-border px-1 py-2 text-center text-[10px] font-mono text-muted-foreground last:border-r-0"
-                                  >
-                                    {month}
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-
-                            {scheduleData.activities.map((activity) => (
-                              <div
-                                key={activity.id}
-                                className="grid border-b border-border last:border-b-0 hover:bg-muted/30 transition-colors"
-                                style={{ gridTemplateColumns: "320px 1fr" }}
-                              >
-                                <div className="flex flex-col justify-center gap-1 border-r border-border px-4 py-3">
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-mono text-[10px] text-muted-foreground">
-                                      {activity.code}
-                                    </span>
-                                    <span className="truncate text-sm font-medium">
-                                      {activity.name}
-                                    </span>
-                                  </div>
-                                  <div className="ml-7 flex flex-wrap items-center gap-2">
-                                    <Badge
-                                      variant={
-                                        PHASE_BADGE_VARIANT[activity.phase]
-                                      }
-                                      className="rounded-full text-[9px] px-1.5 py-0 capitalize"
-                                    >
-                                      {activity.phase}
-                                    </Badge>
-                                    <span className="text-[10px] text-muted-foreground">
-                                      {activity.linkedDocs} docs
-                                    </span>
-                                    <span className="text-[10px] text-muted-foreground">
-                                      {activity.openWorkflowItems} open actions
-                                    </span>
-                                    <span className="text-[10px] text-muted-foreground">
-                                      {activity.transmittals} packages
-                                    </span>
-                                  </div>
-                                </div>
-
-                                <div className="relative px-0 py-3">
-                                  <div className="pointer-events-none absolute inset-0 grid grid-cols-12">
-                                    {MONTHS.map((month) => (
-                                      <div
-                                        key={month}
-                                        className="border-r border-border/40 last:border-r-0"
-                                      />
-                                    ))}
-                                  </div>
-
-                                  <div
-                                    className={`absolute top-3 h-4 ${PHASE_COLORS[activity.phase]} rounded-sm opacity-25`}
-                                    style={{
-                                      left: `${activity.startPct}%`,
-                                      width: `${activity.widthPct}%`,
-                                    }}
-                                  />
-
-                                  <div
-                                    className={`absolute top-3 flex h-4 items-center rounded-sm px-1.5 ${PHASE_COLORS[activity.phase]}`}
-                                    style={{
-                                      left: `${activity.startPct}%`,
-                                      width: `${Math.max((activity.widthPct * activity.actual) / 100, 2)}%`,
-                                    }}
-                                  >
-                                    {activity.actual >= 15 && (
-                                      <span className="truncate text-[9px] font-mono font-semibold text-white">
-                                        {activity.actual}%
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="border-border bg-card shadow-sm">
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <TrendingUp className="size-4" />
-                          Progress summary
-                        </CardTitle>
-                        <CardDescription>
-                          Planned time progress vs. actual approved-document
-                          completion by project.
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="px-0">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead className="px-6">Code</TableHead>
-                              <TableHead>Project</TableHead>
-                              <TableHead>Phase</TableHead>
-                              <TableHead>Start</TableHead>
-                              <TableHead>Finish</TableHead>
-                              <TableHead className="text-center">
-                                Docs
-                              </TableHead>
-                              <TableHead className="text-center">
-                                Open WF
-                              </TableHead>
-                              <TableHead>Planned %</TableHead>
-                              <TableHead>Actual %</TableHead>
-                              <TableHead className="px-6">Variance</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {scheduleData.activities.map((activity) => (
-                              <TableRow
-                                key={activity.id}
-                                className="hover:bg-accent transition-colors"
-                              >
-                                <TableCell className="px-6">
-                                  <span className="font-mono text-xs text-muted-foreground">
-                                    {activity.code}
-                                  </span>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="space-y-1">
-                                    <p className="font-medium">
-                                      {activity.name}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground capitalize">
-                                      {activity.status}
-                                    </p>
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  <Badge
-                                    variant={
-                                      PHASE_BADGE_VARIANT[activity.phase]
-                                    }
-                                    className="rounded-full capitalize"
-                                  >
-                                    {activity.phase}
-                                  </Badge>
-                                </TableCell>
-                                <TableCell className="text-sm text-muted-foreground">
-                                  {activity.startLabel}
-                                </TableCell>
-                                <TableCell className="text-sm text-muted-foreground">
-                                  {activity.endLabel}
-                                </TableCell>
-                                <TableCell className="text-center font-mono text-xs">
-                                  {activity.linkedDocs}
-                                </TableCell>
-                                <TableCell className="text-center font-mono text-xs">
-                                  {activity.openWorkflowItems}
-                                </TableCell>
-                                <TableCell>
-                                  <div className="flex items-center gap-2">
-                                    <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
-                                      <div
-                                        className={`h-full rounded-full ${PHASE_COLORS[activity.phase]}`}
-                                        style={{
-                                          width: `${activity.planned}%`,
-                                        }}
-                                      />
-                                    </div>
-                                    <span className="font-mono text-xs">
-                                      {activity.planned}%
-                                    </span>
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="flex items-center gap-2">
-                                    <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
-                                      <div
-                                        className={`h-full rounded-full ${
-                                          activity.actual >= activity.planned
-                                            ? "bg-emerald-500"
-                                            : activity.planned -
-                                                  activity.actual >
-                                                10
-                                              ? "bg-rose-500"
-                                              : "bg-amber-500"
-                                        }`}
-                                        style={{ width: `${activity.actual}%` }}
-                                      />
-                                    </div>
-                                    <span className="font-mono text-xs">
-                                      {activity.actual}%
-                                    </span>
-                                  </div>
-                                </TableCell>
-                                <TableCell className="px-6">
-                                  {getVarianceBadge(
-                                    activity.planned,
-                                    activity.actual,
-                                  )}
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </CardContent>
-                    </Card>
-
-                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                      {scheduleData.phaseSummaries.map((summary) => (
-                        <Card
-                          key={summary.phase}
-                          className="border-border bg-card shadow-sm"
-                        >
-                          <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                              {summary.phase}
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-3xl font-bold tabular-nums">
-                              {summary.actualAverage}
-                              <span className="text-lg font-normal text-muted-foreground">
-                                %
-                              </span>
-                            </p>
-                            <p className="mt-1 text-sm text-muted-foreground">
-                              Average actual vs. {summary.plannedAverage}%
-                              planned
-                            </p>
-                            <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-                              <div
-                                className={`h-full rounded-full ${PHASE_COLORS[summary.phase]}`}
-                                style={{ width: `${summary.actualAverage}%` }}
-                              />
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </section>
-            </Suspense>
-          </ErrorBoundary>
-        </div>
-      </ScrollableContent>
-    </HydrateClient>
+                      ) : (
+                        <span className="text-xs text-muted-foreground italic">
+                          — none linked —
+                        </span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

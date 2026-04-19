@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real, index } from "drizzle-orm/sqlite-core";
+import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { user } from "../schema";
 
 // Teams table
@@ -11,7 +11,9 @@ export const teams = sqliteTable("teams", {
   inboxEmail: text("inbox_email"),
   inboxForwarding: integer("inbox_forwarding", { mode: "boolean" }),
   baseCurrency: text("base_currency").default("USD"),
-  documentClassification: integer("document_classification", { mode: "boolean" }).default(true),
+  documentClassification: integer("document_classification", {
+    mode: "boolean",
+  }).default(true),
   plan: text("plan").default("pro"),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   canceledAt: integer("canceled_at", { mode: "timestamp" }),
@@ -20,7 +22,9 @@ export const teams = sqliteTable("teams", {
 // Bank Accounts table
 export const bankAccounts = sqliteTable("bank_accounts", {
   id: text("id").primaryKey(),
-  teamId: text("team_id").notNull().references(() => teams.id),
+  teamId: text("team_id")
+    .notNull()
+    .references(() => teams.id),
   name: text("name").notNull(),
   currency: text("currency").notNull(),
   balance: real("balance").default(0),
@@ -32,7 +36,9 @@ export const bankAccounts = sqliteTable("bank_accounts", {
 // Transactions table
 export const transactions = sqliteTable("transactions", {
   id: text("id").primaryKey(),
-  teamId: text("team_id").notNull().references(() => teams.id),
+  teamId: text("team_id")
+    .notNull()
+    .references(() => teams.id),
   bankAccountId: text("bank_account_id").references(() => bankAccounts.id),
   name: text("name").notNull(),
   amount: real("amount").notNull(),
@@ -47,7 +53,9 @@ export const transactions = sqliteTable("transactions", {
 // Customers table
 export const customers = sqliteTable("customers", {
   id: text("id").primaryKey(),
-  teamId: text("team_id").notNull().references(() => teams.id),
+  teamId: text("team_id")
+    .notNull()
+    .references(() => teams.id),
   name: text("name").notNull(),
   email: text("email"),
   phone: text("phone"),
@@ -60,7 +68,9 @@ export const customers = sqliteTable("customers", {
 // Invoices table
 export const invoices = sqliteTable("invoices", {
   id: text("id").primaryKey(),
-  teamId: text("team_id").notNull().references(() => teams.id),
+  teamId: text("team_id")
+    .notNull()
+    .references(() => teams.id),
   customerId: text("customer_id").references(() => customers.id),
   invoiceNumber: text("invoice_number").notNull(),
   issueDate: integer("issue_date", { mode: "timestamp" }).notNull(),
@@ -75,7 +85,9 @@ export const invoices = sqliteTable("invoices", {
 // Tracker Projects table
 export const trackerProjects = sqliteTable("tracker_projects", {
   id: text("id").primaryKey(),
-  teamId: text("team_id").notNull().references(() => teams.id),
+  teamId: text("team_id")
+    .notNull()
+    .references(() => teams.id),
   name: text("name").notNull(),
   description: text("description"),
   status: text("status").default("active"),
@@ -85,9 +97,13 @@ export const trackerProjects = sqliteTable("tracker_projects", {
 // Tracker Entries table
 export const trackerEntries = sqliteTable("tracker_entries", {
   id: text("id").primaryKey(),
-  teamId: text("team_id").notNull().references(() => teams.id),
+  teamId: text("team_id")
+    .notNull()
+    .references(() => teams.id),
   projectId: text("project_id").references(() => trackerProjects.id),
-  userId: text("user_id").notNull().references(() => user.id),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
   description: text("description"),
   start: integer("start", { mode: "timestamp" }).notNull(),
   stop: integer("stop", { mode: "timestamp" }),
@@ -98,7 +114,9 @@ export const trackerEntries = sqliteTable("tracker_entries", {
 // Vault Files table
 export const vaultFiles = sqliteTable("vault_files", {
   id: text("id").primaryKey(),
-  teamId: text("team_id").notNull().references(() => teams.id),
+  teamId: text("team_id")
+    .notNull()
+    .references(() => teams.id),
   name: text("name").notNull(),
   path: text("path").notNull(),
   size: integer("size"),
@@ -110,7 +128,9 @@ export const vaultFiles = sqliteTable("vault_files", {
 // Inbox Items table
 export const inboxItems = sqliteTable("inbox_items", {
   id: text("id").primaryKey(),
-  teamId: text("team_id").notNull().references(() => teams.id),
+  teamId: text("team_id")
+    .notNull()
+    .references(() => teams.id),
   displayName: text("display_name").notNull(),
   fileName: text("file_name"),
   filePath: text("file_path"),

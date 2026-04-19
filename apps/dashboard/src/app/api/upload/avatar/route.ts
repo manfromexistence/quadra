@@ -3,7 +3,13 @@ import { auth } from "@/lib/auth";
 import { isImgBBConfigured, uploadImageToImgBB } from "@/lib/storage-imgbb";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB for avatars/images
-const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+const ALLOWED_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+];
 
 export async function POST(request: Request) {
   const session = await auth.api.getSession({
@@ -52,8 +58,9 @@ export async function POST(request: Request) {
     // Check if ImgBB is configured
     if (!isImgBBConfigured()) {
       return NextResponse.json(
-        { 
-          error: "ImgBB is not configured. Please set the IMGBB environment variable." 
+        {
+          error:
+            "ImgBB is not configured. Please set the IMGBB environment variable.",
         },
         { status: 503 },
       );
@@ -71,10 +78,12 @@ export async function POST(request: Request) {
       fileType: uploaded.fileType,
       fileSize: uploaded.fileSize,
     });
-
   } catch (error) {
     console.error("Upload error:", error);
-    const message = error instanceof Error ? error.message : "Upload failed. Please try again.";
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Upload failed. Please try again.";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

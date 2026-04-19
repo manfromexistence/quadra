@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { createTransmittal } from "@/actions/transmittals";
 import { TransmittalFormWithPreview } from "@/components/edms/transmittal-form-with-preview";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { canManageEdmsContent } from "@/lib/edms/rbac";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { getTransmittalManagementData } from "@/lib/edms/transmittals";
-import { createTransmittal } from "@/actions/transmittals";
 
 export const metadata: Metadata = {
   title: "New Transmittal | Quadra EDMS",
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function NewTransmittalPage() {
   const sessionUser = await getRequiredDashboardSessionUser();
-  
+
   if (!canManageEdmsContent(sessionUser.role)) {
     redirect("/transmittals");
   }
@@ -31,8 +31,9 @@ export default async function NewTransmittalPage() {
             Prepare Transmittal
           </h1>
           <p className="text-sm leading-6 text-muted-foreground md:text-base">
-            Compose a formal transmittal to issue documents to a stakeholder. 
-            The system auto-generates the ID and applies the distribution matrix.
+            Compose a formal transmittal to issue documents to a stakeholder.
+            The system auto-generates the ID and applies the distribution
+            matrix.
           </p>
         </div>
 

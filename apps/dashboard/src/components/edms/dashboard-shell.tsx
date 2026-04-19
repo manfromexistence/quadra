@@ -1,5 +1,5 @@
-import type { DashboardUser } from "@/lib/edms/dashboard";
 import { SidebarInset, SidebarProvider } from "@midday/ui/sidebar";
+import type { DashboardUser } from "@/lib/edms/dashboard";
 import { EdmsDashboardSidebar } from "./dashboard-sidebar";
 
 export function EdmsDashboardShell({
@@ -18,5 +18,3 @@ export function EdmsDashboardShell({
     </SidebarProvider>
   );
 }
-
-

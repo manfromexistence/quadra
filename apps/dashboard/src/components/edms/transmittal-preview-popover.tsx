@@ -1,9 +1,9 @@
 "use client";
 
-import { Calendar, ExternalLink, FileText, Send, User } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@midday/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
+import { Calendar, ExternalLink, Send, User } from "lucide-react";
+import Link from "next/link";
 import { EdmsStatusBadge } from "./status-badge";
 
 interface TransmittalPreviewPopoverProps {
@@ -18,7 +18,10 @@ interface TransmittalPreviewPopoverProps {
   children: React.ReactNode;
 }
 
-export function TransmittalPreviewPopover({ transmittal, children }: TransmittalPreviewPopoverProps) {
+export function TransmittalPreviewPopover({
+  transmittal,
+  children,
+}: TransmittalPreviewPopoverProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -28,8 +31,12 @@ export function TransmittalPreviewPopover({ transmittal, children }: Transmittal
           <div className="border-b border-border bg-muted/30 p-4">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 space-y-1">
-                <h4 className="font-semibold leading-tight">{transmittal.subject}</h4>
-                <p className="font-mono text-xs text-muted-foreground">{transmittal.transmittalNumber}</p>
+                <h4 className="font-semibold leading-tight">
+                  {transmittal.subject}
+                </h4>
+                <p className="font-mono text-xs text-muted-foreground">
+                  {transmittal.transmittalNumber}
+                </p>
               </div>
               <EdmsStatusBadge status={transmittal.status} />
             </div>
@@ -49,7 +56,9 @@ export function TransmittalPreviewPopover({ transmittal, children }: Transmittal
 
             <div className="flex items-center gap-2">
               <Send className="size-4 text-muted-foreground" />
-              <span className="text-sm capitalize">{transmittal.status.replace('_', ' ')}</span>
+              <span className="text-sm capitalize">
+                {transmittal.status.replace("_", " ")}
+              </span>
             </div>
           </div>
 

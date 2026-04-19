@@ -20,12 +20,16 @@ export const auth = betterAuth({
       const apiKey = process.env.RESEND_API_KEY ?? process.env.RESEND;
 
       if (!apiKey) {
-        console.warn("⚠️ RESEND_API_KEY not configured - password reset emails will not be sent");
+        console.warn(
+          "⚠️ RESEND_API_KEY not configured - password reset emails will not be sent",
+        );
         return;
       }
 
       const resend = new Resend(apiKey);
-      const from = process.env.RESEND_FROM_EMAIL?.trim() || "QUADRA <onboarding@resend.dev>";
+      const from =
+        process.env.RESEND_FROM_EMAIL?.trim() ||
+        "QUADRA <onboarding@resend.dev>";
 
       await resend.emails.send({
         from,

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function Overview() {
   // Skip server-side prefetch to avoid hydration errors
   // The client will fetch the data on mount
-  
+
   return (
     <HydrateClient>
       <OverviewView />

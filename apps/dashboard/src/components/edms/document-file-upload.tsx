@@ -1,9 +1,9 @@
 "use client";
 
+import { Button } from "@midday/ui/button";
 import { Loader2, UploadCloud } from "lucide-react";
 import { type ChangeEvent, useId, useState, useTransition } from "react";
 import { toast } from "@/hooks/use-toast";
-import { Button } from "@midday/ui/button";
 
 export interface UploadedDocumentFile {
   fileName: string;
@@ -34,7 +34,7 @@ export function DocumentFileUpload({
     if (!files || files.length === 0) {
       return;
     }
-    
+
     // Convert to array and clear input
     const selectedFiles = Array.from(files);
     event.target.value = "";
@@ -51,7 +51,7 @@ export function DocumentFileUpload({
     startTransition(async () => {
       let successCount = 0;
       let failCount = 0;
-      
+
       for (const selectedFile of selectedFiles) {
         const formData = new FormData();
         formData.set("file", selectedFile);
@@ -64,13 +64,16 @@ export function DocumentFileUpload({
             body: formData,
           });
 
-          const payload = (await response.json()) as UploadedDocumentFile & { error?: string };
+          const payload = (await response.json()) as UploadedDocumentFile & {
+            error?: string;
+          };
 
           if (!response.ok) {
             failCount++;
             toast({
               title: "Upload failed",
-              description: payload.error ?? `Unable to upload ${selectedFile.name}.`,
+              description:
+                payload.error ?? `Unable to upload ${selectedFile.name}.`,
               variant: "destructive",
             });
             continue;
@@ -79,7 +82,7 @@ export function DocumentFileUpload({
           onUploaded(payload);
           setUploadedFileName(payload.fileName);
           successCount++;
-        } catch (e) {
+        } catch (_e) {
           failCount++;
           toast({
             title: "Upload failed",
@@ -103,9 +106,13 @@ export function DocumentFileUpload({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="space-y-1">
           <p className="text-sm font-medium">Direct file upload</p>
-          <p className="text-sm leading-6 text-muted-foreground">{helperText}</p>
+          <p className="text-sm leading-6 text-muted-foreground">
+            {helperText}
+          </p>
           {uploadedFileName ? (
-            <p className="text-xs text-foreground">Uploaded file: {uploadedFileName}</p>
+            <p className="text-xs text-foreground">
+              Uploaded file: {uploadedFileName}
+            </p>
           ) : null}
         </div>
         <div>
@@ -117,7 +124,12 @@ export function DocumentFileUpload({
             multiple
             onChange={handleFileSelection}
           />
-          <Button type="button" variant="outline" asChild disabled={isUploading}>
+          <Button
+            type="button"
+            variant="outline"
+            asChild
+            disabled={isUploading}
+          >
             <label htmlFor={inputId} className="cursor-pointer">
               {isUploading ? (
                 <>
@@ -137,5 +149,3 @@ export function DocumentFileUpload({
     </div>
   );
 }
-
-

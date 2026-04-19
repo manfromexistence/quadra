@@ -1,11 +1,11 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { type NextRequest } from "next/server";
-import { appRouter } from "./router";
+import type { NextRequest } from "next/server";
 import { createContext } from "./context";
+import { appRouter } from "./router";
 
 const handler = (req: NextRequest) => {
   console.log(`[tRPC API] ${req.method} ${req.url}`);
-  
+
   try {
     return fetchRequestHandler({
       endpoint: "/api/trpc",
@@ -27,14 +27,14 @@ const handler = (req: NextRequest) => {
   } catch (error) {
     console.error("[tRPC API] Fatal error in handler:", error);
     return new Response(
-      JSON.stringify({ 
-        error: "Internal server error", 
-        message: error instanceof Error ? error.message : "Unknown error" 
+      JSON.stringify({
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
       }),
-      { 
+      {
         status: 500,
-        headers: { "Content-Type": "application/json" }
-      }
+        headers: { "Content-Type": "application/json" },
+      },
     );
   }
 };

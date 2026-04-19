@@ -1,6 +1,5 @@
 import "server-only";
 
-import type { AppRouter } from "@/app/api/trpc/[trpc]/router";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client";
 import {
@@ -9,6 +8,7 @@ import {
 } from "@trpc/tanstack-react-query";
 import { cache } from "react";
 import superjson from "superjson";
+import type { AppRouter } from "@/app/api/trpc/[trpc]/router";
 import { makeQueryClient } from "./query-client";
 
 // IMPORTANT: Create a stable getter for the query client that
@@ -24,7 +24,7 @@ function getServerBaseUrl() {
     const port = process.env.PORT || "3001";
     return `http://localhost:${port}`;
   }
-  
+
   // In production, use relative URL for same-origin requests
   // This is more efficient and avoids external HTTP calls
   return "";
@@ -54,7 +54,11 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
             next: { revalidate: 0 },
           }).then((res) => {
             if (!res.ok) {
-              console.error("[tRPC Server] HTTP Error:", res.status, res.statusText);
+              console.error(
+                "[tRPC Server] HTTP Error:",
+                res.status,
+                res.statusText,
+              );
             }
             return res;
           });

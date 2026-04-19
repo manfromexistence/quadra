@@ -1,21 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Activity, Loader2, PencilLine, ShieldAlert, Trash2, UserCog2, UserX2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import {
-  deleteUser,
-  getUserActivitySummary,
-  toggleUserStatus,
-  type UserActivitySummary,
-  updateUserDetails,
-  updateUserRole,
-} from "@/actions/admin-users";
-import { toast } from "@/hooks/use-toast";
-import { cn } from "@midday/ui/cn";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +15,7 @@ import {
 } from "@midday/ui/alert-dialog";
 import { Button } from "@midday/ui/button";
 import { Card, CardContent } from "@midday/ui/card";
+import { cn } from "@midday/ui/cn";
 import {
   Form,
   FormControl,
@@ -40,7 +26,13 @@ import {
   FormMessage,
 } from "@midday/ui/form";
 import { Input } from "@midday/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@midday/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -50,9 +42,38 @@ import {
   SheetTrigger,
 } from "@midday/ui/sheet";
 import { Switch } from "@midday/ui/switch";
+import {
+  Activity,
+  Loader2,
+  PencilLine,
+  ShieldAlert,
+  Trash2,
+  UserCog2,
+  UserX2,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  deleteUser,
+  getUserActivitySummary,
+  toggleUserStatus,
+  type UserActivitySummary,
+  updateUserDetails,
+  updateUserRole,
+} from "@/actions/admin-users";
+import { toast } from "@/hooks/use-toast";
 import { formatEdmsLabel } from "./status-badge";
 
-const userRoles = ["admin", "client", "pmc", "vendor", "subcontractor", "user"] as const;
+const userRoles = [
+  "admin",
+  "client",
+  "pmc",
+  "vendor",
+  "subcontractor",
+  "user",
+] as const;
 
 const adminUserFormSchema = z.object({
   role: z.enum(userRoles),
@@ -93,7 +114,10 @@ function buildDefaultValues(user: AdminEditableUser): AdminUserFormValues {
   };
 }
 
-export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetProps) {
+export function AdminUserEditSheet({
+  user,
+  currentAdminId,
+}: AdminUserEditSheetProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [summary, setSummary] = useState<UserActivitySummary | null>(null);
@@ -254,7 +278,7 @@ export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetP
                     {formatEdmsLabel(normalizeRole(user.role))}
                   </span>
                   <span className="rounded-full border border-border px-2.5 py-1">
-                    {Boolean(user.isActive ?? true) ? "Active" : "Inactive"}
+                    {(user.isActive ?? true) ? "Active" : "Inactive"}
                   </span>
                   {isCurrentAdmin ? (
                     <span className="rounded-full border border-border px-2.5 py-1">
@@ -267,7 +291,7 @@ export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetP
               <div
                 className={cn(
                   "grid min-w-48 gap-2 rounded-xl border bg-background p-3 text-sm",
-                  isLoadingSummary && "opacity-70"
+                  isLoadingSummary && "opacity-70",
                 )}
               >
                 <div className="flex items-center gap-2 text-sm font-medium">
@@ -281,10 +305,22 @@ export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetP
                   </div>
                 ) : summary ? (
                   <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                    <SummaryMetric label="Documents" value={summary.documentsUploaded} />
-                    <SummaryMetric label="Comments" value={summary.commentsAdded} />
-                    <SummaryMetric label="Workflows" value={summary.workflowsCreated} />
-                    <SummaryMetric label="Assignments" value={summary.projectsAssigned} />
+                    <SummaryMetric
+                      label="Documents"
+                      value={summary.documentsUploaded}
+                    />
+                    <SummaryMetric
+                      label="Comments"
+                      value={summary.commentsAdded}
+                    />
+                    <SummaryMetric
+                      label="Workflows"
+                      value={summary.workflowsCreated}
+                    />
+                    <SummaryMetric
+                      label="Assignments"
+                      value={summary.projectsAssigned}
+                    />
                   </div>
                 ) : (
                   <p className="text-xs text-muted-foreground">
@@ -304,7 +340,10 @@ export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetP
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Workspace role</FormLabel>
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <FormControl>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select role" />
@@ -319,7 +358,8 @@ export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetP
                         </SelectContent>
                       </Select>
                       <FormDescription>
-                        Controls access to projects, workflows, approvals, and administration.
+                        Controls access to projects, workflows, approvals, and
+                        administration.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -363,7 +403,10 @@ export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetP
                     <FormItem>
                       <FormLabel>Job title</FormLabel>
                       <FormControl>
-                        <Input placeholder="Senior document controller" {...field} />
+                        <Input
+                          placeholder="Senior document controller"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -395,11 +438,15 @@ export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetP
                         <div className="space-y-1">
                           <FormLabel>Active access</FormLabel>
                           <FormDescription>
-                            Disable the user if they should no longer access the dashboard.
+                            Disable the user if they should no longer access the
+                            dashboard.
                           </FormDescription>
                         </div>
                         <FormControl>
-                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
                         </FormControl>
                       </div>
                       <FormMessage />
@@ -412,7 +459,8 @@ export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetP
                 <div className="flex items-start gap-3 rounded-xl border border-dashed border-amber-500/40 bg-amber-500/5 p-4 text-sm">
                   <ShieldAlert className="mt-0.5 size-4 text-amber-600" />
                   <p className="text-muted-foreground">
-                    This is your current admin account. You cannot deactivate or demote it here.
+                    This is your current admin account. You cannot deactivate or
+                    demote it here.
                   </p>
                 </div>
               ) : null}
@@ -436,12 +484,15 @@ export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetP
                       </AlertDialogMedia>
                       <AlertDialogTitle>Delete {user.name}?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This removes the account and reassigns or clears dependent records where
-                        necessary. The action cannot be undone.
+                        This removes the account and reassigns or clears
+                        dependent records where necessary. The action cannot be
+                        undone.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel disabled={isPending}>
+                        Cancel
+                      </AlertDialogCancel>
                       <AlertDialogAction
                         variant="destructive"
                         disabled={isPending}
@@ -464,7 +515,11 @@ export function AdminUserEditSheet({ user, currentAdminId }: AdminUserEditSheetP
                 </AlertDialog>
 
                 <div className="flex items-center justify-end gap-3">
-                  <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setIsOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isPending}>
@@ -506,5 +561,3 @@ function normalizeRole(role: string | null) {
 
   return role as (typeof userRoles)[number];
 }
-
-

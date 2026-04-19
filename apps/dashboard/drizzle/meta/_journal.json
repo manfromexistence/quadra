@@ -15,6 +15,20 @@
       "when": 1776162253499,
       "tag": "0001_sudden_rictor",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1776609084450,
+      "tag": "0002_nasty_ironclad",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1776609124863,
+      "tag": "0003_big_korg",
+      "breakpoints": true
     }
   ]
 }

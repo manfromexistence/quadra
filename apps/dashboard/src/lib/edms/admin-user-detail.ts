@@ -61,7 +61,9 @@ export interface AdminUserDetailData {
   }>;
 }
 
-export async function getAdminUserDetailData(userId: string): Promise<AdminUserDetailData | null> {
+export async function getAdminUserDetailData(
+  userId: string,
+): Promise<AdminUserDetailData | null> {
   await requireEdmsRole("admin");
 
   const [profile] = await db
@@ -94,65 +96,81 @@ export async function getAdminUserDetailData(userId: string): Promise<AdminUserD
     commentCount,
     activityCountRow,
   ] = await Promise.all([
-    db.select({ value: count() }).from(documents).where(eq(documents.uploadedBy, userId)),
+    db
+      .select({ value: count() })
+      .from(documents)
+      .where(eq(documents.uploadedBy, userId)),
     db
       .select({ value: count() })
       .from(documentWorkflows)
       .where(eq(documentWorkflows.createdBy, userId)),
-    db.select({ value: count() }).from(workflowSteps).where(eq(workflowSteps.assignedTo, userId)),
-    db.select({ value: count() }).from(projectMembers).where(eq(projectMembers.userId, userId)),
-    db.select({ value: count() }).from(documentComments).where(eq(documentComments.userId, userId)),
-    db.select({ value: count() }).from(activityLog).where(eq(activityLog.userId, userId)),
+    db
+      .select({ value: count() })
+      .from(workflowSteps)
+      .where(eq(workflowSteps.assignedTo, userId)),
+    db
+      .select({ value: count() })
+      .from(projectMembers)
+      .where(eq(projectMembers.userId, userId)),
+    db
+      .select({ value: count() })
+      .from(documentComments)
+      .where(eq(documentComments.userId, userId)),
+    db
+      .select({ value: count() })
+      .from(activityLog)
+      .where(eq(activityLog.userId, userId)),
   ]);
 
-  const [activityRows, membershipRows, uploadedDocumentRows] = await Promise.all([
-    db
-      .select({
-        id: activityLog.id,
-        action: activityLog.action,
-        entityType: activityLog.entityType,
-        entityName: activityLog.entityName,
-        description: activityLog.description,
-        createdAt: activityLog.createdAt,
-        projectName: projects.name,
-      })
-      .from(activityLog)
-      .leftJoin(projects, eq(activityLog.projectId, projects.id))
-      .where(eq(activityLog.userId, userId))
-      .orderBy(desc(activityLog.createdAt))
-      .limit(12),
-    db
-      .select({
-        id: projectMembers.id,
-        projectId: projectMembers.projectId,
-        projectName: projects.name,
-        projectNumber: projects.projectNumber,
-        role: projectMembers.role,
-        status: projects.status,
-        assignedAt: projectMembers.assignedAt,
-      })
-      .from(projectMembers)
-      .innerJoin(projects, eq(projectMembers.projectId, projects.id))
-      .where(eq(projectMembers.userId, userId))
-      .orderBy(desc(projectMembers.assignedAt))
-      .limit(12),
-    db
-      .select({
-        id: documents.id,
-        title: documents.title,
-        documentNumber: documents.documentNumber,
-        revision: documents.revision,
-        status: documents.status,
-        projectId: projects.id,
-        projectName: projects.name,
-        uploadedAt: documents.uploadedAt,
-      })
-      .from(documents)
-      .innerJoin(projects, eq(documents.projectId, projects.id))
-      .where(eq(documents.uploadedBy, userId))
-      .orderBy(desc(documents.uploadedAt))
-      .limit(12),
-  ]);
+  const [activityRows, membershipRows, uploadedDocumentRows] =
+    await Promise.all([
+      db
+        .select({
+          id: activityLog.id,
+          action: activityLog.action,
+          entityType: activityLog.entityType,
+          entityName: activityLog.entityName,
+          description: activityLog.description,
+          createdAt: activityLog.createdAt,
+          projectName: projects.name,
+        })
+        .from(activityLog)
+        .leftJoin(projects, eq(activityLog.projectId, projects.id))
+        .where(eq(activityLog.userId, userId))
+        .orderBy(desc(activityLog.createdAt))
+        .limit(12),
+      db
+        .select({
+          id: projectMembers.id,
+          projectId: projectMembers.projectId,
+          projectName: projects.name,
+          projectNumber: projects.projectNumber,
+          role: projectMembers.role,
+          status: projects.status,
+          assignedAt: projectMembers.assignedAt,
+        })
+        .from(projectMembers)
+        .innerJoin(projects, eq(projectMembers.projectId, projects.id))
+        .where(eq(projectMembers.userId, userId))
+        .orderBy(desc(projectMembers.assignedAt))
+        .limit(12),
+      db
+        .select({
+          id: documents.id,
+          title: documents.title,
+          documentNumber: documents.documentNumber,
+          revision: documents.revision,
+          status: documents.status,
+          projectId: projects.id,
+          projectName: projects.name,
+          uploadedAt: documents.uploadedAt,
+        })
+        .from(documents)
+        .innerJoin(projects, eq(documents.projectId, projects.id))
+        .where(eq(documents.uploadedBy, userId))
+        .orderBy(desc(documents.uploadedAt))
+        .limit(12),
+    ]);
 
   return {
     profile: {

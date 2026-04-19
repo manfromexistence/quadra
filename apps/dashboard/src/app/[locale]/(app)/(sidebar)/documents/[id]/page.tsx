@@ -1,11 +1,14 @@
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import Image from "next/image";
-import { notFound } from "next/navigation";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { CommentPopover } from "@/components/edms/comment-popover";
 import { DocumentVersionSheet } from "@/components/edms/document-version-sheet";
-import { EdmsStatusBadge, formatEdmsLabel } from "@/components/edms/status-badge";
+import {
+  EdmsStatusBadge,
+  formatEdmsLabel,
+} from "@/components/edms/status-badge";
 import { VersionHistoryPopover } from "@/components/edms/version-history-popover";
 import { WorkflowPreviewPopover } from "@/components/edms/workflow-preview-popover";
 import { getDocumentDetailData } from "@/lib/edms/document-detail";
@@ -32,14 +35,18 @@ export default async function DocumentDetailPage({
       <section className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-3xl font-semibold tracking-tight">{data.document.title}</h1>
+            <h1 className="text-3xl font-semibold tracking-tight">
+              {data.document.title}
+            </h1>
             <EdmsStatusBadge status={data.document.status} />
           </div>
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
             <span>{data.document.documentNumber}</span>
             <span>{data.document.projectName}</span>
             <span>Version {data.document.version}</span>
-            {data.document.revision ? <span>Rev {data.document.revision}</span> : null}
+            {data.document.revision ? (
+              <span>Rev {data.document.revision}</span>
+            ) : null}
           </div>
           {data.document.description ? (
             <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
@@ -59,7 +66,10 @@ export default async function DocumentDetailPage({
             currentFileUrl={data.document.fileUrl}
           />
           <Button variant="outline" asChild>
-            <Link href={expandStorageUrl(data.document.fileUrl)} target="_blank">
+            <Link
+              href={expandStorageUrl(data.document.fileUrl)}
+              target="_blank"
+            >
               Open file
             </Link>
           </Button>
@@ -75,7 +85,10 @@ export default async function DocumentDetailPage({
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {documentImages.map((imageUrl, index) => (
-                  <div key={index} className="group relative aspect-video overflow-hidden rounded-lg border border-border bg-muted">
+                  <div
+                    key={index}
+                    className="group relative aspect-video overflow-hidden rounded-lg border border-border bg-muted"
+                  >
                     <Image
                       src={imageUrl}
                       alt={`${data.document.title} - Image ${index + 1}`}
@@ -89,7 +102,9 @@ export default async function DocumentDetailPage({
                       rel="noopener noreferrer"
                       className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/50 group-hover:opacity-100"
                     >
-                      <span className="text-sm font-medium text-white">View full size</span>
+                      <span className="text-sm font-medium text-white">
+                        View full size
+                      </span>
                     </a>
                   </div>
                 ))}
@@ -106,13 +121,23 @@ export default async function DocumentDetailPage({
           </CardHeader>
           <CardContent className="grid gap-4 text-sm">
             <MetadataRow label="Project" value={data.document.projectName} />
-            <MetadataRow label="Discipline" value={data.document.discipline || "General"} />
-            <MetadataRow label="Category" value={data.document.category || "Document"} />
+            <MetadataRow
+              label="Discipline"
+              value={data.document.discipline || "General"}
+            />
+            <MetadataRow
+              label="Category"
+              value={data.document.category || "Document"}
+            />
             <MetadataRow label="Uploaded" value={data.document.uploadedLabel} />
             <MetadataRow label="File" value={data.document.fileName} />
             <MetadataRow
               label="Tags"
-              value={data.document.tags.length > 0 ? data.document.tags.join(", ") : "No tags"}
+              value={
+                data.document.tags.length > 0
+                  ? data.document.tags.join(", ")
+                  : "No tags"
+              }
             />
           </CardContent>
         </Card>
@@ -128,44 +153,53 @@ export default async function DocumentDetailPage({
                   <span>{data.workflow.workflowName}</span>
                   <EdmsStatusBadge status={data.workflow.status} />
                   <span>
-                    Step {data.workflow.currentStep} of {data.workflow.totalSteps}
+                    Step {data.workflow.currentStep} of{" "}
+                    {data.workflow.totalSteps}
                   </span>
                 </div>
-            {data.workflow.steps.map((step) => (
-              <WorkflowPreviewPopover
-                key={step.id}
-                workflow={{
-                  id: step.id,
-                  stepName: step.stepName,
-                  title: data.document.title,
-                  documentNumber: data.document.documentNumber,
-                  projectName: data.document.projectName,
-                  status: step.status,
-                  dueLabel: step.completedLabel,
-                  assignedRole: step.assignedRole || undefined,
-                }}
-              >
-                <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-medium">{step.stepName}</p>
-                      <p className="text-sm text-muted-foreground">{step.assignedToName}</p>
+                {data.workflow.steps.map((step) => (
+                  <WorkflowPreviewPopover
+                    key={step.id}
+                    workflow={{
+                      id: step.id,
+                      stepName: step.stepName,
+                      title: data.document.title,
+                      documentNumber: data.document.documentNumber,
+                      projectName: data.document.projectName,
+                      status: step.status,
+                      dueLabel: step.completedLabel,
+                      assignedRole: step.assignedRole || undefined,
+                    }}
+                  >
+                    <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="font-medium">{step.stepName}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {step.assignedToName}
+                          </p>
+                        </div>
+                        <EdmsStatusBadge status={step.status} />
+                      </div>
+                      <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                        {step.assignedRole ? (
+                          <span>{formatEdmsLabel(step.assignedRole)}</span>
+                        ) : null}
+                        <span>{step.completedLabel}</span>
+                      </div>
+                      {step.comments ? (
+                        <p className="mt-3 text-sm text-muted-foreground line-clamp-2">
+                          {step.comments}
+                        </p>
+                      ) : null}
                     </div>
-                    <EdmsStatusBadge status={step.status} />
-                  </div>
-                  <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                    {step.assignedRole ? <span>{formatEdmsLabel(step.assignedRole)}</span> : null}
-                    <span>{step.completedLabel}</span>
-                  </div>
-                  {step.comments ? (
-                    <p className="mt-3 text-sm text-muted-foreground line-clamp-2">{step.comments}</p>
-                  ) : null}
-                </div>
-              </WorkflowPreviewPopover>
-            ))}
+                  </WorkflowPreviewPopover>
+                ))}
               </>
             ) : (
-              <p className="text-sm text-muted-foreground">No workflow is linked to this document yet.</p>
+              <p className="text-sm text-muted-foreground">
+                No workflow is linked to this document yet.
+              </p>
             )}
           </CardContent>
         </Card>
@@ -194,16 +228,22 @@ export default async function DocumentDetailPage({
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-medium">Version {version.version}</p>
-                      <p className="text-sm text-muted-foreground">{version.fileName}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {version.fileName}
+                      </p>
                     </div>
                     <Button variant="ghost" size="sm" asChild>
-                      <Link href={expandStorageUrl(version.fileUrl)} target="_blank">
+                      <Link
+                        href={expandStorageUrl(version.fileUrl)}
+                        target="_blank"
+                      >
                         Open
                       </Link>
                     </Button>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground line-clamp-2">
-                    {version.changeDescription || "No change description provided."}
+                    {version.changeDescription ||
+                      "No change description provided."}
                   </p>
                   <p className="mt-2 text-xs text-muted-foreground">
                     {version.uploadedByName} · {version.uploadedLabel}
@@ -220,7 +260,9 @@ export default async function DocumentDetailPage({
           </CardHeader>
           <CardContent className="space-y-3">
             {data.comments.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No review comments yet.</p>
+              <p className="text-sm text-muted-foreground">
+                No review comments yet.
+              </p>
             ) : (
               data.comments.map((comment) => (
                 <CommentPopover
@@ -237,11 +279,17 @@ export default async function DocumentDetailPage({
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-medium">{comment.authorName}</p>
-                        <p className="text-xs text-muted-foreground">{formatEdmsLabel(comment.commentType)}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatEdmsLabel(comment.commentType)}
+                        </p>
                       </div>
-                      <span className="text-xs text-muted-foreground">{comment.createdLabel}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {comment.createdLabel}
+                      </span>
                     </div>
-                    <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{comment.comment}</p>
+                    <p className="mt-3 text-sm text-muted-foreground line-clamp-3">
+                      {comment.comment}
+                    </p>
                   </div>
                 </CommentPopover>
               ))

@@ -1,14 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { Building2, FileText, Loader2, Send } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { z } from "zod";
-import { createTransmittal } from "@/actions/transmittals";
-import { toast } from "@/hooks/use-toast";
 import { Badge } from "@midday/ui/badge";
 import { Button } from "@midday/ui/button";
 import { Checkbox } from "@midday/ui/checkbox";
@@ -37,6 +29,14 @@ import {
   SheetTrigger,
 } from "@midday/ui/sheet";
 import { Textarea } from "@midday/ui/textarea";
+import { format } from "date-fns";
+import { Building2, FileText, Loader2, Send } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { z } from "zod";
+import { createTransmittal } from "@/actions/transmittals";
+import { toast } from "@/hooks/use-toast";
 
 const PURPOSE_LABELS: Record<string, string> = {
   IFR: "Issued for Review",
@@ -236,14 +236,19 @@ function TransmittalPreview({
             </thead>
             <tbody>
               {selectedDocs.map((doc, i) => (
-                <tr key={doc.id} className={i % 2 === 0 ? "bg-white" : "bg-[#fafafa]"}>
+                <tr
+                  key={doc.id}
+                  className={i % 2 === 0 ? "bg-white" : "bg-[#fafafa]"}
+                >
                   <td className="border border-[#d0d0d0] px-2 py-1 text-center font-mono">
                     {i + 1}
                   </td>
                   <td className="border border-[#d0d0d0] px-2 py-1 font-mono font-medium">
                     {doc.documentNumber}
                   </td>
-                  <td className="border border-[#d0d0d0] px-2 py-1">{doc.title}</td>
+                  <td className="border border-[#d0d0d0] px-2 py-1">
+                    {doc.title}
+                  </td>
                   <td className="border border-[#d0d0d0] px-2 py-1 text-center font-mono">
                     {doc.revision ?? "—"}
                   </td>
@@ -294,22 +299,22 @@ export function TransmittalCreateSheet({
 
   const projectMembers = useMemo(
     () => members.filter((m) => m.projectId === selectedProjectId),
-    [members, selectedProjectId]
+    [members, selectedProjectId],
   );
 
   const projectDocuments = useMemo(
     () => documents.filter((d) => d.projectId === selectedProjectId),
-    [documents, selectedProjectId]
+    [documents, selectedProjectId],
   );
 
   const selectedDocs = useMemo(
     () => projectDocuments.filter((d) => selectedDocIds.includes(d.id)),
-    [projectDocuments, selectedDocIds]
+    [projectDocuments, selectedDocIds],
   );
 
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
   const selectedMember = projectMembers.find(
-    (m) => m.id === watchedValues.recipientUserId
+    (m) => m.id === watchedValues.recipientUserId,
   );
 
   useEffect(() => {
@@ -492,7 +497,7 @@ export function TransmittalCreateSheet({
                                     </span>{" "}
                                     — {label}
                                   </SelectItem>
-                                )
+                                ),
                               )}
                             </SelectContent>
                           </Select>
@@ -586,14 +591,10 @@ export function TransmittalCreateSheet({
                               {projectMembers
                                 .filter(
                                   (m) =>
-                                    m.id !==
-                                    form.getValues("recipientUserId")
+                                    m.id !== form.getValues("recipientUserId"),
                                 )
                                 .map((member) => (
-                                  <SelectItem
-                                    key={member.id}
-                                    value={member.id}
-                                  >
+                                  <SelectItem key={member.id} value={member.id}>
                                     {member.name} — {member.role}
                                   </SelectItem>
                                 ))}
@@ -631,11 +632,12 @@ export function TransmittalCreateSheet({
                     render={() => (
                       <FormItem>
                         <div className="flex items-center justify-between">
-                          <FormLabel>
-                            Documents enclosed
-                          </FormLabel>
+                          <FormLabel>Documents enclosed</FormLabel>
                           {selectedDocIds.length > 0 && (
-                            <Badge variant="secondary" className="font-mono text-xs">
+                            <Badge
+                              variant="secondary"
+                              className="font-mono text-xs"
+                            >
                               {selectedDocIds.length} selected
                             </Badge>
                           )}
@@ -661,7 +663,7 @@ export function TransmittalCreateSheet({
                                     <FormControl>
                                       <Checkbox
                                         checked={field.value.includes(
-                                          document.id
+                                          document.id,
                                         )}
                                         onCheckedChange={(checked) => {
                                           if (checked) {
@@ -672,8 +674,8 @@ export function TransmittalCreateSheet({
                                           } else {
                                             field.onChange(
                                               field.value.filter(
-                                                (v) => v !== document.id
-                                              )
+                                                (v) => v !== document.id,
+                                              ),
                                             );
                                           }
                                         }}

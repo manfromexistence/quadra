@@ -594,7 +594,7 @@ export function findNotificationsByUserId(userId: string) {
 
 export function findUnreadNotificationsByUserId(userId: string) {
   return mockNotifications.filter(
-    (notif) => notif.userId === userId && !notif.isRead
+    (notif) => notif.userId === userId && !notif.isRead,
   );
 }
 
@@ -607,11 +607,15 @@ export function findProjectMembersByProjectId(projectId: string) {
 }
 
 export function findDocumentVersionsByDocumentId(documentId: string) {
-  return mockDocumentVersions.filter((version) => version.documentId === documentId);
+  return mockDocumentVersions.filter(
+    (version) => version.documentId === documentId,
+  );
 }
 
 export function findDocumentCommentsByDocumentId(documentId: string) {
-  return mockDocumentComments.filter((comment) => comment.documentId === documentId);
+  return mockDocumentComments.filter(
+    (comment) => comment.documentId === documentId,
+  );
 }
 
 // ============================================
@@ -624,7 +628,8 @@ export const mockTransmittals = [
     projectId: "proj_1",
     transmittalNumber: "TRN-2024-001",
     subject: "Architectural Drawings Package 1",
-    description: "Transmitting architectural drawings for floors 1-5 for review",
+    description:
+      "Transmitting architectural drawings for floors 1-5 for review",
     sentFrom: "user_1",
     sentTo: "user_3",
     ccTo: "user_2",
@@ -853,7 +858,9 @@ export function findTransmittalById(id: string) {
 }
 
 export function findTransmittalDocumentsByTransmittalId(transmittalId: string) {
-  return mockTransmittalDocuments.filter((td) => td.transmittalId === transmittalId);
+  return mockTransmittalDocuments.filter(
+    (td) => td.transmittalId === transmittalId,
+  );
 }
 
 export function findDocumentWorkflowsByDocumentId(documentId: string) {
@@ -891,7 +898,7 @@ export const mockBankAccounts = [
     teamId: "team_1",
     name: "Business Checking",
     currency: "USD",
-    balance: 125000.50,
+    balance: 125000.5,
     type: "checking",
     enabled: true,
     createdAt: new Date("2024-01-01"),
@@ -901,7 +908,7 @@ export const mockBankAccounts = [
     teamId: "team_1",
     name: "Savings Account",
     currency: "USD",
-    balance: 50000.00,
+    balance: 50000.0,
     type: "savings",
     enabled: true,
     createdAt: new Date("2024-01-01"),
@@ -914,7 +921,7 @@ export const mockTransactions = [
     teamId: "team_1",
     bankAccountId: "bank_1",
     name: "Office Supplies",
-    amount: -450.00,
+    amount: -450.0,
     currency: "USD",
     date: new Date("2024-02-01"),
     status: "completed",
@@ -927,7 +934,7 @@ export const mockTransactions = [
     teamId: "team_1",
     bankAccountId: "bank_1",
     name: "Client Payment - Project A",
-    amount: 15000.00,
+    amount: 15000.0,
     currency: "USD",
     date: new Date("2024-02-05"),
     status: "completed",
@@ -940,7 +947,7 @@ export const mockTransactions = [
     teamId: "team_1",
     bankAccountId: "bank_1",
     name: "Software Subscription",
-    amount: -299.00,
+    amount: -299.0,
     currency: "USD",
     date: new Date("2024-02-10"),
     status: "completed",
@@ -983,7 +990,7 @@ export const mockInvoices = [
     invoiceNumber: "INV-2024-001",
     issueDate: new Date("2024-02-01"),
     dueDate: new Date("2024-03-01"),
-    amount: 15000.00,
+    amount: 15000.0,
     currency: "USD",
     status: "paid",
     paidAt: new Date("2024-02-05"),
@@ -996,7 +1003,7 @@ export const mockInvoices = [
     invoiceNumber: "INV-2024-002",
     issueDate: new Date("2024-02-10"),
     dueDate: new Date("2024-03-10"),
-    amount: 25000.00,
+    amount: 25000.0,
     currency: "USD",
     status: "sent",
     paidAt: null,
@@ -1110,7 +1117,7 @@ export const mockInboxItems = [
     displayName: "Receipt - Office Supplies",
     fileName: "receipt_001.pdf",
     filePath: "/inbox/receipt_001.pdf",
-    amount: 450.00,
+    amount: 450.0,
     currency: "USD",
     date: new Date("2024-02-01"),
     status: "pending",
@@ -1122,7 +1129,7 @@ export const mockInboxItems = [
     displayName: "Invoice - Software License",
     fileName: "invoice_002.pdf",
     filePath: "/inbox/invoice_002.pdf",
-    amount: 299.00,
+    amount: 299.0,
     currency: "USD",
     date: new Date("2024-02-10"),
     status: "processed",

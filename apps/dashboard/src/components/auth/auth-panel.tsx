@@ -1,15 +1,26 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { Button } from "@midday/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@midday/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@midday/ui/card";
 import { Input } from "@midday/ui/input";
 import { Label } from "@midday/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@midday/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
 import { Spinner } from "@midday/ui/spinner";
 import { useToast } from "@midday/ui/use-toast";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 
 type AuthMode = "signin" | "signup" | "forgot";
@@ -25,15 +36,26 @@ function getAuthErrorMessage(error: unknown, fallback: string) {
     return fallback;
   }
 
-  if ("error" in error && typeof error.error === "object" && error.error !== null) {
+  if (
+    "error" in error &&
+    typeof error.error === "object" &&
+    error.error !== null
+  ) {
     const nestedError = error.error as { message?: unknown };
 
-    if (typeof nestedError.message === "string" && nestedError.message.length > 0) {
+    if (
+      typeof nestedError.message === "string" &&
+      nestedError.message.length > 0
+    ) {
       return nestedError.message;
     }
   }
 
-  if ("message" in error && typeof error.message === "string" && error.message.length > 0) {
+  if (
+    "message" in error &&
+    typeof error.message === "string" &&
+    error.message.length > 0
+  ) {
     return error.message;
   }
 
@@ -44,7 +66,8 @@ function getModeCopy(mode: AuthMode) {
   if (mode === "forgot") {
     return {
       title: "Reset password",
-      description: "Enter your account email and we will send you a reset link.",
+      description:
+        "Enter your account email and we will send you a reset link.",
     };
   }
 
@@ -85,11 +108,16 @@ export function AuthPanel({
     setRole("user");
   }, [initialMode]);
 
-  const getCallbackUrl = (targetMode: "signin" | "signup" | "social" = "signin") => {
+  const getCallbackUrl = (
+    targetMode: "signin" | "signup" | "social" = "signin",
+  ) => {
     const baseUrl =
       targetMode === "signup"
         ? "/settings/account?onboarding=1"
-        : pathname && pathname.length > 0 && pathname !== "/auth" && pathname !== "/login"
+        : pathname &&
+            pathname.length > 0 &&
+            pathname !== "/auth" &&
+            pathname !== "/login"
           ? pathname
           : "/";
     const queryString = searchParams?.toString() || "";
@@ -115,13 +143,16 @@ export function AuthPanel({
     router.refresh();
   };
 
-  const handleForgotPassword = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleForgotPassword = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
 
     if (!email) {
       toast({
         title: "Email required",
-        description: "Enter the email address for the account you want to recover.",
+        description:
+          "Enter the email address for the account you want to recover.",
         variant: "destructive",
       });
       return;
@@ -130,7 +161,7 @@ export function AuthPanel({
     setIsEmailLoading(true);
 
     try {
-      // @ts-ignore - forgetPassword exists but types may not be updated
+      // @ts-expect-error - forgetPassword exists but types may not be updated
       const result = await authClient.forgetPassword({
         email,
         redirectTo: getResetRedirectUrl(),
@@ -150,7 +181,7 @@ export function AuthPanel({
         title: "Reset request failed",
         description: getAuthErrorMessage(
           error,
-          "Unable to send the reset email. Please try again."
+          "Unable to send the reset email. Please try again.",
         ),
         variant: "destructive",
       });
@@ -231,7 +262,7 @@ export function AuthPanel({
         title: isSignIn ? "Sign-in failed" : "Sign-up failed",
         description: getAuthErrorMessage(
           error,
-          `Unable to ${isSignIn ? "sign in" : "create the account"}. Please try again.`
+          `Unable to ${isSignIn ? "sign in" : "create the account"}. Please try again.`,
         ),
         variant: "destructive",
       });
@@ -241,15 +272,25 @@ export function AuthPanel({
   };
 
   const cardClassName =
-    variant === "dialog" ? "border-0 bg-transparent shadow-none" : "border-border shadow-sm";
+    variant === "dialog"
+      ? "border-0 bg-transparent shadow-none"
+      : "border-border shadow-sm";
 
   return (
     <Card className={cardClassName}>
-      <CardHeader className={variant === "dialog" ? "space-y-2 px-6 pt-2" : "space-y-2"}>
-        <CardTitle className="text-center text-2xl font-semibold">{copy.title}</CardTitle>
-        <CardDescription className="text-center">{copy.description}</CardDescription>
+      <CardHeader
+        className={variant === "dialog" ? "space-y-2 px-6 pt-2" : "space-y-2"}
+      >
+        <CardTitle className="text-center text-2xl font-semibold">
+          {copy.title}
+        </CardTitle>
+        <CardDescription className="text-center">
+          {copy.description}
+        </CardDescription>
       </CardHeader>
-      <CardContent className={variant === "dialog" ? "space-y-6 px-6 pb-6" : "space-y-6"}>
+      <CardContent
+        className={variant === "dialog" ? "space-y-6 px-6 pb-6" : "space-y-6"}
+      >
         <form onSubmit={handleEmailAuth} className="space-y-4">
           {!isSignIn && mode !== "forgot" ? (
             <>
@@ -268,7 +309,11 @@ export function AuthPanel({
 
               <div className="space-y-2">
                 <Label htmlFor="auth-role">Role</Label>
-                <Select value={role} onValueChange={setRole} disabled={isEmailLoading}>
+                <Select
+                  value={role}
+                  onValueChange={setRole}
+                  disabled={isEmailLoading}
+                >
                   <SelectTrigger id="auth-role">
                     <SelectValue placeholder="Select your role" />
                   </SelectTrigger>
@@ -276,7 +321,9 @@ export function AuthPanel({
                     <SelectItem value="user">User</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                     <SelectItem value="client">Client</SelectItem>
-                    <SelectItem value="pmc">PMC (Project Management Consultant)</SelectItem>
+                    <SelectItem value="pmc">
+                      PMC (Project Management Consultant)
+                    </SelectItem>
                     <SelectItem value="vendor">Vendor</SelectItem>
                     <SelectItem value="subcontractor">Subcontractor</SelectItem>
                   </SelectContent>
@@ -332,7 +379,11 @@ export function AuthPanel({
             disabled={isEmailLoading}
           >
             {isEmailLoading ? <Spinner className="size-4" /> : null}
-            {mode === "forgot" ? "Send reset link" : isSignIn ? "Sign in" : "Create account"}
+            {mode === "forgot"
+              ? "Send reset link"
+              : isSignIn
+                ? "Sign in"
+                : "Create account"}
           </Button>
         </form>
 
@@ -358,7 +409,8 @@ export function AuthPanel({
 
         {variant === "page" ? (
           <p className="text-center text-xs leading-6 text-muted-foreground">
-            By continuing, you agree to use QUADRA EDMS for your project management and document control.
+            By continuing, you agree to use QUADRA EDMS for your project
+            management and document control.
           </p>
         ) : null}
       </CardContent>

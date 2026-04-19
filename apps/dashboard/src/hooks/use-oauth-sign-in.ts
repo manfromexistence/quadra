@@ -1,9 +1,8 @@
 "use client";
 
-import { isDesktopApp } from "@midday/desktop-client/platform";
-import { signIn } from "@/lib/auth-client";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { signIn } from "@/lib/auth-client";
 
 export type OAuthProvider = "google" | "github";
 
@@ -37,7 +36,7 @@ export function useOAuthSignIn(provider: OAuthProvider) {
 
     try {
       const callbackURL = returnTo || "/";
-      
+
       await signIn.social({
         provider,
         callbackURL,

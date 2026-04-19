@@ -1,9 +1,8 @@
 // Mock database implementation that mimics Drizzle ORM interface
 // This allows switching between mock data and real database without changing application code
 
-import { eq } from "drizzle-orm";
-import * as schema from "./schema";
 import * as mockData from "./mock-data";
+import * as schema from "./schema";
 
 // Type for mock query builder
 type MockQueryBuilder<T> = {
@@ -12,7 +11,10 @@ type MockQueryBuilder<T> = {
   offset: (count: number) => MockQueryBuilder<T>;
   orderBy: (...args: unknown[]) => MockQueryBuilder<T>;
   execute: () => Promise<T[]>;
-  then: (resolve: (value: T[]) => void, reject?: (reason: unknown) => void) => Promise<T[]>;
+  then: (
+    resolve: (value: T[]) => void,
+    reject?: (reason: unknown) => void,
+  ) => Promise<T[]>;
 };
 
 // Mock database class
@@ -25,11 +27,11 @@ class MockDatabase {
       findMany: async (options?: { where?: unknown; limit?: number }) => {
         if (!this.mockEnabled) throw new Error("Mock DB not enabled");
         let users = [...mockData.mockUsers];
-        
+
         if (options?.limit) {
           users = users.slice(0, options.limit);
         }
-        
+
         return users;
       },
       findFirst: async (options?: { where?: unknown }) => {
@@ -285,7 +287,7 @@ class MockDatabase {
       from: (table: unknown) => {
         const tableName = this.getTableName(table);
         const data = this.getMockDataForTable(tableName);
-        
+
         return {
           where: (condition: unknown) => {
             // For now, return all data - proper filtering would require parsing the condition
@@ -363,29 +365,6 @@ class MockDatabase {
     if (table === schema.vaultFiles) return "vaultFiles";
     if (table === schema.inboxItems) return "inboxItems";
     return "unknown";
-  }
-
-  private createMockQueryBuilder<T>(tableName: string): MockQueryBuilder<T> {
-    const builder: MockQueryBuilder<T> = {
-      where: (condition: unknown) => builder,
-      limit: (count: number) => builder,
-      offset: (count: number) => builder,
-      orderBy: (...args: unknown[]) => builder,
-      execute: async () => {
-        return this.getMockDataForTable(tableName) as T[];
-      },
-      then: async (resolve, reject) => {
-        try {
-          const result = await builder.execute();
-          resolve(result);
-          return result;
-        } catch (error) {
-          if (reject) reject(error);
-          throw error;
-        }
-      },
-    };
-    return builder;
   }
 
   private getMockDataForTable(tableName: string): unknown[] {

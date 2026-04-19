@@ -33,20 +33,20 @@ export async function POST(req: Request) {
       if (msg.parts && Array.isArray(msg.parts)) {
         // Extract text from parts structure
         const textContent = msg.parts
-          .filter((part: any) => part.type === 'text')
+          .filter((part: any) => part.type === "text")
           .map((part: any) => part.text)
-          .join('');
-        
+          .join("");
+
         return {
           role: msg.role,
-          content: textContent
+          content: textContent,
         };
       }
-      
+
       // If already in correct format, return as is
       return {
         role: msg.role,
-        content: msg.content || msg.text || ''
+        content: msg.content || msg.text || "",
       };
     });
 
@@ -64,98 +64,117 @@ export async function POST(req: Request) {
         scopedProjectCondition === null
           ? []
           : await db
-        .select({
-          id: projects.id,
-          name: projects.name,
-          number: projects.projectNumber,
-          description: projects.description,
-          status: projects.status,
-          startDate: projects.startDate,
-          endDate: projects.endDate,
-        })
-        .from(projects)
-        .where(scopedProjectCondition)
-        .orderBy(desc(projects.updatedAt))
-        .limit(8);
+              .select({
+                id: projects.id,
+                name: projects.name,
+                number: projects.projectNumber,
+                description: projects.description,
+                status: projects.status,
+                startDate: projects.startDate,
+                endDate: projects.endDate,
+              })
+              .from(projects)
+              .where(scopedProjectCondition)
+              .orderBy(desc(projects.updatedAt))
+              .limit(8);
 
       if (userProjects.length > 0) {
         const projectIds = userProjects.map((project) => project.id);
 
-        const [documentCounts, pendingWorkflowCounts, transmittalCounts, recentDocuments] =
-          await Promise.all([
-            db
-              .select({
-                projectId: documents.projectId,
-                value: count(),
-              })
-              .from(documents)
-              .where(inArray(documents.projectId, projectIds))
-              .groupBy(documents.projectId),
-            db
-              .select({
-                projectId: documents.projectId,
-                value: count(),
-              })
-              .from(workflowSteps)
-              .innerJoin(documentWorkflows, eq(workflowSteps.workflowId, documentWorkflows.id))
-              .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
-              .where(
-                and(
-                  inArray(documents.projectId, projectIds),
-                  inArray(workflowSteps.status, ["pending", "in_progress"])
-                )
-              )
-              .groupBy(documents.projectId),
-            db
-              .select({
-                projectId: transmittals.projectId,
-                value: count(),
-              })
-              .from(transmittals)
-              .where(inArray(transmittals.projectId, projectIds))
-              .groupBy(transmittals.projectId),
-            db
-              .select({
-                projectId: documents.projectId,
-                documentNumber: documents.documentNumber,
-                title: documents.title,
-                status: documents.status,
-              })
-              .from(documents)
-              .where(inArray(documents.projectId, projectIds))
-              .orderBy(desc(documents.uploadedAt))
-              .limit(12),
-          ]);
+        const [
+          documentCounts,
+          pendingWorkflowCounts,
+          transmittalCounts,
+          recentDocuments,
+        ] = await Promise.all([
+          db
+            .select({
+              projectId: documents.projectId,
+              value: count(),
+            })
+            .from(documents)
+            .where(inArray(documents.projectId, projectIds))
+            .groupBy(documents.projectId),
+          db
+            .select({
+              projectId: documents.projectId,
+              value: count(),
+            })
+            .from(workflowSteps)
+            .innerJoin(
+              documentWorkflows,
+              eq(workflowSteps.workflowId, documentWorkflows.id),
+            )
+            .innerJoin(
+              documents,
+              eq(documentWorkflows.documentId, documents.id),
+            )
+            .where(
+              and(
+                inArray(documents.projectId, projectIds),
+                inArray(workflowSteps.status, ["pending", "in_progress"]),
+              ),
+            )
+            .groupBy(documents.projectId),
+          db
+            .select({
+              projectId: transmittals.projectId,
+              value: count(),
+            })
+            .from(transmittals)
+            .where(inArray(transmittals.projectId, projectIds))
+            .groupBy(transmittals.projectId),
+          db
+            .select({
+              projectId: documents.projectId,
+              documentNumber: documents.documentNumber,
+              title: documents.title,
+              status: documents.status,
+            })
+            .from(documents)
+            .where(inArray(documents.projectId, projectIds))
+            .orderBy(desc(documents.uploadedAt))
+            .limit(12),
+        ]);
 
         const documentCountMap = new Map(
-          documentCounts.map((row) => [String(row.projectId), Number(row.value ?? 0)])
+          documentCounts.map((row) => [
+            String(row.projectId),
+            Number(row.value ?? 0),
+          ]),
         );
         const workflowCountMap = new Map(
-          pendingWorkflowCounts.map((row) => [String(row.projectId), Number(row.value ?? 0)])
+          pendingWorkflowCounts.map((row) => [
+            String(row.projectId),
+            Number(row.value ?? 0),
+          ]),
         );
         const transmittalCountMap = new Map(
-          transmittalCounts.map((row) => [String(row.projectId), Number(row.value ?? 0)])
+          transmittalCounts.map((row) => [
+            String(row.projectId),
+            Number(row.value ?? 0),
+          ]),
         );
-        const recentDocumentsByProject = recentDocuments.reduce<Record<string, string[]>>(
-          (acc, document) => {
-            const key = String(document.projectId);
-            if (!acc[key]) {
-              acc[key] = [];
-            }
-            if (acc[key].length < 2) {
-              acc[key].push(
-                `${document.documentNumber}: ${document.title} (${document.status.replaceAll("_", " ")})`
-              );
-            }
-            return acc;
-          },
-          {}
-        );
+        const recentDocumentsByProject = recentDocuments.reduce<
+          Record<string, string[]>
+        >((acc, document) => {
+          const key = String(document.projectId);
+          if (!acc[key]) {
+            acc[key] = [];
+          }
+          if (acc[key].length < 2) {
+            acc[key].push(
+              `${document.documentNumber}: ${document.title} (${document.status.replaceAll("_", " ")})`,
+            );
+          }
+          return acc;
+        }, {});
 
         projectsContext = userProjects
           .map((project) => {
             const projectId = String(project.id);
-            const recentProjectDocuments = recentDocumentsByProject[projectId] ?? [];
+            const recentProjectDocuments =
+              recentDocumentsByProject[projectId] ?? [];
 
             return [
               `- Short title: ${project.number || project.name}`,
@@ -207,13 +226,16 @@ Be concise, helpful, and professional in your responses.`,
     return result.toUIMessageStreamResponse();
   } catch (error) {
     console.error("Chat API error:", error);
-    return new Response(JSON.stringify({ 
-      error: "Internal Server Error",
-      details: error.message 
-    }), { 
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        error: "Internal Server Error",
+        details: error.message,
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 }
 

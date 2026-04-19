@@ -25,7 +25,11 @@ export async function uploadEdmsFile(input: {
     throw new Error("BLOB_READ_WRITE_TOKEN is not configured.");
   }
 
-  const pathname = buildBlobPath(input.projectId, input.folder, input.file.name);
+  const pathname = buildBlobPath(
+    input.projectId,
+    input.folder,
+    input.file.name,
+  );
   const uploadedFile = await put(pathname, input.file, {
     access: "public",
     addRandomSuffix: true,
@@ -48,7 +52,8 @@ function buildBlobPath(projectId: string, folder: string, fileName: string) {
 function sanitizeFileName(value: string) {
   const lastDotIndex = value.lastIndexOf(".");
   const baseName = lastDotIndex >= 0 ? value.slice(0, lastDotIndex) : value;
-  const extension = lastDotIndex >= 0 ? value.slice(lastDotIndex).toLowerCase() : "";
+  const extension =
+    lastDotIndex >= 0 ? value.slice(lastDotIndex).toLowerCase() : "";
 
   return `${sanitizeSegment(baseName)}${extension}`;
 }

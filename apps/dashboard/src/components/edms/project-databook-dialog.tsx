@@ -1,9 +1,5 @@
 "use client";
 
-import { BookOpen, Download, Loader2 } from "lucide-react";
-import { useEffect, useState, useTransition } from "react";
-import { generateProjectDataBook, getProjectDataBookDocuments } from "@/actions/project-databook";
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@midday/ui/button";
 import { Checkbox } from "@midday/ui/checkbox";
 import {
@@ -15,6 +11,13 @@ import {
   DialogTrigger,
 } from "@midday/ui/dialog";
 import { ScrollArea } from "@midday/ui/scroll-area";
+import { BookOpen, Download, Loader2 } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
+import {
+  generateProjectDataBook,
+  getProjectDataBookDocuments,
+} from "@/actions/project-databook";
+import { toast } from "@/hooks/use-toast";
 
 interface ProjectDataBookDialogProps {
   projectId: string;
@@ -32,7 +35,10 @@ interface DataBookDocument {
   fileName: string;
 }
 
-export function ProjectDataBookDialog({ projectId, projectName }: ProjectDataBookDialogProps) {
+export function ProjectDataBookDialog({
+  projectId,
+  projectName,
+}: ProjectDataBookDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +99,10 @@ export function ProjectDataBookDialog({ projectId, projectName }: ProjectDataBoo
     }
 
     startTransition(async () => {
-      const result = await generateProjectDataBook(projectId, Array.from(selectedDocs));
+      const result = await generateProjectDataBook(
+        projectId,
+        Array.from(selectedDocs),
+      );
 
       if (result.success && result.data) {
         toast({
@@ -129,8 +138,9 @@ export function ProjectDataBookDialog({ projectId, projectName }: ProjectDataBoo
         <DialogHeader>
           <DialogTitle>Generate Project Data Book</DialogTitle>
           <DialogDescription>
-            Compile all approved final documents into a single PDF for project closeout and client
-            delivery. Select the documents to include in the compilation.
+            Compile all approved final documents into a single PDF for project
+            closeout and client delivery. Select the documents to include in the
+            compilation.
           </DialogDescription>
         </DialogHeader>
 
@@ -148,7 +158,9 @@ export function ProjectDataBookDialog({ projectId, projectName }: ProjectDataBoo
               onClick={toggleAll}
               disabled={isLoading || documents.length === 0}
             >
-              {selectedDocs.size === documents.length ? "Deselect All" : "Select All"}
+              {selectedDocs.size === documents.length
+                ? "Deselect All"
+                : "Select All"}
             </Button>
           </div>
 
@@ -159,8 +171,8 @@ export function ProjectDataBookDialog({ projectId, projectName }: ProjectDataBoo
           ) : documents.length === 0 ? (
             <div className="rounded-lg border border-dashed border-border bg-muted/10 p-8 text-center">
               <p className="text-muted-foreground">
-                No documents found for this project. Upload and approve documents to generate a
-                Project Data Book.
+                No documents found for this project. Upload and approve
+                documents to generate a Project Data Book.
               </p>
             </div>
           ) : (
@@ -180,7 +192,9 @@ export function ProjectDataBookDialog({ projectId, projectName }: ProjectDataBoo
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <p className="font-medium">{doc.documentNumber}</p>
-                          <p className="text-sm text-muted-foreground">{doc.title}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {doc.title}
+                          </p>
                         </div>
                         {doc.revision && (
                           <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium">
@@ -202,7 +216,9 @@ export function ProjectDataBookDialog({ projectId, projectName }: ProjectDataBoo
 
           <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
             <div>
-              <p className="font-medium">Selected: {selectedDocs.size} document(s)</p>
+              <p className="font-medium">
+                Selected: {selectedDocs.size} document(s)
+              </p>
               <p className="text-sm text-muted-foreground">
                 These documents will be compiled into a single PDF
               </p>
@@ -229,5 +245,3 @@ export function ProjectDataBookDialog({ projectId, projectName }: ProjectDataBoo
     </Dialog>
   );
 }
-
-

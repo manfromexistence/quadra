@@ -10,29 +10,29 @@ export const mockRevenue = {
     {
       date: "2026-01",
       current: { value: 45000, date: "2026-01-01" },
-      previous: { value: 38000, date: "2025-01-01" }
+      previous: { value: 38000, date: "2025-01-01" },
     },
     {
       date: "2026-02",
       current: { value: 52000, date: "2026-02-01" },
-      previous: { value: 41000, date: "2025-02-01" }
+      previous: { value: 41000, date: "2025-02-01" },
     },
     {
       date: "2026-03",
       current: { value: 48000, date: "2026-03-01" },
-      previous: { value: 42000, date: "2025-03-01" }
+      previous: { value: 42000, date: "2025-03-01" },
     },
     {
       date: "2026-04",
       current: { value: 61000, date: "2026-04-01" },
-      previous: { value: 45000, date: "2025-04-01" }
-    }
+      previous: { value: 45000, date: "2025-04-01" },
+    },
   ],
   summary: {
     currentTotal: 206000,
     previousTotal: 166000,
-    currency: "USD"
-  }
+    currency: "USD",
+  },
 };
 
 export const mockProfit = {
@@ -40,29 +40,29 @@ export const mockProfit = {
     {
       date: "2026-01",
       current: { value: 15000, date: "2026-01-01" },
-      previous: { value: 12000, date: "2025-01-01" }
+      previous: { value: 12000, date: "2025-01-01" },
     },
     {
       date: "2026-02",
       current: { value: 18000, date: "2026-02-01" },
-      previous: { value: 14000, date: "2025-02-01" }
+      previous: { value: 14000, date: "2025-02-01" },
     },
     {
       date: "2026-03",
       current: { value: 16000, date: "2026-03-01" },
-      previous: { value: 13500, date: "2025-03-01" }
+      previous: { value: 13500, date: "2025-03-01" },
     },
     {
       date: "2026-04",
       current: { value: 24000, date: "2026-04-01" },
-      previous: { value: 16000, date: "2025-04-01" }
-    }
+      previous: { value: 16000, date: "2025-04-01" },
+    },
   ],
   summary: {
     currentTotal: 73000,
     previousTotal: 55500,
-    currency: "USD"
-  }
+    currency: "USD",
+  },
 };
 
 export const mockExpenses = {
@@ -74,8 +74,8 @@ export const mockExpenses = {
       categories: [
         { name: "Software", value: 5000, recurring: 5000 },
         { name: "Payroll", value: 20000, recurring: 10000 },
-        { name: "Office", value: 5000, recurring: 0 }
-      ]
+        { name: "Office", value: 5000, recurring: 0 },
+      ],
     },
     {
       date: "2026-02",
@@ -84,8 +84,8 @@ export const mockExpenses = {
       categories: [
         { name: "Software", value: 5000, recurring: 5000 },
         { name: "Payroll", value: 20000, recurring: 10000 },
-        { name: "Travel", value: 9000, recurring: 0 }
-      ]
+        { name: "Travel", value: 9000, recurring: 0 },
+      ],
     },
     {
       date: "2026-03",
@@ -94,8 +94,8 @@ export const mockExpenses = {
       categories: [
         { name: "Software", value: 5500, recurring: 5500 },
         { name: "Payroll", value: 20000, recurring: 10000 },
-        { name: "Marketing", value: 6500, recurring: 0 }
-      ]
+        { name: "Marketing", value: 6500, recurring: 0 },
+      ],
     },
     {
       date: "2026-04",
@@ -104,22 +104,22 @@ export const mockExpenses = {
       categories: [
         { name: "Software", value: 5500, recurring: 5500 },
         { name: "Payroll", value: 20000, recurring: 10000 },
-        { name: "Equipment", value: 11500, recurring: 0 }
-      ]
-    }
+        { name: "Equipment", value: 11500, recurring: 0 },
+      ],
+    },
   ],
   summary: {
     total: 133000,
     averageExpense: 33250,
-    currency: "USD"
-  }
+    currency: "USD",
+  },
 };
 
 export const mockBurnRate = [
   { date: "2026-01", value: 28000, currency: "USD" },
   { date: "2026-02", value: 29500, currency: "USD" },
   { date: "2026-03", value: 31000, currency: "USD" },
-  { date: "2026-04", value: 30500, currency: "USD" }
+  { date: "2026-04", value: 30500, currency: "USD" },
 ];
 
 export const mockCashflow = {
@@ -127,30 +127,30 @@ export const mockCashflow = {
     {
       date: "2026-01",
       in: 45000,
-      out: 30000
+      out: 30000,
     },
     {
       date: "2026-02",
       in: 52000,
-      out: 34000
+      out: 34000,
     },
     {
       date: "2026-03",
       in: 48000,
-      out: 32000
+      out: 32000,
     },
     {
       date: "2026-04",
       in: 61000,
-      out: 37000
-    }
+      out: 37000,
+    },
   ],
   summary: {
     totalIn: 206000,
     totalOut: 133000,
     net: 73000,
-    currency: "USD"
-  }
+    currency: "USD",
+  },
 };
 
 // ============================================================================
@@ -163,7 +163,7 @@ export const mockTransactions = [
     teamId: "team_1",
     bankAccountId: "acc_1",
     name: "Stripe Payout",
-    amount: 15400.00,
+    amount: 15400.0,
     currency: "USD",
     date: "2026-04-15",
     status: "posted",
@@ -177,7 +177,7 @@ export const mockTransactions = [
     description: "Stripe Transfer STRIPE Payout",
     internal: false,
     recurring: false,
-    isFulfilled: true
+    isFulfilled: true,
   },
   {
     id: "txn_2",
@@ -199,14 +199,14 @@ export const mockTransactions = [
     internal: false,
     recurring: true,
     frequency: "monthly",
-    isFulfilled: true
+    isFulfilled: true,
   },
   {
     id: "txn_3",
     teamId: "team_1",
     bankAccountId: "acc_1",
     name: "Office Supplies - Staples",
-    amount: -245.50,
+    amount: -245.5,
     currency: "USD",
     date: "2026-04-10",
     status: "posted",
@@ -220,14 +220,14 @@ export const mockTransactions = [
     description: "STAPLES INC STORE 1029",
     internal: false,
     recurring: false,
-    isFulfilled: true
+    isFulfilled: true,
   },
   {
     id: "txn_4",
     teamId: "team_1",
     bankAccountId: "acc_1",
     name: "Gusto Payroll",
-    amount: -18450.00,
+    amount: -18450.0,
     currency: "USD",
     date: "2026-04-01",
     status: "posted",
@@ -242,8 +242,8 @@ export const mockTransactions = [
     internal: false,
     recurring: true,
     frequency: "monthly",
-    isFulfilled: true
-  }
+    isFulfilled: true,
+  },
 ];
 
 export const mockTransactionCategories = [
@@ -253,7 +253,7 @@ export const mockTransactionCategories = [
   { id: "cat_4", name: "Payroll", slug: "payroll" },
   { id: "cat_5", name: "Travel", slug: "travel" },
   { id: "cat_6", name: "Marketing", slug: "marketing" },
-  { id: "cat_7", name: "Equipment", slug: "equipment" }
+  { id: "cat_7", name: "Equipment", slug: "equipment" },
 ];
 
 // ============================================================================
@@ -266,69 +266,92 @@ export const mockInvoices = [
     invoiceNumber: "INV-2026-001",
     customerId: "cust_1",
     customer: { id: "cust_1", name: "Acme Corp", email: "billing@acme.corp" },
-    amount: 12500.00,
+    amount: 12500.0,
     currency: "USD",
     status: "paid",
     issueDate: "2026-03-01T00:00:00.000Z",
     dueDate: "2026-03-31T00:00:00.000Z",
     paidAt: "2026-03-28T00:00:00.000Z",
     items: [
-      { id: "item_1", description: "Q1 Consulting Retainer", quantity: 1, price: 12500.00 }
+      {
+        id: "item_1",
+        description: "Q1 Consulting Retainer",
+        quantity: 1,
+        price: 12500.0,
+      },
     ],
     notes: "Thank you for your business.",
-    recurring: false
+    recurring: false,
   },
   {
     id: "inv_2",
     invoiceNumber: "INV-2026-002",
     customerId: "cust_2",
-    customer: { id: "cust_2", name: "TechStart Inc", email: "finance@techstart.io" },
-    amount: 8400.00,
+    customer: {
+      id: "cust_2",
+      name: "TechStart Inc",
+      email: "finance@techstart.io",
+    },
+    amount: 8400.0,
     currency: "USD",
     status: "overdue",
     issueDate: "2026-03-15T00:00:00.000Z",
     dueDate: "2026-04-14T00:00:00.000Z",
     paidAt: null,
     items: [
-      { id: "item_2", description: "Backend Development (March)", quantity: 120, price: 70.00 }
+      {
+        id: "item_2",
+        description: "Backend Development (March)",
+        quantity: 120,
+        price: 70.0,
+      },
     ],
     notes: "Please remit payment at your earliest convenience.",
-    recurring: false
+    recurring: false,
   },
   {
     id: "inv_3",
     invoiceNumber: "INV-2026-003",
     customerId: "cust_1",
     customer: { id: "cust_1", name: "Acme Corp", email: "billing@acme.corp" },
-    amount: 12500.00,
+    amount: 12500.0,
     currency: "USD",
     status: "unpaid",
     issueDate: "2026-04-01T00:00:00.000Z",
     dueDate: "2026-04-30T00:00:00.000Z",
     paidAt: null,
     items: [
-      { id: "item_3", description: "Q2 Consulting Retainer", quantity: 1, price: 12500.00 }
+      {
+        id: "item_3",
+        description: "Q2 Consulting Retainer",
+        quantity: 1,
+        price: 12500.0,
+      },
     ],
     notes: "Thank you for your business.",
-    recurring: false
+    recurring: false,
   },
   {
     id: "inv_4",
     invoiceNumber: "INV-2026-004",
     customerId: "cust_3",
-    customer: { id: "cust_3", name: "Global Logistics", email: "ap@globallogistics.com" },
-    amount: 4500.00,
+    customer: {
+      id: "cust_3",
+      name: "Global Logistics",
+      email: "ap@globallogistics.com",
+    },
+    amount: 4500.0,
     currency: "USD",
     status: "draft",
     issueDate: "2026-04-15T00:00:00.000Z",
     dueDate: "2026-05-15T00:00:00.000Z",
     paidAt: null,
     items: [
-      { id: "item_4", description: "System Audit", quantity: 1, price: 4500.00 }
+      { id: "item_4", description: "System Audit", quantity: 1, price: 4500.0 },
     ],
     notes: "Draft invoice for review.",
-    recurring: false
-  }
+    recurring: false,
+  },
 ];
 
 export const mockInvoiceSummary = {
@@ -337,7 +360,7 @@ export const mockInvoiceSummary = {
   unpaidAmount: 20900,
   overdueAmount: 8400,
   draftAmount: 4500,
-  currency: "USD"
+  currency: "USD",
 };
 
 // ============================================================================
@@ -355,7 +378,7 @@ export const mockCustomers = [
     status: "active",
     createdAt: "2025-01-10T00:00:00.000Z",
     totalBilled: 150000,
-    currency: "USD"
+    currency: "USD",
   },
   {
     id: "cust_2",
@@ -367,7 +390,7 @@ export const mockCustomers = [
     status: "active",
     createdAt: "2025-06-22T00:00:00.000Z",
     totalBilled: 42000,
-    currency: "USD"
+    currency: "USD",
   },
   {
     id: "cust_3",
@@ -379,8 +402,8 @@ export const mockCustomers = [
     status: "active",
     createdAt: "2026-02-05T00:00:00.000Z",
     totalBilled: 0,
-    currency: "USD"
-  }
+    currency: "USD",
+  },
 ];
 
 // ============================================================================
@@ -401,7 +424,7 @@ export const mockTrackerEntries = {
       endTime: "11:00",
       billable: true,
       amount: 300, // e.g. $150/hr
-      currency: "USD"
+      currency: "USD",
     },
     {
       id: "trk_2",
@@ -415,7 +438,7 @@ export const mockTrackerEntries = {
       endTime: "17:00",
       billable: true,
       amount: 400, // e.g. $100/hr
-      currency: "USD"
+      currency: "USD",
     },
     {
       id: "trk_3",
@@ -429,15 +452,15 @@ export const mockTrackerEntries = {
       endTime: "11:00",
       billable: false,
       amount: 0,
-      currency: "USD"
-    }
+      currency: "USD",
+    },
   ],
   summary: {
     totalDuration: 25200, // 7 hours
     billableDuration: 21600, // 6 hours
     billableAmount: 700,
-    currency: "USD"
-  }
+    currency: "USD",
+  },
 };
 
 // ============================================================================
@@ -455,7 +478,7 @@ export const mockVaultDocuments = [
     tags: [{ id: "tag_4", name: "contract" }],
     uploadedBy: { id: "usr_1", name: "John Doe" },
     createdAt: "2026-03-25T00:00:00.000Z",
-    updatedAt: "2026-03-25T00:00:00.000Z"
+    updatedAt: "2026-03-25T00:00:00.000Z",
   },
   {
     id: "doc_2",
@@ -467,7 +490,7 @@ export const mockVaultDocuments = [
     tags: [{ id: "tag_5", name: "specifications" }],
     uploadedBy: { id: "usr_2", name: "Jane Smith" },
     createdAt: "2026-04-02T00:00:00.000Z",
-    updatedAt: "2026-04-05T00:00:00.000Z"
+    updatedAt: "2026-04-05T00:00:00.000Z",
   },
   {
     id: "doc_3",
@@ -476,11 +499,14 @@ export const mockVaultDocuments = [
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     url: "#",
     folderId: "fold_3",
-    tags: [{ id: "tag_6", name: "finance" }, { id: "tag_7", name: "report" }],
+    tags: [
+      { id: "tag_6", name: "finance" },
+      { id: "tag_7", name: "report" },
+    ],
     uploadedBy: { id: "usr_1", name: "John Doe" },
     createdAt: "2026-04-10T00:00:00.000Z",
-    updatedAt: "2026-04-10T00:00:00.000Z"
-  }
+    updatedAt: "2026-04-10T00:00:00.000Z",
+  },
 ];
 
 // ============================================================================
@@ -492,21 +518,23 @@ export const mockInboxMessages = [
     id: "msg_1",
     subject: "Action Required: Re-authenticate Gusto",
     sender: { name: "Quadra System", email: "ajju40959@gmail.com" },
-    preview: "Your Gusto connection has expired and requires re-authentication.",
+    preview:
+      "Your Gusto connection has expired and requires re-authentication.",
     isRead: false,
     date: "2026-04-17T08:30:00.000Z",
     type: "system_alert",
-    actionUrl: "/apps/gusto"
+    actionUrl: "/apps/gusto",
   },
   {
     id: "msg_2",
     subject: "Invoice INV-2026-001 Paid",
     sender: { name: "Acme Corp", email: "billing@acme.corp" },
-    preview: "Payment of $12,500.00 has been received for invoice INV-2026-001.",
+    preview:
+      "Payment of $12,500.00 has been received for invoice INV-2026-001.",
     isRead: true,
     date: "2026-03-28T14:15:00.000Z",
     type: "invoice_paid",
-    actionUrl: "/invoices/inv_1"
+    actionUrl: "/invoices/inv_1",
   },
   {
     id: "msg_3",
@@ -516,8 +544,8 @@ export const mockInboxMessages = [
     isRead: true,
     date: "2026-04-02T10:05:00.000Z",
     type: "vault_upload",
-    actionUrl: "/vault/doc_2"
-  }
+    actionUrl: "/vault/doc_2",
+  },
 ];
 
 // ============================================================================
@@ -534,7 +562,7 @@ export const mockApps = [
     icon: "stripe",
     connected: true,
     lastSync: "2026-04-17T09:00:00.000Z",
-    status: "active"
+    status: "active",
   },
   {
     id: "app_gusto",
@@ -545,7 +573,7 @@ export const mockApps = [
     icon: "gusto",
     connected: true,
     lastSync: "2026-03-31T23:59:00.000Z",
-    status: "needs_auth"
+    status: "needs_auth",
   },
   {
     id: "app_slack",
@@ -556,8 +584,8 @@ export const mockApps = [
     icon: "slack",
     connected: false,
     lastSync: null,
-    status: "disconnected"
-  }
+    status: "disconnected",
+  },
 ];
 
 // ============================================================================
@@ -576,14 +604,14 @@ export const mockSettings = {
     city: "San Francisco",
     state: "CA",
     zip: "94105",
-    country: "US"
+    country: "US",
   },
   notifications: {
     emailAlerts: true,
     slackAlerts: false,
     weeklyReport: true,
-    invoiceStatus: true
-  }
+    invoiceStatus: true,
+  },
 };
 
 // ============================================================================
@@ -600,8 +628,8 @@ export const mockAccount = {
   preferences: {
     theme: "system",
     language: "en-US",
-    weekStartsOnMonday: true
-  }
+    weekStartsOnMonday: true,
+  },
 };
 
 // ============================================================================
@@ -619,9 +647,9 @@ export const mockPlans = [
       "Up to 50 transactions/mo",
       "Basic reports",
       "1 team member",
-      "Community support"
+      "Community support",
     ],
-    isCurrent: false
+    isCurrent: false,
   },
   {
     id: "plan_pro",
@@ -634,10 +662,10 @@ export const mockPlans = [
       "Advanced financial reports",
       "Up to 5 team members",
       "Priority email support",
-      "Custom invoice branding"
+      "Custom invoice branding",
     ],
     isCurrent: true,
-    currentPeriodEnd: "2026-05-01T00:00:00.000Z"
+    currentPeriodEnd: "2026-05-01T00:00:00.000Z",
   },
   {
     id: "plan_business",
@@ -650,8 +678,8 @@ export const mockPlans = [
       "Unlimited team members",
       "Dedicated account manager",
       "API access",
-      "SSO / SAML"
+      "SSO / SAML",
     ],
-    isCurrent: false
-  }
+    isCurrent: false,
+  },
 ];

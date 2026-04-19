@@ -2,7 +2,6 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useUserQuery } from "@/hooks/use-user";
 import { useTRPC } from "@/trpc/client";
 
 interface WidgetCardProps {
@@ -35,19 +34,24 @@ export function WidgetCards() {
 
   // Use the actual EDMS metrics from the dashboard data
   const projectsValue = data.edmsMetrics?.projects?.value ?? "0";
-  const projectsDetail = data.edmsMetrics?.projects?.description ?? "Active projects";
+  const projectsDetail =
+    data.edmsMetrics?.projects?.description ?? "Active projects";
 
   const documentsValue = data.edmsMetrics?.documents?.value ?? "0";
-  const documentsDetail = data.edmsMetrics?.documents?.description ?? "Controlled documents";
+  const documentsDetail =
+    data.edmsMetrics?.documents?.description ?? "Controlled documents";
 
   const workflowsValue = data.edmsMetrics?.workflows?.value ?? "0";
-  const workflowsDetail = data.edmsMetrics?.workflows?.description ?? "Pending reviews";
+  const workflowsDetail =
+    data.edmsMetrics?.workflows?.description ?? "Pending reviews";
 
   const transmittalsValue = data.edmsMetrics?.transmittals?.value ?? "0";
-  const transmittalsDetail = data.edmsMetrics?.transmittals?.description ?? "Open transmittals";
+  const transmittalsDetail =
+    data.edmsMetrics?.transmittals?.description ?? "Open transmittals";
 
   const notificationsValue = data.edmsMetrics?.notifications?.value ?? "0";
-  const notificationsDetail = data.edmsMetrics?.notifications?.description ?? "Unread alerts";
+  const notificationsDetail =
+    data.edmsMetrics?.notifications?.description ?? "Unread alerts";
 
   const inboxValue = String(data.inboxPending.count);
   const inboxDetail =

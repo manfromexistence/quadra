@@ -17,7 +17,12 @@ export async function markNotificationRead(input: { notificationId: string }) {
         isRead: true,
         readAt: now,
       })
-      .where(and(eq(notifications.id, input.notificationId), eq(notifications.userId, sessionUser.id)));
+      .where(
+        and(
+          eq(notifications.id, input.notificationId),
+          eq(notifications.userId, sessionUser.id),
+        ),
+      );
 
     revalidatePath("/notifications");
 
@@ -40,7 +45,12 @@ export async function markAllNotificationsRead() {
         isRead: true,
         readAt: now,
       })
-      .where(and(eq(notifications.userId, sessionUser.id), eq(notifications.isRead, false)));
+      .where(
+        and(
+          eq(notifications.userId, sessionUser.id),
+          eq(notifications.isRead, false),
+        ),
+      );
 
     revalidatePath("/notifications");
 

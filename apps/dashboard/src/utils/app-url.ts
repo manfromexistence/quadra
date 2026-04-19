@@ -29,7 +29,10 @@ function getRailwayUrl() {
 
 export function getServerAppUrl() {
   if (process.env.VERCEL_ENV === "production") {
-    return normalizeUrl(process.env.VERCEL_PROJECT_PRODUCTION_URL) ?? PRODUCTION_APP_URL;
+    return (
+      normalizeUrl(process.env.VERCEL_PROJECT_PRODUCTION_URL) ??
+      PRODUCTION_APP_URL
+    );
   }
 
   return (

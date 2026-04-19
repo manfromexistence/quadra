@@ -20,10 +20,9 @@ export const EDMS_ROLE_ORDER = [
 
 export type EdmsRole = (typeof EDMS_ROLE_ORDER)[number];
 
-const ROLE_RANK = Object.fromEntries(EDMS_ROLE_ORDER.map((role, index) => [role, index])) as Record<
-  EdmsRole,
-  number
->;
+const ROLE_RANK = Object.fromEntries(
+  EDMS_ROLE_ORDER.map((role, index) => [role, index]),
+) as Record<EdmsRole, number>;
 
 export interface EdmsAccessUser {
   id: string;
@@ -32,7 +31,7 @@ export interface EdmsAccessUser {
 
 export async function requireEdmsRole(
   minimumRole: EdmsRole,
-  options?: { redirectTo?: string }
+  options?: { redirectTo?: string },
 ): Promise<EdmsAccessUser> {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -75,7 +74,10 @@ export function canManageEdmsContent(role: string | null | undefined) {
   return ROLE_RANK[normalizeEdmsRole(role)] >= ROLE_RANK.vendor;
 }
 
-export function hasEdmsRoleAtLeast(role: string | null | undefined, minimumRole: EdmsRole) {
+export function hasEdmsRoleAtLeast(
+  role: string | null | undefined,
+  minimumRole: EdmsRole,
+) {
   return ROLE_RANK[normalizeEdmsRole(role)] >= ROLE_RANK[minimumRole];
 }
 

@@ -36,7 +36,7 @@ export function useUpload() {
       }
 
       const data = await response.json();
-      
+
       return {
         url: data.url,
         path,

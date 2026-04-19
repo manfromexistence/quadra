@@ -45,6 +45,9 @@ export interface TransmittalSummary {
   recipientName: string;
   documentCount: string;
   isActionable: boolean;
+  documentCodes?: string[];
+  purpose?: string;
+  dueDate?: string;
 }
 
 export interface TransmittalManagementData {
@@ -170,6 +173,8 @@ export async function getTransmittalManagementData(
               subject: transmittals.subject,
               projectName: projects.name,
               status: transmittals.status,
+              purpose: transmittals.purpose,
+              dueDate: transmittals.dueDate,
               sentAt: transmittals.sentAt,
               createdAt: transmittals.createdAt,
               sentTo: transmittals.sentTo,
@@ -190,6 +195,8 @@ export async function getTransmittalManagementData(
               transmittals.subject,
               projects.name,
               transmittals.status,
+              transmittals.purpose,
+              transmittals.dueDate,
               transmittals.sentAt,
               transmittals.createdAt,
               transmittals.sentTo,
@@ -203,6 +210,27 @@ export async function getTransmittalManagementData(
     const [acknowledgedCount] = acknowledgedRows;
     const [sentCount] = sentRows;
     const [notificationCount] = notificationRows;
+
+    // Fetch document codes for each transmittal
+    const transmittalIds = transmittalRows.map((t) => t.id);
+    const transmittalDocsMap = new Map<string, string[]>();
+
+    if (transmittalIds.length > 0) {
+      const transmittalDocs = await db
+        .select({
+          transmittalId: transmittalDocuments.transmittalId,
+          documentNumber: documents.documentNumber,
+        })
+        .from(transmittalDocuments)
+        .innerJoin(documents, eq(transmittalDocuments.documentId, documents.id))
+        .where(inArray(transmittalDocuments.transmittalId, transmittalIds));
+
+      for (const doc of transmittalDocs) {
+        const codes = transmittalDocsMap.get(doc.transmittalId) || [];
+        codes.push(doc.documentNumber);
+        transmittalDocsMap.set(doc.transmittalId, codes);
+      }
+    }
 
     return {
       metrics: [
@@ -263,9 +291,14 @@ export async function getTransmittalManagementData(
         subject: transmittal.subject,
         projectName: transmittal.projectName,
         status: transmittal.status,
+        purpose: transmittal.purpose || "IFR",
+        dueDate: transmittal.dueDate
+          ? formatStoredAbsoluteDate(transmittal.dueDate)
+          : undefined,
         sentLabel: formatDateLabel(transmittal.sentAt ?? transmittal.createdAt),
         recipientName: parseRecipientLabel(transmittal.sentTo, memberRows),
         documentCount: formatCount(transmittal.documentCount),
+        documentCodes: transmittalDocsMap.get(transmittal.id) || [],
         isActionable:
           transmittal.status === "sent" &&
           parseRecipients(transmittal.sentTo).includes(sessionUser.id),
@@ -361,9 +394,12 @@ async function createFallbackTransmittalData(
       subject: item.subject,
       projectName: item.projectName,
       status: item.status,
+      purpose: index % 3 === 0 ? "IFR" : index % 3 === 1 ? "IFA" : "IFC",
+      dueDate: index === 0 ? "2026-04-27" : undefined,
       sentLabel: item.sentLabel,
       recipientName: index === 0 ? sessionUser.name : "Ayesha Karim",
       documentCount: "2",
+      documentCodes: [`DOC-${index + 1}`, `DOC-${index + 2}`],
       isActionable: index === 0 && item.status === "sent",
     })),
     isUsingFallbackData: true,

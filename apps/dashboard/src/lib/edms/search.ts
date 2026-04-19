@@ -1,6 +1,16 @@
 import "server-only";
 
-import { and, desc, eq, gte, ilike, inArray, lte, or, type SQL } from "drizzle-orm";
+import {
+  and,
+  desc,
+  eq,
+  gte,
+  ilike,
+  inArray,
+  lte,
+  or,
+  type SQL,
+} from "drizzle-orm";
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";
 import { documentComments, documents } from "@/db/schema/documents";
@@ -74,7 +84,9 @@ const SEARCH_CATEGORIES: GlobalSearchCategory[] = [
   "notification",
 ];
 
-export function normalizeGlobalSearchFilters(input: GlobalSearchQueryInput): GlobalSearchFilters {
+export function normalizeGlobalSearchFilters(
+  input: GlobalSearchQueryInput,
+): GlobalSearchFilters {
   const normalizedCategories = ensureCategories(asSingleValue(input.category));
 
   return {
@@ -90,7 +102,7 @@ export function normalizeGlobalSearchFilters(input: GlobalSearchQueryInput): Glo
 
 export async function getGlobalSearchData(
   sessionUser: DashboardSessionUser,
-  input: string | GlobalSearchFilters
+  input: string | GlobalSearchFilters,
 ): Promise<GlobalSearchData> {
   const filters =
     typeof input === "string"
@@ -145,7 +157,7 @@ export async function getGlobalSearchData(
             ? or(
                 ilike(projects.name, pattern),
                 ilike(projects.projectNumber, pattern),
-                ilike(projects.location, pattern)
+                ilike(projects.location, pattern),
               )
             : undefined,
           filters.projectId ? eq(projects.id, filters.projectId) : undefined,
@@ -176,7 +188,7 @@ export async function getGlobalSearchData(
             meta: project.location ?? "Location pending",
             source: "project record",
             status: project.status ?? undefined,
-          }))
+          })),
         );
       }
     }
@@ -193,12 +205,16 @@ export async function getGlobalSearchData(
                 ilike(documents.documentNumber, pattern),
                 ilike(documents.description, pattern),
                 ilike(documents.category, pattern),
-                ilike(documents.discipline, pattern)
+                ilike(documents.discipline, pattern),
               )
             : undefined,
-          filters.projectId ? eq(documents.projectId, filters.projectId) : undefined,
+          filters.projectId
+            ? eq(documents.projectId, filters.projectId)
+            : undefined,
           filters.status ? eq(documents.status, filters.status) : undefined,
-          filters.uploaderId ? eq(documents.uploadedBy, filters.uploaderId) : undefined,
+          filters.uploaderId
+            ? eq(documents.uploadedBy, filters.uploaderId)
+            : undefined,
           createDateBounds(documents.uploadedAt, filters),
         ]);
 
@@ -223,11 +239,15 @@ export async function getGlobalSearchData(
             ? or(
                 ilike(documentComments.comment, pattern),
                 ilike(documents.title, pattern),
-                ilike(documents.documentNumber, pattern)
+                ilike(documents.documentNumber, pattern),
               )
             : undefined,
-          filters.projectId ? eq(documents.projectId, filters.projectId) : undefined,
-          filters.uploaderId ? eq(documentComments.userId, filters.uploaderId) : undefined,
+          filters.projectId
+            ? eq(documents.projectId, filters.projectId)
+            : undefined,
+          filters.uploaderId
+            ? eq(documentComments.userId, filters.uploaderId)
+            : undefined,
           createDateBounds(documentComments.createdAt, filters),
         ]);
 
@@ -268,7 +288,7 @@ export async function getGlobalSearchData(
             meta: truncateText(comment.comment, 140),
             source: "comment match",
             status: comment.status ?? undefined,
-          }))
+          })),
         );
       }
     }
@@ -283,11 +303,15 @@ export async function getGlobalSearchData(
             ? or(
                 ilike(documentWorkflows.workflowName, pattern),
                 ilike(documents.title, pattern),
-                ilike(documents.documentNumber, pattern)
+                ilike(documents.documentNumber, pattern),
               )
             : undefined,
-          filters.projectId ? eq(documents.projectId, filters.projectId) : undefined,
-          filters.status ? eq(documentWorkflows.status, filters.status) : undefined,
+          filters.projectId
+            ? eq(documents.projectId, filters.projectId)
+            : undefined,
+          filters.status
+            ? eq(documentWorkflows.status, filters.status)
+            : undefined,
           createDateBounds(documentWorkflows.startedAt, filters),
         ]);
 
@@ -313,11 +337,15 @@ export async function getGlobalSearchData(
             ? or(
                 ilike(workflowSteps.comments, pattern),
                 ilike(workflowSteps.stepName, pattern),
-                ilike(documentWorkflows.workflowName, pattern)
+                ilike(documentWorkflows.workflowName, pattern),
               )
             : undefined,
-          filters.projectId ? eq(documents.projectId, filters.projectId) : undefined,
-          filters.uploaderId ? eq(workflowSteps.assignedTo, filters.uploaderId) : undefined,
+          filters.projectId
+            ? eq(documents.projectId, filters.projectId)
+            : undefined,
+          filters.uploaderId
+            ? eq(workflowSteps.assignedTo, filters.uploaderId)
+            : undefined,
           filters.status ? eq(workflowSteps.status, filters.status) : undefined,
           createDateBounds(workflowSteps.completedAt, filters) ??
             createDateBounds(workflowSteps.startedAt, filters),
@@ -335,11 +363,17 @@ export async function getGlobalSearchData(
             projectName: projects.name,
           })
           .from(workflowSteps)
-          .innerJoin(documentWorkflows, eq(workflowSteps.workflowId, documentWorkflows.id))
+          .innerJoin(
+            documentWorkflows,
+            eq(workflowSteps.workflowId, documentWorkflows.id),
+          )
           .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
           .innerJoin(projects, eq(documents.projectId, projects.id))
           .where(combineConditions(workflowNoteConditions))
-          .orderBy(desc(workflowSteps.completedAt), desc(workflowSteps.startedAt))
+          .orderBy(
+            desc(workflowSteps.completedAt),
+            desc(workflowSteps.startedAt),
+          )
           .limit(6);
 
         results.push(
@@ -359,10 +393,13 @@ export async function getGlobalSearchData(
             subtitle: note.documentNumber,
             category: "workflow" as const,
             href: "/dashboard/workflows",
-            meta: truncateText(note.comments || `${note.projectName} • ${note.documentTitle}`, 140),
+            meta: truncateText(
+              note.comments || `${note.projectName} • ${note.documentTitle}`,
+              140,
+            ),
             source: "workflow note",
             status: note.status ?? undefined,
-          }))
+          })),
         );
       }
     }
@@ -378,12 +415,16 @@ export async function getGlobalSearchData(
                 ilike(transmittals.transmittalNumber, pattern),
                 ilike(transmittals.subject, pattern),
                 ilike(transmittals.description, pattern),
-                ilike(transmittals.notes, pattern)
+                ilike(transmittals.notes, pattern),
               )
             : undefined,
-          filters.projectId ? eq(transmittals.projectId, filters.projectId) : undefined,
+          filters.projectId
+            ? eq(transmittals.projectId, filters.projectId)
+            : undefined,
           filters.status ? eq(transmittals.status, filters.status) : undefined,
-          filters.uploaderId ? eq(transmittals.sentFrom, filters.uploaderId) : undefined,
+          filters.uploaderId
+            ? eq(transmittals.sentFrom, filters.uploaderId)
+            : undefined,
           createDateBounds(transmittals.createdAt, filters),
         ]);
 
@@ -411,7 +452,7 @@ export async function getGlobalSearchData(
             meta: transmittal.projectName,
             source: "transmittal record",
             status: transmittal.status ?? undefined,
-          }))
+          })),
         );
       }
     }
@@ -420,9 +461,14 @@ export async function getGlobalSearchData(
       const notificationConditions = compactConditions([
         eq(notifications.userId, sessionUser.id),
         pattern
-          ? or(ilike(notifications.title, pattern), ilike(notifications.message, pattern))
+          ? or(
+              ilike(notifications.title, pattern),
+              ilike(notifications.message, pattern),
+            )
           : undefined,
-        filters.projectId ? eq(notifications.projectId, filters.projectId) : undefined,
+        filters.projectId
+          ? eq(notifications.projectId, filters.projectId)
+          : undefined,
         filters.status === "read"
           ? eq(notifications.isRead, true)
           : filters.status === "unread"
@@ -453,10 +499,11 @@ export async function getGlobalSearchData(
           subtitle: "Notification",
           category: "notification" as const,
           href: notification.actionUrl ?? "/dashboard/notifications",
-          meta: notification.projectName ?? truncateText(notification.message, 140),
+          meta:
+            notification.projectName ?? truncateText(notification.message, 140),
           source: "notification inbox",
           status: notification.isRead ? "read" : "unread",
-        }))
+        })),
       );
     }
 
@@ -475,12 +522,14 @@ export async function getGlobalSearchData(
       filters,
       availableProjects,
       availableUploaders,
-      error
+      error,
     );
   }
 }
 
-async function getProjectOptions(sessionUser: DashboardSessionUser): Promise<SearchOption[]> {
+async function getProjectOptions(
+  sessionUser: DashboardSessionUser,
+): Promise<SearchOption[]> {
   const accessScope = await getProjectAccessScope(sessionUser);
   const scopedCondition = accessScope.isAdmin
     ? undefined
@@ -510,7 +559,9 @@ async function getProjectOptions(sessionUser: DashboardSessionUser): Promise<Sea
   }));
 }
 
-async function getUploaderOptions(sessionUser: DashboardSessionUser): Promise<SearchOption[]> {
+async function getUploaderOptions(
+  sessionUser: DashboardSessionUser,
+): Promise<SearchOption[]> {
   const accessScope = await getProjectAccessScope(sessionUser);
 
   if (!accessScope.isAdmin && accessScope.projectIds.length === 0) {
@@ -525,7 +576,11 @@ async function getUploaderOptions(sessionUser: DashboardSessionUser): Promise<Se
     })
     .from(userTable)
     .innerJoin(documents, eq(userTable.id, documents.uploadedBy))
-    .where(accessScope.isAdmin ? undefined : inArray(documents.projectId, accessScope.projectIds))
+    .where(
+      accessScope.isAdmin
+        ? undefined
+        : inArray(documents.projectId, accessScope.projectIds),
+    )
     .orderBy(desc(userTable.updatedAt))
     .limit(50);
 
@@ -538,8 +593,8 @@ async function getUploaderOptions(sessionUser: DashboardSessionUser): Promise<Se
           label: row.label,
           description: row.description,
         },
-      ])
-    ).values()
+      ]),
+    ).values(),
   );
 }
 
@@ -561,7 +616,7 @@ function combineConditions(conditions: SQL[]) {
 
 function createDateBounds(
   column: SQL | { _: { data: Date | null } },
-  filters: GlobalSearchFilters
+  filters: GlobalSearchFilters,
 ) {
   const fromDate = parseDateBoundary(filters.fromDate, "start");
   const toDate = parseDateBoundary(filters.toDate, "end");
@@ -586,7 +641,9 @@ function parseDateBoundary(value: string, boundary: "start" | "end") {
     return null;
   }
 
-  const date = new Date(`${value}T${boundary === "start" ? "00:00:00.000" : "23:59:59.999"}Z`);
+  const date = new Date(
+    `${value}T${boundary === "start" ? "00:00:00.000" : "23:59:59.999"}Z`,
+  );
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
@@ -602,7 +659,10 @@ function hasSearchIntent(filters: GlobalSearchFilters) {
   );
 }
 
-function includesCategory(filters: GlobalSearchFilters, category: GlobalSearchCategory) {
+function includesCategory(
+  filters: GlobalSearchFilters,
+  category: GlobalSearchCategory,
+) {
   return filters.categories.includes(category);
 }
 
@@ -615,7 +675,7 @@ function ensureCategories(rawValue: string) {
     .split(",")
     .map((value) => value.trim())
     .filter((value): value is GlobalSearchCategory =>
-      SEARCH_CATEGORIES.includes(value as GlobalSearchCategory)
+      SEARCH_CATEGORIES.includes(value as GlobalSearchCategory),
     );
 
   return parsed.length > 0 ? parsed : [...SEARCH_CATEGORIES];
@@ -630,7 +690,7 @@ async function createFallbackSearchData(
   filters: GlobalSearchFilters,
   availableProjects: SearchOption[],
   availableUploaders: SearchOption[],
-  error: unknown
+  error: unknown,
 ): Promise<GlobalSearchData> {
   const dashboard = await getEdmsDashboardData(sessionUser);
   const pattern = filters.query.toLowerCase();
@@ -642,7 +702,7 @@ async function createFallbackSearchData(
           includesCategory(filters, "project") &&
           (!pattern ||
             project.name.toLowerCase().includes(pattern) ||
-            project.projectNumber?.toLowerCase().includes(pattern))
+            project.projectNumber?.toLowerCase().includes(pattern)),
       )
       .map((project) => ({
         id: project.id,
@@ -661,7 +721,7 @@ async function createFallbackSearchData(
           (!pattern ||
             document.title.toLowerCase().includes(pattern) ||
             document.documentNumber.toLowerCase().includes(pattern) ||
-            document.projectName.toLowerCase().includes(pattern))
+            document.projectName.toLowerCase().includes(pattern)),
       )
       .map((document) => ({
         id: document.id,
@@ -679,7 +739,7 @@ async function createFallbackSearchData(
           includesCategory(filters, "transmittal") &&
           (!pattern ||
             transmittal.subject.toLowerCase().includes(pattern) ||
-            transmittal.transmittalNumber.toLowerCase().includes(pattern))
+            transmittal.transmittalNumber.toLowerCase().includes(pattern)),
       )
       .map((transmittal) => ({
         id: transmittal.id,

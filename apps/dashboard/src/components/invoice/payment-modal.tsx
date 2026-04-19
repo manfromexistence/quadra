@@ -9,20 +9,20 @@ import { Icons } from "@midday/ui/icons";
 import { Skeleton } from "@midday/ui/skeleton";
 import { Spinner } from "@midday/ui/spinner";
 import { SubmitButton } from "@midday/ui/submit-button";
-import {
-  Elements,
-  PaymentElement,
-  useElements,
-  useStripe,
-} from "@/lib/mocks/stripe-react";
-import type { Appearance } from "@/lib/mocks/stripe-js";
-import { loadStripe } from "@/lib/mocks/stripe-js";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { useOnClickOutside } from "usehooks-ts";
 import { useSuccessSound } from "@/hooks/use-success-sound";
 import { downloadFile } from "@/lib/download";
+import type { Appearance } from "@/lib/mocks/stripe-js";
+import { loadStripe } from "@/lib/mocks/stripe-js";
+import {
+  Elements,
+  PaymentElement,
+  useElements,
+  useStripe,
+} from "@/lib/mocks/stripe-react";
 
 function StripeLogo({ className }: { className?: string }) {
   return (

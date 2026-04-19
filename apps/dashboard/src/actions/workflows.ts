@@ -1,6 +1,6 @@
 "use server";
 
-import { and, asc, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { documentComments, documents } from "@/db/schema/documents";
@@ -28,14 +28,21 @@ interface CreateDocumentWorkflowInput {
 
 interface RecordWorkflowDecisionInput {
   stepId: string;
-  decision: "approve" | "approve_with_comments" | "reject" | "comment" | "for_information";
+  decision:
+    | "approve"
+    | "approve_with_comments"
+    | "reject"
+    | "comment"
+    | "for_information";
   comments?: string;
   attachmentUrl?: string;
   attachmentFileName?: string;
   attachmentFileSize?: number;
 }
 
-export async function createDocumentWorkflow(input: CreateDocumentWorkflowInput) {
+export async function createDocumentWorkflow(
+  input: CreateDocumentWorkflowInput,
+) {
   try {
     const sessionUser = await requireActionSessionUser();
     requireManageEdmsContent(sessionUser.role);
@@ -55,7 +62,10 @@ export async function createDocumentWorkflow(input: CreateDocumentWorkflowInput)
       throw new Error("Document not found.");
     }
 
-    const hasProjectAccess = await canAccessProject(sessionUser, String(documentSummary.projectId));
+    const hasProjectAccess = await canAccessProject(
+      sessionUser,
+      String(documentSummary.projectId),
+    );
 
     if (!hasProjectAccess) {
       throw new Error("You do not have access to this document.");
@@ -151,7 +161,9 @@ export async function createDocumentWorkflow(input: CreateDocumentWorkflowInput)
   }
 }
 
-export async function recordWorkflowDecision(input: RecordWorkflowDecisionInput) {
+export async function recordWorkflowDecision(
+  input: RecordWorkflowDecisionInput,
+) {
   try {
     const sessionUser = await requireActionSessionUser();
 
@@ -170,7 +182,10 @@ export async function recordWorkflowDecision(input: RecordWorkflowDecisionInput)
         createdBy: documentWorkflows.createdBy,
       })
       .from(workflowSteps)
-      .innerJoin(documentWorkflows, eq(workflowSteps.workflowId, documentWorkflows.id))
+      .innerJoin(
+        documentWorkflows,
+        eq(workflowSteps.workflowId, documentWorkflows.id),
+      )
       .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
       .where(eq(workflowSteps.id, input.stepId))
       .limit(1);
@@ -179,13 +194,19 @@ export async function recordWorkflowDecision(input: RecordWorkflowDecisionInput)
       throw new Error("Workflow step not found.");
     }
 
-    const hasProjectAccess = await canAccessProject(sessionUser, String(stepSummary.projectId));
+    const hasProjectAccess = await canAccessProject(
+      sessionUser,
+      String(stepSummary.projectId),
+    );
 
     if (!hasProjectAccess) {
       throw new Error("You do not have access to this workflow.");
     }
 
-    if (stepSummary.assignedTo !== sessionUser.id && sessionUser.role !== "admin") {
+    if (
+      stepSummary.assignedTo !== sessionUser.id &&
+      sessionUser.role !== "admin"
+    ) {
       throw new Error("Only the assigned reviewer can act on this step.");
     }
 
@@ -226,7 +247,8 @@ export async function recordWorkflowDecision(input: RecordWorkflowDecisionInput)
       });
     }
 
-    const completedStatus = input.decision === "reject" ? "rejected" : "completed";
+    const completedStatus =
+      input.decision === "reject" ? "rejected" : "completed";
 
     await db
       .update(workflowSteps)
@@ -253,8 +275,8 @@ export async function recordWorkflowDecision(input: RecordWorkflowDecisionInput)
       .where(
         and(
           eq(workflowSteps.workflowId, String(stepSummary.workflowId)),
-          inArray(workflowSteps.status, ["pending"])
-        )
+          inArray(workflowSteps.status, ["pending"]),
+        ),
       )
       .orderBy(asc(workflowSteps.stepNumber))
       .limit(1);
@@ -330,7 +352,7 @@ export async function recordWorkflowDecision(input: RecordWorkflowDecisionInput)
     }
 
     const notificationTargets = Array.from(
-      new Set([stepSummary.uploadedBy, stepSummary.createdBy].filter(Boolean))
+      new Set([stepSummary.uploadedBy, stepSummary.createdBy].filter(Boolean)),
     ) as string[];
 
     if (notificationTargets.length > 0) {

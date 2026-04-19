@@ -26,7 +26,7 @@ export function actionError(message: string): EdmsActionResult<never> {
 
 export function actionFromError(
   error: unknown,
-  fallbackMessage: string
+  fallbackMessage: string,
 ): EdmsActionResult<never> {
   if (error instanceof Error && error.message.trim().length > 0) {
     return actionError(error.message);
@@ -75,7 +75,9 @@ export function requireManageEdmsContent(role: string | null | undefined) {
   const normalizedRole = normalizeEdmsRole(role);
 
   if (!canManageEdmsContent(normalizedRole)) {
-    throw new ForbiddenError("You do not have permission to manage EDMS content.");
+    throw new ForbiddenError(
+      "You do not have permission to manage EDMS content.",
+    );
   }
 }
 
@@ -110,7 +112,9 @@ export function parseStringArray(value: string | null | undefined) {
     const parsed = JSON.parse(value) as unknown;
 
     return Array.isArray(parsed)
-      ? parsed.filter((item): item is string => typeof item === "string" && item.length > 0)
+      ? parsed.filter(
+          (item): item is string => typeof item === "string" && item.length > 0,
+        )
       : [];
   } catch {
     return [];
@@ -119,7 +123,11 @@ export function parseStringArray(value: string | null | undefined) {
 
 export function toStringArrayJson(values: Array<string | null | undefined>) {
   return JSON.stringify(
-    Array.from(new Set(values.filter((value): value is string => Boolean(value && value.trim()))))
+    Array.from(
+      new Set(
+        values.filter((value): value is string => Boolean(value?.trim())),
+      ),
+    ),
   );
 }
 
@@ -133,13 +141,18 @@ export function parseTagList(value: string | null | undefined) {
       value
         .split(",")
         .map((part) => part.trim())
-        .filter(Boolean)
-    )
+        .filter(Boolean),
+    ),
   );
 }
 
 export function mapDecisionToApprovalCode(
-  decision: "approve" | "approve_with_comments" | "reject" | "comment" | "for_information"
+  decision:
+    | "approve"
+    | "approve_with_comments"
+    | "reject"
+    | "comment"
+    | "for_information",
 ) {
   switch (decision) {
     case "approve":

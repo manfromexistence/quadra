@@ -9,7 +9,8 @@ const testimonials = [
     title: "Project Manager • Dubai",
     content:
       "Quadra EDMS has streamlined our document control process. We're now saving 3-4 hours per week on transmittal management, and our team has complete visibility of all project documents.",
-    highlighted: "We're now saving 3-4 hours per week on transmittal management",
+    highlighted:
+      "We're now saving 3-4 hours per week on transmittal management",
     firstPart:
       "Quadra EDMS has streamlined our document control process. We're now saving 3-4 hours per week on transmittal management",
     secondPart:
@@ -34,7 +35,8 @@ const testimonials = [
       "It has completely transformed how we manage construction documents. From tracking submittals to managing workflows and having all drawings centralized in one place, the change has been remarkable.",
     highlighted:
       "It has completely transformed how we manage construction documents",
-    firstPart: "It has completely transformed how we manage construction documents",
+    firstPart:
+      "It has completely transformed how we manage construction documents",
     secondPart:
       ". From tracking submittals to managing workflows and having all drawings centralized in one place, the change has been remarkable.",
   },

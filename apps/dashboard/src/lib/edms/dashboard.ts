@@ -46,8 +46,11 @@ export interface DashboardDocument {
   title: string;
   projectName: string;
   discipline: string | null;
+  category?: string | null;
   revision: string | null;
   status: string;
+  author?: string | null;
+  fileSize?: number | null;
   uploadedLabel: string;
   images: string | null;
   fileUrl: string;
@@ -232,8 +235,11 @@ export async function getEdmsDashboardData(
               title: documents.title,
               projectName: projects.name,
               discipline: documents.discipline,
+              category: documents.category,
               revision: documents.revision,
               status: documents.status,
+              createdBy: documents.createdBy,
+              fileSize: documents.fileSize,
               uploadedAt: documents.uploadedAt,
               images: documents.images,
               fileUrl: documents.fileUrl,
@@ -409,8 +415,11 @@ export async function getEdmsDashboardData(
         title: document.title,
         projectName: document.projectName,
         discipline: document.discipline,
+        category: document.category,
         revision: document.revision,
         status: document.status,
+        author: document.createdBy,
+        fileSize: document.fileSize,
         uploadedLabel: formatDateLabel(document.uploadedAt, "Uploaded"),
         images: document.images, // Keep truncated for now, expand in component
         fileUrl: expandStorageUrl(document.fileUrl), // Expand file URL

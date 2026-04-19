@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { uploadEdmsFile } from "@/lib/edms/storage-catbox";
-import { canStoreEdmsFileInTurso, uploadEdmsFileToTurso } from "@/lib/edms/storage-turso";
+import {
+  canStoreEdmsFileInTurso,
+  uploadEdmsFileToTurso,
+} from "@/lib/edms/storage-turso";
 import { isImgBBConfigured, uploadImageToImgBB } from "@/lib/storage-imgbb";
 
 const MAX_FILE_SIZE = 200 * 1024 * 1024;
@@ -92,7 +95,7 @@ export async function POST(request: Request) {
 async function uploadWithFreeProvider(
   file: File,
   projectId: string,
-  folder: "documents" | "versions" | "workflow-attachments"
+  folder: "documents" | "versions" | "workflow-attachments",
 ) {
   const isImage = file.type.startsWith("image/");
 
@@ -156,7 +159,7 @@ function sanitizeFileName(value: string) {
   return value.replace(/[^a-z0-9._-]+/gi, "-").toLowerCase();
 }
 
-function getExtensionFromFileName(fileName: string) {
+function _getExtensionFromFileName(fileName: string) {
   const parts = fileName.split(".");
   return parts.length > 1 ? (parts.at(-1) ?? "file") : "file";
 }

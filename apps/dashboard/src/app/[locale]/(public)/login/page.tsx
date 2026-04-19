@@ -1,8 +1,8 @@
 import { Icons } from "@midday/ui/icons";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LoginVideoBackground } from "@/components/login-video-background";
 import { AuthPanel } from "@/components/auth/auth-panel";
+import { LoginVideoBackground } from "@/components/login-video-background";
 
 export const metadata: Metadata = {
   title: "Login | Quadra EDMS",
@@ -49,7 +49,8 @@ export default async function Page() {
           {/* Terms and Privacy Policy - Bottom aligned */}
           <div className="text-center mt-auto">
             <p className="font-sans text-xs text-[#878787]">
-              By signing in you agree to use QUADRA EDMS for your construction project management.
+              By signing in you agree to use QUADRA EDMS for your construction
+              project management.
             </p>
           </div>
         </div>

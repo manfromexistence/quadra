@@ -2,12 +2,15 @@ import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import { Building2, Calendar, MapPin } from "lucide-react";
 import Image from "next/image";
-import { notFound } from "next/navigation";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { ActivityEntryPopover } from "@/components/edms/activity-entry-popover";
 import { DocumentPreviewPopover } from "@/components/edms/document-preview-popover";
 import { ProjectMemberSheet } from "@/components/edms/project-member-sheet";
-import { EdmsStatusBadge, formatEdmsLabel } from "@/components/edms/status-badge";
+import {
+  EdmsStatusBadge,
+  formatEdmsLabel,
+} from "@/components/edms/status-badge";
 import { TeamMemberPopover } from "@/components/edms/team-member-popover";
 import { WorkflowPreviewPopover } from "@/components/edms/workflow-preview-popover";
 import { getProjectDetailData } from "@/lib/edms/projects";
@@ -46,7 +49,7 @@ export default async function ProjectDetailPage({
             />
             {/* Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-            
+
             {/* Project Info Overlay */}
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
               <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -57,7 +60,7 @@ export default async function ProjectDetailPage({
                     </h1>
                     <EdmsStatusBadge status={data.project.status} />
                   </div>
-                  
+
                   <div className="flex flex-wrap items-center gap-4 text-sm text-white/90">
                     {data.project.projectNumber && (
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 font-mono text-xs backdrop-blur-sm">
@@ -85,7 +88,10 @@ export default async function ProjectDetailPage({
 
                 <div className="flex flex-wrap items-center gap-2">
                   {sessionUser.role === "admin" && (
-                    <ProjectMemberSheet projectId={data.project.id} users={data.assignableUsers} />
+                    <ProjectMemberSheet
+                      projectId={data.project.id}
+                      users={data.assignableUsers}
+                    />
                   )}
                   <Button variant="secondary" asChild>
                     <Link href="/projects">Back to projects</Link>
@@ -137,7 +143,7 @@ export default async function ProjectDetailPage({
                 </h1>
                 <EdmsStatusBadge status={data.project.status} />
               </div>
-              
+
               <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                 {data.project.projectNumber && (
                   <span className="rounded-full border border-border bg-muted px-3 py-1 font-mono text-xs">
@@ -165,7 +171,10 @@ export default async function ProjectDetailPage({
 
             <div className="flex flex-wrap items-center gap-2">
               {sessionUser.role === "admin" && (
-                <ProjectMemberSheet projectId={data.project.id} users={data.assignableUsers} />
+                <ProjectMemberSheet
+                  projectId={data.project.id}
+                  users={data.assignableUsers}
+                />
               )}
               <Button variant="outline" asChild>
                 <Link href="/projects">Back to projects</Link>
@@ -183,7 +192,9 @@ export default async function ProjectDetailPage({
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-semibold">{metric.value}</p>
-              <p className="mt-2 text-sm text-muted-foreground">{metric.description}</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {metric.description}
+              </p>
             </CardContent>
           </Card>
         ))}
@@ -193,13 +204,17 @@ export default async function ProjectDetailPage({
         <Card className="border-border bg-card shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Project team</CardTitle>
-            <span className="text-sm text-muted-foreground">{data.members.length} members</span>
+            <span className="text-sm text-muted-foreground">
+              {data.members.length} members
+            </span>
           </CardHeader>
           <CardContent className="space-y-3">
             {data.members.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center">
                 <Building2 className="size-8 text-muted-foreground/50" />
-                <p className="mt-2 text-sm text-muted-foreground">No team members assigned</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  No team members assigned
+                </p>
               </div>
             ) : (
               data.members.map((member) => (
@@ -218,12 +233,16 @@ export default async function ProjectDetailPage({
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-medium">{member.name}</p>
-                        <p className="text-sm text-muted-foreground">{member.email}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {member.email}
+                        </p>
                       </div>
                       <EdmsStatusBadge status={member.role} />
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                      {member.organization ? <span>{member.organization}</span> : null}
+                      {member.organization ? (
+                        <span>{member.organization}</span>
+                      ) : null}
                       <span>{member.assignedLabel}</span>
                     </div>
                   </div>
@@ -241,7 +260,9 @@ export default async function ProjectDetailPage({
             {data.activity.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center">
                 <Calendar className="size-8 text-muted-foreground/50" />
-                <p className="mt-2 text-sm text-muted-foreground">No recent activity</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  No recent activity
+                </p>
               </div>
             ) : (
               data.activity.map((entry) => (
@@ -261,13 +282,21 @@ export default async function ProjectDetailPage({
                   <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
                     <p className="text-sm">
                       <span className="font-medium">{entry.actorName}</span>{" "}
-                      <span className="text-muted-foreground">{formatEdmsLabel(entry.action)}</span>
-                      {entry.entityName ? <span className="font-medium"> {entry.entityName}</span> : null}
+                      <span className="text-muted-foreground">
+                        {formatEdmsLabel(entry.action)}
+                      </span>
+                      {entry.entityName ? (
+                        <span className="font-medium"> {entry.entityName}</span>
+                      ) : null}
                     </p>
                     {entry.description ? (
-                      <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{entry.description}</p>
+                      <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
+                        {entry.description}
+                      </p>
                     ) : null}
-                    <p className="mt-2 text-xs text-muted-foreground">{entry.createdLabel}</p>
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      {entry.createdLabel}
+                    </p>
                   </div>
                 </ActivityEntryPopover>
               ))
@@ -285,7 +314,9 @@ export default async function ProjectDetailPage({
             {data.documents.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center">
                 <Building2 className="size-8 text-muted-foreground/50" />
-                <p className="mt-2 text-sm text-muted-foreground">No documents yet</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  No documents yet
+                </p>
               </div>
             ) : (
               data.documents.map((document) => (
@@ -307,12 +338,18 @@ export default async function ProjectDetailPage({
                   <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="font-medium hover:text-primary">{document.title}</p>
-                        <p className="font-mono text-xs text-muted-foreground">{document.documentNumber}</p>
+                        <p className="font-medium hover:text-primary">
+                          {document.title}
+                        </p>
+                        <p className="font-mono text-xs text-muted-foreground">
+                          {document.documentNumber}
+                        </p>
                       </div>
                       <EdmsStatusBadge status={document.status} />
                     </div>
-                    <p className="mt-3 text-xs text-muted-foreground">{document.uploadedLabel}</p>
+                    <p className="mt-3 text-xs text-muted-foreground">
+                      {document.uploadedLabel}
+                    </p>
                   </div>
                 </DocumentPreviewPopover>
               ))
@@ -328,7 +365,9 @@ export default async function ProjectDetailPage({
             {data.workflows.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center">
                 <Building2 className="size-8 text-muted-foreground/50" />
-                <p className="mt-2 text-sm text-muted-foreground">No active workflows</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  No active workflows
+                </p>
               </div>
             ) : (
               data.workflows.map((workflow) => (
@@ -349,13 +388,17 @@ export default async function ProjectDetailPage({
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-medium">{workflow.stepName}</p>
-                        <p className="text-sm text-muted-foreground">{workflow.title}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {workflow.title}
+                        </p>
                       </div>
                       <EdmsStatusBadge status={workflow.status} />
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                       <span>{workflow.documentNumber}</span>
-                      {workflow.assignedRole ? <span>{formatEdmsLabel(workflow.assignedRole)}</span> : null}
+                      {workflow.assignedRole ? (
+                        <span>{formatEdmsLabel(workflow.assignedRole)}</span>
+                      ) : null}
                       <span>{workflow.dueLabel}</span>
                     </div>
                   </div>

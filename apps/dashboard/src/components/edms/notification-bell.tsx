@@ -1,13 +1,16 @@
 "use client";
 
-import { BellRing } from "lucide-react";
-import Link from "next/link";
-import { MarkAllNotificationsReadButton, MarkNotificationReadButton } from "@/components/edms/notification-actions";
-import type { EdmsNotificationFeedItem } from "@/lib/edms/notification-feed";
 import { Badge } from "@midday/ui/badge";
 import { Button } from "@midday/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
 import { ScrollArea } from "@midday/ui/scroll-area";
+import { BellRing } from "lucide-react";
+import Link from "next/link";
+import {
+  MarkAllNotificationsReadButton,
+  MarkNotificationReadButton,
+} from "@/components/edms/notification-actions";
+import type { EdmsNotificationFeedItem } from "@/lib/edms/notification-feed";
 
 export function EdmsNotificationBell({
   notifications,
@@ -37,7 +40,9 @@ export function EdmsNotificationBell({
                 Review requests, transmittals, and approval updates.
               </p>
             </div>
-            <MarkAllNotificationsReadButton disabled={notifications.every((item) => item.isRead)} />
+            <MarkAllNotificationsReadButton
+              disabled={notifications.every((item) => item.isRead)}
+            />
           </div>
         </div>
 
@@ -49,19 +54,33 @@ export function EdmsNotificationBell({
           ) : (
             <div className="divide-y">
               {notifications.map((notification) => (
-                <div key={notification.id} className="flex items-start gap-3 px-4 py-4">
+                <div
+                  key={notification.id}
+                  className="flex items-start gap-3 px-4 py-4"
+                >
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium">{notification.title}</p>
-                      {!notification.isRead ? <Badge variant="outline">Unread</Badge> : null}
+                      <p className="text-sm font-medium">
+                        {notification.title}
+                      </p>
+                      {!notification.isRead ? (
+                        <Badge variant="outline">Unread</Badge>
+                      ) : null}
                     </div>
-                    <p className="text-sm text-muted-foreground">{notification.message}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {notification.message}
+                    </p>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                      {notification.projectName ? <span>{notification.projectName}</span> : null}
+                      {notification.projectName ? (
+                        <span>{notification.projectName}</span>
+                      ) : null}
                       <span>{notification.createdLabel}</span>
                     </div>
                     {notification.actionUrl ? (
-                      <Link href={notification.actionUrl} className="text-sm text-primary hover:underline">
+                      <Link
+                        href={notification.actionUrl}
+                        className="text-sm text-primary hover:underline"
+                      >
                         Open item
                       </Link>
                     ) : null}

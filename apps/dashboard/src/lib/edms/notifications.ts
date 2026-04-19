@@ -69,7 +69,9 @@ export async function notifyUsers(input: NotifyUsersInput) {
     }
 
     const enabledRecipients = recipients.filter((recipient) => {
-      const preferences = parseNotificationPreferences(recipient.notificationPreferences);
+      const preferences = parseNotificationPreferences(
+        recipient.notificationPreferences,
+      );
       return preferences[input.preferenceKey];
     });
 
@@ -92,7 +94,7 @@ export async function notifyUsers(input: NotifyUsersInput) {
           relatedEntityId: input.relatedEntityId ?? null,
           actionUrl: normalizeOptional(input.actionUrl),
           createdAt: now,
-        }))
+        })),
       )
       .returning({
         id: notifications.id,
@@ -106,8 +108,12 @@ export async function notifyUsers(input: NotifyUsersInput) {
     }
 
     const emailEnabledRecipients = enabledRecipients.filter((recipient) => {
-      const preferences = parseNotificationPreferences(recipient.notificationPreferences);
-      return preferences.emailNotifications && recipient.email.trim().length > 0;
+      const preferences = parseNotificationPreferences(
+        recipient.notificationPreferences,
+      );
+      return (
+        preferences.emailNotifications && recipient.email.trim().length > 0
+      );
     });
 
     if (emailEnabledRecipients.length === 0) {
@@ -135,13 +141,13 @@ export async function notifyUsers(input: NotifyUsersInput) {
         }
 
         const notificationRecord = insertedNotifications.find(
-          (notification) => notification.userId === recipient.id
+          (notification) => notification.userId === recipient.id,
         );
 
         if (notificationRecord) {
           sentNotificationIds.push(notificationRecord.id);
         }
-      })
+      }),
     );
 
     if (sentNotificationIds.length === 0) {
@@ -192,18 +198,25 @@ function parseNotificationPreferences(value: string | null | undefined) {
   }
 
   try {
-    const parsed = JSON.parse(value) as Partial<typeof DEFAULT_NOTIFICATION_PREFERENCES>;
+    const parsed = JSON.parse(value) as Partial<
+      typeof DEFAULT_NOTIFICATION_PREFERENCES
+    >;
 
     return {
       documentSubmission:
-        parsed.documentSubmission ?? DEFAULT_NOTIFICATION_PREFERENCES.documentSubmission,
-      reviewRequest: parsed.reviewRequest ?? DEFAULT_NOTIFICATION_PREFERENCES.reviewRequest,
+        parsed.documentSubmission ??
+        DEFAULT_NOTIFICATION_PREFERENCES.documentSubmission,
+      reviewRequest:
+        parsed.reviewRequest ?? DEFAULT_NOTIFICATION_PREFERENCES.reviewRequest,
       approvalDecision:
-        parsed.approvalDecision ?? DEFAULT_NOTIFICATION_PREFERENCES.approvalDecision,
+        parsed.approvalDecision ??
+        DEFAULT_NOTIFICATION_PREFERENCES.approvalDecision,
       transmittalUpdate:
-        parsed.transmittalUpdate ?? DEFAULT_NOTIFICATION_PREFERENCES.transmittalUpdate,
+        parsed.transmittalUpdate ??
+        DEFAULT_NOTIFICATION_PREFERENCES.transmittalUpdate,
       emailNotifications:
-        parsed.emailNotifications ?? DEFAULT_NOTIFICATION_PREFERENCES.emailNotifications,
+        parsed.emailNotifications ??
+        DEFAULT_NOTIFICATION_PREFERENCES.emailNotifications,
     };
   } catch {
     return DEFAULT_NOTIFICATION_PREFERENCES;
@@ -222,7 +235,9 @@ function getResendClient() {
 
 function getResendFromAddress() {
   const fromAddress = process.env.RESEND_FROM_EMAIL?.trim();
-  return fromAddress && fromAddress.length > 0 ? fromAddress : "QUADRA <onboarding@resend.dev>";
+  return fromAddress && fromAddress.length > 0
+    ? fromAddress
+    : "QUADRA <onboarding@resend.dev>";
 }
 
 function toAbsoluteUrl(actionUrl: string | null | undefined) {

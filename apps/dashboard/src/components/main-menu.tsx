@@ -362,7 +362,9 @@ export function MainMenu({ onSelect, isExpanded = false }: Props) {
           {items.map((item) => {
             const isActive =
               (normalizedPath === "/" && item.path === "/") ||
-              (normalizedPath !== "/" && item.path !== "/" && `/${part}` === item.path);
+              (normalizedPath !== "/" &&
+                item.path !== "/" &&
+                `/${part}` === item.path);
 
             return (
               <Item

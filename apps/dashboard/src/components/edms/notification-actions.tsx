@@ -1,11 +1,14 @@
 "use client";
 
+import { Button } from "@midday/ui/button";
 import { BellRing, CheckCheck, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { markAllNotificationsRead, markNotificationRead } from "@/actions/notifications";
+import {
+  markAllNotificationsRead,
+  markNotificationRead,
+} from "@/actions/notifications";
 import { toast } from "@/hooks/use-toast";
-import { Button } from "@midday/ui/button";
 
 export function MarkNotificationReadButton({
   notificationId,
@@ -54,7 +57,11 @@ export function MarkNotificationReadButton({
   );
 }
 
-export function MarkAllNotificationsReadButton({ disabled }: { disabled: boolean }) {
+export function MarkAllNotificationsReadButton({
+  disabled,
+}: {
+  disabled: boolean;
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -92,5 +99,3 @@ export function MarkAllNotificationsReadButton({ disabled }: { disabled: boolean
     </Button>
   );
 }
-
-

@@ -1,3 +1,19 @@
+import { Button } from "@midday/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@midday/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@midday/ui/table";
 import {
   ArrowRight,
   BellRing,
@@ -18,13 +34,14 @@ import type {
   DashboardWorkflowItem,
 } from "@/lib/edms/dashboard";
 import { expandImageArray } from "@/lib/storage-utils";
-import { Button } from "@midday/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@midday/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@midday/ui/table";
 import { DocumentPreviewPopover } from "./document-preview-popover";
 import { EdmsStatusBadge, formatEdmsLabel } from "./status-badge";
 
-export function EdmsProjectList({ projects }: { projects: DashboardProject[] }) {
+export function EdmsProjectList({
+  projects,
+}: {
+  projects: DashboardProject[];
+}) {
   return (
     <Card className="h-full bg-card/95">
       <CardHeader className="flex flex-row items-start justify-between gap-4">
@@ -97,7 +114,9 @@ export function EdmsProjectList({ projects }: { projects: DashboardProject[] }) 
                         </div>
                       ) : null}
                     </div>
-                    <p className="text-sm text-muted-foreground">{project.schedule}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {project.schedule}
+                    </p>
                   </div>
                 </div>
               </Link>
@@ -109,7 +128,11 @@ export function EdmsProjectList({ projects }: { projects: DashboardProject[] }) 
   );
 }
 
-export function EdmsDocumentTable({ documents }: { documents: DashboardDocument[] }) {
+export function EdmsDocumentTable({
+  documents,
+}: {
+  documents: DashboardDocument[];
+}) {
   return (
     <Card className="bg-card/95">
       <CardHeader className="flex flex-row items-start justify-between gap-4">
@@ -178,9 +201,14 @@ export function EdmsDocumentTable({ documents }: { documents: DashboardDocument[
                     </TableCell>
                     <TableCell>
                       <DocumentPreviewPopover document={document}>
-                        <button type="button" className="cursor-pointer text-left">
+                        <button
+                          type="button"
+                          className="cursor-pointer text-left"
+                        >
                           <div className="space-y-1">
-                            <p className="font-medium hover:underline">{document.title}</p>
+                            <p className="font-medium hover:underline">
+                              {document.title}
+                            </p>
                             <p className="font-mono text-xs text-muted-foreground hover:underline">
                               {document.documentNumber}
                             </p>
@@ -216,13 +244,19 @@ export function EdmsDocumentTable({ documents }: { documents: DashboardDocument[
 
 // Helper function removed - now using expandImageArray from storage-utils
 
-export function EdmsWorkflowQueue({ items }: { items: DashboardWorkflowItem[] }) {
+export function EdmsWorkflowQueue({
+  items,
+}: {
+  items: DashboardWorkflowItem[];
+}) {
   return (
     <Card className="h-full bg-card/95">
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div className="space-y-1">
           <CardTitle>Workflow queue</CardTitle>
-          <CardDescription>Review steps waiting on the next construction party.</CardDescription>
+          <CardDescription>
+            Review steps waiting on the next construction party.
+          </CardDescription>
         </div>
         <Button variant="ghost" size="sm" asChild>
           <Link href="/dashboard/workflows">
@@ -248,7 +282,9 @@ export function EdmsWorkflowQueue({ items }: { items: DashboardWorkflowItem[] })
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="space-y-1">
                     <p className="font-medium">{item.stepName}</p>
-                    <p className="text-sm text-muted-foreground">{item.projectName}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {item.projectName}
+                    </p>
                   </div>
                   <EdmsStatusBadge status={item.status} />
                 </div>
@@ -271,13 +307,19 @@ export function EdmsWorkflowQueue({ items }: { items: DashboardWorkflowItem[] })
   );
 }
 
-export function EdmsTransmittalList({ items }: { items: DashboardTransmittal[] }) {
+export function EdmsTransmittalList({
+  items,
+}: {
+  items: DashboardTransmittal[];
+}) {
   return (
     <Card className="h-full bg-card/95">
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div className="space-y-1">
           <CardTitle>Transmittals</CardTitle>
-          <CardDescription>Formal issue packages and acknowledgement tracking.</CardDescription>
+          <CardDescription>
+            Formal issue packages and acknowledgement tracking.
+          </CardDescription>
         </div>
         <Button variant="ghost" size="sm" asChild>
           <Link href="/dashboard/transmittals">
@@ -311,7 +353,9 @@ export function EdmsTransmittalList({ items }: { items: DashboardTransmittal[] }
                 </div>
                 <EdmsStatusBadge status={item.status} />
               </div>
-              <p className="mt-3 text-sm text-muted-foreground">{item.sentLabel}</p>
+              <p className="mt-3 text-sm text-muted-foreground">
+                {item.sentLabel}
+              </p>
             </div>
           ))
         )}
@@ -320,13 +364,19 @@ export function EdmsTransmittalList({ items }: { items: DashboardTransmittal[] }
   );
 }
 
-export function EdmsNotificationList({ items }: { items: DashboardNotification[] }) {
+export function EdmsNotificationList({
+  items,
+}: {
+  items: DashboardNotification[];
+}) {
   return (
     <Card className="h-full bg-card/95">
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div className="space-y-1">
           <CardTitle>Notifications</CardTitle>
-          <CardDescription>Unread approvals, transmittals, and workflow alerts.</CardDescription>
+          <CardDescription>
+            Unread approvals, transmittals, and workflow alerts.
+          </CardDescription>
         </div>
         <Button variant="ghost" size="sm" asChild>
           <Link href="/dashboard/notifications">
@@ -354,7 +404,9 @@ export function EdmsNotificationList({ items }: { items: DashboardNotification[]
                     <p className="font-medium">{item.title}</p>
                     {!item.isRead ? <EdmsStatusBadge status="unread" /> : null}
                   </div>
-                  <p className="text-sm leading-6 text-muted-foreground">{item.message}</p>
+                  <p className="text-sm leading-6 text-muted-foreground">
+                    {item.message}
+                  </p>
                   <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                     <span>{formatEdmsLabel(item.type)}</span>
                     {item.projectName ? <span>{item.projectName}</span> : null}
@@ -372,7 +424,9 @@ export function EdmsNotificationList({ items }: { items: DashboardNotification[]
                   </Button>
                 </div>
               ) : null}
-              <p className="mt-3 text-sm text-muted-foreground">{item.createdLabel}</p>
+              <p className="mt-3 text-sm text-muted-foreground">
+                {item.createdLabel}
+              </p>
             </div>
           ))
         )}
@@ -381,7 +435,11 @@ export function EdmsNotificationList({ items }: { items: DashboardNotification[]
   );
 }
 
-export function EdmsActivityFeed({ items }: { items: DashboardActivityItem[] }) {
+export function EdmsActivityFeed({
+  items,
+}: {
+  items: DashboardActivityItem[];
+}) {
   return (
     <Card className="h-full bg-card/95">
       <CardHeader className="space-y-1">
@@ -406,11 +464,17 @@ export function EdmsActivityFeed({ items }: { items: DashboardActivityItem[] }) 
               <div className="space-y-1">
                 <p className="text-sm leading-6">
                   <span className="font-medium">{item.actorName}</span>{" "}
-                  <span className="text-muted-foreground">{formatEdmsLabel(item.action)}</span>
-                  {item.entityName ? <span className="font-medium"> {item.entityName}</span> : null}
+                  <span className="text-muted-foreground">
+                    {formatEdmsLabel(item.action)}
+                  </span>
+                  {item.entityName ? (
+                    <span className="font-medium"> {item.entityName}</span>
+                  ) : null}
                 </p>
                 {item.description ? (
-                  <p className="text-sm leading-6 text-muted-foreground">{item.description}</p>
+                  <p className="text-sm leading-6 text-muted-foreground">
+                    {item.description}
+                  </p>
                 ) : null}
                 <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                   <span>{formatEdmsLabel(item.entityType)}</span>
@@ -447,5 +511,3 @@ function EdmsEmptyState({
     </div>
   );
 }
-
-

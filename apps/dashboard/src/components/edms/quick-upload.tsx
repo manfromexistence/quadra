@@ -1,6 +1,5 @@
 "use client";
 
-import { createDocument } from "@/actions/documents";
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import { Input } from "@midday/ui/input";
@@ -8,6 +7,7 @@ import { Label } from "@midday/ui/label";
 import { useToast } from "@midday/ui/use-toast";
 import { Loader2, UploadCloud } from "lucide-react";
 import { useId, useMemo, useState, useTransition } from "react";
+import { createDocument } from "@/actions/documents";
 
 interface UploadedFilePayload {
   fileName: string;
@@ -220,5 +220,3 @@ function formatBytes(value: number) {
 
   return `${(value / (1024 * 1024)).toFixed(1)} MB`;
 }
-
-

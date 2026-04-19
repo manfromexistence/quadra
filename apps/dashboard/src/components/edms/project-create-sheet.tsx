@@ -1,13 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { createProject } from "@/actions/projects";
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@midday/ui/button";
 import {
   Form,
@@ -19,7 +12,13 @@ import {
   FormMessage,
 } from "@midday/ui/form";
 import { Input } from "@midday/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@midday/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@midday/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -29,6 +28,13 @@ import {
   SheetTrigger,
 } from "@midday/ui/sheet";
 import { Textarea } from "@midday/ui/textarea";
+import { Loader2, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { createProject } from "@/actions/projects";
+import { toast } from "@/hooks/use-toast";
 import { ImageCardUpload } from "./image-card-upload";
 
 const projectStatuses = ["active", "on-hold", "completed", "archived"] as const;
@@ -92,7 +98,8 @@ export function ProjectCreateSheet() {
 
       toast({
         title: "Project created",
-        description: "The project workspace is ready for document control and team assignment.",
+        description:
+          "The project workspace is ready for document control and team assignment.",
       });
 
       setIsOpen(false);
@@ -114,15 +121,18 @@ export function ProjectCreateSheet() {
           <div className="px-6 pt-6">
             <SheetTitle>Create project</SheetTitle>
             <SheetDescription>
-              Set up the basic project container so team members, documents, workflows, and
-              transmittals all have a shared operating context.
+              Set up the basic project container so team members, documents,
+              workflows, and transmittals all have a shared operating context.
             </SheetDescription>
           </div>
         </SheetHeader>
 
         <div className="px-6 pb-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-6 pb-6">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="mt-8 space-y-6 pb-6"
+            >
               <FormField
                 control={form.control}
                 name="name"
@@ -161,7 +171,10 @@ export function ProjectCreateSheet() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Status</FormLabel>
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select status" />
@@ -261,7 +274,11 @@ export function ProjectCreateSheet() {
               />
 
               <div className="flex items-center justify-end gap-3 border-t pt-6">
-                <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setIsOpen(false)}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isPending}>
@@ -285,5 +302,3 @@ export function ProjectCreateSheet() {
     </Sheet>
   );
 }
-
-

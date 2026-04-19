@@ -351,14 +351,11 @@ export function ChatInput({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showAppsPanel]);
 
-  const addFiles = useCallback(
-    (incoming: File[]) => {
-      const valid = incoming.filter((f) => f.size <= MAX_FILE_SIZE);
-      if (!valid.length) return;
-      setFiles((prev) => [...prev, ...valid]);
-    },
-    [],
-  );
+  const addFiles = useCallback((incoming: File[]) => {
+    const valid = incoming.filter((f) => f.size <= MAX_FILE_SIZE);
+    if (!valid.length) return;
+    setFiles((prev) => [...prev, ...valid]);
+  }, []);
 
   const removeFile = useCallback((index: number) => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
@@ -746,8 +743,6 @@ export function ChatInput({
           >
             @
           </button>
-
-
 
           <Popover
             open={mcpOpen}

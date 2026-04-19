@@ -1,6 +1,12 @@
 import type { Session } from "./auth";
 
-export type UserRole = "admin" | "client" | "pmc" | "vendor" | "subcontractor" | "user";
+export type UserRole =
+  | "admin"
+  | "client"
+  | "pmc"
+  | "vendor"
+  | "subcontractor"
+  | "user";
 
 export const ROLE_HIERARCHY: Record<UserRole, number> = {
   admin: 100,
@@ -52,34 +58,46 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
     "edit:own",
     "view:transmittals",
   ],
-  user: [
-    "view:assigned",
-    "comment:documents",
-  ],
+  user: ["view:assigned", "comment:documents"],
 };
 
-export function hasPermission(userRole: UserRole | undefined, permission: string): boolean {
+export function hasPermission(
+  userRole: UserRole | undefined,
+  permission: string,
+): boolean {
   if (!userRole) return false;
   const permissions = ROLE_PERMISSIONS[userRole] || [];
   return permissions.includes(permission);
 }
 
-export function hasAnyPermission(userRole: UserRole | undefined, permissions: string[]): boolean {
+export function hasAnyPermission(
+  userRole: UserRole | undefined,
+  permissions: string[],
+): boolean {
   if (!userRole) return false;
-  return permissions.some(permission => hasPermission(userRole, permission));
+  return permissions.some((permission) => hasPermission(userRole, permission));
 }
 
-export function hasAllPermissions(userRole: UserRole | undefined, permissions: string[]): boolean {
+export function hasAllPermissions(
+  userRole: UserRole | undefined,
+  permissions: string[],
+): boolean {
   if (!userRole) return false;
-  return permissions.every(permission => hasPermission(userRole, permission));
+  return permissions.every((permission) => hasPermission(userRole, permission));
 }
 
-export function isRoleAtLeast(userRole: UserRole | undefined, minimumRole: UserRole): boolean {
+export function isRoleAtLeast(
+  userRole: UserRole | undefined,
+  minimumRole: UserRole,
+): boolean {
   if (!userRole) return false;
   return ROLE_HIERARCHY[userRole] >= ROLE_HIERARCHY[minimumRole];
 }
 
-export function canAccessRoute(userRole: UserRole | undefined, route: string): boolean {
+export function canAccessRoute(
+  userRole: UserRole | undefined,
+  route: string,
+): boolean {
   if (!userRole) return false;
 
   // Admin can access everything

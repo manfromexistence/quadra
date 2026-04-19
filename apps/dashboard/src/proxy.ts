@@ -15,7 +15,9 @@ export async function proxy(request: NextRequest) {
   // Skip proxy for static assets completely
   if (
     request.nextUrl.pathname.startsWith("/_next/") ||
-    request.nextUrl.pathname.match(/\.(png|jpe?g|gif|svg|webp|ico|webmanifest|txt)$/i)
+    request.nextUrl.pathname.match(
+      /\.(png|jpe?g|gif|svg|webp|ico|webmanifest|txt)$/i,
+    )
   ) {
     return NextResponse.next();
   }
@@ -37,7 +39,9 @@ export async function proxy(request: NextRequest) {
   const nextUrl = request.nextUrl;
   const pathnameSegments = nextUrl.pathname.split("/").filter(Boolean);
   const pathnameLocale = pathnameSegments[0];
-  const hasLocalePrefix = pathnameLocale ? SUPPORTED_LOCALES.has(pathnameLocale) : false;
+  const hasLocalePrefix = pathnameLocale
+    ? SUPPORTED_LOCALES.has(pathnameLocale)
+    : false;
   const pathnameWithoutLocale = hasLocalePrefix
     ? `/${pathnameSegments.slice(1).join("/")}` || "/"
     : nextUrl.pathname;
@@ -69,7 +73,9 @@ export async function proxy(request: NextRequest) {
 
   // Redirect unauthenticated users to login
   if (!isAuthenticated && !isPublicRoute && newUrl.pathname !== "/login") {
-    const loginPath = hasLocalePrefix ? `/${pathnameLocale}/login` : "/en/login";
+    const loginPath = hasLocalePrefix
+      ? `/${pathnameLocale}/login`
+      : "/en/login";
     const loginUrl = new URL(loginPath, origin);
 
     if (encodedSearchParams) {

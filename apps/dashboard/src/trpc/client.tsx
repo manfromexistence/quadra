@@ -1,17 +1,12 @@
 "use client";
 
-import type { AppRouter } from "@/app/api/trpc/[trpc]/router";
 import type { QueryClient } from "@tanstack/react-query";
 import { isServer, QueryClientProvider } from "@tanstack/react-query";
-import {
-  createTRPCClient,
-  httpBatchLink,
-  loggerLink,
-} from "@trpc/client";
+import { createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
 import { useState } from "react";
 import superjson from "superjson";
-import { getServerAppUrl } from "@/utils/app-url";
+import type { AppRouter } from "@/app/api/trpc/[trpc]/router";
 import { makeQueryClient } from "./query-client";
 
 export const { TRPCProvider, useTRPC } = createTRPCContext<AppRouter>();
@@ -32,7 +27,7 @@ function getBaseUrl() {
   // Always use relative URLs to ensure requests go to the current origin
   // This works for both development (localhost) and production
   if (typeof window !== "undefined") return "";
-  
+
   // On server side, also use relative URL for same-origin requests
   // This prevents the server from making external HTTP calls to itself
   return "";

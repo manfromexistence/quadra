@@ -1,9 +1,9 @@
 "use client";
 
-import { Calendar, Download, ExternalLink, FileText, User } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@midday/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@midday/ui/popover";
+import { Calendar, Download, ExternalLink, FileText, User } from "lucide-react";
+import Link from "next/link";
 
 interface VersionHistoryPopoverProps {
   version: {
@@ -18,7 +18,10 @@ interface VersionHistoryPopoverProps {
   children: React.ReactNode;
 }
 
-export function VersionHistoryPopover({ version, children }: VersionHistoryPopoverProps) {
+export function VersionHistoryPopover({
+  version,
+  children,
+}: VersionHistoryPopoverProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -28,8 +31,12 @@ export function VersionHistoryPopover({ version, children }: VersionHistoryPopov
           <div className="border-b border-border bg-muted/30 p-4">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 space-y-1">
-                <h4 className="font-semibold leading-tight">Version {version.version}</h4>
-                <p className="text-sm text-muted-foreground">{version.fileName}</p>
+                <h4 className="font-semibold leading-tight">
+                  Version {version.version}
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  {version.fileName}
+                </p>
               </div>
               <FileText className="size-5 text-muted-foreground" />
             </div>
@@ -52,7 +59,9 @@ export function VersionHistoryPopover({ version, children }: VersionHistoryPopov
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   Change Description
                 </p>
-                <p className="text-sm leading-relaxed">{version.changeDescription}</p>
+                <p className="text-sm leading-relaxed">
+                  {version.changeDescription}
+                </p>
               </div>
             )}
           </div>
