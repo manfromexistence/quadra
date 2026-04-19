@@ -22,7 +22,7 @@
     "smoke:auth-edms": "bun run ./scripts/smoke-auth-edms.ts",
     "check:turso:auth": "powershell -ExecutionPolicy Bypass -File ./scripts/check-turso-auth.ps1",
     "typecheck": "tsc --noEmit",
-    "test": "find src -name '*.test.ts' -o -name '*.spec.ts' | grep -q . && bun test --exit src || echo 'No tests yet'",
+    "test": "bun test src",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"

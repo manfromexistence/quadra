@@ -23,6 +23,7 @@ import { ScrollableContent } from "@/components/scrollable-content";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { HydrateClient } from "@/trpc/server";
+import { PrintButton } from "@/components/edms/print-button";
 
 export const metadata: Metadata = {
   title: "Audit Trail | Quadra EDMS",
@@ -240,7 +241,7 @@ export default async function AuditPage({
             </div>
           </CollapsibleSummary>
 
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between print:hidden">
             <div className="max-w-3xl space-y-3">
               <div className="space-y-2">
                 <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
@@ -254,6 +255,7 @@ export default async function AuditPage({
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
+              <PrintButton label="Export to PDF" variant="secondary" />
               <Button variant="outline" asChild>
                 <Link href="/workflows">
                   Workflow queue
