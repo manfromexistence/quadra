@@ -22,14 +22,7 @@ export async function getRequiredDashboardSessionUser(): Promise<DashboardSessio
       headers: await headers(),
     });
 
-    console.log("[EDMS Session] Session check:", { 
-      hasSession: !!session, 
-      hasUser: !!session?.user, 
-      userId: session?.user?.id 
-    });
-
     if (!session?.user?.id) {
-      console.log("[EDMS Session] No session found, redirecting to /login");
       redirect("/login");
     }
 
@@ -47,12 +40,6 @@ export async function getRequiredDashboardSessionUser(): Promise<DashboardSessio
       .limit(1);
 
     const [user] = userRows;
-
-    console.log("[EDMS Session] User from DB:", { 
-      found: !!user, 
-      id: user?.id,
-      role: user?.role 
-    });
 
     const role = typeof user?.role === "string" && user.role.length > 0 ? user.role : "user";
     const organization =
@@ -79,7 +66,6 @@ export async function getRequiredDashboardSessionUser(): Promise<DashboardSessio
       organization,
     };
   } catch (error) {
-    console.error("[EDMS Session] Error:", error);
     redirect("/login");
   }
 }

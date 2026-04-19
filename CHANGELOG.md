@@ -13,7 +13,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Replaced hardcoded SVG icon with BrandLogo component in EdmsDashboardSidebar header (note: EdmsDashboardSidebar is not currently active; the main Sidebar component already uses BrandLogo correctly)
 - Fixed ChunkLoadError in GlobalSheetsProvider by adding loading fallback to dynamic import
 - Fixed theme preset helper to import from correct presets file (was importing from old theme-presets.ts instead of new presets.ts with Quadra theme)
-- Fixed BrandLogo component rendering issues by adding explicit style prop, inline-block display, and unoptimized flag for Next.js 16.3 compatibility
+- Fixed BrandLogo component to use native img tags with eager loading and object-contain for better compatibility with Next.js 16.3
+- Added explicit favicon link tags in layout head section for better browser compatibility
+- Removed all console.log statements from EDMS session management (cleaner development logs)
 
 ### Changed
 

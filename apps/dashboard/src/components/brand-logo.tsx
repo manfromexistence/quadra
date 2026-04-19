@@ -1,5 +1,4 @@
 import { cn } from "@midday/ui/cn";
-import Image from "next/image";
 
 interface BrandLogoProps {
   size?: number;
@@ -10,29 +9,31 @@ interface BrandLogoProps {
 export function BrandLogo({
   size = 36,
   className,
-  priority = false,
 }: BrandLogoProps) {
   return (
-    <span className={cn("relative inline-block shrink-0", className)}>
-      <Image
+    <span 
+      className={cn("relative inline-block shrink-0", className)} 
+      style={{ width: size, height: size }}
+    >
+      {/* Light mode logo */}
+      <img
         src="/logo-dark.png"
-        alt="Quadra"
+        alt=""
         width={size}
         height={size}
-        priority={priority}
-        className="dark:hidden"
-        style={{ width: size, height: size }}
-        unoptimized
+        className="dark:hidden object-contain"
+        style={{ width: size, height: size, display: 'block' }}
+        loading="eager"
       />
-      <Image
+      {/* Dark mode logo */}
+      <img
         src="/logo-light.png"
-        alt="Quadra"
+        alt=""
         width={size}
         height={size}
-        priority={priority}
-        className="hidden dark:block"
-        style={{ width: size, height: size }}
-        unoptimized
+        className="hidden dark:block object-contain"
+        style={{ width: size, height: size, display: 'block' }}
+        loading="eager"
       />
     </span>
   );
