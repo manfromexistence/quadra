@@ -3,10 +3,10 @@ import { OverviewView } from "@/components/widgets";
 import { HydrateClient } from "@/trpc/server";
 
 export const metadata: Metadata = {
-  title: "Overview | Quadra EDMS",
+  title: "Dashboard | Quadra EDMS",
 };
 
-export default function Overview() {
+export default function Dashboard() {
   // Skip server-side prefetch to avoid hydration errors
   // The client will fetch the data on mount
 

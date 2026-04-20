@@ -96,4 +96,6 @@ Awesome! Now in our app's dashboard project please fix this problems:
 At the transmitter dashboard page, at new transmitter, between the format and other data table cell in the live preview, please put a border or a column data table border there. In the transmitter page add proper transmitter. The UI is looking good so just remove that dialog or sheet proper of the live transmitter and just use the link of the transmitter new page in there. 
 And the project description document creation is not working in our app dashboard so please fix it correctly. If they are anyhow using fake data, please just remove that fake data and make sure that when there is no data we handle things correctly instead of showing an error. Please fix this too. 
 
+
+
 Please lint and format all files and folder in the apps/dashbnoard correctly - and check for errors - in lowend device way and fix all errors

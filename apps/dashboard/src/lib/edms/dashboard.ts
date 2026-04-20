@@ -471,7 +471,67 @@ export async function getEdmsDashboardData(
     };
   } catch (error) {
     console.error("Error fetching EDMS dashboard data:", error);
-    throw error;
+    return {
+      user: {
+        id: sessionUser.id,
+        name: sessionUser.name,
+        email: sessionUser.email,
+        image: sessionUser.image,
+        role: sessionUser.role,
+        organization: sessionUser.organization,
+      },
+      metrics: [
+        {
+          label: "Active projects",
+          value: "0",
+          description:
+            "Projects currently being coordinated through the EDMS workspace.",
+          tone: "amber",
+          icon: "projects",
+        },
+        {
+          label: "Controlled documents",
+          value: "0",
+          description:
+            "Latest drawing, specification, and report revisions available to the team.",
+          tone: "blue",
+          icon: "documents",
+        },
+        {
+          label: "Pending reviews",
+          value: "0",
+          description:
+            "Workflow steps waiting on PMC, client, or vendor action.",
+          tone: "emerald",
+          icon: "reviews",
+        },
+        {
+          label: "Open transmittals",
+          value: "0",
+          description:
+            "Draft and sent packages still moving across project parties.",
+          tone: "rose",
+          icon: "transmittals",
+        },
+        {
+          label: "Unread alerts",
+          value: "0",
+          description:
+            "Recent delivery, review, and approval notices still awaiting attention.",
+          tone: "slate",
+          icon: "notifications",
+        },
+      ],
+      projects: [],
+      documents: [],
+      workflowQueue: [],
+      transmittals: [],
+      notifications: [],
+      activity: [],
+      isUsingFallbackData: true,
+      statusMessage:
+        "Unable to load data. Please check your connection and try again.",
+    };
   }
 }
 

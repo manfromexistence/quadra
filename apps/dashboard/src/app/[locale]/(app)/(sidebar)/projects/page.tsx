@@ -105,7 +105,7 @@ export default async function ProjectsPage() {
               </Button>
               <Button variant="outline" asChild>
                 <Link href="/">
-                  Return to overview
+                  Return to dashboard
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
