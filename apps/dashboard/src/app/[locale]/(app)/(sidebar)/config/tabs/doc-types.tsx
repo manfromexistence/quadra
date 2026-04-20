@@ -11,7 +11,7 @@ import {
 } from "@midday/ui/table";
 import { FileText, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { deleteDocumentType } from "@/actions/project-config";
 import { DocumentTypeModal } from "@/components/modals/document-type-modal";
 
@@ -25,7 +25,46 @@ interface ConfigDocTypesProps {
   }>;
 }
 
-export function ConfigDocTypes({
+const DocumentTypeRow = memo(
+  ({
+    docType,
+    onEdit,
+    onDelete,
+  }: {
+    docType: ConfigDocTypesProps["documentTypes"][0];
+    onEdit: (docType: ConfigDocTypesProps["documentTypes"][0]) => void;
+    onDelete: (id: string) => void;
+  }) => (
+    <TableRow>
+      <TableCell>
+        <span className="font-mono text-sm font-medium">{docType.code}</span>
+      </TableCell>
+      <TableCell>{docType.name}</TableCell>
+      <TableCell className="font-mono text-xs text-muted-foreground">
+        {docType.docCount} docs
+      </TableCell>
+      <TableCell>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={() => onEdit(docType)}>
+            Edit
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onDelete(docType.id)}
+            className="text-destructive hover:text-destructive"
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </div>
+      </TableCell>
+    </TableRow>
+  ),
+);
+
+DocumentTypeRow.displayName = "DocumentTypeRow";
+
+export const ConfigDocTypes = memo(function ConfigDocTypes({
   projectId,
   documentTypes,
 }: ConfigDocTypesProps) {
@@ -35,26 +74,34 @@ export function ConfigDocTypes({
     (typeof documentTypes)[0] | undefined
   >();
 
-  function openAddModal() {
+  const openAddModal = useCallback(() => {
     setEditingDocType(undefined);
     setIsModalOpen(true);
-  }
+  }, []);
 
-  function openEditModal(docType: (typeof documentTypes)[0]) {
+  const openEditModal = useCallback((docType: (typeof documentTypes)[0]) => {
     setEditingDocType(docType);
     setIsModalOpen(true);
-  }
+  }, []);
 
-  async function handleDelete(id: string) {
-    if (confirm("Are you sure you want to delete this document type?")) {
-      try {
-        await deleteDocumentType(id);
-        router.refresh();
-      } catch (error) {
-        console.error("Error deleting document type:", error);
+  const handleDelete = useCallback(
+    async (id: string) => {
+      if (confirm("Are you sure you want to delete this document type?")) {
+        try {
+          await deleteDocumentType(id);
+          router.refresh();
+        } catch (error) {
+          console.error("Error deleting document type:", error);
+        }
       }
-    }
-  }
+    },
+    [router],
+  );
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
+
   return (
     <>
       <div className="space-y-6">
@@ -98,36 +145,12 @@ export function ConfigDocTypes({
               </TableHeader>
               <TableBody>
                 {documentTypes.map((docType) => (
-                  <TableRow key={docType.id}>
-                    <TableCell>
-                      <span className="font-mono text-sm font-medium">
-                        {docType.code}
-                      </span>
-                    </TableCell>
-                    <TableCell>{docType.name}</TableCell>
-                    <TableCell className="font-mono text-xs text-muted-foreground">
-                      {docType.docCount} docs
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openEditModal(docType)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(docType.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="size-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  <DocumentTypeRow
+                    key={docType.id}
+                    docType={docType}
+                    onEdit={openEditModal}
+                    onDelete={handleDelete}
+                  />
                 ))}
               </TableBody>
             </Table>
@@ -137,10 +160,10 @@ export function ConfigDocTypes({
 
       <DocumentTypeModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={closeModal}
         projectId={projectId}
         documentType={editingDocType}
       />
     </>
   );
-}
+});

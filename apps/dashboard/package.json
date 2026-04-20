@@ -22,6 +22,7 @@
     "smoke:auth-edms": "bun run ./scripts/smoke-auth-edms.ts",
     "check:turso:auth": "powershell -ExecutionPolicy Bypass -File ./scripts/check-turso-auth.ps1",
     "typecheck": "tsc --noEmit",
+    "typecheck:lowend": "echo 'Skipping typecheck on low-end device. Use lint for basic checks.' && bun run lint",
     "test": "bun test src",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",

@@ -11,7 +11,7 @@ import {
   stakeholders,
   workflowStepTemplates,
 } from "@/db/schema";
-import { requireActionSessionUser } from "@/lib/edms/session";
+import { requireActionSessionUser } from "./_edms";
 
 // Get project configuration
 export async function getProjectConfig(projectId: string) {

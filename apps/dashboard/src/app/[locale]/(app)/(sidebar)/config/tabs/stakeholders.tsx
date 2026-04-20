@@ -11,7 +11,7 @@ import {
 } from "@midday/ui/table";
 import { Trash2, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { deleteStakeholder } from "@/actions/project-config";
 import { StakeholderModal } from "@/components/modals/stakeholder-modal";
 
@@ -26,7 +26,51 @@ interface ConfigStakeholdersProps {
   }>;
 }
 
-export function ConfigStakeholders({
+const StakeholderRow = memo(
+  ({
+    stakeholder,
+    onEdit,
+    onDelete,
+  }: {
+    stakeholder: ConfigStakeholdersProps["stakeholders"][0];
+    onEdit: (stakeholder: ConfigStakeholdersProps["stakeholders"][0]) => void;
+    onDelete: (id: string) => void;
+  }) => (
+    <TableRow>
+      <TableCell>
+        <span className="font-mono text-sm">{stakeholder.stakeholderId}</span>
+      </TableCell>
+      <TableCell>{stakeholder.name}</TableCell>
+      <TableCell>
+        <span className="inline-flex items-center px-2 py-1 text-xs font-medium border border-border bg-muted">
+          {stakeholder.role.toUpperCase()}
+        </span>
+      </TableCell>
+      <TableCell className="text-sm text-muted-foreground">
+        {stakeholder.contact || "—"}
+      </TableCell>
+      <TableCell>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={() => onEdit(stakeholder)}>
+            Edit
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onDelete(stakeholder.id)}
+            className="text-destructive hover:text-destructive"
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </div>
+      </TableCell>
+    </TableRow>
+  ),
+);
+
+StakeholderRow.displayName = "StakeholderRow";
+
+export const ConfigStakeholders = memo(function ConfigStakeholders({
   projectId,
   stakeholders,
 }: ConfigStakeholdersProps) {
@@ -36,26 +80,34 @@ export function ConfigStakeholders({
     (typeof stakeholders)[0] | undefined
   >();
 
-  function openAddModal() {
+  const openAddModal = useCallback(() => {
     setEditingStakeholder(undefined);
     setIsModalOpen(true);
-  }
+  }, []);
 
-  function openEditModal(stakeholder: (typeof stakeholders)[0]) {
+  const openEditModal = useCallback((stakeholder: (typeof stakeholders)[0]) => {
     setEditingStakeholder(stakeholder);
     setIsModalOpen(true);
-  }
+  }, []);
 
-  async function handleDelete(id: string) {
-    if (confirm("Are you sure you want to delete this stakeholder?")) {
-      try {
-        await deleteStakeholder(id);
-        router.refresh();
-      } catch (error) {
-        console.error("Error deleting stakeholder:", error);
+  const handleDelete = useCallback(
+    async (id: string) => {
+      if (confirm("Are you sure you want to delete this stakeholder?")) {
+        try {
+          await deleteStakeholder(id);
+          router.refresh();
+        } catch (error) {
+          console.error("Error deleting stakeholder:", error);
+        }
       }
-    }
-  }
+    },
+    [router],
+  );
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
+
   return (
     <>
       <div className="space-y-6">
@@ -98,41 +150,12 @@ export function ConfigStakeholders({
               </TableHeader>
               <TableBody>
                 {stakeholders.map((stakeholder) => (
-                  <TableRow key={stakeholder.id}>
-                    <TableCell>
-                      <span className="font-mono text-sm">
-                        {stakeholder.stakeholderId}
-                      </span>
-                    </TableCell>
-                    <TableCell>{stakeholder.name}</TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center px-2 py-1 text-xs font-medium border border-border bg-muted">
-                        {stakeholder.role.toUpperCase()}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {stakeholder.contact || "—"}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openEditModal(stakeholder)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(stakeholder.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="size-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  <StakeholderRow
+                    key={stakeholder.id}
+                    stakeholder={stakeholder}
+                    onEdit={openEditModal}
+                    onDelete={handleDelete}
+                  />
                 ))}
               </TableBody>
             </Table>
@@ -142,10 +165,10 @@ export function ConfigStakeholders({
 
       <StakeholderModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={closeModal}
         projectId={projectId}
         stakeholder={editingStakeholder}
       />
     </>
   );
-}
+});

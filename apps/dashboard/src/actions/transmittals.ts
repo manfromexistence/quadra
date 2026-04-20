@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { transmittalDocuments, transmittals } from "@/db/schema";
 import { canManageEdmsContent } from "@/lib/edms/rbac";
-import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
+import { requireActionSessionUser } from "./_edms";
 
 interface CreateTransmittalData {
   transmittalNumber: string;
@@ -21,7 +21,7 @@ interface CreateTransmittalData {
 }
 
 export async function createTransmittal(data: CreateTransmittalData) {
-  const sessionUser = await getRequiredDashboardSessionUser();
+  const sessionUser = await requireActionSessionUser();
 
   if (!canManageEdmsContent(sessionUser.role)) {
     throw new Error("Unauthorized");
@@ -68,7 +68,7 @@ interface AcknowledgeTransmittalData {
 }
 
 export async function acknowledgeTransmittal(data: AcknowledgeTransmittalData) {
-  const sessionUser = await getRequiredDashboardSessionUser();
+  const sessionUser = await requireActionSessionUser();
 
   if (!canManageEdmsContent(sessionUser.role)) {
     return {
@@ -111,7 +111,7 @@ interface ReviewTransmittalData {
 }
 
 export async function reviewTransmittal(data: ReviewTransmittalData) {
-  const sessionUser = await getRequiredDashboardSessionUser();
+  const sessionUser = await requireActionSessionUser();
 
   if (!canManageEdmsContent(sessionUser.role)) {
     return {
