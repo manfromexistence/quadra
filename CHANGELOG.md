@@ -5,6 +5,57 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Fixed
+
+- **Project and Document Creation Issues** ✅
+  - **Project Creation**: Fixed ProjectCreateSheet component with proper form validation and error handling
+  - **Document Creation**: Fixed file upload functionality to use real file storage via ImgBB API
+  - **Image Upload**: Fixed ImageCardUpload component missing `id` variable
+  - **File Storage**: Integrated proper file upload with /api/upload/avatar endpoint
+  - **Error Handling**: Added comprehensive error messages and validation
+  - **Missing Dependencies**: All required components and actions are now properly implemented
+
+- **Environment Configuration** ✅
+  - Added IMGBB environment variable requirement for file uploads
+  - Document creation now properly uploads files before creating database records
+  - Project creation includes image upload functionality
+  - Proper error messages when storage is not configured
+
+### Removed
+
+- **All Fallback Data Removed** ✅
+  - Completely removed all fallback/sample data from EDMS system
+  - Removed fallback functions from `dashboard.ts`, `documents.ts`, `workflows.ts`, `transmittals.ts`
+  - System now only shows real database data - no mock/sample content
+  - Empty states handled gracefully when no real data exists
+  - Cleaner, more reliable data flow without fallback complexity
+
+### Fixed
+
+- **Transmittal Live Preview Table Borders** ✅
+  - Added proper cell padding (`p-2`) to all table cells in transmittal preview
+  - Fixed missing border on Format column header
+  - Improved table visual consistency with proper spacing
+
+- **Transmittal Page UI Cleanup** ✅
+  - Removed duplicate TransmittalCreateSheet dialog/sheet from transmittals page
+  - Simplified UI to use only the "New Transmittal" link to `/transmittals/new`
+  - Cleaner, more focused user experience without redundant creation options
+
+- **Document Creation Functionality** ✅
+  - Fixed document upload form to use real `createDocument` action instead of placeholder
+  - Added proper error handling with toast notifications
+  - Implemented file validation and size checking
+  - Added fallback UI when no projects are available
+  - Removed fake data dependencies and improved error states
+  - Document creation now properly integrates with database and shows success/error messages
+
+- **Error Handling Improvements** ✅
+  - Added comprehensive error handling for document creation
+  - Proper validation messages for missing required fields
+  - Graceful handling of no-projects scenario
+  - Toast notifications for better user feedback
+
 ### Changed
 
 - **Bulk Upload - Excel File Import** ✅

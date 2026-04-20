@@ -457,15 +457,14 @@ export function TransmittalFormWithPreview({
                   </div>
                   <div>
                     <Badge
-                      className={`text-[10px] font-mono ${
-                        formData.purpose === "IFR"
-                          ? "bg-amber-100 text-amber-800 border-amber-300"
-                          : formData.purpose === "IFA"
-                            ? "bg-blue-100 text-blue-800 border-blue-300"
-                            : formData.purpose === "IFC"
-                              ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                              : "bg-slate-100 text-slate-800 border-slate-300"
-                      }`}
+                      className={`text-[10px] font-mono ${formData.purpose === "IFR"
+                        ? "bg-amber-100 text-amber-800 border-amber-300"
+                        : formData.purpose === "IFA"
+                          ? "bg-blue-100 text-blue-800 border-blue-300"
+                          : formData.purpose === "IFC"
+                            ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                            : "bg-slate-100 text-slate-800 border-slate-300"
+                        }`}
                     >
                       ● {formData.purpose}
                     </Badge>
@@ -509,19 +508,19 @@ export function TransmittalFormWithPreview({
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-gray-100 border-b border-gray-300">
-                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300">
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
                             #
                           </TableHead>
-                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300">
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
                             Document Code
                           </TableHead>
-                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300">
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
                             Title
                           </TableHead>
-                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300">
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
                             Rev
                           </TableHead>
-                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900">
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
                             Format
                           </TableHead>
                         </TableRow>
@@ -532,19 +531,19 @@ export function TransmittalFormWithPreview({
                             key={doc.id}
                             className="border-b border-gray-300 last:border-b-0"
                           >
-                            <TableCell className="text-black border-r border-gray-300">
+                            <TableCell className="text-black border-r border-gray-300 p-2">
                               {index + 1}
                             </TableCell>
-                            <TableCell className="font-mono text-[11px] text-black border-r border-gray-300">
+                            <TableCell className="font-mono text-[11px] text-black border-r border-gray-300 p-2">
                               {doc.documentNumber}
                             </TableCell>
-                            <TableCell className="text-black border-r border-gray-300">
+                            <TableCell className="text-black border-r border-gray-300 p-2">
                               {doc.title}
                             </TableCell>
-                            <TableCell className="font-mono text-[11px] text-black border-r border-gray-300">
+                            <TableCell className="font-mono text-[11px] text-black border-r border-gray-300 p-2">
                               {doc.revision || "—"}
                             </TableCell>
-                            <TableCell className="font-mono text-[11px] text-black">
+                            <TableCell className="font-mono text-[11px] text-black p-2">
                               PDF
                             </TableCell>
                           </TableRow>

@@ -19,7 +19,6 @@ import { ExportButton } from "@/components/edms/export-button";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
 import { PrintButton } from "@/components/edms/print-button";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
-import { TransmittalCreateSheet } from "@/components/edms/transmittal-create-sheet";
 import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
@@ -123,16 +122,9 @@ export default async function TransmittalsPage() {
               />
               <PrintButton label="Print" variant="outline" icon="print" />
               {canManageContent ? (
-                <>
-                  <Button asChild>
-                    <Link href="/transmittals/new">New Transmittal</Link>
-                  </Button>
-                  <TransmittalCreateSheet
-                    projects={data.projects}
-                    members={data.members}
-                    documents={data.documents}
-                  />
-                </>
+                <Button asChild>
+                  <Link href="/transmittals/new">New Transmittal</Link>
+                </Button>
               ) : null}
               <Button variant="outline" asChild>
                 <Link href="/documents">

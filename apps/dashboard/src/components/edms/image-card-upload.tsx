@@ -23,6 +23,7 @@ export function ImageCardUpload({
 }: ImageCardUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const images = value || [];
+  const id = "image-card-input";
 
   const handleFileSelect = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -107,7 +108,7 @@ export function ImageCardUpload({
             variant="outline"
             size="sm"
             disabled={isUploading}
-            onClick={() => document.getElementById("image-card-input")?.click()}
+            onClick={() => document.getElementById(id)?.click()}
           >
             {isUploading ? (
               <>
@@ -125,7 +126,7 @@ export function ImageCardUpload({
       </div>
 
       <input
-        id="image-card-input"
+        id={id}
         type="file"
         accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
         multiple

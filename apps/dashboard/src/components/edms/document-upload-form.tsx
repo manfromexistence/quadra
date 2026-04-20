@@ -20,6 +20,8 @@ import { CalendarIcon, FileText, Loader2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DocumentCodeBuilder } from "./document-code-builder";
+import { createDocument } from "@/actions/documents";
+import { toast } from "@/hooks/use-toast";
 
 interface Project {
   id: string;
@@ -45,7 +47,7 @@ export function DocumentUploadForm({ projects }: DocumentUploadFormProps) {
   const [formData, setFormData] = useState({
     documentNumber: "",
     title: "",
-    projectId: projects[0]?.id || "",
+    projectId: projects.length > 0 ? projects[0].id : "",
     status: "draft",
     revision: "A",
     issueDate: new Date().toISOString().split("T")[0],
@@ -53,6 +55,28 @@ export function DocumentUploadForm({ projects }: DocumentUploadFormProps) {
   });
 
   const selectedProject = projects.find((p) => p.id === formData.projectId);
+
+  // Handle case when no projects are available
+  if (projects.length === 0) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <div className="text-center space-y-4">
+            <div className="text-muted-foreground">
+              <FileText className="size-12 mx-auto mb-4 opacity-50" />
+              <h3 className="text-lg font-medium">No Projects Available</h3>
+              <p className="text-sm">
+                You need at least one project to upload documents. Please create a project first or contact your administrator.
+              </p>
+            </div>
+            <Button variant="outline" onClick={() => router.back()}>
+              Go Back
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -65,20 +89,80 @@ export function DocumentUploadForm({ projects }: DocumentUploadFormProps) {
     e.preventDefault();
 
     if (!formData.title || !formData.documentNumber) {
-      alert("Please fill in all required fields");
+      toast({
+        title: "Missing required fields",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!file) {
+      toast({
+        title: "No file selected",
+        description: "Please select a file to upload",
+        variant: "destructive",
+      });
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // TODO: Implement actual file upload and document creation
-      // For now, just redirect back
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // First upload the file
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+
+      const uploadResponse = await fetch("/api/upload/avatar", {
+        method: "POST",
+        body: formDataUpload,
+      });
+
+      if (!uploadResponse.ok) {
+        const error = await uploadResponse.json();
+        throw new Error(error.error || "File upload failed");
+      }
+
+      const uploadData = await uploadResponse.json();
+
+      const result = await createDocument({
+        projectId: formData.projectId,
+        documentNumber: formData.documentNumber,
+        title: formData.title,
+        description: formData.description || undefined,
+        discipline: "GEN", // Default discipline
+        category: "DOC", // Default category
+        version: "1.0",
+        revision: formData.revision,
+        status: formData.status as any,
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+        fileUrl: uploadData.url,
+      });
+
+      if (!result.success) {
+        toast({
+          title: "Failed to create document",
+          description: result.error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Document created successfully",
+        description: `Document ${result.data.documentNumber} has been added to the register`,
+      });
+
       router.push("/documents");
     } catch (error) {
       console.error("Failed to create document:", error);
-      alert("Failed to create document");
+      toast({
+        title: "Failed to create document",
+        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
