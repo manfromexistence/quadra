@@ -28,10 +28,10 @@ import {
   TableHeader,
   TableRow,
 } from "@midday/ui/table";
-import { Textarea } from "@midday/ui/textarea";
-import { Loader2 } from "lucide-react";
+import { FileSpreadsheet, Loader2, Upload, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
+import * as XLSX from "xlsx";
 import { toast } from "@/hooks/use-toast";
 
 interface ParsedRow {
@@ -55,9 +55,10 @@ export function DocumentBulkImportSheet({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [csvData, setCsvData] = useState("");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [parsedRows, setParsedRows] = useState<ParsedRow[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [hideValid, setHideValid] = useState(false);
@@ -68,102 +69,152 @@ export function DocumentBulkImportSheet({
   const validStatuses = ["DRAFT", "IFR", "IFA", "IFC"];
 
   const downloadTemplate = () => {
-    const template = `Discipline,Type,Sequence,Rev,Title,Author,Status
-CIV,DWG,0100,A,Foundation Plan - Unit 300,R. Patel,DRAFT
-MEC,SPC,0030,B,Pump Specification P-201,J. Okafor,IFR
-STR,CAL,0025,0,Tank Foundation Calc T-301,M. Chen,IFC`;
+    const wb = XLSX.utils.book_new();
+    const wsData = [
+      ["Discipline", "Type", "Sequence", "Rev", "Title", "Author", "Status"],
+      ["CIV", "DWG", "0100", "A", "Foundation Plan - Unit 300", "R. Patel", "DRAFT"],
+      ["MEC", "SPC", "0030", "B", "Pump Specification P-201", "J. Okafor", "IFR"],
+      ["STR", "CAL", "0025", "0", "Tank Foundation Calc T-301", "M. Chen", "IFC"],
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-    const blob = new Blob([template], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "bulk_import_template.csv";
-    a.click();
-    URL.revokeObjectURL(url);
+    // Set column widths
+    ws["!cols"] = [
+      { wch: 12 },
+      { wch: 8 },
+      { wch: 10 },
+      { wch: 6 },
+      { wch: 40 },
+      { wch: 15 },
+      { wch: 10 },
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, "Documents");
+    XLSX.writeFile(wb, "bulk_import_template.xlsx");
   };
 
-  const parseCsv = () => {
-    if (!csvData.trim()) {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validExtensions = [".xlsx", ".xls"];
+    const fileExtension = file.name.toLowerCase().slice(file.name.lastIndexOf("."));
+
+    if (!validExtensions.includes(fileExtension)) {
       toast({
-        title: "No data",
-        description:
-          "Excel import is required; please upload the Excel template (or paste CSV preview for quick validation).",
+        title: "Invalid file type",
+        description: "Please upload an Excel file (.xlsx or .xls)",
         variant: "destructive",
       });
       return;
     }
 
-    const lines = csvData.split(/\r?\n/).filter((l) => l.trim());
-    if (lines.length < 2) {
+    setUploadedFile(file);
+  };
+
+  const removeFile = () => {
+    setUploadedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const parseExcel = async () => {
+    if (!uploadedFile) {
       toast({
-        title: "Invalid data",
-        description: "Need header + at least one row",
+        title: "No file selected",
+        description: "Please upload an Excel file first",
         variant: "destructive",
       });
       return;
     }
 
-    const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
-    const rows: ParsedRow[] = [];
+    try {
+      const arrayBuffer = await uploadedFile.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: "array" });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 }) as string[][];
 
-    for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(",").map((c) => c.trim());
-      const row: any = { rowNum: i };
+      if (jsonData.length < 2) {
+        toast({
+          title: "Invalid data",
+          description: "Excel file must contain header row and at least one data row",
+          variant: "destructive",
+        });
+        return;
+      }
 
-      headers.forEach((h, idx) => {
-        row[h] = cols[idx] || "";
+      const headers = jsonData[0].map((h) => String(h).trim().toLowerCase());
+      const rows: ParsedRow[] = [];
+
+      for (let i = 1; i < jsonData.length; i++) {
+        const cols = jsonData[i];
+        if (!cols || cols.every((c) => !c)) continue; // Skip empty rows
+
+        const row: any = { rowNum: i };
+
+        headers.forEach((h, idx) => {
+          row[h] = cols[idx] ? String(cols[idx]).trim() : "";
+        });
+
+        const errors: string[] = [];
+
+        // Validate discipline
+        if (!validDisciplines.includes(row.discipline?.toUpperCase())) {
+          errors.push(`Invalid discipline: ${row.discipline}`);
+        }
+
+        // Validate type
+        if (!validTypes.includes(row.type?.toUpperCase())) {
+          errors.push(`Invalid type: ${row.type}`);
+        }
+
+        // Validate sequence
+        if (!/^\d{4}$/.test(row.sequence)) {
+          errors.push("Sequence must be 4 digits");
+        }
+
+        // Validate status
+        if (!validStatuses.includes(row.status?.toUpperCase())) {
+          errors.push(`Invalid status: ${row.status}`);
+        }
+
+        // Validate required fields
+        if (!row.title) errors.push("Title is required");
+        if (!row.author) errors.push("Author is required");
+
+        rows.push({
+          rowNum: i,
+          discipline: row.discipline?.toUpperCase() || "",
+          type: row.type?.toUpperCase() || "",
+          sequence: row.sequence || "",
+          revision: row.rev || row.revision || "0",
+          title: row.title || "",
+          author: row.author || "",
+          status: row.status?.toUpperCase() || "",
+          errors,
+          isValid: errors.length === 0,
+        });
+      }
+
+      setParsedRows(rows);
+      setStep(3);
+
+      const validCount = rows.filter((r) => r.isValid).length;
+      const invalidCount = rows.length - validCount;
+
+      toast({
+        title: "Validation complete",
+        description: `${validCount} valid, ${invalidCount} invalid rows`,
       });
-
-      const errors: string[] = [];
-
-      // Validate discipline
-      if (!validDisciplines.includes(row.discipline?.toUpperCase())) {
-        errors.push(`Invalid discipline: ${row.discipline}`);
-      }
-
-      // Validate type
-      if (!validTypes.includes(row.type?.toUpperCase())) {
-        errors.push(`Invalid type: ${row.type}`);
-      }
-
-      // Validate sequence
-      if (!/^\d{4}$/.test(row.sequence)) {
-        errors.push("Sequence must be 4 digits");
-      }
-
-      // Validate status
-      if (!validStatuses.includes(row.status?.toUpperCase())) {
-        errors.push(`Invalid status: ${row.status}`);
-      }
-
-      // Validate required fields
-      if (!row.title) errors.push("Title is required");
-      if (!row.author) errors.push("Author is required");
-
-      rows.push({
-        rowNum: i,
-        discipline: row.discipline?.toUpperCase() || "",
-        type: row.type?.toUpperCase() || "",
-        sequence: row.sequence || "",
-        revision: row.rev || row.revision || "0",
-        title: row.title || "",
-        author: row.author || "",
-        status: row.status?.toUpperCase() || "",
-        errors,
-        isValid: errors.length === 0,
+    } catch (error) {
+      console.log({ error });
+      toast({
+        title: "Parse error",
+        description: "Failed to parse Excel file. Please check the file format.",
+        variant: "destructive",
       });
     }
-
-    setParsedRows(rows);
-    setStep(3);
-
-    const validCount = rows.filter((r) => r.isValid).length;
-    const invalidCount = rows.length - validCount;
-
-    toast({
-      title: "Validation complete",
-      description: `${validCount} valid, ${invalidCount} invalid rows`,
-    });
   };
 
   const commitImport = () => {
@@ -205,9 +256,12 @@ STR,CAL,0025,0,Tank Foundation Calc T-301,M. Chen,IFC`;
 
   const resetImport = () => {
     setStep(1);
-    setCsvData("");
+    setUploadedFile(null);
     setParsedRows([]);
     setHideValid(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const validCount = parsedRows.filter((r) => r.isValid).length;
@@ -223,8 +277,7 @@ STR,CAL,0025,0,Tank Foundation Calc T-301,M. Chen,IFC`;
         <SheetHeader className="space-y-1 px-6 pt-6">
           <SheetTitle>Bulk Document Import</SheetTitle>
           <SheetDescription>
-            Register multiple documents at once via CSV/Excel upload. Excel
-            import is required.
+            Register multiple documents at once via Excel file upload.
           </SheetDescription>
         </SheetHeader>
 
@@ -259,7 +312,7 @@ STR,CAL,0025,0,Tank Foundation Calc T-301,M. Chen,IFC`;
               </CardContent>
             </Card>
 
-            {/* Step 2: Upload (Excel import required) */}
+            {/* Step 2: Upload Excel File */}
             <Card className="rounded-lg">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-3">
@@ -267,7 +320,7 @@ STR,CAL,0025,0,Tank Foundation Calc T-301,M. Chen,IFC`;
                     2
                   </div>
                   <CardTitle className="text-base">
-                    Upload your document list (Excel import required)
+                    Upload your Excel file
                   </CardTitle>
                 </div>
               </CardHeader>
@@ -294,22 +347,55 @@ STR,CAL,0025,0,Tank Foundation Calc T-301,M. Chen,IFC`;
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="csv-data" className="text-sm font-medium">
-                    Excel import is required
-                  </label>
-                  <Textarea
-                    id="csv-data"
-                    value={csvData}
-                    onChange={(e) => setCsvData(e.target.value)}
-                    placeholder="(Optional) Paste CSV preview here for quick validation; production import must use the Excel template."
-                    className="min-h-[200px] rounded-lg font-mono text-xs"
+                  <Label htmlFor="excel-file">Upload Excel File</Label>
+                  <input
+                    ref={fileInputRef}
+                    id="excel-file"
+                    type="file"
+                    accept=".xlsx,.xls"
+                    onChange={handleFileSelect}
+                    className="hidden"
                   />
+
+                  {uploadedFile ? (
+                    <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 p-4">
+                      <FileSpreadsheet className="h-8 w-8 text-primary" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">
+                          {uploadedFile.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {(uploadedFile.size / 1024).toFixed(2)} KB
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={removeFile}
+                        className="h-8 w-8 p-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full rounded-lg border-dashed"
+                    >
+                      <Upload className="mr-2 h-4 w-4" />
+                      Choose Excel File
+                    </Button>
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    Supported formats: .xlsx, .xls
+                  </p>
                 </div>
 
                 <Button
-                  onClick={parseCsv}
-                  disabled={!csvData.trim() || !selectedProjectId}
-                  className="rounded-lg"
+                  onClick={parseExcel}
+                  disabled={!uploadedFile || !selectedProjectId}
+                  className="w-full rounded-lg"
                 >
                   Parse & Validate →
                 </Button>

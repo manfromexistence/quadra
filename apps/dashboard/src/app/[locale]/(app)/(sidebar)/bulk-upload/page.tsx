@@ -33,7 +33,7 @@ export default async function BulkUploadPage() {
                 Bulk Upload
               </h1>
               <p className="text-sm leading-6 text-muted-foreground md:text-base">
-                Upload multiple documents at once using file upload or CSV/Excel
+                Upload multiple documents at once using file upload or Excel
                 import.
               </p>
             </div>
@@ -77,23 +77,22 @@ export default async function BulkUploadPage() {
                   <FileSpreadsheet className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold">CSV/Excel Import</h3>
+                  <h3 className="text-lg font-semibold">Excel Import</h3>
                   <p className="text-sm text-muted-foreground">
-                    Import document metadata from spreadsheet
+                    Import document metadata from Excel file
                   </p>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <p className="mb-4 text-sm text-muted-foreground">
-                Download the CSV template, fill in document details, and import
-                the Excel file to create multiple document records. Excel import
-                is required.
+                Download the Excel template, fill in document details, and
+                upload the file to create multiple document records at once.
               </p>
               <DocumentBulkImportSheet projects={data.projects}>
                 <Button variant="outline" className="w-full">
                   <FileSpreadsheet className="mr-2 h-4 w-4" />
-                  Start CSV Import
+                  Start Excel Import
                 </Button>
               </DocumentBulkImportSheet>
             </CardContent>
@@ -116,9 +115,9 @@ export default async function BulkUploadPage() {
             </div>
 
             <div>
-              <h4 className="mb-2 font-medium">CSV/Excel Import</h4>
+              <h4 className="mb-2 font-medium">Excel Import</h4>
               <ul className="list-inside list-disc space-y-1 text-sm text-muted-foreground">
-                <li>Download the template to ensure correct column format</li>
+                <li>Download the Excel template to ensure correct format</li>
                 <li>
                   Required fields: Project, Discipline, Type, Sequence, Title,
                   Author
@@ -129,6 +128,7 @@ export default async function BulkUploadPage() {
                 </li>
                 <li>Preview shows validation results before importing</li>
                 <li>Only valid rows will be imported</li>
+                <li>Supported formats: .xlsx, .xls</li>
               </ul>
             </div>
 

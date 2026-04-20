@@ -5,6 +5,18 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Changed
+
+- **Bulk Upload - Excel File Import** ✅
+  - Replaced CSV paste textarea with proper Excel file upload functionality
+  - Added file input with .xlsx and .xls support
+  - Implemented real Excel parsing using `xlsx` package
+  - File selection UI with file name, size display, and remove button
+  - Template now downloads as .xlsx instead of .csv
+  - Improved validation and error handling for Excel files
+  - Updated page descriptions to reflect Excel-only import
+  - Cleaner UX with drag-and-drop style file selection button
+
 ### Fixed
 
 - **Final Comprehensive Quality Check (Round 6)** ✅
