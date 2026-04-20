@@ -8,7 +8,7 @@ import { notifications } from "@/db/schema/notifications";
 import { projectMembers, projects } from "@/db/schema/projects";
 import { documentWorkflows, workflowSteps } from "@/db/schema/workflows";
 import { getProjectAccessScope } from "./access";
-import { type DashboardMetric, getEdmsDashboardData } from "./dashboard";
+import type { DashboardMetric } from "./dashboard";
 import { formatStoredAbsoluteDate } from "./dates";
 import type { DashboardSessionUser } from "./session";
 
@@ -277,6 +277,10 @@ export async function getWorkflowManagementData(
       isUsingFallbackData: false,
       statusMessage: null,
     };
+  } catch (error) {
+    console.error("Error fetching workflow dashboard data:", error);
+    throw error;
+  }
 }
 
 function formatCount(value: number | string | null | undefined) {

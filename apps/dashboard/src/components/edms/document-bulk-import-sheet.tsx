@@ -72,9 +72,33 @@ export function DocumentBulkImportSheet({
     const wb = XLSX.utils.book_new();
     const wsData = [
       ["Discipline", "Type", "Sequence", "Rev", "Title", "Author", "Status"],
-      ["CIV", "DWG", "0100", "A", "Foundation Plan - Unit 300", "R. Patel", "DRAFT"],
-      ["MEC", "SPC", "0030", "B", "Pump Specification P-201", "J. Okafor", "IFR"],
-      ["STR", "CAL", "0025", "0", "Tank Foundation Calc T-301", "M. Chen", "IFC"],
+      [
+        "CIV",
+        "DWG",
+        "0100",
+        "A",
+        "Foundation Plan - Unit 300",
+        "R. Patel",
+        "DRAFT",
+      ],
+      [
+        "MEC",
+        "SPC",
+        "0030",
+        "B",
+        "Pump Specification P-201",
+        "J. Okafor",
+        "IFR",
+      ],
+      [
+        "STR",
+        "CAL",
+        "0025",
+        "0",
+        "Tank Foundation Calc T-301",
+        "M. Chen",
+        "IFC",
+      ],
     ];
     const ws = XLSX.utils.aoa_to_sheet(wsData);
 
@@ -98,7 +122,9 @@ export function DocumentBulkImportSheet({
     if (!file) return;
 
     const validExtensions = [".xlsx", ".xls"];
-    const fileExtension = file.name.toLowerCase().slice(file.name.lastIndexOf("."));
+    const fileExtension = file.name
+      .toLowerCase()
+      .slice(file.name.lastIndexOf("."));
 
     if (!validExtensions.includes(fileExtension)) {
       toast({
@@ -133,12 +159,15 @@ export function DocumentBulkImportSheet({
       const arrayBuffer = await uploadedFile.arrayBuffer();
       const workbook = XLSX.read(arrayBuffer, { type: "array" });
       const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 }) as string[][];
+      const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
+        header: 1,
+      }) as string[][];
 
       if (jsonData.length < 2) {
         toast({
           title: "Invalid data",
-          description: "Excel file must contain header row and at least one data row",
+          description:
+            "Excel file must contain header row and at least one data row",
           variant: "destructive",
         });
         return;
@@ -211,7 +240,8 @@ export function DocumentBulkImportSheet({
       console.log({ error });
       toast({
         title: "Parse error",
-        description: "Failed to parse Excel file. Please check the file format.",
+        description:
+          "Failed to parse Excel file. Please check the file format.",
         variant: "destructive",
       });
     }

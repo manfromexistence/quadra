@@ -6,11 +6,7 @@ import { documents } from "@/db/schema/documents";
 import { projects } from "@/db/schema/projects";
 import { expandStorageUrl } from "@/lib/storage-utils";
 import { getProjectAccessScope } from "./access";
-import {
-  type DashboardDocument,
-  type DashboardMetric,
-  getEdmsDashboardData,
-} from "./dashboard";
+import type { DashboardDocument, DashboardMetric } from "./dashboard";
 import { formatStoredAbsoluteDate } from "./dates";
 import type { DashboardSessionUser } from "./session";
 
@@ -100,10 +96,7 @@ export async function getDocumentControlData(
           .select({ value: count() })
           .from(documents)
           .where(
-            and(
-              eq(documents.status, "under_review"),
-              scopedDocumentCondition,
-            ),
+            and(eq(documents.status, "under_review"), scopedDocumentCondition),
           ),
     scopedDocumentCondition === null
       ? Promise.resolve([{ value: 0 }])
@@ -153,9 +146,7 @@ export async function getDocumentControlData(
       : db
           .select({ discipline: documents.discipline })
           .from(documents)
-          .where(
-            and(ilike(documents.discipline, `%`), scopedDocumentCondition),
-          )
+          .where(and(ilike(documents.discipline, `%`), scopedDocumentCondition))
           .orderBy(documents.discipline),
     scopedDocumentCondition === null
       ? Promise.resolve([])

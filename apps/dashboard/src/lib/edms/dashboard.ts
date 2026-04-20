@@ -469,6 +469,10 @@ export async function getEdmsDashboardData(
       isUsingFallbackData: false,
       statusMessage: null,
     };
+  } catch (error) {
+    console.error("Error fetching EDMS dashboard data:", error);
+    throw error;
+  }
 }
 
 function formatCount(value: number | string | null | undefined) {

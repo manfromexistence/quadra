@@ -8,7 +8,7 @@ import { notifications } from "@/db/schema/notifications";
 import { projectMembers, projects } from "@/db/schema/projects";
 import { transmittalDocuments, transmittals } from "@/db/schema/transmittals";
 import { getProjectAccessScope } from "./access";
-import { type DashboardMetric, getEdmsDashboardData } from "./dashboard";
+import type { DashboardMetric } from "./dashboard";
 import { formatStoredAbsoluteDate } from "./dates";
 import type { DashboardSessionUser } from "./session";
 
@@ -306,6 +306,10 @@ export async function getTransmittalManagementData(
       isUsingFallbackData: false,
       statusMessage: null,
     };
+  } catch (error) {
+    console.error("Error fetching transmittal dashboard data:", error);
+    throw error;
+  }
 }
 
 function parseRecipients(value: string) {

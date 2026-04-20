@@ -457,14 +457,15 @@ export function TransmittalFormWithPreview({
                   </div>
                   <div>
                     <Badge
-                      className={`text-[10px] font-mono ${formData.purpose === "IFR"
-                        ? "bg-amber-100 text-amber-800 border-amber-300"
-                        : formData.purpose === "IFA"
-                          ? "bg-blue-100 text-blue-800 border-blue-300"
-                          : formData.purpose === "IFC"
-                            ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                            : "bg-slate-100 text-slate-800 border-slate-300"
-                        }`}
+                      className={`text-[10px] font-mono ${
+                        formData.purpose === "IFR"
+                          ? "bg-amber-100 text-amber-800 border-amber-300"
+                          : formData.purpose === "IFA"
+                            ? "bg-blue-100 text-blue-800 border-blue-300"
+                            : formData.purpose === "IFC"
+                              ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                              : "bg-slate-100 text-slate-800 border-slate-300"
+                      }`}
                     >
                       ● {formData.purpose}
                     </Badge>

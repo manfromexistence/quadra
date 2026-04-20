@@ -19,9 +19,9 @@ import { format } from "date-fns";
 import { CalendarIcon, FileText, Loader2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { DocumentCodeBuilder } from "./document-code-builder";
 import { createDocument } from "@/actions/documents";
 import { toast } from "@/hooks/use-toast";
+import { DocumentCodeBuilder } from "./document-code-builder";
 
 interface Project {
   id: string;
@@ -66,7 +66,8 @@ export function DocumentUploadForm({ projects }: DocumentUploadFormProps) {
               <FileText className="size-12 mx-auto mb-4 opacity-50" />
               <h3 className="text-lg font-medium">No Projects Available</h3>
               <p className="text-sm">
-                You need at least one project to upload documents. Please create a project first or contact your administrator.
+                You need at least one project to upload documents. Please create
+                a project first or contact your administrator.
               </p>
             </div>
             <Button variant="outline" onClick={() => router.back()}>
@@ -160,7 +161,10 @@ export function DocumentUploadForm({ projects }: DocumentUploadFormProps) {
       console.error("Failed to create document:", error);
       toast({
         title: "Failed to create document",
-        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {

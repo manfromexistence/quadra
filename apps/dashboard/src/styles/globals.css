@@ -29,12 +29,6 @@ body {
   border-color: transparent;
 }
 
-.skeleton-circle > *,
-.skeleton-box > *,
-.skeleton-line > * {
-  opacity: 0;
-}
-
 .pin-field-container {
   display: grid;
   grid-auto-columns: max-content;
@@ -268,17 +262,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   border-top: 1px;
 }
 
-.hide-scrollbar,
-.hide-scrollbar * {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.hide-scrollbar::-webkit-scrollbar,
-.hide-scrollbar *::-webkit-scrollbar {
-  display: none;
-}
-
 /* Print Styles */
 @media print {
   /* Hide navigation, headers, and UI elements */
@@ -380,4 +363,23 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   a[href^="javascript:"]:after {
     content: "";
   }
+}
+
+/* Utility styles - placed after print styles to maintain proper specificity */
+.hide-scrollbar,
+.hide-scrollbar * {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar,
+.hide-scrollbar *::-webkit-scrollbar {
+  display: none;
+}
+
+/* Skeleton styles */
+.skeleton-circle > *,
+.skeleton-box > *,
+.skeleton-line > * {
+  opacity: 0;
 }
