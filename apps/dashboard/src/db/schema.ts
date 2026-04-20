@@ -264,6 +264,7 @@ export * from "./schema/edms-file-assets";
 export * from "./schema/incoming-transmittals";
 export * from "./schema/midday";
 export * from "./schema/notifications";
+export * from "./schema/project-config";
 export * from "./schema/projects";
 export * from "./schema/queries";
 export * from "./schema/schedule";

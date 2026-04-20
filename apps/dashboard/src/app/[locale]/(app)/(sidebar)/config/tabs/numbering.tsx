@@ -1,3 +1,6 @@
+"use client";
+
+import { Button } from "@midday/ui/button";
 import { Input } from "@midday/ui/input";
 import { Label } from "@midday/ui/label";
 import {
@@ -7,10 +10,62 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@midday/ui/select";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { updateProjectConfig } from "@/actions/project-config";
 
-export function ConfigNumbering() {
+interface ConfigNumberingProps {
+  projectId: string;
+  config: {
+    projectCode: string;
+    shortCode: string;
+    client: string | null;
+    contractor: string | null;
+    currency: string | null;
+    numberingPattern: string;
+    sequencePadding: number;
+    separator: string;
+    revisionScheme: string;
+    sequenceReset: string;
+  } | null;
+}
+
+export function ConfigNumbering({ projectId, config }: ConfigNumberingProps) {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const pattern = config?.numberingPattern ?? "PRJ-DISC-TYPE-SEQ";
+  const padding = config?.sequencePadding ?? 4;
+  const separator = config?.separator ?? "hyphen";
+  const revisionScheme = config?.revisionScheme ?? "alpha-numeric";
+  const sequenceReset = config?.sequenceReset ?? "continuous";
+
+  async function onSubmit(formData: FormData) {
+    setIsLoading(true);
+    try {
+      await updateProjectConfig({
+        projectId,
+        projectCode: config?.projectCode ?? "PRJ-001",
+        shortCode: config?.shortCode ?? "PRJ",
+        client: config?.client,
+        contractor: config?.contractor,
+        currency: config?.currency ?? "usd",
+        numberingPattern: formData.get("numberingPattern") as string,
+        sequencePadding: Number(formData.get("sequencePadding")),
+        separator: formData.get("separator") as string,
+        revisionScheme: formData.get("revisionScheme") as string,
+        sequenceReset: formData.get("sequenceReset") as string,
+      });
+      router.refresh();
+    } catch (error) {
+      console.error("Error updating numbering config:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
-    <div className="space-y-6">
+    <form action={onSubmit} className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold">Document Numbering Scheme</h3>
         <p className="text-sm text-muted-foreground mt-1">
@@ -23,9 +78,11 @@ export function ConfigNumbering() {
         <Label htmlFor="numberPattern">Number Pattern Template</Label>
         <Input
           id="numberPattern"
+          name="numberingPattern"
           className="font-mono"
-          defaultValue="PRJ-DISC-TYPE-SEQ"
+          defaultValue={pattern}
           placeholder="PRJ-DISC-TYPE-SEQ"
+          required
         />
         <p className="text-xs text-muted-foreground">
           Supported tokens: PRJ · DISC · TYPE · SEQ · REV · YEAR
@@ -54,7 +111,9 @@ export function ConfigNumbering() {
           <span className="text-muted-foreground">-</span>
           <div className="flex flex-col items-center gap-1 px-3 py-2 border border-border bg-card">
             <span className="text-xs text-muted-foreground">SEQ</span>
-            <span className="font-mono text-sm font-medium">0001</span>
+            <span className="font-mono text-sm font-medium">
+              {"0".repeat(padding - 1)}1
+            </span>
           </div>
           <span className="text-muted-foreground">/</span>
           <div className="flex flex-col items-center gap-1 px-3 py-2 border border-border bg-card">
@@ -67,7 +126,7 @@ export function ConfigNumbering() {
             Example Output
           </div>
           <div className="font-mono text-base font-semibold">
-            AHR-MEC-DWG-0001 / Rev A
+            AHR-MEC-DWG-{"0".repeat(padding - 1)}1 / Rev A
           </div>
         </div>
       </div>
@@ -75,7 +134,7 @@ export function ConfigNumbering() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="sequencePadding">Sequence Padding</Label>
-          <Select defaultValue="4">
+          <Select name="sequencePadding" defaultValue={String(padding)}>
             <SelectTrigger id="sequencePadding">
               <SelectValue />
             </SelectTrigger>
@@ -89,7 +148,7 @@ export function ConfigNumbering() {
 
         <div className="space-y-2">
           <Label htmlFor="separator">Separator</Label>
-          <Select defaultValue="hyphen">
+          <Select name="separator" defaultValue={separator}>
             <SelectTrigger id="separator">
               <SelectValue />
             </SelectTrigger>
@@ -103,7 +162,7 @@ export function ConfigNumbering() {
 
         <div className="space-y-2">
           <Label htmlFor="revisionScheme">Revision Scheme</Label>
-          <Select defaultValue="alpha-numeric">
+          <Select name="revisionScheme" defaultValue={revisionScheme}>
             <SelectTrigger id="revisionScheme">
               <SelectValue />
             </SelectTrigger>
@@ -119,7 +178,7 @@ export function ConfigNumbering() {
 
         <div className="space-y-2">
           <Label htmlFor="sequenceReset">Sequence Reset</Label>
-          <Select defaultValue="continuous">
+          <Select name="sequenceReset" defaultValue={sequenceReset}>
             <SelectTrigger id="sequenceReset">
               <SelectValue />
             </SelectTrigger>
@@ -133,6 +192,12 @@ export function ConfigNumbering() {
           </Select>
         </div>
       </div>
-    </div>
+
+      <div className="flex justify-end">
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Saving..." : "Save Numbering Settings"}
+        </Button>
+      </div>
+    </form>
   );
 }

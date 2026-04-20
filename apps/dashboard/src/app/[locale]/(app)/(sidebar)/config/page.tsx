@@ -3,9 +3,11 @@ import { Card, CardContent } from "@midday/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@midday/ui/tabs";
 import type { Metadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { getProjectConfigData } from "@/lib/edms/project-config";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { HydrateClient } from "@/trpc/server";
 import { ConfigDisciplines } from "./tabs/disciplines";
@@ -19,8 +21,24 @@ export const metadata: Metadata = {
   title: "Project Setup | Quadra EDMS",
 };
 
-export default async function ProjectSetupPage() {
+export default async function ProjectSetupPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ projectId?: string }>;
+}) {
   const sessionUser = await getRequiredDashboardSessionUser();
+  const params = await searchParams;
+
+  // For now, we'll use the first project or require projectId in query
+  // In production, you might want to have a project selector
+  const projectId = params.projectId;
+
+  if (!projectId) {
+    // Redirect to projects page to select a project
+    redirect("/projects");
+  }
+
+  const configData = await getProjectConfigData(sessionUser, projectId);
 
   return (
     <HydrateClient>
@@ -63,12 +81,27 @@ export default async function ProjectSetupPage() {
                         </TabsTrigger>
                         <TabsTrigger value="disciplines">
                           Disciplines
+                          {configData.disciplines.length > 0 && (
+                            <span className="ml-1 text-xs">
+                              ({configData.disciplines.length})
+                            </span>
+                          )}
                         </TabsTrigger>
                         <TabsTrigger value="doctypes">
                           Document Types
+                          {configData.documentTypes.length > 0 && (
+                            <span className="ml-1 text-xs">
+                              ({configData.documentTypes.length})
+                            </span>
+                          )}
                         </TabsTrigger>
                         <TabsTrigger value="stakeholders">
                           Stakeholders
+                          {configData.stakeholders.length > 0 && (
+                            <span className="ml-1 text-xs">
+                              ({configData.stakeholders.length})
+                            </span>
+                          )}
                         </TabsTrigger>
                         <TabsTrigger value="workflow">Workflow</TabsTrigger>
                       </TabsList>
@@ -76,27 +109,47 @@ export default async function ProjectSetupPage() {
 
                     <div className="p-6">
                       <TabsContent value="general" className="mt-0">
-                        <ConfigGeneral sessionUser={sessionUser} />
+                        <ConfigGeneral
+                          sessionUser={sessionUser}
+                          projectId={projectId}
+                          config={configData.config}
+                        />
                       </TabsContent>
 
                       <TabsContent value="numbering" className="mt-0">
-                        <ConfigNumbering />
+                        <ConfigNumbering
+                          projectId={projectId}
+                          config={configData.config}
+                        />
                       </TabsContent>
 
                       <TabsContent value="disciplines" className="mt-0">
-                        <ConfigDisciplines />
+                        <ConfigDisciplines
+                          projectId={projectId}
+                          disciplines={configData.disciplines}
+                        />
                       </TabsContent>
 
                       <TabsContent value="doctypes" className="mt-0">
-                        <ConfigDocTypes />
+                        <ConfigDocTypes
+                          projectId={projectId}
+                          documentTypes={configData.documentTypes}
+                        />
                       </TabsContent>
 
                       <TabsContent value="stakeholders" className="mt-0">
-                        <ConfigStakeholders />
+                        <ConfigStakeholders
+                          projectId={projectId}
+                          stakeholders={configData.stakeholders}
+                        />
                       </TabsContent>
 
                       <TabsContent value="workflow" className="mt-0">
-                        <ConfigWorkflow />
+                        <ConfigWorkflow
+                          projectId={projectId}
+                          workflowSteps={configData.workflowSteps}
+                          config={configData.config}
+                        />
                       </TabsContent>
                     </div>
                   </Tabs>
