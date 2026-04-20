@@ -86,9 +86,9 @@ export default async function BulkUploadPage() {
             </CardHeader>
             <CardContent>
               <p className="mb-4 text-sm text-muted-foreground">
-                Download the CSV template, fill in document details, and paste
-                the data to import multiple document records. Includes
-                validation and error checking.
+                Download the CSV template, fill in document details, and import
+                the Excel file to create multiple document records. Excel import
+                is required.
               </p>
               <DocumentBulkImportSheet projects={data.projects}>
                 <Button variant="outline" className="w-full">

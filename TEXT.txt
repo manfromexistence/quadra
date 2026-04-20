@@ -85,4 +85,11 @@ In our edms page like projects, document, workflow, transmittal all items are fa
 
 So in our apps dashboard project at the login screen the logo was the previous logo. Please look for the logo that we are using in our dashboard sidebar at the top and use that in our login screen too. In our login screen next to that logo there is a text.
 
+
+In our apps/dashboard project at the new tranmittal please add new format pdf column in the datatable like this image:
+
+And at bulk-upload page
+
+Here in stead of "Paste" excel import is required.
+
 Please lint and format all files and folder in the apps/dashbnoard correctly - and check for errors - in lowend device way and fix all errors

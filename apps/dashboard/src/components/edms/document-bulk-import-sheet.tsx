@@ -86,7 +86,8 @@ STR,CAL,0025,0,Tank Foundation Calc T-301,M. Chen,IFC`;
     if (!csvData.trim()) {
       toast({
         title: "No data",
-        description: "Please paste CSV data first",
+        description:
+          "Excel import is required; please upload the Excel template (or paste CSV preview for quick validation).",
         variant: "destructive",
       });
       return;
@@ -222,8 +223,8 @@ STR,CAL,0025,0,Tank Foundation Calc T-301,M. Chen,IFC`;
         <SheetHeader className="space-y-1 px-6 pt-6">
           <SheetTitle>Bulk Document Import</SheetTitle>
           <SheetDescription>
-            Register multiple documents at once via CSV/Excel upload or
-            clipboard paste
+            Register multiple documents at once via CSV/Excel upload. Excel
+            import is required.
           </SheetDescription>
         </SheetHeader>
 
@@ -258,7 +259,7 @@ STR,CAL,0025,0,Tank Foundation Calc T-301,M. Chen,IFC`;
               </CardContent>
             </Card>
 
-            {/* Step 2: Upload or Paste */}
+            {/* Step 2: Upload (Excel import required) */}
             <Card className="rounded-lg">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-3">
@@ -266,7 +267,7 @@ STR,CAL,0025,0,Tank Foundation Calc T-301,M. Chen,IFC`;
                     2
                   </div>
                   <CardTitle className="text-base">
-                    Upload or paste your document list
+                    Upload your document list (Excel import required)
                   </CardTitle>
                 </div>
               </CardHeader>
@@ -294,13 +295,13 @@ STR,CAL,0025,0,Tank Foundation Calc T-301,M. Chen,IFC`;
 
                 <div className="space-y-2">
                   <label htmlFor="csv-data" className="text-sm font-medium">
-                    Paste CSV Data
+                    Excel import is required
                   </label>
                   <Textarea
                     id="csv-data"
                     value={csvData}
                     onChange={(e) => setCsvData(e.target.value)}
-                    placeholder="Discipline,Type,Sequence,Rev,Title,Author,Status&#10;CIV,DWG,0100,A,Foundation Plan Unit 300,R. Patel,DRAFT&#10;MEC,SPC,0030,B,Pump Specification P-201,J. Okafor,IFR"
+                    placeholder="(Optional) Paste CSV preview here for quick validation; production import must use the Excel template."
                     className="min-h-[200px] rounded-lg font-mono text-xs"
                   />
                 </div>

@@ -1,3 +1,6 @@
+/* stylelint-disable no-descending-specificity */
+/* biome-disable lint/style/noDescendingSpecificity */
+
 html,
 body {
   height: 100%;
