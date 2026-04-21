@@ -1,31 +1,7 @@
-import {
-  OpenPanelComponent,
-  type TrackProperties,
-  useOpenPanel,
-} from "@openpanel/nextjs";
+const Provider = () => null;
 
-const isProd = process.env.NODE_ENV === "production";
-
-const Provider = () => (
-  <OpenPanelComponent
-    clientId={process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID!}
-    trackAttributes={true}
-    trackScreenViews={isProd}
-    trackOutgoingLinks={isProd}
-  />
-);
-
-const track = (options: { event: string } & TrackProperties) => {
-  const { track: openTrack } = useOpenPanel();
-
-  if (!isProd) {
-    console.log("Track", options);
-    return;
-  }
-
-  const { event, ...rest } = options;
-
-  openTrack(event, rest);
+const track = (options: { event: string } & Record<string, unknown>) => {
+  // OpenPanel tracking disabled
 };
 
 export { Provider, track };

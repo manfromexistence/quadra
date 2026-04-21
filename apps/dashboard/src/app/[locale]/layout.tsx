@@ -1,7 +1,6 @@
 import "@/styles/globals.css";
 import { cn } from "@midday/ui/cn";
 import "@midday/ui/globals.css";
-import { Provider as Analytics } from "@midday/events/client";
 import { createThemeInitializationScript } from "@midday/ui/theme";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -75,7 +74,6 @@ export default async function Layout({
       className={cn(isDesktop && "desktop")}
     >
       <head suppressHydrationWarning>
-        {/* @ts-expect-error - Theme script must run before hydration */}
         <script
           dangerouslySetInnerHTML={{ __html: themeScript }}
           suppressHydrationWarning
@@ -94,7 +92,6 @@ export default async function Layout({
             {children}
             <Toaster />
           </Providers>
-          <Analytics />
         </NuqsAdapter>
       </body>
     </html>
