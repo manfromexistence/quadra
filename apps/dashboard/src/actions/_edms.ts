@@ -60,7 +60,7 @@ export async function requireActionSessionUser(): Promise<DashboardSessionUser> 
     id: user.id,
     name: user.name,
     email: user.email,
-    image: user.image ?? "https://github.com/shadcn.png",
+    image: user.image ?? "",
     role: user.role ?? "user",
     organization: user.organization,
   };

@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";
@@ -52,12 +53,10 @@ export async function getRequiredDashboardSessionUser(): Promise<DashboardSessio
     //   redirect("/settings/account?onboarding=1");
     // }
 
-    // Use shadcn avatar as default if no image is set
-    const defaultAvatar = "https://github.com/shadcn.png";
     const userImage =
       typeof user?.image === "string" && user.image.length > 0
         ? user.image
-        : defaultAvatar;
+        : "";
 
     return {
       id: String(user?.id ?? session.user.id),

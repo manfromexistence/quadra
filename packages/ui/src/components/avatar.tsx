@@ -23,7 +23,7 @@ Avatar.displayName = AvatarPrimitive.Root.displayName;
 export const AvatarImageNext = React.forwardRef<
   React.ElementRef<typeof Image>,
   React.ComponentPropsWithoutRef<typeof Image>
->(({ className, onError, onLoad, ...props }, ref) => {
+>(({ className, onError, onLoad, unoptimized, ...props }, ref) => {
   const [hasError, setHasError] = React.useState(false);
 
   if (hasError || !props.src) {
@@ -40,6 +40,7 @@ export const AvatarImageNext = React.forwardRef<
       }}
       onLoad={onLoad}
       {...props}
+      unoptimized={unoptimized ?? true}
     />
   );
 });

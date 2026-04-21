@@ -1,0 +1,3 @@
+- [ ] Fix login redirect loop by replacing client-side auth gating with validated server-side session checks. `In Progress` - 2026-04-22 00:00
+- [ ] Remove GitHub avatar/logo placeholder URLs and use safe fallbacks that do not trigger image loader warnings.
+- [ ] Verify the login flow and avatar rendering with targeted checks, then mark completed items with timestamps.

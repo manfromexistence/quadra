@@ -31,7 +31,7 @@ export function OnboardingUserMenu() {
         <DropdownMenuTrigger asChild>
           <Avatar className="rounded-full w-8 h-8 cursor-pointer bg-accent overflow-hidden">
             <AvatarImageNext
-              src={user?.avatarUrl || "https://github.com/evilrabbit.png"}
+              src={user?.avatarUrl ?? ""}
               alt={user?.fullName ?? ""}
               width={32}
               height={32}

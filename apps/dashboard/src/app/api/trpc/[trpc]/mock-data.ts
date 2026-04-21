@@ -622,7 +622,7 @@ export const mockAccount = {
   id: "usr_1",
   name: "John Doe",
   email: "john@example.com",
-  avatarUrl: "https://github.com/shadcn.png",
+  avatarUrl: "",
   role: "admin",
   createdAt: "2025-01-01T00:00:00.000Z",
   preferences: {
