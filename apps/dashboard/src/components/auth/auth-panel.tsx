@@ -139,8 +139,13 @@ export function AuthPanel({
 
   const completeAuthTransition = (nextUrl: string) => {
     onSuccess?.();
-    router.push(nextUrl);
-    router.refresh();
+
+    if (typeof window !== "undefined") {
+      window.location.replace(nextUrl);
+      return;
+    }
+
+    router.replace(nextUrl);
   };
 
   const handleForgotPassword = async (

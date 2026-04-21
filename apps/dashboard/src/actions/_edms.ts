@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { getRequestAuthSession } from "@/lib/auth-server-session";
 import { canManageEdmsContent, normalizeEdmsRole } from "@/lib/edms/rbac";
 import type { DashboardSessionUser } from "@/lib/edms/session";
 import { ForbiddenError, UnauthorizedError } from "@/types/errors";
@@ -33,7 +33,7 @@ export function actionFromError(
 }
 
 export async function requireActionSessionUser(): Promise<DashboardSessionUser> {
-  const session = await auth.api.getSession();
+  const session = await getRequestAuthSession();
 
   if (!session?.user?.id) {
     throw new UnauthorizedError();

@@ -5,7 +5,7 @@ import { cache } from "react";
 import { z } from "zod";
 import { db } from "@/db";
 import { theme as themeTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { getRequestAuthSession } from "@/lib/auth-server-session";
 
 const createThemeSchema = z.object({
   name: z.string().min(1).max(50),
@@ -19,9 +19,7 @@ const updateThemeSchema = z.object({
 });
 
 async function getCurrentUserId() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getRequestAuthSession();
 
   if (!session?.user?.id) {
     throw new Error("Unauthorized");
@@ -31,7 +29,7 @@ async function getCurrentUserId() {
 }
 
 export const getThemes = cache(async () => {
-  const session = await auth.api.getSession();
+  const session = await getRequestAuthSession();
 
   if (!session) {
     return [];
@@ -84,7 +82,7 @@ export async function createTheme(input: {
 }
 
 export async function saveTheme(input: { name: string; styles: ThemeStyles }) {
-  const session = await auth.api.getSession();
+  const session = await getRequestAuthSession();
 
   if (!session) {
     throw new Error("Unauthorized");
