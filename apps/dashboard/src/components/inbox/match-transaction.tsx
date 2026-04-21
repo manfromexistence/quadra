@@ -1,6 +1,5 @@
 "use client";
 
-import { LogEvents } from "@midday/events/events";
 import { Button } from "@midday/ui/button";
 import { cn } from "@midday/ui/cn";
 import { Combobox } from "@midday/ui/combobox";
@@ -11,7 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@midday/ui/tooltip";
-import { useOpenPanel } from "@openpanel/nextjs";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
@@ -27,7 +26,7 @@ export function MatchTransaction() {
   const trpc = useTRPC();
   const { params } = useInboxParams();
   const { data: user } = useUserQuery();
-  const { track } = useOpenPanel();
+
   const queryClient = useQueryClient();
 
   const [debouncedValue, setValue] = useDebounceValue("", 200);
@@ -157,7 +156,7 @@ export function MatchTransaction() {
 
   const handleSelect = (option?: { id: string; name: string }) => {
     if (option) {
-      track(LogEvents.InboxMatched.name);
+      // OpenPanel tracking removed
       matchTransactionMutation.mutate({
         id: id!,
         transactionId: option.id,

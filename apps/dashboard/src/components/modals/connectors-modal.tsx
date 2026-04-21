@@ -2,7 +2,6 @@
 
 import { connectorApps } from "@midday/connectors";
 import type { ConnectorApp } from "@midday/connectors/types";
-import { LogEvents } from "@midday/events/events";
 import { Badge } from "@midday/ui/badge";
 import { Button } from "@midday/ui/button";
 import {
@@ -16,7 +15,7 @@ import { Icons } from "@midday/ui/icons";
 import { Input } from "@midday/ui/input";
 import { ScrollArea } from "@midday/ui/scroll-area";
 import { Skeleton } from "@midday/ui/skeleton";
-import { useOpenPanel } from "@openpanel/nextjs";
+
 import {
   useMutation,
   useQuery,
@@ -377,7 +376,7 @@ function ConnectorsContent({
 }) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { track } = useOpenPanel();
+
   const [search, setSearch] = useState("");
   const [selectedConnector, setSelectedConnector] = useState<Connector | null>(
     null,
@@ -478,7 +477,7 @@ function ConnectorsContent({
             setIsConnecting(false);
             invalidateConnectors();
             setSelectedConnector(null);
-            track(LogEvents.ConnectorConnected.name, { connector: slug });
+            // OpenPanel tracking removed
           }
         };
 
@@ -510,7 +509,7 @@ function ConnectorsContent({
 
   const handleDisconnect = useCallback(
     (connectedAccountId: string) => {
-      track(LogEvents.ConnectorDisconnected.name, { connectedAccountId });
+      // OpenPanel tracking removed
       disconnectMutation.mutate({ connectedAccountId });
     },
     [disconnectMutation, track],
@@ -518,7 +517,7 @@ function ConnectorsContent({
 
   useEffect(() => {
     if (open) {
-      track(LogEvents.ConnectorModalOpened.name);
+      // OpenPanel tracking removed
     } else {
       setSearch("");
       setSelectedConnector(null);

@@ -65,16 +65,11 @@ export const authActionClient = actionClientWithMeta
 
     const analytics = await setupAnalytics();
 
-    if (metadata?.track) {
-      analytics.track(metadata.track);
-    }
-
     return next({
       ctx: {
         supabase,
         analytics,
         user,
-        teamId: user.teamId,
       },
     });
   });

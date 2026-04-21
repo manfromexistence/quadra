@@ -1,8 +1,7 @@
 "use client";
 
-import { LogEvents } from "@midday/events/events";
 import { Table, TableBody } from "@midday/ui/table";
-import { useOpenPanel } from "@openpanel/nextjs";
+
 import { useMutation, useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useDeferredValue, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
@@ -20,7 +19,7 @@ import { EmptyState, NoResults } from "./empty-states";
 export function DataTable() {
   const trpc = useTRPC();
   const { ref, inView } = useInView();
-  const { track } = useOpenPanel();
+
   const { data: user } = useUserQuery();
   const { latestProjectId, setLatestProjectId } = useLatestProjectId(
     user?.teamId,
@@ -51,7 +50,7 @@ export function DataTable() {
   const deleteTrackerProjectMutation = useMutation(
     trpc.trackerProjects.delete.mutationOptions({
       onSuccess: (result) => {
-        track(LogEvents.TrackerProjectDeleted.name);
+        // OpenPanel tracking removed
 
         if (result && result.id === latestProjectId) {
           setLatestProjectId(null);

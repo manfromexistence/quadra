@@ -31,9 +31,7 @@ async function getCurrentUserId() {
 }
 
 export const getThemes = cache(async () => {
-  const session = await auth.api.getSession({
-    headers: new Headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) {
     return [];
@@ -86,9 +84,7 @@ export async function createTheme(input: {
 }
 
 export async function saveTheme(input: { name: string; styles: ThemeStyles }) {
-  const session = await auth.api.getSession({
-    headers: new Headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) {
     throw new Error("Unauthorized");

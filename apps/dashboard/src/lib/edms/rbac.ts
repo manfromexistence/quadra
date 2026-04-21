@@ -30,9 +30,7 @@ export async function requireEdmsRole(
   minimumRole: EdmsRole,
   options?: { redirectTo?: string },
 ): Promise<EdmsAccessUser> {
-  const session = await auth.api.getSession({
-    headers: new Headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session?.user?.id) {
     if (options?.redirectTo) {
@@ -69,6 +67,42 @@ export async function requireEdmsRole(
 
 export function canManageEdmsContent(role: string | null | undefined) {
   return ROLE_RANK[normalizeEdmsRole(role)] >= ROLE_RANK.vendor;
+}
+
+export async function getDashboardSessionUser(): Promise<DashboardSessionUser | null> {
+  const session = await auth.api.getSession();
+
+  if (!session) {
+    return null;
+  }
+
+  const user = await db
+    .select({
+      id: userTable.id,
+      name: userTable.name,
+      email: userTable.email,
+      image: userTable.image,
+      role: userTable.role,
+      organization: userTable.organization,
+    })
+    .from(userTable)
+    .where(eq(userTable.id, session.user.id))
+    .limit(1);
+
+  const [userData] = user;
+
+  if (!userData) {
+    return null;
+  }
+
+  return {
+    id: userData.id,
+    name: userData.name || "",
+    email: userData.email || "",
+    image: userData.image || "",
+    role: userData.role || "user",
+    organization: userData.organization,
+  };
 }
 
 export function hasEdmsRoleAtLeast(

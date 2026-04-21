@@ -22,7 +22,7 @@ import { Switch } from "@midday/ui/switch";
 import { ToastAction } from "@midday/ui/toast";
 import { toast } from "@midday/ui/use-toast";
 import { getTaxTypeLabel } from "@midday/utils/tax";
-import { useOpenPanel } from "@openpanel/nextjs";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, parseISO } from "date-fns";
 import { useInvalidateTransactionQueries } from "@/hooks/use-invalidate-transaction-queries";
@@ -44,7 +44,7 @@ export function TransactionDetails() {
   const trpc = useTRPC();
   const { transactionId } = useTransactionParams();
   const queryClient = useQueryClient();
-  const { track } = useOpenPanel();
+
   const invalidateTransactionQueries = useInvalidateTransactionQueries();
 
   const { updateCategory } = useUpdateTransactionCategory({
@@ -76,7 +76,7 @@ export function TransactionDetails() {
   const updateTransactionMutation = useMutation(
     trpc.transactions.update.mutationOptions({
       onSuccess: (_, variables) => {
-        track(LogEvents.TransactionUpdated.name);
+        // OpenPanel tracking removed
         if ("categorySlug" in variables) {
           track(LogEvents.TransactionCategoryChanged.name, {
             category: variables.categorySlug,

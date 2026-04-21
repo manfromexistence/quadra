@@ -1,6 +1,5 @@
 "use client";
 
-import { LogEvents } from "@midday/events/events";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,7 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@midday/ui/alert-dialog";
-import { useOpenPanel } from "@openpanel/nextjs";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -36,7 +35,7 @@ export function DeleteInboxDialog({
 }: Props) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { track } = useOpenPanel();
+
   const router = useRouter();
   const { setParams, params } = useInboxParams();
   const { params: filter } = useInboxFilterParams();
@@ -165,7 +164,7 @@ export function DeleteInboxDialog({
   );
 
   const handleDelete = () => {
-    track(LogEvents.InboxItemDeleted.name);
+    // OpenPanel tracking removed
     deleteInboxMutation.mutate({ id });
   };
 

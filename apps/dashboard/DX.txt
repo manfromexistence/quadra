@@ -46,4 +46,6 @@ Now please use proper state handling so our website is as fast and not reloads a
 
 Do the latest Web Search about TableCN, and please use that TableCN table in all of our admin dashboard tables.
 
+And the website is not loading and showing error page so pelase fix it
+
 Awesome now please fix all of those pages and do lint and fix all the errors and warnings!!!

@@ -15,9 +15,7 @@ export interface DashboardSessionUser {
 
 export async function getRequiredDashboardSessionUser(): Promise<DashboardSessionUser> {
   try {
-    const session = await auth.api.getSession({
-      headers: new Headers(),
-    });
+    const session = await auth.api.getSession();
 
     if (!session?.user?.id) {
       redirect("/login");

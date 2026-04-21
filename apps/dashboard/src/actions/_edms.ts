@@ -33,9 +33,7 @@ export function actionFromError(
 }
 
 export async function requireActionSessionUser(): Promise<DashboardSessionUser> {
-  const session = await auth.api.getSession({
-    headers: new Headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session?.user?.id) {
     throw new UnauthorizedError();

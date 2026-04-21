@@ -1,9 +1,8 @@
 "use client";
 
 import { closestCenter, DndContext } from "@dnd-kit/core";
-import { LogEvents } from "@midday/events/events";
 import { Table, TableBody, TableCell, TableRow } from "@midday/ui/table";
-import { useOpenPanel } from "@openpanel/nextjs";
+
 import { useMutation, useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
@@ -45,7 +44,7 @@ type Props = {
 
 export function DataTable({ initialSettings }: Props) {
   const trpc = useTRPC();
-  const { track } = useOpenPanel();
+
   const { data: user } = useUserQuery();
   const { setParams } = useCustomerParams();
   const { filter, hasFilters } = useCustomerFilterParams();
@@ -89,7 +88,7 @@ export function DataTable({ initialSettings }: Props) {
   const deleteCustomerMutation = useMutation(
     trpc.customers.delete.mutationOptions({
       onSuccess: () => {
-        track(LogEvents.CustomerDeleted.name);
+        // OpenPanel tracking removed
         refetch();
       },
     }),
@@ -98,7 +97,7 @@ export function DataTable({ initialSettings }: Props) {
   const enrichCustomerMutation = useMutation(
     trpc.customers.enrich.mutationOptions({
       onSuccess: () => {
-        track(LogEvents.CustomerEnriched.name);
+        // OpenPanel tracking removed
         refetch();
       },
     }),

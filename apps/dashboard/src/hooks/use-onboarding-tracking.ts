@@ -46,7 +46,7 @@ export function useOnboardingTracking(step: number) {
 
   const trackEvent = useCallback(
     (event: EventConfig, props?: Record<string, unknown>) => {
-      track({ event: event.name, channel: event.channel, ...props });
+      // OpenPanel tracking removed
     },
     [],
   );

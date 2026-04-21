@@ -1,6 +1,5 @@
 "use client";
 
-import { LogEvents } from "@midday/events/events";
 import { Icons } from "@midday/ui/icons";
 import {
   Tooltip,
@@ -10,7 +9,7 @@ import {
 } from "@midday/ui/tooltip";
 import { useToast } from "@midday/ui/use-toast";
 import NumberFlow from "@number-flow/react";
-import { useOpenPanel } from "@openpanel/nextjs";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useRef } from "react";
 import { useGlobalTimerStatus } from "@/hooks/use-global-timer-status";
@@ -35,7 +34,7 @@ export function TrackerTimer({
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const { track } = useOpenPanel();
+
   const setTimerStatus = useTimerStore((state) => state.setTimerStatus);
 
   // Use global timer status to avoid duplicate intervals
@@ -212,7 +211,7 @@ export function TrackerTimer({
   const handleButtonClick = useCallback(() => {
     if (isThisProjectRunning) {
       justStoppedRef.current = true;
-      track(LogEvents.TrackerStopped.name, { projectId });
+      // OpenPanel tracking removed
       stopTimerMutation.mutate({});
       setTimeout(() => {
         justStoppedRef.current = false;
@@ -232,7 +231,7 @@ export function TrackerTimer({
       return;
     }
 
-    track(LogEvents.TrackerStarted.name, { projectId });
+    // OpenPanel tracking removed
     startTimerMutation.mutate({
       projectId,
     });

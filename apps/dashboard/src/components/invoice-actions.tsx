@@ -1,6 +1,5 @@
 "use client";
 
-import { LogEvents } from "@midday/events/events";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,7 +25,7 @@ import {
 } from "@midday/ui/dropdown-menu";
 import { Icons } from "@midday/ui/icons";
 import { useToast } from "@midday/ui/use-toast";
-import { useOpenPanel } from "@openpanel/nextjs";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useFileUrl } from "@/hooks/use-file-url";
@@ -54,7 +53,7 @@ export function InvoiceActions({
 }: Props) {
   const trpc = useTRPC();
   const { toast } = useToast();
-  const { track } = useOpenPanel();
+
   const queryClient = useQueryClient();
   const { setParams } = useInvoiceParams();
   const { data: user } = useUserQuery();
@@ -134,7 +133,7 @@ export function InvoiceActions({
   const sendReminderMutation = useMutation(
     trpc.invoice.remind.mutationOptions({
       onSuccess: () => {
-        track(LogEvents.InvoiceReminderSent.name);
+        // OpenPanel tracking removed
         toast({
           duration: 2500,
           title: "Reminder sent",
@@ -229,7 +228,7 @@ export function InvoiceActions({
   );
 
   const handleDeleteInvoice = () => {
-    track(LogEvents.InvoiceDeleted.name);
+    // OpenPanel tracking removed
     deleteInvoiceMutation.mutate({ id });
     setParams(null);
   };
