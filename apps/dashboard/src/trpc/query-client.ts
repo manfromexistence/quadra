@@ -26,19 +26,21 @@ export function makeQueryClient() {
         }),
     defaultOptions: {
       queries: {
-        // Default staleTime of 2 minutes - queries won't refetch if data is fresh
-        // For static data (user settings, team config), override with longer staleTime (5+ min)
-        staleTime: 2 * 60 * 1000,
-        // Keep unused data in cache for 10 minutes before garbage collection
-        gcTime: 10 * 60 * 1000,
+        // Optimized caching strategies
+        staleTime: 30 * 1000, // 30 seconds default for dynamic data
+        gcTime: 5 * 60 * 1000, // 5 minutes garbage collection
+        refetchOnWindowFocus: false, // Prevent unnecessary refetches on focus
+        refetchOnReconnect: true, // Refetch on reconnect
+        refetchOnMount: false, // Don't refetch on mount if data is fresh
         retry: isServer
           ? false
           : (failureCount, error) => {
-              // Never retry auth errors — the token won't change between attempts
-              // and retrying just delays the redirect to /login.
               if (isUnauthorizedError(error)) return false;
               return failureCount < 2;
             },
+      },
+      mutations: {
+        retry: 1, // Retry mutations once on failure
       },
       dehydrate: {
         serializeData: superjson.serialize,

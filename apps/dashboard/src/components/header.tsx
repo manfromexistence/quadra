@@ -2,6 +2,7 @@ import { Skeleton } from "@midday/ui/skeleton";
 import { Suspense } from "react";
 import { NotificationCenter } from "@/components/notification-center";
 import { OpenSearchButton } from "@/components/search/open-search-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { UserMenu } from "@/components/user-menu";
 import { MobileMenu } from "./mobile-menu";
 
@@ -18,6 +19,7 @@ export function Header() {
 
       <div className="flex space-x-2 ml-auto">
         {/* <ConnectionStatus /> */}
+        <ThemeToggle />
         <NotificationCenter />
         <Suspense fallback={<UserMenuSkeleton />}>
           <UserMenu />

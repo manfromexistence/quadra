@@ -25,11 +25,13 @@ import { CollapsibleSummary } from "@/components/collapsible-summary";
 import { EdmsDataState } from "@/components/edms/data-state";
 import { DocumentBulkImportSheet } from "@/components/edms/document-bulk-import-sheet";
 import { DocumentBulkUploadSheet } from "@/components/edms/document-bulk-upload-sheet";
+import { DocumentsSkeleton } from "@/components/edms/documents-skeleton";
 import { ExportButton } from "@/components/edms/export-button";
 import { EdmsMetricCard } from "@/components/edms/metric-card";
 import { PrintButton } from "@/components/edms/print-button";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
 import { ErrorFallback } from "@/components/error-fallback";
+import { PageBreadcrumb } from "@/components/page-breadcrumb";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { getDocumentControlData } from "@/lib/edms/documents";
@@ -110,6 +112,7 @@ export default async function DocumentsPage({
 
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div className="max-w-3xl space-y-3">
+              <PageBreadcrumb />
               <div className="space-y-2">
                 <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
                   Document Register
@@ -151,8 +154,12 @@ export default async function DocumentsPage({
                   <Button asChild>
                     <Link href="/documents/new">+ New Document</Link>
                   </Button>
-                  <DocumentBulkImportSheet projects={data.projects} />
-                  <DocumentBulkUploadSheet projects={data.projects} />
+                  <DocumentBulkImportSheet projects={data.projects}>
+                    <Button variant="outline">Bulk Import</Button>
+                  </DocumentBulkImportSheet>
+                  <DocumentBulkUploadSheet projects={data.projects}>
+                    <Button variant="outline">Bulk Upload</Button>
+                  </DocumentBulkUploadSheet>
                 </>
               ) : null}
             </div>
@@ -164,13 +171,7 @@ export default async function DocumentsPage({
           />
 
           <ErrorBoundary errorComponent={ErrorFallback}>
-            <Suspense
-              fallback={
-                <div className="text-sm text-muted-foreground">
-                  Loading documents...
-                </div>
-              }
-            >
+            <Suspense fallback={<DocumentsSkeleton />}>
               <Card className="border-border bg-card shadow-sm">
                 <CardHeader className="space-y-4">
                   <div className="flex items-center justify-between gap-4">

@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
 import {
@@ -9,31 +11,76 @@ import {
   TableRow,
 } from "@midday/ui/table";
 import { AlertCircle, FileText, Send } from "lucide-react";
-import type { Metadata } from "next";
 import Link from "next/link";
+import { useState, useTransition } from "react";
 import { MemosFilters } from "@/components/edms/memos-filters";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getMemos } from "@/lib/edms/correspondence";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
-export const metadata: Metadata = {
-  title: "Memos | Quadra EDMS",
-};
+export default function MemosPage() {
+  const [isPending, startTransition] = useTransition();
+  const [memos, setMemos] = useState<any[]>([]);
+  const [projectId, setProjectId] = useState<string | null>(null);
 
-export default async function MemosPage({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    query?: string;
-    category?: string;
-  }>;
-}) {
-  const params = await searchParams;
-  const sessionUser = await getRequiredDashboardSessionUser();
+  startTransition(async () => {
+    const sessionUser = await getRequiredDashboardSessionUser();
+    const pid = await getFirstAccessibleProjectId(sessionUser);
+    setProjectId(pid);
+    if (pid) {
+      const data = await getMemos(pid);
+      setMemos(data);
+    }
+  });
 
-  // Get the first accessible project ID
-  const projectId = await getFirstAccessibleProjectId(sessionUser);
+  const filteredMemos = memos;
+
+  const exportCsv = () => {
+    const rows = filteredMemos.map((memo) => ({
+      "Memo ID": memo.memoNumber,
+      Subject: memo.subject,
+      From: memo.from,
+      To: memo.to,
+      Category: memo.category,
+      Date: memo.date ? new Date(memo.date).toISOString().split("T")[0] : "",
+      Status: memo.status,
+      Urgent: memo.urgent ? "Yes" : "No",
+    }));
+
+    const headers = Object.keys(
+      rows[0] || {
+        "Memo ID": "",
+        Subject: "",
+        From: "",
+        To: "",
+        Category: "",
+        Date: "",
+        Status: "",
+        Urgent: "",
+      },
+    );
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) =>
+        headers
+          .map(
+            (header) =>
+              `"${String(row[header as keyof typeof row] ?? "").replaceAll('"', '""')}"`,
+          )
+          .join(","),
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const href = URL.createObjectURL(blob);
+    link.href = href;
+    link.download = "memos.csv";
+    link.click();
+    URL.revokeObjectURL(href);
+  };
 
   if (!projectId) {
     return (
@@ -49,23 +96,17 @@ export default async function MemosPage({
     );
   }
 
-  // Fetch from database
-  const memos = await getMemos(projectId);
-
-  // Filter memos based on search params
-  const filteredMemos = memos.filter((memo) => {
-    const matchesQuery =
-      !params.query ||
-      memo.subject.toLowerCase().includes(params.query.toLowerCase()) ||
-      memo.memoNumber.toLowerCase().includes(params.query.toLowerCase());
-
-    const matchesCategory =
-      !params.category ||
-      params.category === "all" ||
-      memo.category === params.category;
-
-    return matchesQuery && matchesCategory;
-  });
+  if (isPending && memos.length === 0) {
+    return (
+      <ScrollableContent>
+        <div className="flex flex-col gap-6 pt-6">
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </ScrollableContent>
+    );
+  }
 
   return (
     <ScrollableContent>
@@ -84,17 +125,19 @@ export default async function MemosPage({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline">
+            <Button variant="outline" onClick={exportCsv} disabled={isPending}>
               <FileText className="size-4" />
               Export CSV
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" disabled={isPending}>
               <AlertCircle className="size-4" />
               Mark Urgent
             </Button>
-            <Button>
-              <Send className="size-4" />
-              New Memo
+            <Button asChild>
+              <Link href="/memos/new">
+                <Send className="size-4" />
+                New Memo
+              </Link>
             </Button>
           </div>
         </div>

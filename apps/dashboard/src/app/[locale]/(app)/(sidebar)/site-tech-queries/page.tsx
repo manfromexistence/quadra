@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
 import {
@@ -9,32 +11,74 @@ import {
   TableRow,
 } from "@midday/ui/table";
 import { AlertTriangle, FileText, MapPin, UserPlus } from "lucide-react";
-import type { Metadata } from "next";
 import Link from "next/link";
+import { useState, useTransition } from "react";
 import { SiteTechQueriesFilters } from "@/components/edms/site-tech-queries-filters";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getSiteTechQueries } from "@/lib/edms/queries";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
-export const metadata: Metadata = {
-  title: "Site Technical Queries | Quadra EDMS",
-};
+export default function SiteTechQueriesPage() {
+  const [isPending, startTransition] = useTransition();
+  const [siteQueries, setSiteQueries] = useState<any[]>([]);
+  const [projectId, setProjectId] = useState<string | null>(null);
 
-export default async function SiteTechQueriesPage({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    query?: string;
-    discipline?: string;
-    status?: string;
-  }>;
-}) {
-  const params = await searchParams;
-  const sessionUser = await getRequiredDashboardSessionUser();
+  startTransition(async () => {
+    const sessionUser = await getRequiredDashboardSessionUser();
+    const pid = await getFirstAccessibleProjectId(sessionUser);
+    setProjectId(pid);
+    if (pid) {
+      const data = await getSiteTechQueries(pid);
+      setSiteQueries(data);
+    }
+  });
 
-  // Get the first accessible project ID
-  const projectId = await getFirstAccessibleProjectId(sessionUser);
+  const filteredQueries = siteQueries;
+
+  const exportCsv = () => {
+    const rows = filteredQueries.map((stq) => ({
+      "STQ ID": stq.queryNumber,
+      Subject: stq.subject,
+      Location: stq.location,
+      Discipline: stq.discipline,
+      Status: stq.status,
+      Priority: stq.priority,
+      "Assigned To": stq.assignedTo,
+    }));
+
+    const headers = Object.keys(
+      rows[0] || {
+        "STQ ID": "",
+        Subject: "",
+        Location: "",
+        Discipline: "",
+        Status: "",
+        Priority: "",
+        "Assigned To": "",
+      },
+    );
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) =>
+        headers
+          .map(
+            (header) =>
+              `"${String(row[header as keyof typeof row] ?? "").replaceAll('"', '""')}"`,
+          )
+          .join(","),
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const href = URL.createObjectURL(blob);
+    link.href = href;
+    link.download = "site-tech-queries.csv";
+    link.click();
+    URL.revokeObjectURL(href);
+  };
 
   if (!projectId) {
     return (
@@ -50,24 +94,17 @@ export default async function SiteTechQueriesPage({
     );
   }
 
-  const siteQueries = await getSiteTechQueries(projectId);
-
-  // Filter site queries based on search params
-  const filteredQueries = siteQueries.filter((stq) => {
-    const matchesQuery =
-      !params.query ||
-      stq.subject.toLowerCase().includes(params.query.toLowerCase()) ||
-      stq.queryNumber.toLowerCase().includes(params.query.toLowerCase());
-
-    const matchesDiscipline =
-      !params.discipline ||
-      params.discipline === "all" ||
-      stq.discipline === params.discipline;
-    const matchesStatus =
-      !params.status || params.status === "all" || stq.status === params.status;
-
-    return matchesQuery && matchesDiscipline && matchesStatus;
-  });
+  if (isPending && siteQueries.length === 0) {
+    return (
+      <ScrollableContent>
+        <div className="flex flex-col gap-6 pt-6">
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </ScrollableContent>
+    );
+  }
 
   return (
     <ScrollableContent>
@@ -86,21 +123,23 @@ export default async function SiteTechQueriesPage({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline">
+            <Button variant="outline" onClick={exportCsv} disabled={isPending}>
               <FileText className="size-4" />
               Export CSV
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" disabled={isPending}>
               <MapPin className="size-4" />
               Site Map
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" disabled={isPending}>
               <UserPlus className="size-4" />
               Assign Bulk
             </Button>
-            <Button>
-              <AlertTriangle className="size-4" />
-              New STQ
+            <Button asChild>
+              <Link href="/site-tech-queries/new">
+                <AlertTriangle className="size-4" />
+                New STQ
+              </Link>
             </Button>
           </div>
         </div>

@@ -3,12 +3,12 @@ import { cn } from "@midday/ui/cn";
 import "@midday/ui/globals.css";
 import { Provider as Analytics } from "@midday/events/client";
 import { createThemeInitializationScript } from "@midday/ui/theme";
-import { Toaster } from "@midday/ui/toaster";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { ReactElement } from "react";
 import { DesktopHeader } from "@/components/desktop-header";
+import { Toaster } from "@/components/ui/toast";
 import { isDesktopApp } from "@/utils/desktop";
 import { Providers } from "./providers";
 

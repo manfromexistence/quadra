@@ -24,4 +24,24 @@ Now use wsl with inline turso-cli command to make sure of all the database conne
 
 Please look for the admin dashboard sidebar pages, and in those pages look for any kind of dummy UI instead of any functional UI. Brutally check all the pages listed in the sidebar for this kind of problems.
 
+Now please brutally check all the pages in our admin dashboard and look for any types of HTML element instead of MUI component, and replace those with MUI components correctly. Also look for any dummy UI and properly make them functional and configure and connect them with our database and make them totally connected with the whole system.
+
+In all of our sidebar pages please look for any dummy ui that are not correctly configured and do a brutal check for any kind of ux flaws and list them!!!
+
 This is a very low-end device, so please do a low-end device type check for any kind of errors and try to fix that. Also lint and format all files
+
+Now please look at the @edms.html    file more closely. That HTML file was the freelance client's own demo website, so please look at it carefully and also look at our dashboard sidebar and all of its pages. Make sure that our dashboard sidebar has all the features listed in that @edms.html  file. First, brutally check our admin dashboard and the @edms.html  file, and look for any gaps that the @edms.html     file has but we don't have in our app dashboard sidebar pages. Brutally check it.
+
+And if there are any kind of gaps, then please add all the features in our app dashboard sidebar pages using MUI UI component and configure that with our dashboard so that they work correctly.
+
+No bro, there has to be some law. Look for any kind of law. Typically check our apps, just book website, and look for any kind of law and make it stay out of the production-ready professional website.
+
+And suggest me UI app rate to make this website more usable and more user friendly.
+
+Yes, do that - add all the features suggestions and use midday-ui and create and use shadcn-ui components correctly - do a web search and list all the npm packages that will make our current webite and use them correctly as today is 21 april 2026
+
+Please check all of our packages and do a web search and and make sure that all packages use their latest version as today is 21 april 2026
+
+Now please use proper state handling so our website is as fast and not reloads at all - use react-query and things like that so that our whole website is SPA and loads crazy fast and has best SEO and performance!!!
+
+Awesome now please fix all of those pages and do lint and fix all the errors and warnings!!!

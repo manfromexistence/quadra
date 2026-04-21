@@ -1,5 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
+import type { Metadata } from "next";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import Link from "next/link";
+import { Suspense } from "react";
 import {
   MarkAllNotificationsReadButton,
   MarkNotificationReadButton,
@@ -8,11 +11,39 @@ import {
   EdmsStatusBadge,
   formatEdmsLabel,
 } from "@/components/edms/status-badge";
+import { ErrorFallback } from "@/components/error-fallback";
+import { ScrollableContent } from "@/components/scrollable-content";
 import { getEdmsNotificationFeed } from "@/lib/edms/notification-feed";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
+import { HydrateClient } from "@/trpc/server";
+
+export const metadata: Metadata = {
+  title: "Activities | Quadra EDMS",
+};
 
 export default async function NotificationsPage() {
   const sessionUser = await getRequiredDashboardSessionUser();
+
+  return (
+    <HydrateClient>
+      <ScrollableContent>
+        <ErrorBoundary errorComponent={ErrorFallback}>
+          <Suspense
+            fallback={
+              <div className="text-sm text-muted-foreground">
+                Loading notifications...
+              </div>
+            }
+          >
+            <NotificationsContent sessionUser={sessionUser} />
+          </Suspense>
+        </ErrorBoundary>
+      </ScrollableContent>
+    </HydrateClient>
+  );
+}
+
+async function NotificationsContent({ sessionUser }: { sessionUser: any }) {
   const notifications = await getEdmsNotificationFeed(sessionUser, 50);
 
   return (

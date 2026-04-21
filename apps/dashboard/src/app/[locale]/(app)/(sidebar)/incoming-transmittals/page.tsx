@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
 import { Input } from "@midday/ui/input";
@@ -16,51 +18,29 @@ import {
   TableHeader,
   TableRow,
 } from "@midday/ui/table";
-import type { Metadata } from "next";
+import { Download } from "lucide-react";
 import Link from "next/link";
+import { useState, useTransition } from "react";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getIncomingTransmittals } from "@/lib/edms/incoming-transmittals";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
-export const metadata: Metadata = {
-  title: "Incoming Transmittals | Quadra EDMS",
-};
+export default function IncomingTransmittalsPage() {
+  const [isPending, startTransition] = useTransition();
+  const [incomingTransmittals, setIncomingTransmittals] = useState<any[]>([]);
+  const [projectId, setProjectId] = useState<string | null>(null);
 
-export default async function IncomingTransmittalsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    query?: string;
-    from?: string;
-    purpose?: string;
-    responseStatus?: string;
-    priority?: string;
-  }>;
-}) {
-  const params = await searchParams;
-  const sessionUser = await getRequiredDashboardSessionUser();
-
-  // Get the first accessible project ID
-  const projectId = await getFirstAccessibleProjectId(sessionUser);
-
-  if (!projectId) {
-    return (
-      <ScrollableContent>
-        <div className="flex flex-col gap-6">
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              No accessible projects found. Please contact your administrator.
-            </p>
-          </div>
-        </div>
-      </ScrollableContent>
-    );
-  }
-
-  // Fetch from database
-  const incomingTransmittals = await getIncomingTransmittals(projectId);
+  startTransition(async () => {
+    const sessionUser = await getRequiredDashboardSessionUser();
+    const pid = await getFirstAccessibleProjectId(sessionUser);
+    setProjectId(pid);
+    if (pid) {
+      const data = await getIncomingTransmittals(pid);
+      setIncomingTransmittals(data);
+    }
+  });
 
   const totalCount = incomingTransmittals.length;
   const pendingCount = incomingTransmittals.filter(
@@ -76,6 +56,82 @@ export default async function IncomingTransmittalsPage({
   const inProgressCount = incomingTransmittals.filter(
     (t) => t.responseStatus === "In Progress",
   ).length;
+
+  const exportCsv = () => {
+    const rows = incomingTransmittals.map((tm) => ({
+      "TM ID": tm.transmittalNumber,
+      "Their Ref": tm.theirRef,
+      Subject: tm.subject,
+      "From Org": tm.fromOrg,
+      From: tm.from,
+      Purpose: tm.purpose,
+      Priority: tm.priority,
+      "Response Status": tm.responseStatus,
+      "Response Due": tm.responseDue
+        ? new Date(tm.responseDue).toISOString().split("T")[0]
+        : "",
+    }));
+
+    const headers = Object.keys(
+      rows[0] || {
+        "TM ID": "",
+        "Their Ref": "",
+        Subject: "",
+        "From Org": "",
+        From: "",
+        Purpose: "",
+        Priority: "",
+        "Response Status": "",
+        "Response Due": "",
+      },
+    );
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) =>
+        headers
+          .map(
+            (header) =>
+              `"${String(row[header as keyof typeof row] ?? "").replaceAll('"', '""')}"`,
+          )
+          .join(","),
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const href = URL.createObjectURL(blob);
+    link.href = href;
+    link.download = "incoming-transmittals.csv";
+    link.click();
+    URL.revokeObjectURL(href);
+  };
+
+  if (!projectId) {
+    return (
+      <ScrollableContent>
+        <div className="flex flex-col gap-6">
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">
+              No accessible projects found. Please contact your administrator.
+            </p>
+          </div>
+        </div>
+      </ScrollableContent>
+    );
+  }
+
+  if (isPending && incomingTransmittals.length === 0) {
+    return (
+      <ScrollableContent>
+        <div className="flex flex-col gap-6">
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </ScrollableContent>
+    );
+  }
 
   return (
     <ScrollableContent>
@@ -94,8 +150,13 @@ export default async function IncomingTransmittalsPage({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline">↓ Export CSV</Button>
-            <Button>+ Register Incoming</Button>
+            <Button variant="outline" onClick={exportCsv} disabled={isPending}>
+              <Download className="size-4" />
+              Export CSV
+            </Button>
+            <Button asChild>
+              <Link href="/incoming-transmittals/new">+ Register Incoming</Link>
+            </Button>
           </div>
         </div>
 
@@ -169,13 +230,11 @@ export default async function IncomingTransmittalsPage({
           <CardHeader>
             <div className="flex flex-wrap items-center gap-3">
               <Input
-                name="query"
-                defaultValue={params.query ?? ""}
                 placeholder="Search incoming transmittals…"
                 className="max-w-[280px]"
               />
 
-              <Select name="from" defaultValue={params.from ?? ""}>
+              <Select>
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="All Senders" />
                 </SelectTrigger>
@@ -188,7 +247,7 @@ export default async function IncomingTransmittalsPage({
                 </SelectContent>
               </Select>
 
-              <Select name="purpose" defaultValue={params.purpose ?? ""}>
+              <Select>
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="All Purposes" />
                 </SelectTrigger>
@@ -201,10 +260,7 @@ export default async function IncomingTransmittalsPage({
                 </SelectContent>
               </Select>
 
-              <Select
-                name="responseStatus"
-                defaultValue={params.responseStatus ?? ""}
-              >
+              <Select>
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
@@ -221,7 +277,7 @@ export default async function IncomingTransmittalsPage({
                 </SelectContent>
               </Select>
 
-              <Select name="priority" defaultValue={params.priority ?? ""}>
+              <Select>
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="All Priorities" />
                 </SelectTrigger>
@@ -249,58 +305,69 @@ export default async function IncomingTransmittalsPage({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {incomingTransmittals.map((tm) => (
-                  <TableRow key={tm.id}>
-                    <TableCell className="px-6">
-                      <div className="font-mono text-xs font-medium">
-                        {tm.transmittalNumber}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {tm.theirRef}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="max-w-md">
-                        <Link
-                          href={`/incoming-transmittals/${tm.id}`}
-                          className="font-medium hover:text-primary"
-                        >
-                          {tm.subject}
-                        </Link>
-                        <div className="text-xs text-muted-foreground">
-                          {tm.fromOrg}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="rounded bg-muted px-2 py-1 font-mono text-xs">
-                        {tm.from}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <EdmsStatusBadge status={tm.purpose} />
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={`text-xs font-medium ${
-                          tm.priority === "High"
-                            ? "text-destructive"
-                            : tm.priority === "Medium"
-                              ? "text-amber-600"
-                              : "text-muted-foreground"
-                        }`}
-                      >
-                        {tm.priority}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-xs">{tm.responseStatus}</span>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-xs">Admin User</span>
+                {incomingTransmittals.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={7}
+                      className="text-center py-8 text-muted-foreground"
+                    >
+                      No incoming transmittals found
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  incomingTransmittals.map((tm) => (
+                    <TableRow key={tm.id}>
+                      <TableCell className="px-6">
+                        <div className="font-mono text-xs font-medium">
+                          {tm.transmittalNumber}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {tm.theirRef}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="max-w-md">
+                          <Link
+                            href={`/incoming-transmittals/${tm.id}`}
+                            className="font-medium hover:text-primary"
+                          >
+                            {tm.subject}
+                          </Link>
+                          <div className="text-xs text-muted-foreground">
+                            {tm.fromOrg}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="rounded bg-muted px-2 py-1 font-mono text-xs">
+                          {tm.from}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <EdmsStatusBadge status={tm.purpose} />
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`text-xs font-medium ${
+                            tm.priority === "High"
+                              ? "text-destructive"
+                              : tm.priority === "Medium"
+                                ? "text-amber-600"
+                                : "text-muted-foreground"
+                          }`}
+                        >
+                          {tm.priority}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-xs">{tm.responseStatus}</span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-xs">Admin User</span>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </CardContent>

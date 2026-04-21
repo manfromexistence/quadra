@@ -9,11 +9,16 @@ import {
   TableRow,
 } from "@midday/ui/table";
 import type { Metadata } from "next";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import { Suspense } from "react";
 import { LinkDocumentsButton } from "@/components/edms/link-documents-button";
 import { ScheduleSyncButton } from "@/components/edms/schedule-sync-button";
+import { ErrorFallback } from "@/components/error-fallback";
+import { ScrollableContent } from "@/components/scrollable-content";
 import { getDocuments } from "@/lib/edms/documents";
 import { getSchedulePageData } from "@/lib/edms/schedule";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
+import { HydrateClient } from "@/trpc/server";
 
 export const metadata: Metadata = {
   title: "Schedule & Progress | Quadra EDMS",
@@ -76,6 +81,32 @@ export default async function SchedulePage() {
   // Get the user's active project (first project for now)
   const projectId = sessionUser.activeProjectId || "PRJ-AHR-2026";
 
+  return (
+    <HydrateClient>
+      <ScrollableContent>
+        <ErrorBoundary errorComponent={ErrorFallback}>
+          <Suspense
+            fallback={
+              <div className="text-sm text-muted-foreground">
+                Loading schedule...
+              </div>
+            }
+          >
+            <ScheduleContent sessionUser={sessionUser} projectId={projectId} />
+          </Suspense>
+        </ErrorBoundary>
+      </ScrollableContent>
+    </HydrateClient>
+  );
+}
+
+async function ScheduleContent({
+  sessionUser,
+  projectId,
+}: {
+  sessionUser: any;
+  projectId: string;
+}) {
   const scheduleData = await getSchedulePageData(projectId);
 
   const totalPlanned =

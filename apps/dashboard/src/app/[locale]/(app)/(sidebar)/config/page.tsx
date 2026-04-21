@@ -1,4 +1,3 @@
-import { Button } from "@midday/ui/button";
 import { Card, CardContent } from "@midday/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@midday/ui/tabs";
 import type { Metadata } from "next";
@@ -55,10 +54,6 @@ export default async function ProjectSetupPage({
                   stakeholders, and approval workflow for this project.
                 </p>
               </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              <Button>Save Configuration</Button>
             </div>
           </div>
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
 import {
@@ -9,33 +11,81 @@ import {
   TableRow,
 } from "@midday/ui/table";
 import { AlertTriangle, FileText, HelpCircle, UserPlus } from "lucide-react";
-import type { Metadata } from "next";
 import Link from "next/link";
+import { useState, useTransition } from "react";
 import { TechnicalQueriesFilters } from "@/components/edms/technical-queries-filters";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getTechnicalQueries } from "@/lib/edms/queries";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
-export const metadata: Metadata = {
-  title: "Technical Queries | Quadra EDMS",
-};
+export default function TechnicalQueriesPage() {
+  const [isPending, startTransition] = useTransition();
+  const [technicalQueries, setTechnicalQueries] = useState<any[]>([]);
+  const [projectId, setProjectId] = useState<string | null>(null);
 
-export default async function TechnicalQueriesPage({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    query?: string;
-    status?: string;
-    priority?: string;
-    discipline?: string;
-  }>;
-}) {
-  const _params = await searchParams;
-  const sessionUser = await getRequiredDashboardSessionUser();
+  startTransition(async () => {
+    const sessionUser = await getRequiredDashboardSessionUser();
+    const pid = await getFirstAccessibleProjectId(sessionUser);
+    setProjectId(pid);
+    if (pid) {
+      const data = await getTechnicalQueries(pid);
+      setTechnicalQueries(data);
+    }
+  });
 
-  // Get the first accessible project ID
-  const projectId = await getFirstAccessibleProjectId(sessionUser);
+  const totalCount = technicalQueries.length;
+  const openCount = technicalQueries.filter((q) => q.status === "Open").length;
+  const respondedCount = technicalQueries.filter(
+    (q) => q.status === "Responded",
+  ).length;
+  const closedCount = technicalQueries.filter(
+    (q) => q.status === "Closed",
+  ).length;
+
+  const exportCsv = () => {
+    const rows = technicalQueries.map((tq) => ({
+      "TQ ID": tq.queryNumber,
+      Subject: tq.subject,
+      Discipline: tq.discipline,
+      Status: tq.status,
+      Priority: tq.priority,
+      "Due Date": tq.dueDate
+        ? new Date(tq.dueDate).toISOString().split("T")[0]
+        : "",
+    }));
+
+    const headers = Object.keys(
+      rows[0] || {
+        "TQ ID": "",
+        Subject: "",
+        Discipline: "",
+        Status: "",
+        Priority: "",
+        "Due Date": "",
+      },
+    );
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) =>
+        headers
+          .map(
+            (header) =>
+              `"${String(row[header as keyof typeof row] ?? "").replaceAll('"', '""')}"`,
+          )
+          .join(","),
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const href = URL.createObjectURL(blob);
+    link.href = href;
+    link.download = "technical-queries.csv";
+    link.click();
+    URL.revokeObjectURL(href);
+  };
 
   if (!projectId) {
     return (
@@ -51,17 +101,17 @@ export default async function TechnicalQueriesPage({
     );
   }
 
-  // Fetch from database
-  const technicalQueries = await getTechnicalQueries(projectId);
-
-  const totalCount = technicalQueries.length;
-  const openCount = technicalQueries.filter((q) => q.status === "Open").length;
-  const respondedCount = technicalQueries.filter(
-    (q) => q.status === "Responded",
-  ).length;
-  const closedCount = technicalQueries.filter(
-    (q) => q.status === "Closed",
-  ).length;
+  if (isPending && technicalQueries.length === 0) {
+    return (
+      <ScrollableContent>
+        <div className="flex flex-col gap-6 pt-6">
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </ScrollableContent>
+    );
+  }
 
   return (
     <ScrollableContent>
@@ -80,21 +130,23 @@ export default async function TechnicalQueriesPage({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline">
+            <Button variant="outline" onClick={exportCsv} disabled={isPending}>
               <FileText className="size-4" />
               Export CSV
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" disabled={isPending}>
               <UserPlus className="size-4" />
               Assign Bulk
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" disabled={isPending}>
               <AlertTriangle className="size-4" />
               Overdue Queries
             </Button>
-            <Button>
-              <HelpCircle className="size-4" />
-              New TQ
+            <Button asChild>
+              <Link href="/technical-queries/new">
+                <HelpCircle className="size-4" />
+                New TQ
+              </Link>
             </Button>
           </div>
         </div>
@@ -172,65 +224,76 @@ export default async function TechnicalQueriesPage({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {technicalQueries.map((tq) => (
-                  <TableRow
-                    key={tq.id}
-                    className="hover:bg-accent/50 cursor-pointer transition-colors"
-                  >
-                    <TableCell className="px-6">
-                      <Link
-                        href={`/technical-queries/${tq.id}`}
-                        className="font-mono text-xs font-medium hover:text-primary transition-colors"
-                      >
-                        {tq.queryNumber}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <div className="max-w-md font-medium">{tq.subject}</div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="rounded bg-muted px-2 py-1 font-mono text-xs">
-                        {tq.discipline}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-xs">Admin User</span>
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={`text-xs font-medium ${
-                          tq.status === "Open"
-                            ? "text-amber-600"
-                            : tq.status === "Responded"
-                              ? "text-blue-600"
-                              : "text-green-600"
-                        }`}
-                      >
-                        {tq.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={`text-xs font-medium ${
-                          tq.priority === "High"
-                            ? "text-destructive"
-                            : tq.priority === "Medium"
-                              ? "text-amber-600"
-                              : "text-muted-foreground"
-                        }`}
-                      >
-                        {tq.priority}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className="font-mono text-xs text-muted-foreground">
-                        {tq.dueDate
-                          ? new Date(tq.dueDate).toISOString().split("T")[0]
-                          : "—"}
-                      </span>
+                {technicalQueries.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={7}
+                      className="text-center py-8 text-muted-foreground"
+                    >
+                      No technical queries found
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  technicalQueries.map((tq) => (
+                    <TableRow
+                      key={tq.id}
+                      className="hover:bg-accent/50 cursor-pointer transition-colors"
+                    >
+                      <TableCell className="px-6">
+                        <Link
+                          href={`/technical-queries/${tq.id}`}
+                          className="font-mono text-xs font-medium hover:text-primary transition-colors"
+                        >
+                          {tq.queryNumber}
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <div className="max-w-md font-medium">{tq.subject}</div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="rounded bg-muted px-2 py-1 font-mono text-xs">
+                          {tq.discipline}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-xs">Admin User</span>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`text-xs font-medium ${
+                            tq.status === "Open"
+                              ? "text-amber-600"
+                              : tq.status === "Responded"
+                                ? "text-blue-600"
+                                : "text-green-600"
+                          }`}
+                        >
+                          {tq.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`text-xs font-medium ${
+                            tq.priority === "High"
+                              ? "text-destructive"
+                              : tq.priority === "Medium"
+                                ? "text-amber-600"
+                                : "text-muted-foreground"
+                          }`}
+                        >
+                          {tq.priority}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-xs">
+                          {tq.dueDate
+                            ? new Date(tq.dueDate).toLocaleDateString()
+                            : "—"}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </CardContent>
