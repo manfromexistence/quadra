@@ -9,14 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
+import { Input } from "@midday/ui/input";
+import { ScrollArea } from "@midday/ui/scroll-area";
 import {
   BarChart3,
   Clock,
@@ -24,10 +18,12 @@ import {
   FileBarChart,
   FilePieChart,
   FileText,
+  Search,
   TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
 import { ReportModal } from "@/components/edms/report-modal";
+import { useTRPC } from "@/trpc/client";
 
 const REPORT_CATALOG = [
   {
@@ -80,204 +76,129 @@ const REPORT_CATALOG = [
   },
 ];
 
-const RECENT_REPORTS = [
-  {
-    name: "Master Document Register",
-    generatedBy: "S. Kumar",
-    format: "XLSX",
-    date: "2026-04-16 14:22",
-    size: "342 KB",
-  },
-  {
-    name: "Weekly Progress Report",
-    generatedBy: "System (scheduled)",
-    format: "PDF",
-    date: "2026-04-15 06:00",
-    size: "1.2 MB",
-  },
-  {
-    name: "Overdue & Pending Report",
-    generatedBy: "S. Kumar",
-    format: "PDF",
-    date: "2026-04-14 09:45",
-    size: "218 KB",
-  },
-  {
-    name: "Transmittal Log (March)",
-    generatedBy: "S. Kumar",
-    format: "XLSX",
-    date: "2026-04-01 10:12",
-    size: "89 KB",
-  },
-];
-
-// Sample report data
-const SAMPLE_REPORTS = {
-  mdr: {
-    id: "mdr",
-    title: "Master Document Register",
-    description: "Complete list of all project documents",
-    columns: [
-      { key: "code", label: "Document Code" },
-      { key: "title", label: "Title" },
-      { key: "discipline", label: "Discipline" },
-      { key: "rev", label: "Rev" },
-      { key: "status", label: "Status" },
-      { key: "author", label: "Author" },
-      { key: "date", label: "Date" },
-    ],
-    data: [
-      {
-        code: "AHR-CIV-DWG-0001",
-        title: "Site Grading Plan — Phase 1",
-        discipline: "Civil",
-        rev: "B",
-        status: "approved",
-        author: "R. Patel",
-        date: "2026-04-14",
-      },
-      {
-        code: "AHR-STR-CAL-0012",
-        title: "Primary Steel Structure Calculation",
-        discipline: "Structural",
-        rev: "0",
-        status: "under_review",
-        author: "M. Hassan",
-        date: "2026-04-13",
-      },
-      {
-        code: "AHR-MEC-SPC-0023",
-        title: "Heat Exchanger Technical Specification",
-        discipline: "Mechanical",
-        rev: "C",
-        status: "approved",
-        author: "S. Kumar",
-        date: "2026-04-12",
-      },
-      {
-        code: "AHR-ELE-DWG-0045",
-        title: "Main Substation Single Line Diagram",
-        discipline: "Electrical",
-        rev: "A",
-        status: "submitted",
-        author: "A. Khan",
-        date: "2026-04-11",
-      },
-      {
-        code: "AHR-INS-DAT-0008",
-        title: "Control Valve Datasheet — Unit 100",
-        discipline: "Instrumentation",
-        rev: "1",
-        status: "approved",
-        author: "N. Islam",
-        date: "2026-04-10",
-      },
-    ],
-  },
-  txlog: {
-    id: "txlog",
-    title: "Transmittal Log",
-    description: "Chronological record of all outgoing transmittals",
-    columns: [
-      { key: "id", label: "ID" },
-      { key: "date", label: "Date" },
-      { key: "recipient", label: "Recipient" },
-      { key: "subject", label: "Subject" },
-      { key: "docs", label: "Docs" },
-      { key: "purpose", label: "Purpose" },
-      { key: "status", label: "Status" },
-    ],
-    data: [
-      {
-        id: "TM-AHR-0042",
-        date: "2026-04-15",
-        recipient: "Gulf National Petroleum",
-        subject: "IFC Drawings for Substation",
-        docs: "3",
-        purpose: "IFC",
-        status: "sent",
-      },
-      {
-        id: "TM-AHR-0041",
-        date: "2026-04-12",
-        recipient: "PMC Engineering",
-        subject: "IFR Instrumentation Datasheets",
-        docs: "5",
-        purpose: "IFR",
-        status: "acknowledged",
-      },
-      {
-        id: "TM-AHR-0040",
-        date: "2026-04-08",
-        recipient: "Gulf National Petroleum",
-        subject: "IFA Structural Calculations Package",
-        docs: "2",
-        purpose: "IFA",
-        status: "acknowledged",
-      },
-    ],
-  },
-  progress: {
-    id: "progress",
-    title: "Engineering Progress Report",
-    description: "Planned vs actual progress by discipline",
-    columns: [
-      { key: "discipline", label: "Discipline" },
-      { key: "planned", label: "Planned" },
-      { key: "actual", label: "Actual" },
-      { key: "variance", label: "Variance" },
-      { key: "status", label: "Status" },
-    ],
-    data: [
-      {
-        discipline: "Civil",
-        planned: "45",
-        actual: "42",
-        variance: "-3",
-        status: "approved",
-      },
-      {
-        discipline: "Structural",
-        planned: "38",
-        actual: "35",
-        variance: "-3",
-        status: "under_review",
-      },
-      {
-        discipline: "Mechanical",
-        planned: "52",
-        actual: "48",
-        variance: "-4",
-        status: "approved",
-      },
-      {
-        discipline: "Electrical",
-        planned: "41",
-        actual: "39",
-        variance: "-2",
-        status: "submitted",
-      },
-      {
-        discipline: "Instrumentation",
-        planned: "29",
-        actual: "31",
-        variance: "+2",
-        status: "approved",
-      },
-    ],
-  },
-};
-
 export default function ReportsPage() {
-  const [selectedReport, setSelectedReport] = useState<
-    typeof SAMPLE_REPORTS.mdr | null
-  >(null);
+  const trpc = useTRPC();
+  const [selectedReport, setSelectedReport] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Fetch real data from database
+  const { data: documents = [] } = trpc.edmsDocuments.list.useQuery();
+  const { data: transmittals = [] } = trpc.transmittals.list.useQuery();
+
+  const filteredReports = REPORT_CATALOG.filter((report) =>
+    report.title.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   const handleRunReport = (reportId: string) => {
-    const report = SAMPLE_REPORTS[reportId as keyof typeof SAMPLE_REPORTS];
-    if (report) {
-      setSelectedReport(report);
+    let reportData: any = null;
+
+    if (reportId === "mdr") {
+      reportData = {
+        id: "mdr",
+        title: "Master Document Register",
+        description: "Complete list of all project documents with metadata",
+        columns: [
+          { key: "code", label: "Code" },
+          { key: "title", label: "Title" },
+          { key: "discipline", label: "Discipline" },
+          { key: "rev", label: "Rev" },
+          { key: "status", label: "Status" },
+          { key: "author", label: "Author" },
+          { key: "date", label: "Date" },
+        ],
+        data: documents.slice(0, 10).map((d: any) => ({
+          code: d.documentNumber,
+          title: d.title,
+          discipline: d.discipline || "N/A",
+          rev: d.revision || "0",
+          status: d.status || "Pending",
+          author: d.uploadedBy || "Unknown",
+          date: d.uploadedAt
+            ? new Date(d.uploadedAt).toISOString().split("T")[0]
+            : "N/A",
+        })),
+      };
+    } else if (reportId === "txlog") {
+      reportData = {
+        id: "txlog",
+        title: "Transmittal Log",
+        description: "Chronological record of all outgoing transmittals",
+        columns: [
+          { key: "id", label: "ID" },
+          { key: "date", label: "Date" },
+          { key: "recipient", label: "Recipient" },
+          { key: "subject", label: "Subject" },
+          { key: "docs", label: "Docs" },
+          { key: "purpose", label: "Purpose" },
+          { key: "status", label: "Status" },
+        ],
+        data: transmittals.slice(0, 10).map((t: any) => ({
+          id: t.transmittalNumber,
+          date: t.createdAt
+            ? new Date(t.createdAt).toISOString().split("T")[0]
+            : "N/A",
+          recipient: t.sentTo || "N/A",
+          subject: t.subject,
+          docs: t.documentCount?.toString() || "0",
+          purpose: t.purpose || "N/A",
+          status: t.status,
+        })),
+      };
+    } else if (reportId === "progress") {
+      reportData = {
+        id: "progress",
+        title: "Engineering Progress Report",
+        description: "Planned vs actual progress by discipline",
+        columns: [
+          { key: "discipline", label: "Discipline" },
+          { key: "planned", label: "Planned" },
+          { key: "actual", label: "Actual" },
+          { key: "variance", label: "Variance" },
+          { key: "status", label: "Status" },
+        ],
+        data: [
+          {
+            discipline: "Civil",
+            planned: "45",
+            actual: "42",
+            variance: "-3",
+            status: "On Track",
+          },
+          {
+            discipline: "Structural",
+            planned: "38",
+            actual: "35",
+            variance: "-3",
+            status: "On Track",
+          },
+          {
+            discipline: "Mechanical",
+            planned: "52",
+            actual: "48",
+            variance: "-4",
+            status: "On Track",
+          },
+          {
+            discipline: "Electrical",
+            planned: "41",
+            actual: "39",
+            variance: "-2",
+            status: "On Track",
+          },
+          {
+            discipline: "Instrumentation",
+            planned: "29",
+            actual: "31",
+            variance: "+2",
+            status: "Ahead",
+          },
+        ],
+      };
+    }
+
+    if (reportData) {
+      setSelectedReport(reportData);
       setModalOpen(true);
     }
   };
@@ -285,123 +206,103 @@ export default function ReportsPage() {
   return (
     <div className="flex flex-col gap-6 p-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="max-w-3xl space-y-3">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-              Reports
-            </h1>
-            <p className="text-sm leading-6 text-muted-foreground md:text-base">
-              Generate standard and custom reports from the project data. All
-              reports can be exported to PDF, Excel, or scheduled for automatic
-              distribution.
-            </p>
-          </div>
+        <div className="max-w-2xl space-y-2">
+          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+            Reports
+          </h1>
+          <p className="text-sm leading-6 text-muted-foreground md:text-base">
+            Generate and download project reports including design reviews,
+            transmittal logs, progress reports, and compliance matrices.
+          </p>
         </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline">
-            <Clock className="size-4 mr-2" />
-            Schedule Reports
-          </Button>
-          <Button>+ Custom Report</Button>
+        <div className="relative w-full md:w-72">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <Input
+            placeholder="Search reports..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {REPORT_CATALOG.map((report) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {filteredReports.map((report) => (
           <Card
             key={report.id}
-            className="rounded-lg group cursor-pointer border-border bg-card shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
-            onClick={() => handleRunReport(report.id)}
+            className="group hover:border-primary/50 transition-colors"
           >
-            <CardHeader>
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex size-10 items-center justify-center border border-border bg-muted">
-                  <report.icon className="size-5 text-muted-foreground transition-colors group-hover:text-primary" />
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <div className="p-2 rounded-lg bg-muted">
+                  <report.icon className="size-5" />
                 </div>
-                <Badge
-                  variant="secondary"
-                  className="shrink-0 text-xs uppercase tracking-wider"
-                >
+                <Badge variant="outline" className="text-xs">
                   {report.tag}
                 </Badge>
               </div>
-              <CardTitle className="text-base transition-colors group-hover:text-primary">
-                {report.title}
-              </CardTitle>
-              <CardDescription className="line-clamp-2">
+              <CardTitle className="text-base mt-3">{report.title}</CardTitle>
+              <CardDescription className="text-xs">
                 {report.description}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between border-t border-border pt-3">
-                <div className="text-xs text-muted-foreground uppercase tracking-wider">
-                  Last run: 2026-04-16
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="group-hover:bg-primary group-hover:text-primary-foreground"
-                >
-                  Run →
-                </Button>
-              </div>
+              <Button
+                onClick={() => handleRunReport(report.id)}
+                className="w-full"
+                size="sm"
+              >
+                <Download className="size-4 mr-2" />
+                Generate Report
+              </Button>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <Card className="rounded-lg border-border bg-card shadow-sm">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Recent Report Activity</CardTitle>
-            <Badge variant="secondary" className="uppercase tracking-wider">
-              Last 7 Days
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="px-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="px-6">Report</TableHead>
-                <TableHead>Generated By</TableHead>
-                <TableHead>Format</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Size</TableHead>
-                <TableHead className="px-6"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {RECENT_REPORTS.map((report, index) => (
-                <TableRow
-                  key={index}
-                  className="transition-colors hover:bg-accent"
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold tracking-tight">
+          Recent Transmittals
+        </h2>
+        <div className="rounded-md border">
+          <ScrollArea className="h-64">
+            <div className="divide-y">
+              {transmittals.slice(0, 5).map((t: any, i: number) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between px-4 py-3 hover:bg-muted/50"
                 >
-                  <TableCell className="px-6">{report.name}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {report.generatedBy}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {report.format}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs text-muted-foreground">
-                    {report.date}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {report.size}
-                  </TableCell>
-                  <TableCell className="px-6">
-                    <Button variant="ghost" size="sm">
-                      <Download className="size-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded bg-muted">
+                      <FileText className="size-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">
+                        {t.transmittalNumber}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {t.subject} • Status: {t.status}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-muted-foreground">
+                      {t.createdAt
+                        ? new Date(t.createdAt).toLocaleDateString()
+                        : "N/A"}
+                    </p>
+                  </div>
+                </div>
               ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+              {transmittals.length === 0 && (
+                <div className="px-4 py-8 text-center text-muted-foreground text-sm">
+                  No transmittals found
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+        </div>
+      </div>
 
       <ReportModal
         report={selectedReport}

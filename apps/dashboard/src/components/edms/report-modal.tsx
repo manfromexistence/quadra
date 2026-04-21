@@ -42,7 +42,34 @@ export function ReportModal({ report, open, onOpenChange }: ReportModalProps) {
   };
 
   const handleExport = (format: "pdf" | "excel") => {
-    // TODO: Implement actual export logic
+    if (format === "pdf") {
+      // Use browser's print functionality for PDF export
+      window.print();
+    } else if (format === "excel") {
+      // Simple CSV export
+      const rows = (report as any).rows || (report as any).data || [];
+      const csvContent = [
+        ["Code", "Title", "Revision", "Status", "Date"],
+        ...rows.map((row: any) => [
+          row.code || row.documentNumber || "",
+          row.title || "",
+          row.revision || "",
+          row.status || "",
+          row.date || row.uploadedAt || "",
+        ]),
+      ]
+        .map((row) => row.join(","))
+        .join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${report.title.replace(/\s+/g, "_")}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
     onOpenChange(false);
   };
 

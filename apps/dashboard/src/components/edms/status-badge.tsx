@@ -10,10 +10,12 @@ const EMPHASIZED_STATUS = new Set([
 ]);
 const MUTED_STATUS = new Set(["draft", "archived"]);
 const PURPOSE_CODES = new Set(["IFR", "IFA", "IFC", "IFI", "VOID"]);
+const CONSTRUCTION_STATUS = new Set(["A", "B", "C", "I", "R"]);
 
 export function EdmsStatusBadge({ status }: { status: string }) {
   const upperStatus = status.toUpperCase();
   const isPurposeCode = PURPOSE_CODES.has(upperStatus);
+  const isConstructionStatus = CONSTRUCTION_STATUS.has(upperStatus);
 
   return (
     <Badge
@@ -35,19 +37,39 @@ export function EdmsStatusBadge({ status }: { status: string }) {
         isPurposeCode &&
           upperStatus === "VOID" &&
           "border-red-600/30 bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400",
+        isConstructionStatus &&
+          upperStatus === "A" &&
+          "border-emerald-600/30 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400",
+        isConstructionStatus &&
+          upperStatus === "B" &&
+          "border-blue-600/30 bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400",
+        isConstructionStatus &&
+          upperStatus === "C" &&
+          "border-violet-600/30 bg-violet-50 text-violet-700 dark:bg-violet-950/30 dark:text-violet-400",
+        isConstructionStatus &&
+          upperStatus === "I" &&
+          "border-slate-600/30 bg-slate-50 text-slate-700 dark:bg-slate-950/30 dark:text-slate-400",
+        isConstructionStatus &&
+          upperStatus === "R" &&
+          "border-red-600/30 bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400",
         !isPurposeCode &&
+          !isConstructionStatus &&
           EMPHASIZED_STATUS.has(status) &&
           "border-border bg-accent text-foreground",
         !isPurposeCode &&
+          !isConstructionStatus &&
           MUTED_STATUS.has(status) &&
           "border-border bg-muted text-muted-foreground",
         !isPurposeCode &&
+          !isConstructionStatus &&
           !EMPHASIZED_STATUS.has(status) &&
           !MUTED_STATUS.has(status) &&
           "border-border bg-background text-foreground",
       )}
     >
-      {isPurposeCode ? upperStatus : formatEdmsLabel(status)}
+      {isPurposeCode || isConstructionStatus
+        ? upperStatus
+        : formatEdmsLabel(status)}
     </Badge>
   );
 }

@@ -5,7 +5,11 @@ import { RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { ScheduleSyncDialog } from "./schedule-sync-dialog";
 
-export function ScheduleSyncButton() {
+interface ScheduleSyncButtonProps {
+  projectId: string;
+}
+
+export function ScheduleSyncButton({ projectId }: ScheduleSyncButtonProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -14,7 +18,11 @@ export function ScheduleSyncButton() {
         <RefreshCw className="size-4 mr-2" />
         Sync Schedule
       </Button>
-      <ScheduleSyncDialog open={open} onOpenChange={setOpen} />
+      <ScheduleSyncDialog
+        open={open}
+        onOpenChange={setOpen}
+        projectId={projectId}
+      />
     </>
   );
 }

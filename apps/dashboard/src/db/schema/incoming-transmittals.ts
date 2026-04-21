@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { user } from "../schema";
+import { documents } from "./documents";
 import { projects } from "./projects";
 
 export const incomingTransmittals = sqliteTable("incoming_transmittals", {
@@ -42,8 +43,9 @@ export const incomingTransmittalDocuments = sqliteTable(
     transmittalId: text("transmittal_id")
       .notNull()
       .references(() => incomingTransmittals.id, { onDelete: "cascade" }),
-    documentCode: text("document_code").notNull(),
-    title: text("title").notNull(),
+    documentId: text("document_id")
+      .notNull()
+      .references(() => documents.id, { onDelete: "cascade" }),
     revision: text("revision").notNull(),
     status: text("status").notNull(), // Approved, Approved with Comments, For Review, For Information, Revise & Resubmit
     ourAction: text("our_action"),
@@ -80,6 +82,10 @@ export const incomingTransmittalDocumentsRelations = relations(
     transmittal: one(incomingTransmittals, {
       fields: [incomingTransmittalDocuments.transmittalId],
       references: [incomingTransmittals.id],
+    }),
+    document: one(documents, {
+      fields: [incomingTransmittalDocuments.documentId],
+      references: [documents.id],
     }),
   }),
 );

@@ -19,13 +19,119 @@ import { Textarea } from "@midday/ui/textarea";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createMinutesOfMeeting } from "@/actions/correspondence";
 
 export default function NewMoMPage() {
+  const router = useRouter();
   const [meetingDate, setMeetingDate] = useState<Date>(new Date());
   const [nextMeetingDate, setNextMeetingDate] = useState<Date | undefined>(
     undefined,
   );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(formData: FormData) {
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const projectId = formData.get("projectId") as string;
+      const meetingType = formData.get("meetingType") as string;
+      const title = formData.get("title") as string;
+      const location = formData.get("location") as string;
+      const chairperson = formData.get("chairperson") as string;
+      const attendeesText = formData.get("attendees") as string;
+      const agendaText = formData.get("agenda") as string;
+      const decisionsText = formData.get("decisions") as string;
+      const actionItemsText = formData.get("actionItems") as string;
+      const distClt = formData.get("dist-clt") === "on";
+      const distSup = formData.get("dist-sup") === "on";
+      const distEpc = formData.get("dist-epc") === "on";
+      const distVnd = formData.get("dist-vnd") === "on";
+
+      if (!projectId || !meetingType || !title || !location || !chairperson) {
+        setError("Please fill in all required fields.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Parse attendees from text format: "Name (Organization) - Role"
+      const attendees = attendeesText
+        .split("\n")
+        .filter((line) => line.trim())
+        .map((line) => {
+          const match = line.match(/(.+?)\s*\((.+?)\)\s*(?:-\s*(.+))?/);
+          if (match) {
+            return {
+              name: match[1].trim(),
+              organization: match[2].trim(),
+              role: match[3]?.trim() || undefined,
+            };
+          }
+          return null;
+        })
+        .filter((a): a is NonNullable<typeof a> => a !== null);
+
+      // Parse action items from text format: "Action - Assigned To - Due Date"
+      const actionItems = actionItemsText
+        .split("\n")
+        .filter((line) => line.trim())
+        .map((line) => {
+          const parts = line.split("-").map((p) => p.trim());
+          if (parts.length >= 2) {
+            return {
+              item: parts[0],
+              assignedTo: parts[1],
+              dueDate: parts[2] || undefined,
+            };
+          }
+          return null;
+        })
+        .filter((a): a is NonNullable<typeof a> => a !== null);
+
+      // Build distribution array
+      const distribution: string[] = [];
+      if (distClt) distribution.push("CLT");
+      if (distSup) distribution.push("SUP");
+      if (distEpc) distribution.push("EPC");
+      if (distVnd) distribution.push("VND");
+
+      // Generate MoM number (simplified - in production this would use project config)
+      const momNumber = `MOM-${projectId.toUpperCase().slice(0, 3)}-${Date.now().toString().slice(-4)}`;
+
+      const result = await createMinutesOfMeeting({
+        momNumber,
+        meetingDate: meetingDate.toISOString(),
+        meetingType,
+        title,
+        location,
+        chairperson,
+        minuteTaker: "", // Will be set from session user in action
+        agenda: agendaText,
+        decisions: decisionsText,
+        nextMeeting: nextMeetingDate?.toISOString(),
+        distribution,
+        attendees: attendees.length > 0 ? attendees : undefined,
+        actionItems: actionItems.length > 0 ? actionItems : undefined,
+        projectId,
+      });
+
+      if (result.success) {
+        router.push("/meetings");
+        router.refresh();
+      } else {
+        setError(
+          result.error?.message || "Failed to create minutes of meeting",
+        );
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6 pt-6">
@@ -46,23 +152,30 @@ export default function NewMoMPage() {
           <Button variant="outline" asChild>
             <Link href="/meetings">Cancel</Link>
           </Button>
-          <Button>Issue MoM →</Button>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      {error && (
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
+          {error}
+        </div>
+      )}
+
+      <form action={handleSubmit} className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Meeting Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <input type="hidden" name="projectId" value="default-project" />
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="mom-number">MoM Number</Label>
                   <Input
                     id="mom-number"
-                    defaultValue="MOM-AHR-0019"
+                    value="Auto-generated on save"
                     className="font-mono"
                     readOnly
                   />
@@ -73,7 +186,7 @@ export default function NewMoMPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="meeting-type">Meeting Type</Label>
-                  <Select name="meeting-type" required>
+                  <Select name="meetingType" required>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type..." />
                     </SelectTrigger>
@@ -96,7 +209,12 @@ export default function NewMoMPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="title">Meeting Title</Label>
-                <Input id="title" placeholder="Meeting title" required />
+                <Input
+                  id="title"
+                  name="title"
+                  placeholder="Meeting title"
+                  required
+                />
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -105,6 +223,7 @@ export default function NewMoMPage() {
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
+                        type="button"
                         variant="outline"
                         className={cn(
                           "w-full justify-start text-left font-normal",
@@ -129,6 +248,7 @@ export default function NewMoMPage() {
                   <Label htmlFor="location">Location</Label>
                   <Input
                     id="location"
+                    name="location"
                     placeholder="Meeting location"
                     required
                   />
@@ -140,16 +260,8 @@ export default function NewMoMPage() {
                   <Label htmlFor="chairperson">Chairperson</Label>
                   <Input
                     id="chairperson"
+                    name="chairperson"
                     placeholder="Meeting chair"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="minute-taker">Minute Taker</Label>
-                  <Input
-                    id="minute-taker"
-                    placeholder="Person taking minutes"
                     required
                   />
                 </div>
@@ -166,9 +278,9 @@ export default function NewMoMPage() {
                 <Label htmlFor="attendees">Attendees List</Label>
                 <Textarea
                   id="attendees"
+                  name="attendees"
                   placeholder="Enter attendees (one per line)&#10;Format: Name (Organization) - Role"
                   className="min-h-[150px] font-mono text-xs"
-                  required
                 />
                 <p className="text-xs text-muted-foreground">
                   Example: Jennifer (Quadra) - Project Manager
@@ -186,6 +298,7 @@ export default function NewMoMPage() {
                 <Label htmlFor="agenda">Meeting Agenda</Label>
                 <Textarea
                   id="agenda"
+                  name="agenda"
                   placeholder="Enter agenda items (one per line)"
                   className="min-h-[150px]"
                   required
@@ -203,6 +316,7 @@ export default function NewMoMPage() {
                 <Label htmlFor="decisions">Key Decisions</Label>
                 <Textarea
                   id="decisions"
+                  name="decisions"
                   placeholder="Enter key decisions made (one per line)"
                   className="min-h-[150px]"
                   required
@@ -220,6 +334,7 @@ export default function NewMoMPage() {
                 <Label htmlFor="action-items">Action Items</Label>
                 <Textarea
                   id="action-items"
+                  name="action-items"
                   placeholder="Enter action items&#10;Format: Action - Assigned To - Due Date"
                   className="min-h-[200px] font-mono text-xs"
                 />
@@ -234,12 +349,36 @@ export default function NewMoMPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
+              <CardTitle>Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? "Creating..." : "Issue MoM →"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                asChild
+              >
+                <Link href="/meetings">Cancel</Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Distribution</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <Checkbox id="dist-clt" defaultChecked />
+                  <Checkbox
+                    id="dist-clt"
+                    name="dist-clt"
+                    value="on"
+                    defaultChecked
+                  />
                   <Label
                     htmlFor="dist-clt"
                     className="font-normal cursor-pointer"
@@ -248,7 +387,12 @@ export default function NewMoMPage() {
                   </Label>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Checkbox id="dist-sup" defaultChecked />
+                  <Checkbox
+                    id="dist-sup"
+                    name="dist-sup"
+                    value="on"
+                    defaultChecked
+                  />
                   <Label
                     htmlFor="dist-sup"
                     className="font-normal cursor-pointer"
@@ -257,7 +401,12 @@ export default function NewMoMPage() {
                   </Label>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Checkbox id="dist-epc" defaultChecked />
+                  <Checkbox
+                    id="dist-epc"
+                    name="dist-epc"
+                    value="on"
+                    defaultChecked
+                  />
                   <Label
                     htmlFor="dist-epc"
                     className="font-normal cursor-pointer"
@@ -266,7 +415,7 @@ export default function NewMoMPage() {
                   </Label>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Checkbox id="dist-vnd" />
+                  <Checkbox id="dist-vnd" name="dist-vnd" value="on" />
                   <Label
                     htmlFor="dist-vnd"
                     className="font-normal cursor-pointer"
@@ -288,6 +437,7 @@ export default function NewMoMPage() {
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
+                      type="button"
                       variant="outline"
                       className={cn(
                         "w-full justify-start text-left font-normal",
@@ -319,7 +469,7 @@ export default function NewMoMPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" type="button">
                   + Add Attachment
                 </Button>
                 <p className="text-xs text-muted-foreground">
@@ -329,7 +479,7 @@ export default function NewMoMPage() {
             </CardContent>
           </Card>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

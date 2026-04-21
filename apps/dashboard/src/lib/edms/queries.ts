@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
+import { documents } from "@/db/schema/documents";
 import {
   queryLinkedDocuments,
   rfis,
@@ -26,8 +27,16 @@ export async function getTechnicalQueryById(id: string) {
   if (query.length === 0) return null;
 
   const linkedDocs = await db
-    .select()
+    .select({
+      id: queryLinkedDocuments.id,
+      documentId: queryLinkedDocuments.documentId,
+      revision: queryLinkedDocuments.revision,
+      documentNumber: documents.documentNumber,
+      title: documents.title,
+      discipline: documents.discipline,
+    })
     .from(queryLinkedDocuments)
+    .innerJoin(documents, eq(queryLinkedDocuments.documentId, documents.id))
     .where(eq(queryLinkedDocuments.queryId, id));
 
   return {
@@ -55,8 +64,16 @@ export async function getSiteTechQueryById(id: string) {
   if (query.length === 0) return null;
 
   const linkedDocs = await db
-    .select()
+    .select({
+      id: queryLinkedDocuments.id,
+      documentId: queryLinkedDocuments.documentId,
+      revision: queryLinkedDocuments.revision,
+      documentNumber: documents.documentNumber,
+      title: documents.title,
+      discipline: documents.discipline,
+    })
     .from(queryLinkedDocuments)
+    .innerJoin(documents, eq(queryLinkedDocuments.documentId, documents.id))
     .where(eq(queryLinkedDocuments.queryId, id));
 
   return {
@@ -80,8 +97,16 @@ export async function getRFIById(id: string) {
   if (rfi.length === 0) return null;
 
   const linkedDocs = await db
-    .select()
+    .select({
+      id: queryLinkedDocuments.id,
+      documentId: queryLinkedDocuments.documentId,
+      revision: queryLinkedDocuments.revision,
+      documentNumber: documents.documentNumber,
+      title: documents.title,
+      discipline: documents.discipline,
+    })
     .from(queryLinkedDocuments)
+    .innerJoin(documents, eq(queryLinkedDocuments.documentId, documents.id))
     .where(eq(queryLinkedDocuments.queryId, id));
 
   return {

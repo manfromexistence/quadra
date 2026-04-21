@@ -1,7 +1,10 @@
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { user } from "../schema";
+import { changeOrders } from "./change-orders";
+import { documents } from "./documents";
 import { projects } from "./projects";
+import { submittals } from "./submittals";
 
 // Technical Queries (TQ)
 export const technicalQueries = sqliteTable("technical_queries", {
@@ -81,6 +84,14 @@ export const rfis = sqliteTable("rfis", {
   projectId: text("project_id")
     .notNull()
     .references(() => projects.id),
+  relatedSubmittalId: text("related_submittal_id").references(
+    () => submittals.id,
+    { onDelete: "set null" },
+  ),
+  relatedChangeOrderId: text("related_change_order_id").references(
+    () => changeOrders.id,
+    { onDelete: "set null" },
+  ),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -94,7 +105,10 @@ export const queryLinkedDocuments = sqliteTable("query_linked_documents", {
   id: text("id").primaryKey(),
   queryId: text("query_id").notNull(), // Can be TQ, STQ, or RFI ID
   queryType: text("query_type").notNull(), // TQ, STQ, RFI
-  documentCode: text("document_code").notNull(),
+  documentId: text("document_id")
+    .notNull()
+    .references(() => documents.id, { onDelete: "cascade" }),
+  revision: text("revision"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -136,9 +150,21 @@ export const rfisRelations = relations(rfis, ({ one, many }) => ({
     fields: [rfis.projectId],
     references: [projects.id],
   }),
-  assignedUser: one(user, {
+  raisedByUser: one(user, {
+    fields: [rfis.raisedBy],
+    references: [user.id],
+  }),
+  assignedToUser: one(user, {
     fields: [rfis.assignedTo],
     references: [user.id],
+  }),
+  relatedSubmittal: one(submittals, {
+    fields: [rfis.relatedSubmittalId],
+    references: [submittals.id],
+  }),
+  relatedChangeOrder: one(changeOrders, {
+    fields: [rfis.relatedChangeOrderId],
+    references: [changeOrders.id],
   }),
   linkedDocuments: many(queryLinkedDocuments),
 }));
@@ -157,6 +183,10 @@ export const queryLinkedDocumentsRelations = relations(
     rfi: one(rfis, {
       fields: [queryLinkedDocuments.queryId],
       references: [rfis.id],
+    }),
+    document: one(documents, {
+      fields: [queryLinkedDocuments.documentId],
+      references: [documents.id],
     }),
   }),
 );

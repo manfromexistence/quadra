@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
+import { documents } from "@/db/schema/documents";
 import {
   incomingTransmittalDocuments,
   incomingTransmittals,
@@ -22,13 +23,26 @@ export async function getIncomingTransmittalById(id: string) {
 
   if (transmittal.length === 0) return null;
 
-  const documents = await db
-    .select()
+  const transmittalDocs = await db
+    .select({
+      id: incomingTransmittalDocuments.id,
+      documentId: incomingTransmittalDocuments.documentId,
+      revision: incomingTransmittalDocuments.revision,
+      status: incomingTransmittalDocuments.status,
+      ourAction: incomingTransmittalDocuments.ourAction,
+      documentNumber: documents.documentNumber,
+      title: documents.title,
+      discipline: documents.discipline,
+    })
     .from(incomingTransmittalDocuments)
+    .innerJoin(
+      documents,
+      eq(incomingTransmittalDocuments.documentId, documents.id),
+    )
     .where(eq(incomingTransmittalDocuments.transmittalId, id));
 
   return {
     ...transmittal[0],
-    documents,
+    documents: transmittalDocs,
   };
 }

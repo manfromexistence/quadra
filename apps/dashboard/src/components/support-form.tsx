@@ -26,6 +26,7 @@ import { useState } from "react";
 import { z } from "zod/v3";
 import { sendSupportAction } from "@/actions/send-support-action";
 import { useZodForm } from "@/hooks/use-zod-form";
+import { useTRPC } from "@/trpc/client";
 
 const formSchema = z.object({
   subject: z.string(),
@@ -39,6 +40,7 @@ const formSchema = z.object({
 
 export function SupportForm() {
   const { toast } = useToast();
+  const trpc = useTRPC();
   const [transmittalSearch, setTransmittalSearch] = useState("");
   const [selectedTransmittal, setSelectedTransmittal] = useState<{
     id: string;
@@ -46,20 +48,20 @@ export function SupportForm() {
     subject: string;
   } | null>(null);
 
-  // Mock transmittals for search - in production, fetch from API
-  const mockTransmittals = [
-    { id: "1", number: "TX-2026-001", subject: "Design Documents Rev A" },
-    { id: "2", number: "TX-2026-002", subject: "Structural Calculations" },
-    { id: "3", number: "TX-2026-003", subject: "MEP Specifications" },
-    { id: "4", number: "TX-2026-004", subject: "Foundation Drawings" },
-    { id: "5", number: "TX-2026-005", subject: "Architectural Plans" },
-  ];
+  // Fetch transmittals from database
+  const { data: transmittals = [] } = trpc.transmittals.list.useQuery();
 
-  const filteredTransmittals = mockTransmittals.filter(
-    (t) =>
-      t.number.toLowerCase().includes(transmittalSearch.toLowerCase()) ||
-      t.subject.toLowerCase().includes(transmittalSearch.toLowerCase()),
-  );
+  const filteredTransmittals = transmittals
+    .map((t) => ({
+      id: t.id,
+      number: t.transmittalNumber,
+      subject: t.subject,
+    }))
+    .filter(
+      (t) =>
+        t.number.toLowerCase().includes(transmittalSearch.toLowerCase()) ||
+        t.subject.toLowerCase().includes(transmittalSearch.toLowerCase()),
+    );
 
   const form = useZodForm(formSchema, {
     defaultValues: {

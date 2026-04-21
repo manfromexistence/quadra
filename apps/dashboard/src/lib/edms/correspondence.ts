@@ -8,6 +8,7 @@ import {
   momActionItems,
   momAttendees,
 } from "@/db/schema/correspondence";
+import { documents } from "@/db/schema/documents";
 
 // Letters
 export async function getLetters(projectId: string) {
@@ -28,8 +29,16 @@ export async function getLetterById(id: string) {
   if (letter.length === 0) return null;
 
   const relatedDocs = await db
-    .select()
+    .select({
+      id: letterRelatedDocuments.id,
+      documentId: letterRelatedDocuments.documentId,
+      revision: letterRelatedDocuments.revision,
+      documentNumber: documents.documentNumber,
+      title: documents.title,
+      discipline: documents.discipline,
+    })
     .from(letterRelatedDocuments)
+    .innerJoin(documents, eq(letterRelatedDocuments.documentId, documents.id))
     .where(eq(letterRelatedDocuments.letterId, id));
 
   return {

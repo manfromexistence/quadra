@@ -134,7 +134,7 @@ export async function getDocumentControlData(
               revision: documents.revision,
               status: documents.status,
               uploadedAt: documents.uploadedAt,
-              createdBy: documents.createdBy,
+              uploadedBy: documents.uploadedBy,
               fileSize: documents.fileSize,
               images: documents.images,
               fileUrl: documents.fileUrl,
@@ -213,7 +213,7 @@ export async function getDocumentControlData(
         category: document.category,
         revision: document.revision,
         status: document.status,
-        author: document.createdBy,
+        author: document.uploadedBy || "Unknown",
         fileSize: document.fileSize,
         uploadedLabel: formatDateLabel(document.uploadedAt),
         images: document.images, // Keep truncated, expand in component
@@ -291,4 +291,24 @@ function formatDateLabel(date: Date | null) {
 
 function formatCount(value: number | string | null | undefined) {
   return new Intl.NumberFormat("en-US").format(Number(value ?? 0));
+}
+
+export async function getDocuments(projectId: string) {
+  const documentRows = await db
+    .select({
+      id: documents.id,
+      documentNumber: documents.documentNumber,
+      title: documents.title,
+      revision: documents.revision,
+    })
+    .from(documents)
+    .where(eq(documents.projectId, projectId))
+    .orderBy(desc(documents.uploadedAt))
+    .limit(50);
+
+  return documentRows.map((document) => ({
+    code: document.documentNumber,
+    title: document.title,
+    rev: document.revision || "0",
+  }));
 }

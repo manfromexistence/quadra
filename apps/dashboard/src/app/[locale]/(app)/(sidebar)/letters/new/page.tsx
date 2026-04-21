@@ -19,10 +19,67 @@ import { Textarea } from "@midday/ui/textarea";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createLetter } from "@/actions/correspondence";
 
 export default function NewLetterPage() {
+  const router = useRouter();
   const [letterDate, setLetterDate] = useState<Date>(new Date());
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(formData: FormData) {
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const projectId = formData.get("projectId") as string;
+      const to = formData.get("to") as string;
+      const toType = formData.get("toType") as string;
+      const subject = formData.get("subject") as string;
+      const category = formData.get("category") as string;
+      const ref = formData.get("ref") as string;
+      const content = formData.get("content") as string;
+      const _urgent = formData.get("urgent") === "on";
+
+      if (!projectId || !to || !toType || !subject || !category || !content) {
+        setError("Please fill in all required fields.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Generate letter number (simplified - in production this would use project config)
+      const letterNumber = `LTR-OUT-${projectId.toUpperCase().slice(0, 3)}-${Date.now().toString().slice(-4)}`;
+
+      const result = await createLetter({
+        letterNumber,
+        date: letterDate.toISOString(),
+        direction: "Outgoing",
+        from: "Quadra Engineering", // In production, this would come from project config
+        to,
+        toType,
+        subject,
+        category,
+        ref: ref || undefined,
+        forInfo: false,
+        actionRequired: false,
+        responseRequired: undefined,
+        projectId,
+      });
+
+      if (result.success) {
+        router.push("/letters");
+        router.refresh();
+      } else {
+        setError(result.error?.message || "Failed to create letter");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6 pt-6">
@@ -42,23 +99,30 @@ export default function NewLetterPage() {
           <Button variant="outline" asChild>
             <Link href="/letters">Cancel</Link>
           </Button>
-          <Button>Issue Letter →</Button>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+      {error && (
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
+          {error}
+        </div>
+      )}
+
+      <form action={handleSubmit} className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Letter Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <input type="hidden" name="projectId" value="default-project" />
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="letter-number">Letter Number</Label>
                   <Input
                     id="letter-number"
-                    defaultValue="LTR-OUT-AHR-0157"
+                    value="Auto-generated on save"
                     className="font-mono"
                     readOnly
                   />
@@ -72,6 +136,7 @@ export default function NewLetterPage() {
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
+                        type="button"
                         variant="outline"
                         className={cn(
                           "w-full justify-start text-left font-normal",
@@ -95,11 +160,10 @@ export default function NewLetterPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="from">From</Label>
-                <Input
-                  id="from"
-                  defaultValue="Quadra Demo Engineering"
-                  readOnly
-                />
+                <Input id="from" value="Quadra Engineering" readOnly />
+                <p className="text-xs text-muted-foreground">
+                  From project configuration
+                </p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -107,14 +171,15 @@ export default function NewLetterPage() {
                   <Label htmlFor="to">To</Label>
                   <Input
                     id="to"
+                    name="to"
                     placeholder="Recipient organization"
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="to-type">Recipient Type</Label>
-                  <Select name="to-type" required>
+                  <Label htmlFor="toType">Recipient Type</Label>
+                  <Select name="toType" required>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type..." />
                     </SelectTrigger>
@@ -133,7 +198,12 @@ export default function NewLetterPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="subject">Subject</Label>
-                <Input id="subject" placeholder="Letter subject" required />
+                <Input
+                  id="subject"
+                  name="subject"
+                  placeholder="Letter subject"
+                  required
+                />
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -163,6 +233,7 @@ export default function NewLetterPage() {
                   <Label htmlFor="ref">Reference Number</Label>
                   <Input
                     id="ref"
+                    name="ref"
                     placeholder="External reference (optional)"
                     className="font-mono"
                   />
@@ -173,6 +244,7 @@ export default function NewLetterPage() {
                 <Label htmlFor="content">Letter Content</Label>
                 <Textarea
                   id="content"
+                  name="content"
                   placeholder="Enter letter content..."
                   className="min-h-[300px]"
                   required
@@ -180,7 +252,7 @@ export default function NewLetterPage() {
               </div>
 
               <div className="flex items-center gap-2">
-                <Checkbox id="urgent" />
+                <Checkbox id="urgent" name="urgent" value="on" />
                 <Label htmlFor="urgent" className="font-normal">
                   Mark as urgent
                 </Label>
@@ -192,11 +264,30 @@ export default function NewLetterPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
+              <CardTitle>Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? "Creating..." : "Issue Letter →"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                asChild
+              >
+                <Link href="/letters">Cancel</Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Attachments</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" type="button">
                   + Add Attachment
                 </Button>
                 <p className="text-xs text-muted-foreground">
@@ -212,7 +303,7 @@ export default function NewLetterPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" type="button">
                   + Link Document
                 </Button>
                 <p className="text-xs text-muted-foreground">
@@ -221,24 +312,8 @@ export default function NewLetterPage() {
               </div>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Distribution</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Label htmlFor="cc">CC (Optional)</Label>
-                <Textarea
-                  id="cc"
-                  placeholder="Additional recipients (one per line)"
-                  className="min-h-[100px] text-xs"
-                />
-              </div>
-            </CardContent>
-          </Card>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

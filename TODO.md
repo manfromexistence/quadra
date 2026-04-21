@@ -2,6 +2,122 @@
 
 ## In Progress
 
+### Construction EDMS Gaps - Implementation Plan
+
+#### Critical Priority (Address First)
+
+- [ ] Create submittals table and workflow
+  - Create `submittals` schema with fields: submittalNumber, type (shop_drawing, material, equipment), specificationSection, revision, reviewStatus, dueDate, projectId, submittedBy, reviewedBy, reviewedAt, comments
+  - Create `submittalDocuments` junction table linking submittals to documents with revision tracking
+  - Create query library `src/lib/edms/submittals.ts`
+  - Create submittals page at `/submittals`
+  - Create submittal creation sheet component
+  - Add to sidebar navigation
+
+- [ ] Fix incoming transmittal documents to use actual document IDs
+  - Update `incomingTransmittalDocuments` schema: change `documentCode` to `documentId` (foreign key to documents.id)
+  - Add `revision` field to track specific revision
+  - Update `src/lib/edms/incoming-transmittals.ts` to join with documents table
+  - Update incoming transmittals page to display actual document details
+  - Create migration for schema change
+
+- [ ] Create change orders table
+  - Create `changeOrders` schema with fields: changeOrderNumber, originalContractValue, changeValue, reason, approvalStatus, approvedBy, approvedAt, projectId, relatedDocuments
+  - Create `changeOrderDocuments` junction table
+  - Create query library `src/lib/edms/change-orders.ts`
+  - Create change orders page at `/change-orders`
+  - Connect to letters (variation category)
+  - Add to sidebar navigation
+
+- [ ] Add construction-standard document statuses
+  - Update `documents` schema status field to use construction standards: "A" (Approved for Construction), "B" (Approved for Design), "C" (Approved for Construction), "I" (Issued for Information), "R" (Revise and Resubmit)
+  - Update status badge component to display construction statuses with proper colors
+  - Update all document filters to use new statuses
+  - Create migration for status enum change
+
+- [ ] Fix query/letter linked documents to use actual document IDs
+  - Update `queryLinkedDocuments` schema: change `documentCode` to `documentId` (foreign key)
+  - Add `revision` field
+  - Update `letterRelatedDocuments` schema: same changes
+  - Update `src/lib/edms/queries.ts` to join with documents table
+  - Update `src/lib/edms/correspondence.ts` to join with documents table
+  - Create migration for schema changes
+
+#### High Priority
+
+- [ ] Create inspection requests table
+  - Create `inspectionRequests` schema with fields: inspectionNumber, type, location, scheduledDate, inspector, results (pass/fail/conditional), deficiencies, projectId, relatedDocuments
+  - Create `inspectionRequestDocuments` junction table
+  - Create query library `src/lib/edms/inspections.ts`
+  - Create inspections page at `/inspections`
+  - Add to sidebar navigation
+
+- [ ] Add contract details to projects
+  - Update `projects` schema: add `contractValue`, `contractType` (lump_sum, cost_plus, unit_rate), `contractNumber`, `clientName`, `noticeToProceedDate`
+  - Update projects page to display contract information
+  - Update project creation form to include contract fields
+  - Create migration for schema changes
+
+- [ ] Connect RFIs/queries to submittals and change orders
+  - Update `rfis` schema: add `relatedSubmittalId`, `relatedChangeOrderId`
+  - Update `technicalQueries` schema: same changes
+  - Update `siteTechQueries` schema: same changes
+  - Update RFI/query forms to allow linking to submittals/change orders
+  - Create migration for schema changes
+
+- [ ] Add document type classification
+  - Update `documents` schema: add `documentType` field with values: "design", "shop_drawing", "as_built", "manufacturer_data"
+  - Update document form to include document type selection
+  - Update document filters to include document type
+  - Update numbering pattern to handle different document types
+  - Create migration for schema change
+
+- [ ] Create extension of time tracking
+  - Create `extensionOfTimeRequests` schema with fields: eotNumber, requestedDays, reason, approvalStatus, approvedDays, approvedBy, approvedAt, projectId
+  - Create query library `src/lib/edms/eot.ts`
+  - Create EOT page at `/extension-of-time`
+  - Connect to schedule impacts
+  - Add to sidebar navigation
+
+#### Medium Priority
+
+- [ ] Add as-built document tracking
+  - Add `asBuiltRevision` field to documents table
+  - Add `isAsBuilt` boolean field
+  - Create as-built document comparison view
+  - Add as-built filter to documents page
+  - Create migration for schema changes
+
+- [ ] Create daily reports
+  - Create `dailyReports` schema with fields: reportDate, weather, manpower, equipment, activitiesCompleted, issues, projectId, createdBy
+  - Create `dailyReportManpower` table for trade breakdown
+  - Create `dailyReportEquipment` table for equipment tracking
+  - Create query library `src/lib/edms/daily-reports.ts`
+  - Create daily reports page at `/daily-reports`
+  - Add to sidebar navigation
+
+- [ ] Add safety observations tracking
+  - Create `safetyObservations` schema with fields: observationNumber, type, severity, location, description, correctiveAction, status, dueDate, projectId, observedBy
+  - Create query library `src/lib/edms/safety.ts`
+  - Create safety observations page at `/safety`
+  - Add safety metrics to dashboard
+  - Add to sidebar navigation
+
+- [ ] Create commissioning checklists
+  - Create `commissioningChecklists` schema with fields: system, testProcedure, result, status, completedDate, projectId
+  - Create `commissioningChecklistItems` table for individual test items
+  - Create query library `src/lib/edms/commissioning.ts`
+  - Create commissioning page at `/commissioning`
+  - Connect to schedule activities
+  - Add to sidebar navigation
+
+- [ ] Add warranty tracking
+  - Create `warranties` schema with fields: warrantyNumber, system, equipment, startDate, endDate, provider, projectId
+  - Create query library `src/lib/edms/warranties.ts`
+  - Create warranties page at `/warranties`
+  - Add warranty expiry alerts
+  - Add to sidebar navigation
+
 ---
 
 ## Completed ✅

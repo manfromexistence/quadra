@@ -206,9 +206,22 @@ export default async function DocumentsPage({
                         <SelectContent>
                           <SelectItem value="all">All Statuses</SelectItem>
                           <SelectItem value="draft">DRAFT</SelectItem>
-                          <SelectItem value="submitted">IFR</SelectItem>
-                          <SelectItem value="under_review">IFA</SelectItem>
-                          <SelectItem value="approved">IFC</SelectItem>
+                          <SelectItem value="A">
+                            A - Approved for Construction
+                          </SelectItem>
+                          <SelectItem value="B">
+                            B - Approved for Design
+                          </SelectItem>
+                          <SelectItem value="C">
+                            C - Approved for Construction
+                          </SelectItem>
+                          <SelectItem value="I">
+                            I - Issued for Information
+                          </SelectItem>
+                          <SelectItem value="R">
+                            R - Revise and Resubmit
+                          </SelectItem>
+                          <SelectItem value="rejected">Rejected</SelectItem>
                         </SelectContent>
                       </Select>
 

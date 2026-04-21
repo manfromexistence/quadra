@@ -12,29 +12,86 @@ import {
 import { Input } from "@midday/ui/input";
 import { Label } from "@midday/ui/label";
 import { ScrollArea } from "@midday/ui/scroll-area";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { toast } from "@/hooks/use-toast";
 
 interface AddSectionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  projectId?: string;
 }
 
 export function AddSectionDialog({
   open,
   onOpenChange,
+  projectId,
 }: AddSectionDialogProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [code, setCode] = useState("");
   const [title, setTitle] = useState("");
   const [count, setCount] = useState("");
   const [rule, setRule] = useState("");
 
   const handleAdd = () => {
-    // TODO: Implement add section logic
-    onOpenChange(false);
-    setCode("");
-    setTitle("");
-    setCount("");
-    setRule("");
+    if (!code || !title) {
+      toast({
+        title: "Missing required fields",
+        description: "Section code and title are required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!projectId) {
+      toast({
+        title: "Project not available",
+        description: "Cannot add section without project context",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    startTransition(async () => {
+      try {
+        const { nanoid } = await import("nanoid");
+        const { db } = await import("@/db");
+        const { databookSections } = await import("@/db/schema/databook");
+
+        // Insert new section
+        await db.insert(databookSections).values({
+          id: nanoid(),
+          projectId,
+          code,
+          title,
+          requiredCount: count ? parseInt(count, 10) : 0,
+          collectedCount: 0,
+          sortOrder: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+
+        toast({
+          title: "Section added",
+          description: `Section ${code} has been created`,
+        });
+
+        onOpenChange(false);
+        setCode("");
+        setTitle("");
+        setCount("");
+        setRule("");
+        router.refresh();
+      } catch (error) {
+        console.error("Failed to add section:", error);
+        toast({
+          title: "Failed to add section",
+          description: "An error occurred while creating the section",
+          variant: "destructive",
+        });
+      }
+    });
   };
 
   return (
@@ -98,8 +155,8 @@ export function AddSectionDialog({
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleAdd} disabled={!code || !title}>
-            Add Section
+          <Button onClick={handleAdd} disabled={!code || !title || isPending}>
+            {isPending ? "Adding..." : "Add Section"}
           </Button>
         </DialogFooter>
       </DialogContent>

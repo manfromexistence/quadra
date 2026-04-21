@@ -43,6 +43,13 @@ const icons = {
   "/workflows": () => <Workflow size={20} />,
   "/transmittals": () => <Send size={20} />,
   "/incoming-transmittals": () => <MailOpen size={20} />,
+  "/submittals": () => <FileText size={20} />,
+  "/change-orders": () => <Activity size={20} />,
+  "/inspections": () => <ClipboardList size={20} />,
+  "/daily-reports": () => <FileText size={20} />,
+  "/safety-observations": () => <Activity size={20} />,
+  "/commissioning": () => <ClipboardList size={20} />,
+  "/warranty": () => <BookOpen size={20} />,
   "/technical-queries": () => <HelpCircle size={20} />,
   "/site-tech-queries": () => <Wrench size={20} />,
   "/rfis": () => <MessageSquare size={20} />,
@@ -72,6 +79,38 @@ const items = [
   {
     path: "/workflows",
     name: "Workflows",
+  },
+  {
+    path: "/submittals",
+    name: "Submittals",
+  },
+  {
+    path: "/change-orders",
+    name: "Change Orders",
+  },
+  {
+    path: "/inspections",
+    name: "Inspections",
+  },
+  {
+    path: "/extension-of-time",
+    name: "Extension of Time",
+  },
+  {
+    path: "/daily-reports",
+    name: "Daily Reports",
+  },
+  {
+    path: "/safety-observations",
+    name: "Safety Observations",
+  },
+  {
+    path: "/commissioning",
+    name: "Commissioning",
+  },
+  {
+    path: "/warranty",
+    name: "Warranty",
   },
   {
     path: "/bulk-upload",

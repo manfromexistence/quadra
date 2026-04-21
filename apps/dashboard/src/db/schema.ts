@@ -257,17 +257,25 @@ export const oauthToken = sqliteTable("oauth_token", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
+export * from "./schema/change-orders";
+export * from "./schema/commissioning";
 export * from "./schema/correspondence";
+export * from "./schema/daily-reports";
 export * from "./schema/databook";
 export * from "./schema/documents";
 export * from "./schema/edms-file-assets";
+export * from "./schema/extension-of-time";
 export * from "./schema/incoming-transmittals";
+export * from "./schema/inspections";
 export * from "./schema/midday";
 export * from "./schema/notifications";
 export * from "./schema/project-config";
 export * from "./schema/project-templates";
 export * from "./schema/projects";
 export * from "./schema/queries";
+export * from "./schema/safety-observations";
 export * from "./schema/schedule";
+export * from "./schema/submittals";
 export * from "./schema/transmittals";
+export * from "./schema/warranty";
 export * from "./schema/workflows";

@@ -30,7 +30,7 @@ import {
 } from "@midday/ui/table";
 import { FileSpreadsheet, Loader2, Upload, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useRef, useState, useTransition } from "react";
+import { useState } from "react";
 import * as XLSX from "xlsx";
 import { toast } from "@/hooks/use-toast";
 
@@ -247,7 +247,7 @@ export function DocumentBulkImportSheet({
     }
   };
 
-  const commitImport = () => {
+  const commitImport = async () => {
     if (!selectedProjectId) {
       toast({
         title: "No project selected",
@@ -269,18 +269,55 @@ export function DocumentBulkImportSheet({
     }
 
     startTransition(async () => {
-      // TODO: Implement actual import API call
-      // For now, just show success message
-      toast({
-        title: "Import successful",
-        description: `${validRows.length} documents imported`,
-      });
+      try {
+        const { createDocument } = await import("@/actions/documents");
 
-      setIsOpen(false);
-      setStep(1);
-      setCsvData("");
-      setParsedRows([]);
-      router.refresh();
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const row of validRows) {
+          try {
+            await createDocument({
+              projectId: selectedProjectId,
+              documentNumber: `${row.discipline}-${row.type}-${row.sequence}`,
+              title: row.title,
+              discipline: row.discipline,
+              category: row.type,
+              revision: row.revision,
+              status: row.status === "IFC" ? "approved" : "draft",
+              version: "1.0",
+              fileName: `${row.discipline}-${row.type}-${row.sequence}.pdf`,
+              fileUrl: "", // File upload would be handled separately
+              fileSize: 0,
+            });
+            successCount++;
+          } catch (error) {
+            console.error(
+              `Failed to import document ${row.discipline}-${row.type}-${row.sequence}:`,
+              error,
+            );
+            errorCount++;
+          }
+        }
+
+        toast({
+          title: "Import complete",
+          description: `${successCount} documents imported${errorCount > 0 ? `, ${errorCount} failed` : ""}`,
+        });
+
+        setIsOpen(false);
+        setStep(1);
+        setUploadedFile(null);
+        setParsedRows([]);
+        router.refresh();
+      } catch (error) {
+        console.error("Import failed:", error);
+        toast({
+          title: "Import failed",
+          description: "An error occurred during import",
+          variant: "destructive",
+        });
+      }
     });
   };
 

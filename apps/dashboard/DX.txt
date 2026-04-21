@@ -17,3 +17,11 @@ make it a 'search window' so that we can search and add to Transmittal
 You did so good - now please lint - format all files and use a lowend by typecheck for any errors and fix all fo them
 
 Good, now vscode has a windsorf extension - in zed is there any agent or extension connect to windsurf available right now or I have to add a new suppor for that in my fork?? and about the 3 free models alongside the swe 1.6 models - is a only free for now or will be free in windsurf all the time and about the usage - the are just labeled free - are the unlimited free for free users or not?? and if I connect the support of windsurf then can i use that commertially as you will be doing BYOK in my zed fork dx code editor
+
+Now you are doing a really great job. Can you look for any native HTML element instead of MUI component in our admin dashboard pages? I really don't want to use them, so please look for any site bar pages that use HTML native elements instead of MUI components, as we have to use MUI components there correctly.
+
+Now use wsl with inline turso-cli command to make sure of all the database connection in all pages are properly connected - run the bun run dev server and then try to check for any kind of misalignment by using scripts and make sure all things are correctly corrected so that every page is functional and corrected properly with the database.
+
+Please look for the admin dashboard sidebar pages, and in those pages look for any kind of dummy UI instead of any functional UI. Brutally check all the pages listed in the sidebar for this kind of problems.
+
+This is a very low-end device, so please do a low-end device type check for any kind of errors and try to fix that. Also lint and format all files

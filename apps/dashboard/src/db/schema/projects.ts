@@ -14,6 +14,12 @@ export const projects = sqliteTable("projects", {
   startDate: integer("start_date", { mode: "timestamp" }),
   endDate: integer("end_date", { mode: "timestamp" }),
   images: text("images"),
+  // Contract details
+  contractValue: integer("contract_value"), // In cents/minor units
+  contractType: text("contract_type"), // lump_sum, cost_plus, unit_rate
+  contractNumber: text("contract_number"),
+  clientName: text("client_name"),
+  noticeToProceedDate: integer("notice_to_proceed_date", { mode: "timestamp" }),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   createdBy: text("created_by").references(() => user.id, {

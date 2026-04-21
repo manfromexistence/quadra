@@ -11,6 +11,7 @@ import {
 import type { Metadata } from "next";
 import { LinkDocumentsButton } from "@/components/edms/link-documents-button";
 import { ScheduleSyncButton } from "@/components/edms/schedule-sync-button";
+import { getDocuments } from "@/lib/edms/documents";
 import { getSchedulePageData } from "@/lib/edms/schedule";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
@@ -70,10 +71,10 @@ function calculatePosition(startDate: string, endDate: string) {
 }
 
 export default async function SchedulePage() {
-  const _sessionUser = await getRequiredDashboardSessionUser();
+  const sessionUser = await getRequiredDashboardSessionUser();
 
   // Get the user's active project (first project for now)
-  const projectId = "PRJ-AHR-2026"; // TODO: Get from session user's active project
+  const projectId = sessionUser.activeProjectId || "PRJ-AHR-2026";
 
   const scheduleData = await getSchedulePageData(projectId);
 
@@ -96,34 +97,8 @@ export default async function SchedulePage() {
     wbs: a.wbs,
   }));
 
-  const documents = [
-    {
-      code: "AHR-CIV-DWG-0001",
-      title: "Site Grading Plan — Phase 1",
-      rev: "B",
-    },
-    {
-      code: "AHR-STR-CAL-0012",
-      title: "Primary Steel Structure Calculation",
-      rev: "0",
-    },
-    {
-      code: "AHR-MEC-SPC-0023",
-      title: "Heat Exchanger Technical Specification",
-      rev: "C",
-    },
-    {
-      code: "AHR-ELE-DWG-0045",
-      title: "Main Substation Single Line Diagram",
-      rev: "A",
-    },
-    {
-      code: "AHR-INS-DAT-0008",
-      title: "Control Valve Datasheet — Unit 100",
-      rev: "1",
-    },
-    { code: "AHR-PIP-ISO-0056", title: "Piping Isometric Drawing", rev: "A" },
-  ];
+  // Fetch documents from database
+  const documents = await getDocuments(projectId);
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -142,8 +117,12 @@ export default async function SchedulePage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <ScheduleSyncButton />
-          <LinkDocumentsButton activities={activities} documents={documents} />
+          <ScheduleSyncButton projectId={projectId} />
+          <LinkDocumentsButton
+            activities={activities}
+            documents={documents}
+            projectId={projectId}
+          />
         </div>
       </div>
 

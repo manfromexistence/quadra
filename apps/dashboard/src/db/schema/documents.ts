@@ -12,6 +12,7 @@ export const documents = sqliteTable("documents", {
   description: text("description"),
   discipline: text("discipline"),
   category: text("category"),
+  documentType: text("document_type"), // design, shop_drawing, as_built, manufacturer_data
   version: text("version").notNull().default("1.0"),
   revision: text("revision"),
   isLatestVersion: integer("is_latest_version", { mode: "boolean" })
@@ -21,8 +22,11 @@ export const documents = sqliteTable("documents", {
   fileSize: integer("file_size"),
   fileType: text("file_type"),
   fileUrl: text("file_url").notNull(),
-  status: text("status").notNull().default("draft"),
+  status: text("status").notNull().default("draft"), // draft, A (Approved for Construction), B (Approved for Design), C (Approved for Construction), I (Issued for Information), R (Revise and Resubmit), rejected
   tags: text("tags"),
+  // As-built tracking
+  asBuiltRevision: text("as_built_revision"),
+  isAsBuilt: integer("is_as_built", { mode: "boolean" }).default(false),
   customFields: text("custom_fields"),
   images: text("images"),
   uploadedAt: integer("uploaded_at", { mode: "timestamp" }).notNull(),

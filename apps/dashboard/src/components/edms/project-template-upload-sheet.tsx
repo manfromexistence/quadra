@@ -81,24 +81,50 @@ const defaultValues: UploadTemplateFormValues = {
 export function ProjectTemplateUploadSheet() {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const form = useForm<UploadTemplateFormValues>({
     resolver: zodResolver(uploadTemplateFormSchema),
     defaultValues,
   });
 
-  const onSubmit = (values: UploadTemplateFormValues) => {
+  const onSubmit = async (values: UploadTemplateFormValues) => {
     startTransition(async () => {
-      // TODO: Implement file upload and server action
-      console.log("Uploading template:", values);
+      try {
+        const { nanoid } = await import("nanoid");
+        const { db } = await import("@/db");
+        const { projectTemplates } = await import(
+          "@/db/schema/project-templates"
+        );
 
-      toast({
-        title: "Template uploaded",
-        description: "The template has been added to the library.",
-      });
+        await db.insert(projectTemplates).values({
+          id: nanoid(),
+          name: values.name,
+          description: values.description || null,
+          category: values.category,
+          disciplines: null,
+          documentTypes: null,
+          workflowSteps: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
 
-      setIsOpen(false);
-      form.reset(defaultValues);
+        toast({
+          title: "Template uploaded",
+          description: `"${values.name}" has been added to the library`,
+        });
+
+        setIsOpen(false);
+        form.reset(defaultValues);
+        router.refresh();
+      } catch (error) {
+        console.error("Failed to upload template:", error);
+        toast({
+          title: "Upload failed",
+          description: "An error occurred while uploading the template",
+          variant: "destructive",
+        });
+      }
     });
   };
 

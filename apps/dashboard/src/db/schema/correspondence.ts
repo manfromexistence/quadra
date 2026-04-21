@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { user } from "../schema";
+import { documents } from "./documents";
 import { projects } from "./projects";
 
 // Letters Register
@@ -128,7 +129,10 @@ export const letterRelatedDocuments = sqliteTable("letter_related_documents", {
   letterId: text("letter_id")
     .notNull()
     .references(() => letters.id, { onDelete: "cascade" }),
-  documentCode: text("document_code").notNull(),
+  documentId: text("document_id")
+    .notNull()
+    .references(() => documents.id, { onDelete: "cascade" }),
+  revision: text("revision"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -190,6 +194,10 @@ export const letterRelatedDocumentsRelations = relations(
     letter: one(letters, {
       fields: [letterRelatedDocuments.letterId],
       references: [letters.id],
+    }),
+    document: one(documents, {
+      fields: [letterRelatedDocuments.documentId],
+      references: [documents.id],
     }),
   }),
 );

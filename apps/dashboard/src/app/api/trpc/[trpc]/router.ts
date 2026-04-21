@@ -1,7 +1,9 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { z } from "zod";
+import { getDocuments } from "@/lib/edms/documents";
 import { searchEdmsForCommandPalette } from "@/lib/edms/global-search";
+import { getTransmittals } from "@/lib/edms/transmittals";
 import type { Context } from "./context";
 import * as mockData from "./mock-data";
 
@@ -691,7 +693,7 @@ export const appRouter = t.router({
             t.id !== input.transactionId &&
             t.name
               .toLowerCase()
-              .includes(input.name.toLowerCase().split(" ")[0]),
+              .includes(input.name?.toLowerCase().split(" ")[0] || ""),
         );
         return similar.slice(0, 5);
       }),
@@ -783,10 +785,11 @@ export const appRouter = t.router({
 
         mockData.mockExpenses.result.forEach((month) => {
           month.categories.forEach((cat) => {
-            if (allCategories[cat.name]) {
-              allCategories[cat.name] += cat.value;
+            const categoryName = cat.name || "Uncategorized";
+            if (allCategories[categoryName]) {
+              allCategories[categoryName] += cat.value;
             } else {
-              allCategories[cat.name] = cat.value;
+              allCategories[categoryName] = cat.value;
             }
           });
         });
@@ -952,6 +955,42 @@ export const appRouter = t.router({
         );
         return null;
       }),
+  }),
+
+  // EDMS Transmittals
+  transmittals: t.router({
+    list: t.procedure.query(async ({ ctx }) => {
+      console.log("[tRPC] transmittals.list: Fetching real transmittals");
+      try {
+        const projectId = "PRJ-AHR-2026";
+        const transmittals = await getTransmittals(projectId);
+        return transmittals;
+      } catch (error) {
+        console.error(
+          "[tRPC] transmittals.list: Error fetching transmittals",
+          error,
+        );
+        return [];
+      }
+    }),
+  }),
+
+  // EDMS Documents
+  edmsDocuments: t.router({
+    list: t.procedure.query(async ({ ctx }) => {
+      console.log("[tRPC] edmsDocuments.list: Fetching real documents");
+      try {
+        const projectId = "PRJ-AHR-2026";
+        const documents = await getDocuments(projectId);
+        return documents;
+      } catch (error) {
+        console.error(
+          "[tRPC] edmsDocuments.list: Error fetching documents",
+          error,
+        );
+        return [];
+      }
+    }),
   }),
 
   // Documents (Vault)

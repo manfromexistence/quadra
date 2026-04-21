@@ -8,11 +8,13 @@ import { LinkDocumentsDialog } from "./link-documents-dialog";
 interface LinkDocumentsButtonProps {
   activities: Array<{ id: string; name: string; wbs: string }>;
   documents: Array<{ code: string; title: string; rev: string }>;
+  projectId: string;
 }
 
 export function LinkDocumentsButton({
   activities,
   documents,
+  projectId,
 }: LinkDocumentsButtonProps) {
   const [open, setOpen] = useState(false);
 
@@ -27,6 +29,7 @@ export function LinkDocumentsButton({
         onOpenChange={setOpen}
         activities={activities}
         documents={documents}
+        projectId={projectId}
       />
     </>
   );
