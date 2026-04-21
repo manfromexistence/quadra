@@ -1,5 +1,3 @@
-import "server-only";
-
 export interface UploadedImage {
   fileName: string;
   fileType: string;

@@ -1,6 +1,4 @@
-import "server-only";
-
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { Resend } from "resend";
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";

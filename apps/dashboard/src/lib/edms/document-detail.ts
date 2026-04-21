@@ -1,6 +1,4 @@
-import "server-only";
-
-import { asc, desc, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";
 import {

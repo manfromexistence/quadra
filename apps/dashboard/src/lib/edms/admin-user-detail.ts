@@ -1,5 +1,3 @@
-import "server-only";
-
 import { count, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";

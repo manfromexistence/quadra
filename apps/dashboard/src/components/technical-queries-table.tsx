@@ -13,7 +13,7 @@ interface TechnicalQuery {
   raisedBy: string;
   status: string;
   priority: string;
-  dueDate: string;
+  dueDate: Date | null;
 }
 
 interface TechnicalQueriesTableProps {
@@ -109,7 +109,7 @@ export function TechnicalQueriesTable({
         <DataTableColumnHeader column={column} title="Due Date" />
       ),
       cell: ({ row }) => (
-        <span className="text-xs">
+        <span className="text-sm text-muted-foreground">
           {row.original.dueDate
             ? new Date(row.original.dueDate).toLocaleDateString()
             : "—"}

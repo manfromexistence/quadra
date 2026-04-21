@@ -1,5 +1,3 @@
-import "server-only";
-
 import { and, asc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";

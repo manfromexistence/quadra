@@ -1,5 +1,3 @@
-import "server-only";
-
 export interface UploadedEdmsFile {
   fileName: string;
   fileType: string;

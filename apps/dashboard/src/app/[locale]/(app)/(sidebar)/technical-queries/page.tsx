@@ -1,10 +1,7 @@
-"use client";
-
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
-import { AlertTriangle, FileText, HelpCircle, UserPlus } from "lucide-react";
+import { AlertTriangle, HelpCircle, UserPlus } from "lucide-react";
 import Link from "next/link";
-import { useState, useTransition } from "react";
 import { TechnicalQueriesFilters } from "@/components/edms/technical-queries-filters";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { TechnicalQueriesTable } from "@/components/technical-queries-table";
@@ -12,21 +9,12 @@ import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getTechnicalQueries } from "@/lib/edms/queries";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
-export default function TechnicalQueriesPage() {
-  const [isPending, startTransition] = useTransition();
-  const [technicalQueries, setTechnicalQueries] = useState<any[]>([]);
-  const [projectId, setProjectId] = useState<string | null>(null);
-
-  startTransition(async () => {
-    const sessionUser = await getRequiredDashboardSessionUser();
-    const pid = await getFirstAccessibleProjectId(sessionUser);
-    setProjectId(pid);
-    if (pid) {
-      const data = await getTechnicalQueries(pid);
-      setTechnicalQueries(data);
-    }
-  });
-
+export default async function TechnicalQueriesPage() {
+  const sessionUser = await getRequiredDashboardSessionUser();
+  const projectId = await getFirstAccessibleProjectId(sessionUser);
+  const technicalQueries = projectId
+    ? await getTechnicalQueries(projectId)
+    : [];
   const totalCount = technicalQueries.length;
   const openCount = technicalQueries.filter((q) => q.status === "Open").length;
   const respondedCount = technicalQueries.filter(
@@ -36,50 +24,6 @@ export default function TechnicalQueriesPage() {
     (q) => q.status === "Closed",
   ).length;
 
-  const exportCsv = () => {
-    const rows = technicalQueries.map((tq) => ({
-      "TQ ID": tq.queryNumber,
-      Subject: tq.subject,
-      Discipline: tq.discipline,
-      Status: tq.status,
-      Priority: tq.priority,
-      "Due Date": tq.dueDate
-        ? new Date(tq.dueDate).toISOString().split("T")[0]
-        : "",
-    }));
-
-    const headers = Object.keys(
-      rows[0] || {
-        "TQ ID": "",
-        Subject: "",
-        Discipline: "",
-        Status: "",
-        Priority: "",
-        "Due Date": "",
-      },
-    );
-
-    const csvContent = [
-      headers.join(","),
-      ...rows.map((row) =>
-        headers
-          .map(
-            (header) =>
-              `"${String(row[header as keyof typeof row] ?? "").replaceAll('"', '""')}"`,
-          )
-          .join(","),
-      ),
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    const href = URL.createObjectURL(blob);
-    link.href = href;
-    link.download = "technical-queries.csv";
-    link.click();
-    URL.revokeObjectURL(href);
-  };
-
   if (!projectId) {
     return (
       <ScrollableContent>
@@ -88,18 +32,6 @@ export default function TechnicalQueriesPage() {
             <p className="text-muted-foreground">
               No accessible projects found. Please contact your administrator.
             </p>
-          </div>
-        </div>
-      </ScrollableContent>
-    );
-  }
-
-  if (isPending && technicalQueries.length === 0) {
-    return (
-      <ScrollableContent>
-        <div className="flex flex-col gap-6 pt-6">
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Loading...</p>
           </div>
         </div>
       </ScrollableContent>
@@ -116,28 +48,24 @@ export default function TechnicalQueriesPage() {
                 Technical Queries (TQ)
               </h1>
               <p className="text-sm leading-6 text-muted-foreground md:text-base">
-                Engineering clarifications and design questions raised during
-                execution phase requiring client or consultant response.
+                Technical queries raised during design phase for clarification,
+                discrepancies, or design conflicts.
               </p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" onClick={exportCsv} disabled={isPending}>
-              <FileText className="size-4" />
-              Export CSV
+            <Button variant="outline">
+              <HelpCircle className="size-4" />
+              Guidelines
             </Button>
-            <Button variant="outline" disabled={isPending}>
+            <Button variant="outline">
               <UserPlus className="size-4" />
               Assign Bulk
             </Button>
-            <Button variant="outline" disabled={isPending}>
-              <AlertTriangle className="size-4" />
-              Overdue Queries
-            </Button>
             <Button asChild>
               <Link href="/technical-queries/new">
-                <HelpCircle className="size-4" />
+                <AlertTriangle className="size-4" />
                 New TQ
               </Link>
             </Button>

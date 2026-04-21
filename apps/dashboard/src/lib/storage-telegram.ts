@@ -1,5 +1,3 @@
-import "server-only";
-
 const TELEGRAM_API_BASE = "https://api.telegram.org";
 
 interface TelegramUploadResponse {

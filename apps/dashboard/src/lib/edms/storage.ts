@@ -1,5 +1,3 @@
-import "server-only";
-
 import { put } from "@vercel/blob";
 
 const EDMS_UPLOAD_PREFIX = "edms";

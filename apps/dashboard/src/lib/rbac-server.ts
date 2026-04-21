@@ -1,5 +1,3 @@
-import "server-only";
-import { auth } from "@/lib/auth";
 import {
   canAccessRoute,
   hasAllPermissions,

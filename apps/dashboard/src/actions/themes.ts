@@ -1,5 +1,3 @@
-"use server";
-
 import { type ThemeStyles, themeStylesSchema } from "@midday/ui/theme";
 import cuid from "cuid";
 import { and, eq } from "drizzle-orm";

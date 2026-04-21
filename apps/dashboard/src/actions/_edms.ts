@@ -1,5 +1,3 @@
-import "server-only";
-
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { db } from "@/db";
