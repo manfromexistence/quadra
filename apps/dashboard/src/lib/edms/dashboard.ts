@@ -136,6 +136,211 @@ export async function getEdmsDashboardData(
         ? inArray(activityLog.projectId, accessScope.projectIds)
         : null;
 
+    let results: [
+      any[],
+      any[],
+      any[],
+      any[],
+      any[],
+      any[],
+      any[],
+      any[],
+      any[],
+      any[],
+      any[],
+      any[],
+    ];
+    try {
+      results = await Promise.all([
+        db
+          .select({
+            id: userTable.id,
+            name: userTable.name,
+            email: userTable.email,
+            image: userTable.image,
+            role: userTable.role,
+            organization: userTable.organization,
+          })
+          .from(userTable)
+          .where(eq(userTable.id, sessionUser.id))
+          .limit(1),
+        scopedProjectCondition === null
+          ? Promise.resolve([{ value: 0 }])
+          : db
+              .select({ value: count() })
+              .from(projects)
+              .where(scopedProjectCondition),
+        scopedDocumentCondition === null
+          ? Promise.resolve([{ value: 0 }])
+          : db
+              .select({ value: count() })
+              .from(documents)
+              .where(scopedDocumentCondition),
+        db
+          .select({ value: count() })
+          .from(workflowSteps)
+          .innerJoin(
+            documentWorkflows,
+            eq(workflowSteps.workflowId, documentWorkflows.id),
+          )
+          .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
+          .where(
+            and(
+              inArray(workflowSteps.status, ["pending", "in_progress"]),
+              scopedDocumentCondition ?? undefined,
+            ),
+          ),
+        db
+          .select({ value: count() })
+          .from(transmittals)
+          .where(
+            and(
+              inArray(transmittals.status, ["draft", "sent"]),
+              scopedTransmittalCondition ?? undefined,
+            ),
+          ),
+        db
+          .select({ value: count() })
+          .from(notifications)
+          .where(
+            and(
+              eq(notifications.userId, sessionUser.id),
+              eq(notifications.isRead, false),
+            ),
+          ),
+        scopedProjectCondition === null
+          ? Promise.resolve([])
+          : db
+              .select({
+                id: projects.id,
+                name: projects.name,
+                projectNumber: projects.projectNumber,
+                location: projects.location,
+                status: projects.status,
+                startDate: projects.startDate,
+                endDate: projects.endDate,
+                updatedAt: projects.updatedAt,
+                images: projects.images,
+              })
+              .from(projects)
+              .where(scopedProjectCondition)
+              .orderBy(desc(projects.updatedAt))
+              .limit(5),
+        scopedDocumentCondition === null
+          ? Promise.resolve([])
+          : db
+              .select({
+                id: documents.id,
+                documentNumber: documents.documentNumber,
+                title: documents.title,
+                projectName: projects.name,
+                discipline: documents.discipline,
+                category: documents.category,
+                revision: documents.revision,
+                status: documents.status,
+                fileSize: documents.fileSize,
+                uploadedAt: documents.uploadedAt,
+                images: documents.images,
+                fileUrl: documents.fileUrl,
+                fileType: documents.fileType,
+              })
+              .from(documents)
+              .innerJoin(projects, eq(documents.projectId, projects.id))
+              .where(scopedDocumentCondition)
+              .orderBy(desc(documents.uploadedAt))
+              .limit(6),
+        scopedDocumentCondition === null
+          ? Promise.resolve([])
+          : db
+              .select({
+                id: workflowSteps.id,
+                documentNumber: documents.documentNumber,
+                title: documents.title,
+                projectName: projects.name,
+                stepName: workflowSteps.stepName,
+                status: workflowSteps.status,
+                assignedRole: workflowSteps.assignedRole,
+                dueDate: workflowSteps.dueDate,
+              })
+              .from(workflowSteps)
+              .innerJoin(
+                documentWorkflows,
+                eq(workflowSteps.workflowId, documentWorkflows.id),
+              )
+              .innerJoin(
+                documents,
+                eq(documentWorkflows.documentId, documents.id),
+              )
+              .innerJoin(projects, eq(documents.projectId, projects.id))
+              .where(
+                and(
+                  inArray(workflowSteps.status, ["pending", "in_progress"]),
+                  scopedDocumentCondition ?? undefined,
+                ),
+              )
+              .orderBy(
+                asc(workflowSteps.dueDate),
+                desc(documentWorkflows.startedAt),
+              )
+              .limit(6),
+        scopedTransmittalCondition === null
+          ? Promise.resolve([])
+          : db
+              .select({
+                id: transmittals.id,
+                transmittalNumber: transmittals.transmittalNumber,
+                subject: transmittals.subject,
+                projectName: projects.name,
+                status: transmittals.status,
+                sentAt: transmittals.sentAt,
+                createdAt: transmittals.createdAt,
+              })
+              .from(transmittals)
+              .innerJoin(projects, eq(transmittals.projectId, projects.id))
+              .where(scopedTransmittalCondition)
+              .orderBy(desc(transmittals.createdAt))
+              .limit(5),
+        db
+          .select({
+            id: notifications.id,
+            title: notifications.title,
+            message: notifications.message,
+            type: notifications.type,
+            projectName: projects.name,
+            isRead: notifications.isRead,
+            actionUrl: notifications.actionUrl,
+            createdAt: notifications.createdAt,
+          })
+          .from(notifications)
+          .leftJoin(projects, eq(notifications.projectId, projects.id))
+          .where(eq(notifications.userId, sessionUser.id))
+          .orderBy(desc(notifications.createdAt))
+          .limit(6),
+        scopedActivityCondition === null
+          ? Promise.resolve([])
+          : db
+              .select({
+                id: activityLog.id,
+                action: activityLog.action,
+                entityType: activityLog.entityType,
+                entityName: activityLog.entityName,
+                description: activityLog.description,
+                actorName: userTable.name,
+                projectName: projects.name,
+                createdAt: activityLog.createdAt,
+              })
+              .from(activityLog)
+              .leftJoin(userTable, eq(activityLog.userId, userTable.id))
+              .leftJoin(projects, eq(activityLog.projectId, projects.id))
+              .where(scopedActivityCondition)
+              .orderBy(desc(activityLog.createdAt))
+              .limit(7),
+      ]);
+    } catch (error) {
+      console.error("Error fetching EDMS dashboard data:", error);
+      throw error;
+    }
+
     const [
       userRows,
       projectCountRows,
@@ -149,192 +354,7 @@ export async function getEdmsDashboardData(
       transmittalRows,
       notificationRows,
       activityRows,
-    ] = await Promise.all([
-      db
-        .select({
-          id: userTable.id,
-          name: userTable.name,
-          email: userTable.email,
-          image: userTable.image,
-          role: userTable.role,
-          organization: userTable.organization,
-        })
-        .from(userTable)
-        .where(eq(userTable.id, sessionUser.id))
-        .limit(1),
-      scopedProjectCondition === null
-        ? Promise.resolve([{ value: 0 }])
-        : db
-            .select({ value: count() })
-            .from(projects)
-            .where(scopedProjectCondition),
-      scopedDocumentCondition === null
-        ? Promise.resolve([{ value: 0 }])
-        : db
-            .select({ value: count() })
-            .from(documents)
-            .where(scopedDocumentCondition),
-      db
-        .select({ value: count() })
-        .from(workflowSteps)
-        .innerJoin(
-          documentWorkflows,
-          eq(workflowSteps.workflowId, documentWorkflows.id),
-        )
-        .innerJoin(documents, eq(documentWorkflows.documentId, documents.id))
-        .where(
-          and(
-            inArray(workflowSteps.status, ["pending", "in_progress"]),
-            scopedDocumentCondition ?? undefined,
-          ),
-        ),
-      db
-        .select({ value: count() })
-        .from(transmittals)
-        .where(
-          and(
-            inArray(transmittals.status, ["draft", "sent"]),
-            scopedTransmittalCondition ?? undefined,
-          ),
-        ),
-      db
-        .select({ value: count() })
-        .from(notifications)
-        .where(
-          and(
-            eq(notifications.userId, sessionUser.id),
-            eq(notifications.isRead, false),
-          ),
-        ),
-      scopedProjectCondition === null
-        ? Promise.resolve([])
-        : db
-            .select({
-              id: projects.id,
-              name: projects.name,
-              projectNumber: projects.projectNumber,
-              location: projects.location,
-              status: projects.status,
-              startDate: projects.startDate,
-              endDate: projects.endDate,
-              updatedAt: projects.updatedAt,
-              images: projects.images,
-            })
-            .from(projects)
-            .where(scopedProjectCondition)
-            .orderBy(desc(projects.updatedAt))
-            .limit(5),
-      scopedDocumentCondition === null
-        ? Promise.resolve([])
-        : db
-            .select({
-              id: documents.id,
-              documentNumber: documents.documentNumber,
-              title: documents.title,
-              projectName: projects.name,
-              discipline: documents.discipline,
-              category: documents.category,
-              revision: documents.revision,
-              status: documents.status,
-              createdBy: documents.createdBy,
-              fileSize: documents.fileSize,
-              uploadedAt: documents.uploadedAt,
-              images: documents.images,
-              fileUrl: documents.fileUrl,
-              fileType: documents.fileType,
-            })
-            .from(documents)
-            .innerJoin(projects, eq(documents.projectId, projects.id))
-            .where(scopedDocumentCondition)
-            .orderBy(desc(documents.uploadedAt))
-            .limit(6),
-      scopedDocumentCondition === null
-        ? Promise.resolve([])
-        : db
-            .select({
-              id: workflowSteps.id,
-              documentNumber: documents.documentNumber,
-              title: documents.title,
-              projectName: projects.name,
-              stepName: workflowSteps.stepName,
-              status: workflowSteps.status,
-              assignedRole: workflowSteps.assignedRole,
-              dueDate: workflowSteps.dueDate,
-            })
-            .from(workflowSteps)
-            .innerJoin(
-              documentWorkflows,
-              eq(workflowSteps.workflowId, documentWorkflows.id),
-            )
-            .innerJoin(
-              documents,
-              eq(documentWorkflows.documentId, documents.id),
-            )
-            .innerJoin(projects, eq(documents.projectId, projects.id))
-            .where(
-              and(
-                inArray(workflowSteps.status, ["pending", "in_progress"]),
-                scopedDocumentCondition,
-              ),
-            )
-            .orderBy(
-              asc(workflowSteps.dueDate),
-              desc(documentWorkflows.startedAt),
-            )
-            .limit(6),
-      scopedTransmittalCondition === null
-        ? Promise.resolve([])
-        : db
-            .select({
-              id: transmittals.id,
-              transmittalNumber: transmittals.transmittalNumber,
-              subject: transmittals.subject,
-              projectName: projects.name,
-              status: transmittals.status,
-              sentAt: transmittals.sentAt,
-              createdAt: transmittals.createdAt,
-            })
-            .from(transmittals)
-            .innerJoin(projects, eq(transmittals.projectId, projects.id))
-            .where(scopedTransmittalCondition)
-            .orderBy(desc(transmittals.createdAt))
-            .limit(5),
-      db
-        .select({
-          id: notifications.id,
-          title: notifications.title,
-          message: notifications.message,
-          type: notifications.type,
-          projectName: projects.name,
-          isRead: notifications.isRead,
-          actionUrl: notifications.actionUrl,
-          createdAt: notifications.createdAt,
-        })
-        .from(notifications)
-        .leftJoin(projects, eq(notifications.projectId, projects.id))
-        .where(eq(notifications.userId, sessionUser.id))
-        .orderBy(desc(notifications.createdAt))
-        .limit(6),
-      scopedActivityCondition === null
-        ? Promise.resolve([])
-        : db
-            .select({
-              id: activityLog.id,
-              action: activityLog.action,
-              entityType: activityLog.entityType,
-              entityName: activityLog.entityName,
-              description: activityLog.description,
-              actorName: userTable.name,
-              projectName: projects.name,
-              createdAt: activityLog.createdAt,
-            })
-            .from(activityLog)
-            .leftJoin(userTable, eq(activityLog.userId, userTable.id))
-            .leftJoin(projects, eq(activityLog.projectId, projects.id))
-            .where(scopedActivityCondition)
-            .orderBy(desc(activityLog.createdAt))
-            .limit(7),
-    ]);
+    ] = results;
 
     const [userProfile] = userRows;
     const [projectCount] = projectCountRows;
@@ -416,7 +436,6 @@ export async function getEdmsDashboardData(
         category: document.category,
         revision: document.revision,
         status: document.status,
-        author: document.createdBy,
         fileSize: document.fileSize,
         uploadedLabel: formatDateLabel(document.uploadedAt, "Uploaded"),
         images: document.images, // Keep truncated for now, expand in component

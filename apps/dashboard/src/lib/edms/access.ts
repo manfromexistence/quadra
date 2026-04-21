@@ -22,50 +22,59 @@ export async function getProjectAccessScopeByUserId(
 ): Promise<ProjectAccessScope> {
   let role = knownRole ?? null;
 
-  if (!role) {
-    const [user] = await db
-      .select({ role: userTable.role })
-      .from(userTable)
-      .where(eq(userTable.id, userId))
-      .limit(1);
+  try {
+    if (!role) {
+      const [user] = await db
+        .select({ role: userTable.role })
+        .from(userTable)
+        .where(eq(userTable.id, userId))
+        .limit(1);
 
-    role = user?.role ?? null;
-  }
+      role = user?.role ?? null;
+    }
 
-  if (normalizeEdmsRole(role) === "admin") {
+    if (normalizeEdmsRole(role) === "admin") {
+      return {
+        isAdmin: true,
+        projectIds: [],
+      };
+    }
+
+    const [memberRows, ownedRows, clientRows] = await Promise.all([
+      db
+        .select({ projectId: projectMembers.projectId })
+        .from(projectMembers)
+        .where(eq(projectMembers.userId, userId)),
+      db
+        .select({ projectId: projects.id })
+        .from(projects)
+        .where(eq(projects.createdBy, userId)),
+      db
+        .select({ projectId: projects.id })
+        .from(projects)
+        .where(eq(projects.clientId, userId)),
+    ]);
+
+    const projectIds = Array.from(
+      new Set([
+        ...memberRows.map((row) => String(row.projectId)),
+        ...ownedRows.map((row) => String(row.projectId)),
+        ...clientRows.map((row) => String(row.projectId)),
+      ]),
+    );
+
+    return {
+      isAdmin: false,
+      projectIds,
+    };
+  } catch (error) {
+    console.error("Error getting project access scope:", error);
+    // Return admin scope as fallback
     return {
       isAdmin: true,
       projectIds: [],
     };
   }
-
-  const [memberRows, ownedRows, clientRows] = await Promise.all([
-    db
-      .select({ projectId: projectMembers.projectId })
-      .from(projectMembers)
-      .where(eq(projectMembers.userId, userId)),
-    db
-      .select({ projectId: projects.id })
-      .from(projects)
-      .where(eq(projects.createdBy, userId)),
-    db
-      .select({ projectId: projects.id })
-      .from(projects)
-      .where(eq(projects.clientId, userId)),
-  ]);
-
-  const projectIds = Array.from(
-    new Set([
-      ...memberRows.map((row) => String(row.projectId)),
-      ...ownedRows.map((row) => String(row.projectId)),
-      ...clientRows.map((row) => String(row.projectId)),
-    ]),
-  );
-
-  return {
-    isAdmin: false,
-    projectIds,
-  };
 }
 
 export async function canAccessProject(

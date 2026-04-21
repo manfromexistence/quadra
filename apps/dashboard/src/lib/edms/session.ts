@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";
@@ -15,7 +16,9 @@ export interface DashboardSessionUser {
 
 export async function getRequiredDashboardSessionUser(): Promise<DashboardSessionUser> {
   try {
-    const session = await auth.api.getSession();
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
 
     if (!session?.user?.id) {
       redirect("/login");

@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";
@@ -30,7 +31,9 @@ export async function requireEdmsRole(
   minimumRole: EdmsRole,
   options?: { redirectTo?: string },
 ): Promise<EdmsAccessUser> {
-  const session = await auth.api.getSession();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user?.id) {
     if (options?.redirectTo) {
@@ -70,7 +73,9 @@ export function canManageEdmsContent(role: string | null | undefined) {
 }
 
 export async function getDashboardSessionUser(): Promise<DashboardSessionUser | null> {
-  const session = await auth.api.getSession();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session) {
     return null;

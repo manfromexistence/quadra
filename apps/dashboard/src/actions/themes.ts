@@ -1,6 +1,7 @@
 import { type ThemeStyles, themeStylesSchema } from "@midday/ui/theme";
 import cuid from "cuid";
 import { and, eq } from "drizzle-orm";
+import { headers } from "next/headers";
 import { cache } from "react";
 import { z } from "zod";
 import { db } from "@/db";
@@ -20,7 +21,7 @@ const updateThemeSchema = z.object({
 
 async function getCurrentUserId() {
   const session = await auth.api.getSession({
-    headers: new Headers(),
+    headers: await headers(),
   });
 
   if (!session?.user?.id) {
@@ -84,7 +85,9 @@ export async function createTheme(input: {
 }
 
 export async function saveTheme(input: { name: string; styles: ThemeStyles }) {
-  const session = await auth.api.getSession();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session) {
     throw new Error("Unauthorized");
