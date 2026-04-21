@@ -19,7 +19,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LettersFilters } from "@/components/edms/letters-filters";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getLetters } from "@/lib/edms/correspondence";
+import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
 export const metadata: Metadata = {
   title: "Letters Register | Quadra EDMS",
@@ -35,7 +37,26 @@ export default async function LettersPage({
   }>;
 }) {
   const params = await searchParams;
-  const letters = await getLetters("PRJ-AHR-2026");
+  const sessionUser = await getRequiredDashboardSessionUser();
+
+  // Get the first accessible project ID
+  const projectId = await getFirstAccessibleProjectId(sessionUser);
+
+  if (!projectId) {
+    return (
+      <ScrollableContent>
+        <div className="flex flex-col gap-6 pt-6">
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">
+              No accessible projects found. Please contact your administrator.
+            </p>
+          </div>
+        </div>
+      </ScrollableContent>
+    );
+  }
+
+  const letters = await getLetters(projectId);
 
   // Filter letters based on search params
   const filteredLetters = letters.filter((letter) => {

@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@midday/ui/badge";
 import { Button } from "@midday/ui/button";
 import {
   Form,
@@ -19,7 +20,6 @@ import {
 } from "@midday/ui/select";
 import { Textarea } from "@midday/ui/textarea";
 import { useToast } from "@midday/ui/use-toast";
-import { Badge } from "@midday/ui/badge";
 import { Loader2, Search, X } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
@@ -55,9 +55,10 @@ export function SupportForm() {
     { id: "5", number: "TX-2026-005", subject: "Architectural Plans" },
   ];
 
-  const filteredTransmittals = mockTransmittals.filter((t) =>
-    t.number.toLowerCase().includes(transmittalSearch.toLowerCase()) ||
-    t.subject.toLowerCase().includes(transmittalSearch.toLowerCase())
+  const filteredTransmittals = mockTransmittals.filter(
+    (t) =>
+      t.number.toLowerCase().includes(transmittalSearch.toLowerCase()) ||
+      t.subject.toLowerCase().includes(transmittalSearch.toLowerCase()),
   );
 
   const form = useZodForm(formSchema, {
@@ -198,7 +199,9 @@ export function SupportForm() {
             {selectedTransmittal ? (
               <div className="flex items-center justify-between p-2 border rounded-lg bg-accent">
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary">{selectedTransmittal.number}</Badge>
+                  <Badge variant="secondary">
+                    {selectedTransmittal.number}
+                  </Badge>
                   <span className="text-sm">{selectedTransmittal.subject}</span>
                 </div>
                 <Button

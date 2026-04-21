@@ -91,12 +91,23 @@ export function TransmittalFormWithPreview({
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const selectedProject = projects.find((p) => p.id === formData.projectId);
   const selectedRecipient = members.find((m) => m.id === formData.recipientId);
   const selectedDocs = documents.filter((d) =>
     formData.selectedDocuments.includes(d.id),
   );
+
+  const filteredDocuments = documents.filter((doc) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      doc.documentNumber.toLowerCase().includes(query) ||
+      doc.title.toLowerCase().includes(query) ||
+      doc.revision?.toLowerCase().includes(query) ||
+      doc.status?.toLowerCase().includes(query)
+    );
+  });
 
   const handleDocumentToggle = (docId: string) => {
     setFormData((prev) => ({
@@ -326,38 +337,46 @@ export function TransmittalFormWithPreview({
             </div>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-[400px] pr-4">
-              <div className="space-y-2">
-                {documents.map((doc) => (
-                  <div
-                    key={doc.id}
-                    className="flex items-start gap-3 rounded-lg border border-border p-3 transition-colors hover:bg-accent"
-                  >
-                    <Checkbox
-                      id={`doc-${doc.id}`}
-                      checked={formData.selectedDocuments.includes(doc.id)}
-                      onCheckedChange={() => handleDocumentToggle(doc.id)}
-                    />
-                    <label
-                      htmlFor={`doc-${doc.id}`}
-                      className="flex-1 cursor-pointer space-y-1"
+            <div className="space-y-3">
+              <Input
+                placeholder="Search documents by number, title, revision, or status..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full"
+              />
+              <ScrollArea className="h-[350px] pr-4">
+                <div className="space-y-2">
+                  {filteredDocuments.map((doc) => (
+                    <div
+                      key={doc.id}
+                      className="flex items-start gap-3 rounded-lg border border-border p-3 transition-colors hover:bg-accent"
                     >
-                      <p className="font-mono text-sm font-medium">
-                        {doc.documentNumber}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {doc.title}
-                      </p>
-                      <div className="flex gap-2 text-xs text-muted-foreground">
-                        <span>Rev {doc.revision || "—"}</span>
-                        <span>·</span>
-                        <span>{doc.status || "—"}</span>
-                      </div>
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
+                      <Checkbox
+                        id={`doc-${doc.id}`}
+                        checked={formData.selectedDocuments.includes(doc.id)}
+                        onCheckedChange={() => handleDocumentToggle(doc.id)}
+                      />
+                      <label
+                        htmlFor={`doc-${doc.id}`}
+                        className="flex-1 cursor-pointer space-y-1"
+                      >
+                        <p className="font-mono text-sm font-medium">
+                          {doc.documentNumber}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {doc.title}
+                        </p>
+                        <div className="flex gap-2 text-xs text-muted-foreground">
+                          <span>Rev {doc.revision || "—"}</span>
+                          <span>·</span>
+                          <span>{doc.status || "—"}</span>
+                        </div>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -457,14 +476,15 @@ export function TransmittalFormWithPreview({
                   </div>
                   <div>
                     <Badge
-                      className={`text-[10px] font-mono ${formData.purpose === "IFR"
-                        ? "bg-amber-100 text-amber-800 border-amber-300"
-                        : formData.purpose === "IFA"
-                          ? "bg-blue-100 text-blue-800 border-blue-300"
-                          : formData.purpose === "IFC"
-                            ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                            : "bg-slate-100 text-slate-800 border-slate-300"
-                        }`}
+                      className={`text-[10px] font-mono ${
+                        formData.purpose === "IFR"
+                          ? "bg-amber-100 text-amber-800 border-amber-300"
+                          : formData.purpose === "IFA"
+                            ? "bg-blue-100 text-blue-800 border-blue-300"
+                            : formData.purpose === "IFC"
+                              ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                              : "bg-slate-100 text-slate-800 border-slate-300"
+                      }`}
                     >
                       ● {formData.purpose}
                     </Badge>
@@ -521,6 +541,9 @@ export function TransmittalFormWithPreview({
                             Rev
                           </TableHead>
                           <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
+                            Status
+                          </TableHead>
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
                             Format
                           </TableHead>
                         </TableRow>
@@ -542,6 +565,9 @@ export function TransmittalFormWithPreview({
                             </TableCell>
                             <TableCell className="font-mono text-[11px] text-black border-r-2 border-gray-900 p-2">
                               {doc.revision || "—"}
+                            </TableCell>
+                            <TableCell className="font-mono text-[11px] text-black border-r border-gray-300 p-2">
+                              {doc.status || "—"}
                             </TableCell>
                             <TableCell className="font-mono text-[11px] text-black p-2">
                               PDF

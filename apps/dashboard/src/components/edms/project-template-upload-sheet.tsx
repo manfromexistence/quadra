@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@midday/ui/button";
-import { cn } from "@midday/ui/cn";
 import {
   Form,
   FormControl,
@@ -228,9 +227,7 @@ export function ProjectTemplateUploadSheet() {
                       <Input
                         type="file"
                         accept=".doc,.docx,.xls,.xlsx,.pdf"
-                        onChange={(e) =>
-                          field.onChange(e.target.files?.[0])
-                        }
+                        onChange={(e) => field.onChange(e.target.files?.[0])}
                       />
                     </FormControl>
                     <FormMessage />

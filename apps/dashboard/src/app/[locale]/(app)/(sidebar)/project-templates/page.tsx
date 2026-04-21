@@ -8,71 +8,28 @@ import {
   TableHeader,
   TableRow,
 } from "@midday/ui/table";
-import { Download, FileText, Upload } from "lucide-react";
+import { Download, FileText } from "lucide-react";
 import type { Metadata } from "next";
 import { ProjectTemplateUploadSheet } from "@/components/edms/project-template-upload-sheet";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { getProjectTemplates } from "@/lib/edms/project-templates";
+import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
 export const metadata: Metadata = {
   title: "Project Templates | Quadra EDMS",
 };
 
-const TEMPLATES = [
-  {
-    id: "1",
-    name: "Standard Letter Template",
-    type: "letter",
-    category: "Correspondence",
-    description: "Standard letter format for official correspondence",
-    fileName: "standard_letter.docx",
-    fileSize: "45 KB",
-    fileType: "DOCX",
-    uploadedBy: "Admin",
-    downloadCount: 12,
-    createdAt: "2026-04-15",
-  },
-  {
-    id: "2",
-    name: "Internal Memo Template",
-    type: "memo",
-    category: "Correspondence",
-    description: "Internal memo format for team communication",
-    fileName: "internal_memo.docx",
-    fileSize: "38 KB",
-    fileType: "DOCX",
-    uploadedBy: "Admin",
-    downloadCount: 8,
-    createdAt: "2026-04-14",
-  },
-  {
-    id: "3",
-    name: "Minutes of Meeting Template",
-    type: "mom",
-    category: "Correspondence",
-    description: "MoM format for meeting documentation",
-    fileName: "mom_template.docx",
-    fileSize: "52 KB",
-    fileType: "DOCX",
-    uploadedBy: "Admin",
-    downloadCount: 15,
-    createdAt: "2026-04-13",
-  },
-  {
-    id: "4",
-    name: "Commercial Request Sheet",
-    type: "crs",
-    category: "Commercial",
-    description: "CRS format for commercial document requests",
-    fileName: "crs_template.xlsx",
-    fileSize: "125 KB",
-    fileType: "XLSX",
-    uploadedBy: "Admin",
-    downloadCount: 6,
-    createdAt: "2026-04-12",
-  },
-];
+export default async function ProjectTemplatesPage() {
+  const _sessionUser = await getRequiredDashboardSessionUser();
+  const templates = await getProjectTemplates();
 
-export default function ProjectTemplatesPage() {
+  function formatFileSize(bytes: number): string {
+    if (bytes === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
+  }
   return (
     <ScrollableContent>
       <div className="flex flex-col gap-6">
@@ -113,7 +70,7 @@ export default function ProjectTemplatesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {TEMPLATES.map((template) => (
+                {templates.map((template) => (
                   <TableRow
                     key={template.id}
                     className="hover:bg-accent/50 transition-colors"
@@ -121,7 +78,7 @@ export default function ProjectTemplatesPage() {
                     <TableCell className="px-6">
                       <div className="font-medium">{template.name}</div>
                       <div className="text-xs text-muted-foreground">
-                        {template.description}
+                        {template.description || "—"}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -137,13 +94,15 @@ export default function ProjectTemplatesPage() {
                       </div>
                     </TableCell>
                     <TableCell className="font-mono text-xs">
-                      {template.fileSize}
+                      {formatFileSize(template.fileSize)}
                     </TableCell>
                     <TableCell className="font-mono text-xs">
                       {template.downloadCount}
                     </TableCell>
                     <TableCell className="font-mono text-xs text-muted-foreground">
-                      {template.createdAt}
+                      {template.createdAt
+                        ? new Date(template.createdAt).toLocaleDateString()
+                        : "—"}
                     </TableCell>
                     <TableCell className="px-6">
                       <div className="flex gap-2">

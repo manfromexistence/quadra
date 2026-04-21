@@ -13,7 +13,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { RFIsFilters } from "@/components/edms/rfis-filters";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getRFIs } from "@/lib/edms/queries";
+import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
 export const metadata: Metadata = {
   title: "RFIs | Quadra EDMS",
@@ -29,7 +31,26 @@ export default async function RFIsPage({
   }>;
 }) {
   const params = await searchParams;
-  const rfis = await getRFIs("PRJ-AHR-2026");
+  const sessionUser = await getRequiredDashboardSessionUser();
+
+  // Get the first accessible project ID
+  const projectId = await getFirstAccessibleProjectId(sessionUser);
+
+  if (!projectId) {
+    return (
+      <ScrollableContent>
+        <div className="flex flex-col gap-6 pt-6">
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">
+              No accessible projects found. Please contact your administrator.
+            </p>
+          </div>
+        </div>
+      </ScrollableContent>
+    );
+  }
+
+  const rfis = await getRFIs(projectId);
 
   // Filter RFIs based on search params
   const filteredRFIs = rfis.filter((rfi) => {

@@ -13,7 +13,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { TechnicalQueriesFilters } from "@/components/edms/technical-queries-filters";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getTechnicalQueries } from "@/lib/edms/queries";
+import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
 export const metadata: Metadata = {
   title: "Technical Queries | Quadra EDMS",
@@ -30,9 +32,27 @@ export default async function TechnicalQueriesPage({
   }>;
 }) {
   const _params = await searchParams;
+  const sessionUser = await getRequiredDashboardSessionUser();
+
+  // Get the first accessible project ID
+  const projectId = await getFirstAccessibleProjectId(sessionUser);
+
+  if (!projectId) {
+    return (
+      <ScrollableContent>
+        <div className="flex flex-col gap-6 pt-6">
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">
+              No accessible projects found. Please contact your administrator.
+            </p>
+          </div>
+        </div>
+      </ScrollableContent>
+    );
+  }
 
   // Fetch from database
-  const technicalQueries = await getTechnicalQueries("PRJ-AHR-2026");
+  const technicalQueries = await getTechnicalQueries(projectId);
 
   const totalCount = technicalQueries.length;
   const openCount = technicalQueries.filter((q) => q.status === "Open").length;

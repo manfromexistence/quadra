@@ -13,3 +13,7 @@ Make the /projects as the defualt page instead of the /dashboard as the default 
 make it a 'search window' so that we can search and add to Transmittal
 6. Also add one new module as "Project Templates" on the left where we can upload and keep all project templates, be it letter, memo, CRS, MoM etc
 7. Correspondence , registering letter to each party and option to tick wether for INFO or Action / Response Required (Y/N)
+
+You did so good - now please lint - format all files and use a lowend by typecheck for any errors and fix all fo them
+
+Good, now vscode has a windsorf extension - in zed is there any agent or extension connect to windsurf available right now or I have to add a new suppor for that in my fork?? and about the 3 free models alongside the swe 1.6 models - is a only free for now or will be free in windsurf all the time and about the usage - the are just labeled free - are the unlimited free for free users or not?? and if I connect the support of windsurf then can i use that commertially as you will be doing BYOK in my zed fork dx code editor

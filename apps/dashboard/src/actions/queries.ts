@@ -209,7 +209,9 @@ export async function updateTechnicalQuery(
       .set({
         ...updates,
         dueDate: updates.dueDate ? new Date(updates.dueDate) : undefined,
-        responseDate: updates.responseDate ? new Date(updates.responseDate) : undefined,
+        responseDate: updates.responseDate
+          ? new Date(updates.responseDate)
+          : undefined,
         updatedAt: now,
       })
       .where(eq(technicalQueries.id, id));
@@ -244,7 +246,7 @@ export async function linkDocumentToQuery(
   documentCode: string,
 ) {
   try {
-    const sessionUser = await requireActionSessionUser();
+    const _sessionUser = await requireActionSessionUser();
 
     await db.insert(queryLinkedDocuments).values({
       id: createEdmsId("query-doc"),

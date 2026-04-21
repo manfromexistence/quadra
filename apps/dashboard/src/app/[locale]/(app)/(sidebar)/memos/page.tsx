@@ -13,7 +13,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MemosFilters } from "@/components/edms/memos-filters";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getMemos } from "@/lib/edms/correspondence";
+import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
 export const metadata: Metadata = {
   title: "Memos | Quadra EDMS",
@@ -28,9 +30,27 @@ export default async function MemosPage({
   }>;
 }) {
   const params = await searchParams;
+  const sessionUser = await getRequiredDashboardSessionUser();
+
+  // Get the first accessible project ID
+  const projectId = await getFirstAccessibleProjectId(sessionUser);
+
+  if (!projectId) {
+    return (
+      <ScrollableContent>
+        <div className="flex flex-col gap-6 pt-6">
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">
+              No accessible projects found. Please contact your administrator.
+            </p>
+          </div>
+        </div>
+      </ScrollableContent>
+    );
+  }
 
   // Fetch from database
-  const memos = await getMemos("PRJ-AHR-2026");
+  const memos = await getMemos(projectId);
 
   // Filter memos based on search params
   const filteredMemos = memos.filter((memo) => {

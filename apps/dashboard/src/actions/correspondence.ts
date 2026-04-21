@@ -14,7 +14,6 @@ import {
   actionOk,
   createEdmsId,
   normalizeOptionalString,
-  parseOptionalDate,
   requireActionSessionUser,
 } from "./_edms";
 
@@ -182,7 +181,7 @@ export async function linkDocumentToLetter(
   documentCode: string,
 ) {
   try {
-    const sessionUser = await requireActionSessionUser();
+    const _sessionUser = await requireActionSessionUser();
 
     await db.insert(letterRelatedDocuments).values({
       id: createEdmsId("letter-doc"),

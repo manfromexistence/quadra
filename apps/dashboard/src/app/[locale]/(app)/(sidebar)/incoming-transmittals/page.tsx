@@ -20,7 +20,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getIncomingTransmittals } from "@/lib/edms/incoming-transmittals";
+import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
 export const metadata: Metadata = {
   title: "Incoming Transmittals | Quadra EDMS",
@@ -38,9 +40,27 @@ export default async function IncomingTransmittalsPage({
   }>;
 }) {
   const params = await searchParams;
+  const sessionUser = await getRequiredDashboardSessionUser();
+
+  // Get the first accessible project ID
+  const projectId = await getFirstAccessibleProjectId(sessionUser);
+
+  if (!projectId) {
+    return (
+      <ScrollableContent>
+        <div className="flex flex-col gap-6">
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">
+              No accessible projects found. Please contact your administrator.
+            </p>
+          </div>
+        </div>
+      </ScrollableContent>
+    );
+  }
 
   // Fetch from database
-  const incomingTransmittals = await getIncomingTransmittals("PRJ-AHR-2026");
+  const incomingTransmittals = await getIncomingTransmittals(projectId);
 
   const totalCount = incomingTransmittals.length;
   const pendingCount = incomingTransmittals.filter(

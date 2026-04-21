@@ -62,7 +62,9 @@ export async function createIncomingTransmittal(
       theirRef: normalizeOptionalString(input.theirRef),
       responseRequired: input.responseRequired ?? false,
       responseDue: parseOptionalDate(input.responseDue),
-      responseStatus: input.responseRequired ? "Pending" : "No Response Required",
+      responseStatus: input.responseRequired
+        ? "Pending"
+        : "No Response Required",
       priority: input.priority,
       notes: normalizeOptionalString(input.notes),
       attachments: 0,
@@ -94,7 +96,7 @@ export async function addIncomingTransmittalDocument(
   input: AddIncomingTransmittalDocumentInput,
 ) {
   try {
-    const sessionUser = await requireActionSessionUser();
+    const _sessionUser = await requireActionSessionUser();
 
     await db.insert(incomingTransmittalDocuments).values({
       id: createEdmsId("in-tx-doc"),
@@ -149,7 +151,9 @@ export async function updateIncomingTransmittal(
       .update(incomingTransmittals)
       .set({
         ...updates,
-        responseDate: updates.responseDate ? new Date(updates.responseDate) : undefined,
+        responseDate: updates.responseDate
+          ? new Date(updates.responseDate)
+          : undefined,
         updatedAt: now,
       })
       .where(eq(incomingTransmittals.id, id));

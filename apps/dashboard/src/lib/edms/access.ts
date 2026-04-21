@@ -82,3 +82,38 @@ export async function canAccessProject(
 
   return scope.projectIds.includes(projectId);
 }
+
+export async function getFirstAccessibleProjectId(
+  sessionUser: DashboardSessionUser,
+): Promise<string | null> {
+  const scope = await getProjectAccessScope(sessionUser);
+
+  if (scope.isAdmin) {
+    // For admins, get the first active project
+    const [project] = await db
+      .select({ id: projects.id })
+      .from(projects)
+      .where(eq(projects.status, "active"))
+      .limit(1);
+
+    return project?.id ?? null;
+  }
+
+  if (scope.projectIds.length === 0) {
+    return null;
+  }
+
+  const firstProjectId = scope.projectIds[0];
+  if (!firstProjectId) {
+    return null;
+  }
+
+  // Get the first accessible project
+  const [project] = await db
+    .select({ id: projects.id })
+    .from(projects)
+    .where(eq(projects.id, firstProjectId))
+    .limit(1);
+
+  return project?.id ?? null;
+}

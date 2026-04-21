@@ -62,10 +62,6 @@ const icons = {
 
 const items = [
   {
-    path: "/",
-    name: "Dashboard",
-  },
-  {
     path: "/projects",
     name: "Projects",
   },

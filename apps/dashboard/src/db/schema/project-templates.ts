@@ -29,13 +29,16 @@ export const projectTemplates = sqliteTable("project_templates", {
 });
 
 // Relations
-export const projectTemplatesRelations = relations(projectTemplates, ({ one }) => ({
-  project: one(projects, {
-    fields: [projectTemplates.projectId],
-    references: [projects.id],
+export const projectTemplatesRelations = relations(
+  projectTemplates,
+  ({ one }) => ({
+    project: one(projects, {
+      fields: [projectTemplates.projectId],
+      references: [projects.id],
+    }),
+    uploadedByUser: one(user, {
+      fields: [projectTemplates.uploadedBy],
+      references: [user.id],
+    }),
   }),
-  uploadedByUser: one(user, {
-    fields: [projectTemplates.uploadedBy],
-    references: [user.id],
-  }),
-}));
+);
