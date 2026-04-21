@@ -202,7 +202,7 @@ export default async function SchedulePage() {
         </div>
       </div>
 
-      <Card className="border-border bg-card shadow-sm">
+      <Card className="rounded-lg border-border bg-card shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -303,7 +303,7 @@ export default async function SchedulePage() {
         </CardContent>
       </Card>
 
-      <Card className="border-border bg-card shadow-sm">
+      <Card className="rounded-lg border-border bg-card shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>

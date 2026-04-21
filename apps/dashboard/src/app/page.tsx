@@ -7,5 +7,5 @@ export default async function RootPage() {
     cookieStore.get("better-auth.session_token")?.value,
   );
 
-  redirect(hasSession ? "/en" : "/en/login");
+  redirect(hasSession ? "/en/projects" : "/en/login");
 }

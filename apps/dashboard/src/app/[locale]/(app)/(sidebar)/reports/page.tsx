@@ -311,7 +311,7 @@ export default function ReportsPage() {
         {REPORT_CATALOG.map((report) => (
           <Card
             key={report.id}
-            className="group cursor-pointer border-border bg-card shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
+            className="rounded-lg group cursor-pointer border-border bg-card shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
             onClick={() => handleRunReport(report.id)}
           >
             <CardHeader>
@@ -351,7 +351,7 @@ export default function ReportsPage() {
         ))}
       </div>
 
-      <Card className="border-border bg-card shadow-sm">
+      <Card className="rounded-lg border-border bg-card shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Recent Report Activity</CardTitle>

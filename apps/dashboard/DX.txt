@@ -1,0 +1,15 @@
+Make the /projects as the defualt page instead of the /dashboard as the default page!!!
+
+1. Created project but not appearing in watchlist. Make it working across all modules first.
+
+2. Transmittal Incoming, TQ, STQ, RFI, Memo etc are not yet functional
+
+3. Make everything functional for me to test a dummy project from start to final documentation
+
+4. Report modules , Data Book, Schedule - boxes to make curved
+
+5. Check overall gaps then I will check final
+6. Make Software Support module email working
+make it a 'search window' so that we can search and add to Transmittal
+6. Also add one new module as "Project Templates" on the left where we can upload and keep all project templates, be it letter, memo, CRS, MoM etc
+7. Correspondence , registering letter to each party and option to tick wether for INFO or Action / Response Required (Y/N)

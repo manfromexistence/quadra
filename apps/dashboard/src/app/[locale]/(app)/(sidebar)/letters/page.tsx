@@ -104,6 +104,9 @@ export default async function LettersPage({
                   <TableHead>Direction</TableHead>
                   <TableHead>To/From</TableHead>
                   <TableHead>Category</TableHead>
+                  <TableHead>INFO</TableHead>
+                  <TableHead>Action</TableHead>
+                  <TableHead>Response</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
@@ -112,7 +115,7 @@ export default async function LettersPage({
                 {filteredLetters.length === 0 ? (
                   <TableRow>
                     <TableCell
-                      colSpan={7}
+                      colSpan={10}
                       className="text-center py-8 text-muted-foreground"
                     >
                       No letters found matching your criteria
@@ -165,6 +168,21 @@ export default async function LettersPage({
                       </TableCell>
                       <TableCell>
                         <span className="text-xs">{letter.category}</span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-xs">
+                          {letter.forInfo ? "✓" : "—"}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-xs">
+                          {letter.actionRequired ? "✓" : "—"}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-xs font-mono">
+                          {letter.responseRequired || "—"}
+                        </span>
                       </TableCell>
                       <TableCell>
                         <span className="font-mono text-xs text-muted-foreground">

@@ -1,18 +1,11 @@
+import { redirect } from "next/navigation";
 import type { Metadata } from "next";
-import { OverviewView } from "@/components/widgets";
-import { HydrateClient } from "@/trpc/server";
 
 export const metadata: Metadata = {
   title: "Dashboard | Quadra EDMS",
 };
 
 export default function Dashboard() {
-  // Skip server-side prefetch to avoid hydration errors
-  // The client will fetch the data on mount
-
-  return (
-    <HydrateClient>
-      <OverviewView />
-    </HydrateClient>
-  );
+  // Redirect to projects page to make it the default
+  redirect("/projects");
 }

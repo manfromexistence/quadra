@@ -13,6 +13,8 @@ export const sendSupportAction = authActionClient
       type: z.string(),
       message: z.string(),
       url: z.string().optional(),
+      transmittalId: z.string().optional(),
+      recipientEmail: z.string().email().optional(),
     }),
   )
   .metadata({
@@ -23,19 +25,27 @@ export const sendSupportAction = authActionClient
     },
   })
   .action(async ({ parsedInput: data, ctx: { user } }) => {
-    await sendTelegramMessage(
-      [
-        "*Quadra Support Request*",
-        `Subject: ${data.subject}`,
-        `Priority: ${data.priority}`,
-        `Type: ${data.type}`,
-        `User ID: ${user.id}`,
-        `Email: ${user.email ?? "unknown"}`,
-        ...(data.url ? [`URL: ${data.url}`] : []),
-        "",
-        data.message,
-      ].join("\n"),
-    );
+    const messageParts = [
+      "*Quadra Support Request*",
+      `Subject: ${data.subject}`,
+      `Priority: ${data.priority}`,
+      `Type: ${data.type}`,
+      `User ID: ${user.id}`,
+      `Email: ${user.email ?? "unknown"}`,
+      ...(data.url ? [`URL: ${data.url}`] : []),
+      ...(data.transmittalId ? [`Transmittal ID: ${data.transmittalId}`] : []),
+      ...(data.recipientEmail ? [`Recipient: ${data.recipientEmail}`] : []),
+      "",
+      data.message,
+    ];
+
+    await sendTelegramMessage(messageParts.join("\n"));
+
+    // TODO: Add email sending functionality here if recipientEmail is provided
+    if (data.recipientEmail) {
+      // Implement email sending logic using your email service
+      console.log(`Email would be sent to: ${data.recipientEmail}`);
+    }
 
     return { ok: true };
   });

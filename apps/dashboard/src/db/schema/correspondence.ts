@@ -21,6 +21,9 @@ export const letters = sqliteTable("letters", {
   attachments: integer("attachments").notNull().default(0),
   status: text("status").notNull(), // Sent, Received, Awaiting Response, Responded
   urgent: integer("urgent", { mode: "boolean" }).notNull().default(false),
+  forInfo: integer("for_info", { mode: "boolean" }).notNull().default(false),
+  actionRequired: integer("action_required", { mode: "boolean" }).notNull().default(false),
+  responseRequired: text("response_required"), // Y, N, or null
   projectId: text("project_id")
     .notNull()
     .references(() => projects.id),

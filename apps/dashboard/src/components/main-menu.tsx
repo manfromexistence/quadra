@@ -9,6 +9,7 @@ import {
   ClipboardList,
   Cog,
   FileStack,
+  FileText,
   FolderKanban,
   Grid3X3,
   HelpCircle,
@@ -56,6 +57,7 @@ const icons = {
   "/bulk-upload": () => <Upload size={20} />,
   "/theme": () => <Palette size={20} />,
   "/config": () => <Wrench size={20} />,
+  "/project-templates": () => <FileText size={20} />,
 } as const;
 
 const items = [
@@ -107,6 +109,10 @@ const items = [
   {
     path: "/theme",
     name: "Theme",
+  },
+  {
+    path: "/project-templates",
+    name: "Project Templates",
   },
   {
     path: "/config",

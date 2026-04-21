@@ -269,7 +269,7 @@ export default function DatabookPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6">
-          <Card className="border-border bg-card shadow-sm">
+          <Card className="rounded-lg border-border bg-card shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
@@ -389,7 +389,7 @@ export default function DatabookPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border bg-card shadow-sm">
+          <Card className="rounded-lg border-border bg-card shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
@@ -435,7 +435,7 @@ export default function DatabookPage() {
         </div>
 
         <div className="lg:sticky lg:top-6 lg:h-fit">
-          <Card className="border-border bg-card shadow-sm">
+          <Card className="rounded-lg border-border bg-card shadow-sm">
             <CardHeader>
               <CardTitle>Coverage Overview</CardTitle>
             </CardHeader>
@@ -516,7 +516,7 @@ export default function DatabookPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border bg-card shadow-sm">
+          <Card className="rounded-lg border-border bg-card shadow-sm">
             <CardHeader>
               <CardTitle>Section Status</CardTitle>
             </CardHeader>
@@ -558,7 +558,7 @@ export default function DatabookPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border bg-card shadow-sm">
+          <Card className="rounded-lg border-border bg-card shadow-sm">
             <CardHeader>
               <CardTitle>Data Book Metadata</CardTitle>
             </CardHeader>
