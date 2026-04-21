@@ -475,17 +475,7 @@ export function TransmittalFormWithPreview({
                     Purpose
                   </div>
                   <div>
-                    <Badge
-                      className={`text-[10px] font-mono ${
-                        formData.purpose === "IFR"
-                          ? "bg-amber-100 text-amber-800 border-amber-300"
-                          : formData.purpose === "IFA"
-                            ? "bg-blue-100 text-blue-800 border-blue-300"
-                            : formData.purpose === "IFC"
-                              ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                              : "bg-slate-100 text-slate-800 border-slate-300"
-                      }`}
-                    >
+                    <Badge className="text-[10px] font-mono bg-gray-100 text-gray-800 border-gray-300">
                       ● {formData.purpose}
                     </Badge>
                   </div>
@@ -543,7 +533,7 @@ export function TransmittalFormWithPreview({
                           <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
                             Status
                           </TableHead>
-                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 p-2">
                             Format
                           </TableHead>
                         </TableRow>
@@ -569,7 +559,7 @@ export function TransmittalFormWithPreview({
                             <TableCell className="font-mono text-[11px] text-black border-r border-gray-300 p-2">
                               {doc.status || "—"}
                             </TableCell>
-                            <TableCell className="font-mono text-[11px] text-black p-2">
+                            <TableCell className="font-mono text-[11px] text-black border-r border-gray-300 p-2">
                               PDF
                             </TableCell>
                           </TableRow>

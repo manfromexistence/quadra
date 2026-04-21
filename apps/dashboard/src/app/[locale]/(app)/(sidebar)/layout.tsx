@@ -24,8 +24,8 @@ export default async function Layout({
       <DashboardLayout>
         <ScrollableContent>
           {children}
-          <QuickActionsFAB />
         </ScrollableContent>
+        <QuickActionsFAB />
       </DashboardLayout>
     </HydrateClient>
   );

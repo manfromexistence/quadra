@@ -241,7 +241,10 @@ export default async function ProjectsPage() {
                             projectName: entry.projectName || undefined,
                           }}
                         >
-                          <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-accent hover:shadow-md">
+                          <button
+                            type="button"
+                            className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-accent hover:shadow-md w-full text-left"
+                          >
                             <div className="flex gap-3">
                               <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center border border-border bg-muted">
                                 <Building2 className="size-4 text-muted-foreground" />
@@ -277,7 +280,7 @@ export default async function ProjectsPage() {
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </button>
                         </ActivityEntryPopover>
                       ))
                     )}

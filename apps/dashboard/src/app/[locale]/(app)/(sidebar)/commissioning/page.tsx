@@ -19,7 +19,7 @@ export default async function CommissioningPage() {
   if (!projectId) {
     return (
       <ScrollableContent>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 pt-6">
           <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
             Commissioning
           </h1>

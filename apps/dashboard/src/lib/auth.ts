@@ -9,6 +9,7 @@ export const auth = betterAuth({
   appName: "QUADRA",
   baseURL: getServerAppUrl(),
   trustedOrigins: getTrustedOrigins(),
+  secret: process.env.BETTER_AUTH_SECRET,
   database: drizzleAdapter(db, {
     provider: "sqlite",
     schema,

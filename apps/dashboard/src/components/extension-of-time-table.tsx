@@ -14,7 +14,7 @@ interface EOTRequest {
   approvedDays: number | null;
   reason: string;
   approvalStatus: string;
-  createdAt: string;
+  createdAt: Date | string;
 }
 
 interface ExtensionOfTimeTableProps {

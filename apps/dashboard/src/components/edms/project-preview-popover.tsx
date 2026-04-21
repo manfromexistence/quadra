@@ -67,6 +67,7 @@ export function ProjectPreviewPopover({
                     fill
                     className="object-cover"
                     sizes="384px"
+                    unoptimized
                   />
                 </div>
 
@@ -87,6 +88,7 @@ export function ProjectPreviewPopover({
                           fill
                           className="object-cover transition-transform group-hover:scale-105"
                           sizes="80px"
+                          unoptimized
                         />
                       </a>
                     ))}

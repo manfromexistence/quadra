@@ -30,7 +30,7 @@ import {
 } from "@midday/ui/table";
 import { FileSpreadsheet, Loader2, Upload, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useTransition } from "react";
 import * as XLSX from "xlsx";
 import { toast } from "@/hooks/use-toast";
 
@@ -158,7 +158,24 @@ export function DocumentBulkImportSheet({
     try {
       const arrayBuffer = await uploadedFile.arrayBuffer();
       const workbook = XLSX.read(arrayBuffer, { type: "array" });
-      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const firstSheetName = workbook.SheetNames[0];
+      if (!firstSheetName) {
+        toast({
+          title: "Invalid file",
+          description: "Excel file must contain at least one sheet",
+          variant: "destructive",
+        });
+        return;
+      }
+      const firstSheet = workbook.Sheets[firstSheetName];
+      if (!firstSheet) {
+        toast({
+          title: "Invalid file",
+          description: "Excel file must contain a valid sheet",
+          variant: "destructive",
+        });
+        return;
+      }
       const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
         header: 1,
       }) as string[][];
@@ -173,7 +190,7 @@ export function DocumentBulkImportSheet({
         return;
       }
 
-      const headers = jsonData[0].map((h) => String(h).trim().toLowerCase());
+      const headers = (jsonData[0] || []).map((h) => String(h).trim().toLowerCase());
       const rows: ParsedRow[] = [];
 
       for (let i = 1; i < jsonData.length; i++) {

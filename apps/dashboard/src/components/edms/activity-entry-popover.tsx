@@ -15,7 +15,7 @@ interface ActivityEntryPopoverProps {
     description?: string | null;
     createdLabel: string;
     entityType?: string;
-    projectName?: string;
+    projectName?: string | null;
   };
   children: React.ReactNode;
 }

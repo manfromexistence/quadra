@@ -4,6 +4,7 @@ import "@midday/ui/globals.css";
 import { createThemeInitializationScript } from "@midday/ui/theme";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { ReactElement } from "react";
 import { DesktopHeader } from "@/components/desktop-header";
@@ -17,7 +18,11 @@ export const metadata: Metadata = {
   description:
     "Manage construction projects, documents, workflows, and transmittals efficiently with Quadra EDMS.",
   manifest: "/site.webmanifest",
-  // favicon.ico is placed at src/app/favicon.ico for file-based metadata (most reliable in App Router)
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
   twitter: {
     title: "Quadra EDMS | Construction Document Management",
     description:
@@ -74,9 +79,10 @@ export default async function Layout({
       className={cn(isDesktop && "desktop")}
     >
       <head suppressHydrationWarning>
-        <script
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: themeScript }}
-          suppressHydrationWarning
         />
       </head>
       <body

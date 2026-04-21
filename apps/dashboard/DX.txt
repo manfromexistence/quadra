@@ -53,3 +53,63 @@ First lint and format everything and also there is a change, so please commit an
 Awesome now please fix all of those pages and do lint and fix all the errors and warnings!!!
 
 First lint and format everything and also there is a change, so please commit and push it to github and make sure to see what files had changed and generate a professional commit after checking those file changes.
+
+
+
+3715-ae8f4639901d0ff3.js:9 ReferenceError: useRef is not defined
+    at v (9459-c4ad7f31895ca27b.js:1:9019)
+    at aw (78baf0b4-4b5a8fdecc51c71d.js:1:53374)
+    at o1 (78baf0b4-4b5a8fdecc51c71d.js:1:73810)
+    at id (78baf0b4-4b5a8fdecc51c71d.js:1:84402)
+    at sh (78baf0b4-4b5a8fdecc51c71d.js:1:128652)
+    at 78baf0b4-4b5a8fdecc51c71d.js:1:128497
+    at sm (78baf0b4-4b5a8fdecc51c71d.js:1:128505)
+    at sr (78baf0b4-4b5a8fdecc51c71d.js:1:124426)
+    at sq (78baf0b4-4b5a8fdecc51c71d.js:1:150209)
+    at MessagePort.j (3715-ae8f4639901d0ff3.js:9:34019)
+d @ 3715-ae8f4639901d0ff3.js:9
+3715-ae8f4639901d0ff3.js:9 Error: An error occurred in the Server Components render. The specific message is omitted in production builds to avoid leaking sensitive details. A digest property is included on this error instance which may provide additional details about the nature of the error.
+d @ 3715-ae8f4639901d0ff3.js:9
+3715-ae8f4639901d0ff3.js:9 ReferenceError: ScrollableContent is not defined
+    at k (page-5a23dc75f47df7c5.js:1:27997)
+    at aw (78baf0b4-4b5a8fdecc51c71d.js:1:53374)
+    at o1 (78baf0b4-4b5a8fdecc51c71d.js:1:73810)
+    at id (78baf0b4-4b5a8fdecc51c71d.js:1:85412)
+    at sh (78baf0b4-4b5a8fdecc51c71d.js:1:128652)
+    at 78baf0b4-4b5a8fdecc51c71d.js:1:128497
+    at sm (78baf0b4-4b5a8fdecc51c71d.js:1:128505)
+    at sr (78baf0b4-4b5a8fdecc51c71d.js:1:124426)
+    at sq (78baf0b4-4b5a8fdecc51c71d.js:1:150209)
+    at MessagePort.j (3715-ae8f4639901d0ff3.js:9:34019)
+d @ 3715-ae8f4639901d0ff3.js:9
+3715-ae8f4639901d0ff3.js:9 TypeError: {(intermediate value)(intermediate value)(intermediate value)(intermediate value)(intermediate value)(intermediate value)(intermediate value)(intermediate value)(intermediate value)(intermediate value)(intermediate value)(intermediate value)}[i] is not a function
+    at 7699-1e3fec513f031f92.js:5:22041
+    at Object.apply (7699-1e3fec513f031f92.js:1:11896)
+    at T (page-dd5375f074cc20d7.js:1:11808)
+    at aw (78baf0b4-4b5a8fdecc51c71d.js:1:53374)
+    at o1 (78baf0b4-4b5a8fdecc51c71d.js:1:73810)
+    at id (78baf0b4-4b5a8fdecc51c71d.js:1:85412)
+    at sh (78baf0b4-4b5a8fdecc51c71d.js:1:128652)
+    at 78baf0b4-4b5a8fdecc51c71d.js:1:128497
+    at sm (78baf0b4-4b5a8fdecc51c71d.js:1:128505)
+    at sr (78baf0b4-4b5a8fdecc51c71d.js:1:124426)
+d @ 3715-ae8f4639901d0ff3.js:9
+page-a6b9ef9d2c3f1a04.js:1 Failed to load saved theme presets BetterAuthError: You are using the default secret. Please set `BETTER_AUTH_SECRET` in your environment variables or pass `secret` in your auth config.
+loadSavedPresets @ page-a6b9ef9d2c3f1a04.js:1
+3715-ae8f4639901d0ff3.js:9 ReferenceError: useRouter is not defined
+    at w (page-a950e00b0fa2d882.js:1:12387)
+    at aw (78baf0b4-4b5a8fdecc51c71d.js:1:53374)
+    at o1 (78baf0b4-4b5a8fdecc51c71d.js:1:73810)
+    at id (78baf0b4-4b5a8fdecc51c71d.js:1:84402)
+    at sh (78baf0b4-4b5a8fdecc51c71d.js:1:128652)
+    at 78baf0b4-4b5a8fdecc51c71d.js:1:128497
+    at sm (78baf0b4-4b5a8fdecc51c71d.js:1:128505)
+    at sr (78baf0b4-4b5a8fdecc51c71d.js:1:124426)
+    at sq (78baf0b4-4b5a8fdecc51c71d.js:1:150209)
+    at MessagePort.j (3715-ae8f4639901d0ff3.js:9:34019)
+d @ 3715-ae8f4639901d0ff3.js:9
+23715-ae8f4639901d0ff3.js:9 BetterAuthError: You are using the default secret. Please set `BETTER_AUTH_SECRET` in your environment variables or pass `secret` in your auth config.
+
+I am running the bun run dev on 3001 route so you please test all the sidebar pages - and there you can find all the pages having the data-table by table has some issue so please use invoke windows url powershell command check all pages and fix all of them correctly!!!
+
+Good, now please look admin site header theme toggle should have the same size and border radius as the notification icon next to it. Also, the favicon that you are buried in many pages is not showing correctly as a fixed favicon, and the icon of the favicon is also not showing. Please fix it correctly.And no need to push to GitHub until I say so.

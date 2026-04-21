@@ -58,11 +58,12 @@ export function DocumentPreviewPopover({
                 {/* Main Image */}
                 <div className="relative aspect-video overflow-hidden rounded-lg border border-border bg-muted">
                   <Image
-                    src={images[0]}
+                    src={images[0] || ""}
                     alt={document.title}
                     fill
                     className="object-cover"
                     sizes="384px"
+                    unoptimized
                   />
                 </div>
 
@@ -83,6 +84,7 @@ export function DocumentPreviewPopover({
                           fill
                           className="object-cover transition-transform group-hover:scale-105"
                           sizes="80px"
+                          unoptimized
                         />
                       </a>
                     ))}

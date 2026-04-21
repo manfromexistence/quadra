@@ -40,7 +40,7 @@ export default async function ProjectDetailPage({
           {/* Main Hero Image */}
           <div className="relative aspect-[21/9] w-full overflow-hidden">
             <Image
-              src={projectImages[0]}
+              src={projectImages[0] || ""}
               alt={data.project.name}
               fill
               className="object-cover"
@@ -279,7 +279,10 @@ export default async function ProjectDetailPage({
                     projectName: entry.projectName,
                   }}
                 >
-                  <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">
+                  <button
+                    type="button"
+                    className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm w-full text-left"
+                  >
                     <p className="text-sm">
                       <span className="font-medium">{entry.actorName}</span>{" "}
                       <span className="text-muted-foreground">
@@ -297,7 +300,7 @@ export default async function ProjectDetailPage({
                     <p className="mt-2 text-xs text-muted-foreground">
                       {entry.createdLabel}
                     </p>
-                  </div>
+                  </button>
                 </ActivityEntryPopover>
               ))
             )}
@@ -381,7 +384,7 @@ export default async function ProjectDetailPage({
                     projectName: data.project.name,
                     status: workflow.status,
                     dueLabel: workflow.dueLabel,
-                    assignedRole: workflow.assignedRole,
+                    assignedRole: workflow.assignedRole || undefined,
                   }}
                 >
                   <div className="cursor-pointer border border-border bg-card p-4 transition-all hover:bg-muted/50 hover:shadow-sm">

@@ -14,7 +14,7 @@ export default async function ThemePage() {
 
   return (
     <ScrollableContent>
-      <div className="flex flex-col gap-6 pt-4">
+      <div className="flex flex-col gap-6 pt-6">
         <div className="max-w-3xl space-y-2">
           <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
             Theme Editor

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@midday/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,19 +54,18 @@ export function QuickActionsFAB() {
     <div className="fixed bottom-6 right-6 z-50">
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild>
-          <Button
-            size="lg"
-            className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all"
+          <div
+            className="h-8 w-8 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all flex items-center justify-center cursor-pointer"
           >
-            <Plus className="size-6" />
-          </Button>
+            <Plus className="h-4 w-4" />
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           {actions.map((action) => (
             <DropdownMenuItem key={action.label} asChild>
               {action.href ? (
                 <Link href={action.href} className="cursor-pointer">
-                  <action.icon className="mr-2 size-4" />
+                  <action.icon className="mr-2 h-4 w-4" />
                   <span>{action.label}</span>
                   <kbd className="ml-auto text-xs text-muted-foreground">
                     {action.shortcut}
@@ -82,7 +80,7 @@ export function QuickActionsFAB() {
                   }}
                   className="w-full cursor-pointer"
                 >
-                  <action.icon className="mr-2 size-4" />
+                  <action.icon className="mr-2 h-4 w-4" />
                   <span>{action.label}</span>
                   <kbd className="ml-auto text-xs text-muted-foreground">
                     {action.shortcut}
