@@ -1,5 +1,4 @@
 import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";
@@ -32,7 +31,7 @@ export async function requireEdmsRole(
   options?: { redirectTo?: string },
 ): Promise<EdmsAccessUser> {
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: new Headers(),
   });
 
   if (!session?.user?.id) {

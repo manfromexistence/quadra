@@ -2,7 +2,6 @@ import * as crypto from "node:crypto";
 import { LogEvents } from "@midday/events/events";
 import { setupAnalytics } from "@midday/events/server";
 import { tasks } from "@trigger.dev/sdk";
-import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -10,8 +9,7 @@ export const dynamic = "force-dynamic";
 // NOTE: This is trigger from supabase database webhook
 export async function POST(req: Request) {
   const text = await req.clone().text();
-  const headersList = await headers();
-  const signature = headersList.get("x-supabase-signature");
+  const signature = req.headers.get("x-supabase-signature");
 
   if (!signature) {
     return NextResponse.json({ message: "Missing signature" }, { status: 401 });

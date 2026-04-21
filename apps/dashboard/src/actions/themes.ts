@@ -1,7 +1,6 @@
 import { type ThemeStyles, themeStylesSchema } from "@midday/ui/theme";
 import cuid from "cuid";
 import { and, eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import { cache } from "react";
 import { z } from "zod";
 import { db } from "@/db";
@@ -21,7 +20,7 @@ const updateThemeSchema = z.object({
 
 async function getCurrentUserId() {
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: new Headers(),
   });
 
   if (!session?.user?.id) {
@@ -31,11 +30,23 @@ async function getCurrentUserId() {
   return session.user.id;
 }
 
-export async function getThemes() {
-  const userId = await getCurrentUserId();
+export const getThemes = cache(async () => {
+  const session = await auth.api.getSession({
+    headers: new Headers(),
+  });
 
-  return db.select().from(themeTable).where(eq(themeTable.userId, userId));
-}
+  if (!session) {
+    return [];
+  }
+
+  const themes = await db
+    .select()
+    .from(themeTable)
+    .where(eq(themeTable.userId, session.user.id))
+    .orderBy(themeTable.createdAt);
+
+  return themes;
+});
 
 export const getTheme = cache(async (themeId: string) => {
   const [theme] = await db
@@ -72,6 +83,34 @@ export async function createTheme(input: {
     .returning();
 
   return createdTheme;
+}
+
+export async function saveTheme(input: { name: string; styles: ThemeStyles }) {
+  const session = await auth.api.getSession({
+    headers: new Headers(),
+  });
+
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
+
+  const validatedStyles = themeStylesSchema.parse(input.styles);
+  const now = new Date();
+
+  const theme = await db
+    .insert(themeTable)
+    .values({
+      id: cuid(),
+      userId: session.user.id,
+      name: input.name,
+      styles: validatedStyles,
+      createdAt: now,
+      updatedAt: now,
+    })
+    .returning()
+    .then((rows) => rows[0]);
+
+  return theme;
 }
 
 export async function updateTheme(input: {
