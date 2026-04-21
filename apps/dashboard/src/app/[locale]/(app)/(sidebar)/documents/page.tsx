@@ -1,6 +1,5 @@
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
-import { Checkbox } from "@midday/ui/checkbox";
 import { Input } from "@midday/ui/input";
 import {
   Select,
@@ -9,19 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@midday/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import type { Metadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import Link from "next/link";
 import { Suspense } from "react";
 import { CollapsibleSummary } from "@/components/collapsible-summary";
+import { DocumentsTable } from "@/components/documents-table";
 import { EdmsDataState } from "@/components/edms/data-state";
 import { DocumentBulkImportSheet } from "@/components/edms/document-bulk-import-sheet";
 import { DocumentBulkUploadSheet } from "@/components/edms/document-bulk-upload-sheet";
@@ -245,74 +237,10 @@ export default async function DocumentsPage({
                       No documents found.
                     </div>
                   ) : (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          {canManageContent && (
-                            <TableHead className="w-[32px] px-6">
-                              <Checkbox disabled />
-                            </TableHead>
-                          )}
-                          <TableHead className="px-6">Document Code</TableHead>
-                          <TableHead>Title</TableHead>
-                          <TableHead>Rev</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Author</TableHead>
-                          <TableHead>Modified</TableHead>
-                          <TableHead className="px-6"></TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {data.documents.map((document) => (
-                          <TableRow
-                            key={document.id}
-                            className="group transition-colors hover:bg-accent"
-                          >
-                            {canManageContent && (
-                              <TableCell className="px-6">
-                                <Checkbox />
-                              </TableCell>
-                            )}
-                            <TableCell className="px-6">
-                              <div className="font-mono text-xs font-medium">
-                                {document.documentNumber}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="space-y-1">
-                                <p className="font-medium">{document.title}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  {document.discipline ?? "General"} ·{" "}
-                                  {document.category ?? "Document"} ·{" "}
-                                  {document.fileSize
-                                    ? `${Math.round(Number(document.fileSize) / 1024)} KB`
-                                    : "—"}
-                                </p>
-                              </div>
-                            </TableCell>
-                            <TableCell className="font-mono text-xs">
-                              {document.revision ?? "0"}
-                            </TableCell>
-                            <TableCell>
-                              <EdmsStatusBadge status={document.status} />
-                            </TableCell>
-                            <TableCell className="text-sm text-muted-foreground">
-                              {document.author ?? "—"}
-                            </TableCell>
-                            <TableCell className="font-mono text-xs text-muted-foreground">
-                              {document.uploadedLabel.replace("Uploaded ", "")}
-                            </TableCell>
-                            <TableCell className="px-6">
-                              <Button variant="ghost" size="sm" asChild>
-                                <Link href={`/documents/${document.id}`}>
-                                  Open
-                                </Link>
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                    <DocumentsTable
+                      documents={data.documents}
+                      canManageContent={canManageContent}
+                    />
                   )}
                 </CardContent>
               </Card>

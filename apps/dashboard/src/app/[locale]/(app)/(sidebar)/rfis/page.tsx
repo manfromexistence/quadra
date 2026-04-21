@@ -2,18 +2,11 @@
 
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import { AlertTriangle, FileText, HelpCircle, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { RFIsFilters } from "@/components/edms/rfis-filters";
+import { RFIsTable } from "@/components/rfis-table";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getRFIs } from "@/lib/edms/queries";
@@ -152,76 +145,13 @@ export default function RFIsPage() {
           </CardHeader>
 
           <CardContent className="px-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="px-6">RFI ID</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>From</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Assigned To</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredRFIs.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="text-center py-8 text-muted-foreground"
-                    >
-                      No RFIs found matching your criteria
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredRFIs.map((rfi) => (
-                    <TableRow
-                      key={rfi.id}
-                      className="hover:bg-accent/50 cursor-pointer transition-colors"
-                    >
-                      <TableCell className="px-6">
-                        <Link
-                          href={`/rfis/${rfi.id}`}
-                          className="font-mono text-xs font-medium hover:text-primary transition-colors"
-                        >
-                          {rfi.rfiNumber}
-                        </Link>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-md font-medium">
-                          {rfi.subject}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {rfi.raisedBy}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="rounded bg-muted px-2 py-1 font-mono text-xs">
-                          {rfi.from}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{rfi.category}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs font-medium text-amber-600">
-                          {rfi.status}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs font-medium text-destructive">
-                          {rfi.priority}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{rfi.assignedTo}</span>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+            {filteredRFIs.length === 0 ? (
+              <div className="px-6 pb-6 text-sm text-muted-foreground">
+                No RFIs found matching your criteria
+              </div>
+            ) : (
+              <RFIsTable rfis={filteredRFIs} />
+            )}
           </CardContent>
         </Card>
       </div>

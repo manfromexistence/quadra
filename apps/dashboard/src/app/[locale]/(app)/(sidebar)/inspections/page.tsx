@@ -1,16 +1,8 @@
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { EdmsStatusBadge } from "@/components/edms/status-badge";
+import { InspectionsTable } from "@/components/inspections-table";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getInspections } from "@/lib/edms/inspections";
@@ -74,59 +66,7 @@ export default async function InspectionsPage() {
                 No inspections found.
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="px-6">Inspection #</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Scheduled Date</TableHead>
-                    <TableHead>Inspector</TableHead>
-                    <TableHead>Results</TableHead>
-                    <TableHead className="px-6"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {inspections.map((inspection) => (
-                    <TableRow
-                      key={inspection.id}
-                      className="group transition-colors hover:bg-accent"
-                    >
-                      <TableCell className="px-6">
-                        <div className="font-mono text-xs font-medium">
-                          {inspection.inspectionNumber}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="capitalize">
-                          {inspection.type.replace(/_/g, " ")}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        {inspection.location}
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {new Date(
-                          inspection.scheduledDate,
-                        ).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {inspection.inspector || "—"}
-                      </TableCell>
-                      <TableCell>
-                        <EdmsStatusBadge status={inspection.results} />
-                      </TableCell>
-                      <TableCell className="px-6">
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link href={`/inspections/${inspection.id}`}>
-                            Open
-                          </Link>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <InspectionsTable inspections={inspections} />
             )}
           </CardContent>
         </Card>

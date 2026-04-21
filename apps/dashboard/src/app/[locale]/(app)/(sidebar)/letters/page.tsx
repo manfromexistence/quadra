@@ -2,24 +2,11 @@
 
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
-import {
-  ArrowDownToLine,
-  ArrowUpFromLine,
-  FileText,
-  Mail,
-  Send,
-} from "lucide-react";
+import { FileText, Mail, Send } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { LettersFilters } from "@/components/edms/letters-filters";
+import { LettersTable } from "@/components/letters-table";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getLetters } from "@/lib/edms/correspondence";
@@ -162,107 +149,13 @@ export default function LettersPage() {
           </CardHeader>
 
           <CardContent className="px-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="px-6">Letter ID</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Direction</TableHead>
-                  <TableHead>To/From</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>INFO</TableHead>
-                  <TableHead>Action</TableHead>
-                  <TableHead>Response</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredLetters.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={10}
-                      className="text-center py-8 text-muted-foreground"
-                    >
-                      No letters found matching your criteria
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredLetters.map((letter) => (
-                    <TableRow
-                      key={letter.id}
-                      className="hover:bg-accent/50 cursor-pointer transition-colors"
-                    >
-                      <TableCell className="px-6">
-                        <Link
-                          href={`/letters/${letter.id}`}
-                          className="font-mono text-xs font-medium hover:text-primary transition-colors"
-                        >
-                          {letter.letterNumber}
-                        </Link>
-                        <div className="font-mono text-xs text-muted-foreground">
-                          {letter.ref}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-md font-medium">
-                          {letter.subject}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {letter.attachments} attachment(s)
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {letter.direction === "Outgoing" ? (
-                            <ArrowUpFromLine className="size-4 text-blue-600" />
-                          ) : (
-                            <ArrowDownToLine className="size-4 text-green-600" />
-                          )}
-                          <span className="text-xs">{letter.direction}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-xs">
-                          {letter.direction === "Outgoing"
-                            ? letter.to
-                            : letter.from}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {letter.toType}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{letter.category}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">
-                          {letter.forInfo ? "✓" : "—"}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">
-                          {letter.actionRequired ? "✓" : "—"}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs font-mono">
-                          {letter.responseRequired || "—"}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-mono text-xs text-muted-foreground">
-                          {new Date(letter.date).toLocaleDateString()}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{letter.status}</span>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+            {filteredLetters.length === 0 ? (
+              <div className="px-6 pb-6 text-sm text-muted-foreground">
+                No letters found matching your criteria
+              </div>
+            ) : (
+              <LettersTable letters={filteredLetters} />
+            )}
           </CardContent>
         </Card>
       </div>

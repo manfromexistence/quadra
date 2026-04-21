@@ -10,18 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@midday/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import { Download } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { EdmsStatusBadge } from "@/components/edms/status-badge";
+import { IncomingTransmittalsTable } from "@/components/incoming-transmittals-table";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getIncomingTransmittals } from "@/lib/edms/incoming-transmittals";
@@ -292,84 +284,15 @@ export default function IncomingTransmittalsPage() {
           </CardHeader>
 
           <CardContent className="px-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="px-6">TM ID & Ref</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>From</TableHead>
-                  <TableHead>Purpose</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Response Status</TableHead>
-                  <TableHead>Assigned To</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {incomingTransmittals.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="text-center py-8 text-muted-foreground"
-                    >
-                      No incoming transmittals found
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  incomingTransmittals.map((tm) => (
-                    <TableRow key={tm.id}>
-                      <TableCell className="px-6">
-                        <div className="font-mono text-xs font-medium">
-                          {tm.transmittalNumber}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {tm.theirRef}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-md">
-                          <Link
-                            href={`/incoming-transmittals/${tm.id}`}
-                            className="font-medium hover:text-primary"
-                          >
-                            {tm.subject}
-                          </Link>
-                          <div className="text-xs text-muted-foreground">
-                            {tm.fromOrg}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="rounded bg-muted px-2 py-1 font-mono text-xs">
-                          {tm.from}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <EdmsStatusBadge status={tm.purpose} />
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={`text-xs font-medium ${
-                            tm.priority === "High"
-                              ? "text-destructive"
-                              : tm.priority === "Medium"
-                                ? "text-amber-600"
-                                : "text-muted-foreground"
-                          }`}
-                        >
-                          {tm.priority}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{tm.responseStatus}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">Admin User</span>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+            {incomingTransmittals.length === 0 ? (
+              <div className="px-6 pb-6 text-sm text-muted-foreground">
+                No incoming transmittals found
+              </div>
+            ) : (
+              <IncomingTransmittalsTable
+                incomingTransmittals={incomingTransmittals}
+              />
+            )}
           </CardContent>
 
           <div className="border-t px-6 py-3">

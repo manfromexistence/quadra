@@ -1,16 +1,7 @@
-import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
-import { Download, FileText } from "lucide-react";
 import type { Metadata } from "next";
 import { ProjectTemplateUploadSheet } from "@/components/edms/project-template-upload-sheet";
+import { ProjectTemplatesTable } from "@/components/project-templates-table";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getProjectTemplates } from "@/lib/edms/project-templates";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
@@ -56,65 +47,10 @@ export default async function ProjectTemplatesPage() {
             <CardTitle>Template Library</CardTitle>
           </CardHeader>
           <CardContent className="px-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="px-6">Template Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>File</TableHead>
-                  <TableHead>Size</TableHead>
-                  <TableHead>Downloads</TableHead>
-                  <TableHead>Uploaded</TableHead>
-                  <TableHead className="px-6">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {templates.map((template) => (
-                  <TableRow
-                    key={template.id}
-                    className="hover:bg-accent/50 transition-colors"
-                  >
-                    <TableCell className="px-6">
-                      <div className="font-medium">{template.name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {template.description || "—"}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="rounded bg-muted px-2 py-1 font-mono text-xs uppercase">
-                        {template.type}
-                      </span>
-                    </TableCell>
-                    <TableCell>{template.category}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <FileText className="size-4 text-muted-foreground" />
-                        <span className="text-sm">{template.fileName}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {formatFileSize(template.fileSize)}
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {template.downloadCount}
-                    </TableCell>
-                    <TableCell className="font-mono text-xs text-muted-foreground">
-                      {template.createdAt
-                        ? new Date(template.createdAt).toLocaleDateString()
-                        : "—"}
-                    </TableCell>
-                    <TableCell className="px-6">
-                      <div className="flex gap-2">
-                        <Button variant="ghost" size="sm">
-                          <Download className="size-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <ProjectTemplatesTable
+              templates={templates}
+              formatFileSize={formatFileSize}
+            />
           </CardContent>
         </Card>
       </div>

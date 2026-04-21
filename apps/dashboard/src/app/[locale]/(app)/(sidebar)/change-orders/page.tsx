@@ -1,16 +1,8 @@
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { EdmsStatusBadge } from "@/components/edms/status-badge";
+import { ChangeOrdersTable } from "@/components/change-orders-table";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getChangeOrders } from "@/lib/edms/change-orders";
@@ -73,55 +65,7 @@ export default async function ChangeOrdersPage() {
                 No change orders found.
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="px-6">CO #</TableHead>
-                    <TableHead>Reason</TableHead>
-                    <TableHead>Original Value</TableHead>
-                    <TableHead>Change Value</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead className="px-6"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {changeOrders.map((co) => (
-                    <TableRow
-                      key={co.id}
-                      className="group transition-colors hover:bg-accent"
-                    >
-                      <TableCell className="px-6">
-                        <div className="font-mono text-xs font-medium">
-                          {co.changeOrderNumber}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <p className="font-medium">{co.reason}</p>
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {co.originalContractValue
-                          ? `$${(Number(co.originalContractValue) / 100).toLocaleString()}`
-                          : "—"}
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        ${Number(co.changeValue / 100).toLocaleString()}
-                      </TableCell>
-                      <TableCell>
-                        <EdmsStatusBadge status={co.approvalStatus} />
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {new Date(co.createdAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className="px-6">
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link href={`/change-orders/${co.id}`}>Open</Link>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <ChangeOrdersTable changeOrders={changeOrders} />
             )}
           </CardContent>
         </Card>

@@ -4,16 +4,9 @@ import { Badge } from "@midday/ui/badge";
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
 import { cn } from "@midday/ui/cn";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import { AlertTriangle, ChevronRight, Plus } from "lucide-react";
 import { useState } from "react";
+import { DatabookTable } from "@/components/databook-table";
 import { AddSectionDialog } from "@/components/edms/add-section-dialog";
 import { CompileDataBookDialog } from "@/components/edms/compile-databook-dialog";
 
@@ -409,32 +402,7 @@ export default function DatabookPage() {
                 </div>
               </CardHeader>
               <CardContent className="px-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="px-6">
-                        When document matches
-                      </TableHead>
-                      <TableHead>Auto-file to Section</TableHead>
-                      <TableHead className="px-6">Trigger</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {AUTO_POPULATE_RULES.map((rule, index) => (
-                      <TableRow key={index} className="hover:bg-accent/50">
-                        <TableCell className="px-6">
-                          <span className="font-mono text-xs">
-                            {rule.pattern}
-                          </span>
-                        </TableCell>
-                        <TableCell>{rule.section}</TableCell>
-                        <TableCell className="px-6 text-sm text-muted-foreground">
-                          {rule.trigger}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <DatabookTable rules={AUTO_POPULATE_RULES} />
               </CardContent>
             </Card>
           </div>

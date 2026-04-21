@@ -1,18 +1,11 @@
 "use client";
 
 import { Button } from "@midday/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
-import { FileText, Trash2 } from "lucide-react";
+import { FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { memo, useCallback, useState } from "react";
 import { deleteDiscipline } from "@/actions/project-config";
+import { DisciplinesTable } from "@/components/disciplines-table";
 import { DisciplineModal } from "@/components/modals/discipline-modal";
 
 interface ConfigDisciplinesProps {
@@ -94,26 +87,11 @@ export const ConfigDisciplines = memo(function ConfigDisciplines({
           </div>
         ) : (
           <div className="border border-border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Usage</TableHead>
-                  <TableHead className="w-[120px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {disciplines.map((discipline) => (
-                  <DisciplineRow
-                    key={discipline.id}
-                    discipline={discipline}
-                    onEdit={openEditModal}
-                    onDelete={handleDelete}
-                  />
-                ))}
-              </TableBody>
-            </Table>
+            <DisciplinesTable
+              disciplines={disciplines}
+              onEdit={openEditModal}
+              onDelete={handleDelete}
+            />
           </div>
         )}
       </div>
@@ -125,64 +103,5 @@ export const ConfigDisciplines = memo(function ConfigDisciplines({
         discipline={editingDiscipline}
       />
     </>
-  );
-});
-
-const DisciplineRow = memo(function DisciplineRow({
-  discipline,
-  onEdit,
-  onDelete,
-}: {
-  discipline: {
-    id: string;
-    code: string;
-    name: string;
-    color: string;
-    docCount: number;
-  };
-  onEdit: (discipline: any) => void;
-  onDelete: (id: string) => void;
-}) {
-  const handleEdit = useCallback(() => {
-    onEdit(discipline);
-  }, [discipline, onEdit]);
-
-  const handleDelete = useCallback(() => {
-    onDelete(discipline.id);
-  }, [discipline.id, onDelete]);
-
-  return (
-    <TableRow>
-      <TableCell>
-        <div className="flex items-center gap-2">
-          <div
-            className="size-3 rounded-sm"
-            style={{ backgroundColor: discipline.color }}
-          />
-          <span className="font-mono text-sm font-medium">
-            {discipline.code}
-          </span>
-        </div>
-      </TableCell>
-      <TableCell>{discipline.name}</TableCell>
-      <TableCell className="font-mono text-xs text-muted-foreground">
-        {discipline.docCount} docs
-      </TableCell>
-      <TableCell>
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" onClick={handleEdit}>
-            Edit
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleDelete}
-            className="text-destructive hover:text-destructive"
-          >
-            <Trash2 className="size-4" />
-          </Button>
-        </div>
-      </TableCell>
-    </TableRow>
   );
 });

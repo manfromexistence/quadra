@@ -2,19 +2,12 @@
 
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import { AlertTriangle, FileText, HelpCircle, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { TechnicalQueriesFilters } from "@/components/edms/technical-queries-filters";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { TechnicalQueriesTable } from "@/components/technical-queries-table";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getTechnicalQueries } from "@/lib/edms/queries";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
@@ -211,91 +204,13 @@ export default function TechnicalQueriesPage() {
           </CardHeader>
 
           <CardContent className="px-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="px-6">TQ ID</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Discipline</TableHead>
-                  <TableHead>Raised By</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Due Date</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {technicalQueries.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="text-center py-8 text-muted-foreground"
-                    >
-                      No technical queries found
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  technicalQueries.map((tq) => (
-                    <TableRow
-                      key={tq.id}
-                      className="hover:bg-accent/50 cursor-pointer transition-colors"
-                    >
-                      <TableCell className="px-6">
-                        <Link
-                          href={`/technical-queries/${tq.id}`}
-                          className="font-mono text-xs font-medium hover:text-primary transition-colors"
-                        >
-                          {tq.queryNumber}
-                        </Link>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-md font-medium">{tq.subject}</div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="rounded bg-muted px-2 py-1 font-mono text-xs">
-                          {tq.discipline}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">Admin User</span>
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={`text-xs font-medium ${
-                            tq.status === "Open"
-                              ? "text-amber-600"
-                              : tq.status === "Responded"
-                                ? "text-blue-600"
-                                : "text-green-600"
-                          }`}
-                        >
-                          {tq.status}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={`text-xs font-medium ${
-                            tq.priority === "High"
-                              ? "text-destructive"
-                              : tq.priority === "Medium"
-                                ? "text-amber-600"
-                                : "text-muted-foreground"
-                          }`}
-                        >
-                          {tq.priority}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">
-                          {tq.dueDate
-                            ? new Date(tq.dueDate).toLocaleDateString()
-                            : "—"}
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+            {technicalQueries.length === 0 ? (
+              <div className="px-6 pb-6 text-sm text-muted-foreground">
+                No technical queries found
+              </div>
+            ) : (
+              <TechnicalQueriesTable technicalQueries={technicalQueries} />
+            )}
           </CardContent>
 
           <div className="border-t px-6 py-3">

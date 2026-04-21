@@ -1,19 +1,12 @@
 import { Badge } from "@midday/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import type { Metadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { Suspense } from "react";
 import { LinkDocumentsButton } from "@/components/edms/link-documents-button";
 import { ScheduleSyncButton } from "@/components/edms/schedule-sync-button";
 import { ErrorFallback } from "@/components/error-fallback";
+import { ScheduleTable } from "@/components/schedule-table";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getDocuments } from "@/lib/edms/documents";
 import { getSchedulePageData } from "@/lib/edms/schedule";
@@ -328,100 +321,7 @@ async function ScheduleContent({
           </div>
         </CardHeader>
         <CardContent className="px-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="px-6">Activity</TableHead>
-                <TableHead>WBS</TableHead>
-                <TableHead>Phase</TableHead>
-                <TableHead>Planned %</TableHead>
-                <TableHead>Actual %</TableHead>
-                <TableHead>Variance</TableHead>
-                <TableHead className="px-6">Linked Docs</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {scheduleData.activities.map((activity) => {
-                const variance = activity.actual - activity.planned;
-                return (
-                  <TableRow key={activity.id} className="hover:bg-accent/50">
-                    <TableCell className="px-6">
-                      <div className="font-medium text-sm">{activity.name}</div>
-                      <div className="text-xs text-muted-foreground font-mono mt-1">
-                        {activity.activityCode} · {activity.start} →{" "}
-                        {activity.end}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {activity.wbs}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        className={`${PHASE_COLORS[activity.phase as keyof typeof PHASE_COLORS]} text-white border-0 text-[10px] uppercase tracking-wider`}
-                      >
-                        {activity.phase}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="font-mono">
-                      {activity.planned}%
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div className="w-20 h-1.5 bg-border relative overflow-hidden">
-                          <div
-                            className={`absolute inset-y-0 left-0 ${
-                              activity.actual < activity.planned - 5
-                                ? "bg-red-600"
-                                : activity.actual < activity.planned
-                                  ? "bg-amber-600"
-                                  : "bg-emerald-600"
-                            }`}
-                            style={{ width: `${activity.actual}%` }}
-                          />
-                        </div>
-                        <span className="font-mono text-xs">
-                          {activity.actual}%
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={variance >= 0 ? "default" : "destructive"}
-                        className="font-mono text-[10px]"
-                      >
-                        {variance >= 0 ? "+" : ""}
-                        {variance}%
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="px-6">
-                      {activity.linkedDocs.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {activity.linkedDocs.slice(0, 2).map((doc) => (
-                            <Badge
-                              key={doc}
-                              variant="outline"
-                              className="font-mono text-[10px]"
-                            >
-                              {doc}
-                            </Badge>
-                          ))}
-                          {activity.linkedDocs.length > 2 && (
-                            <span className="text-xs text-muted-foreground">
-                              +{activity.linkedDocs.length - 2}
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-xs text-muted-foreground italic">
-                          — none linked —
-                        </span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+          <ScheduleTable activities={scheduleData.activities} />
         </CardContent>
       </Card>
     </div>

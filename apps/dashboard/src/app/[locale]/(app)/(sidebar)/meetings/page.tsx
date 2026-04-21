@@ -2,18 +2,11 @@
 
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import { Calendar, FileText, Users } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { MeetingsFilters } from "@/components/edms/meetings-filters";
+import { MeetingsTable } from "@/components/meetings-table";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getMinutesOfMeeting } from "@/lib/edms/correspondence";
@@ -150,74 +143,13 @@ export default function MeetingsPage() {
           </CardHeader>
 
           <CardContent className="px-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="px-6">MoM ID</TableHead>
-                  <TableHead>Meeting Title</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Meeting Date</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Attendees</TableHead>
-                  <TableHead>Action Items</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredMeetings.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-8 text-muted-foreground"
-                    >
-                      No meetings found matching your criteria
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredMeetings.map((mom) => (
-                    <TableRow
-                      key={mom.id}
-                      className="hover:bg-accent/50 cursor-pointer transition-colors"
-                    >
-                      <TableCell className="px-6">
-                        <Link
-                          href={`/meetings/${mom.id}`}
-                          className="font-mono text-xs font-medium hover:text-primary transition-colors"
-                        >
-                          {mom.momNumber}
-                        </Link>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-md font-medium">{mom.title}</div>
-                        <div className="text-xs text-muted-foreground">
-                          Chair: {mom.chairperson}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{mom.meetingType}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-mono text-xs text-muted-foreground">
-                          {new Date(mom.meetingDate).toLocaleDateString()}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{mom.location}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-mono text-xs">—</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-mono text-xs">—</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{mom.status}</span>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+            {filteredMeetings.length === 0 ? (
+              <div className="px-6 pb-6 text-sm text-muted-foreground">
+                No meetings found matching your criteria
+              </div>
+            ) : (
+              <MeetingsTable meetings={filteredMeetings} />
+            )}
           </CardContent>
         </Card>
       </div>

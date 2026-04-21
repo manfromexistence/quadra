@@ -1,18 +1,11 @@
 "use client";
 
 import { Button } from "@midday/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
-import { FileText, Trash2 } from "lucide-react";
+import { FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { memo, useCallback, useState } from "react";
 import { deleteDocumentType } from "@/actions/project-config";
+import { DocTypesTable } from "@/components/doc-types-table";
 import { DocumentTypeModal } from "@/components/modals/document-type-modal";
 
 interface ConfigDocTypesProps {
@@ -24,45 +17,6 @@ interface ConfigDocTypesProps {
     docCount: number;
   }>;
 }
-
-const DocumentTypeRow = memo(
-  ({
-    docType,
-    onEdit,
-    onDelete,
-  }: {
-    docType: ConfigDocTypesProps["documentTypes"][0];
-    onEdit: (docType: ConfigDocTypesProps["documentTypes"][0]) => void;
-    onDelete: (id: string) => void;
-  }) => (
-    <TableRow>
-      <TableCell>
-        <span className="font-mono text-sm font-medium">{docType.code}</span>
-      </TableCell>
-      <TableCell>{docType.name}</TableCell>
-      <TableCell className="font-mono text-xs text-muted-foreground">
-        {docType.docCount} docs
-      </TableCell>
-      <TableCell>
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" onClick={() => onEdit(docType)}>
-            Edit
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onDelete(docType.id)}
-            className="text-destructive hover:text-destructive"
-          >
-            <Trash2 className="size-4" />
-          </Button>
-        </div>
-      </TableCell>
-    </TableRow>
-  ),
-);
-
-DocumentTypeRow.displayName = "DocumentTypeRow";
 
 export const ConfigDocTypes = memo(function ConfigDocTypes({
   projectId,
@@ -134,26 +88,11 @@ export const ConfigDocTypes = memo(function ConfigDocTypes({
           </div>
         ) : (
           <div className="border border-border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Usage</TableHead>
-                  <TableHead className="w-[120px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {documentTypes.map((docType) => (
-                  <DocumentTypeRow
-                    key={docType.id}
-                    docType={docType}
-                    onEdit={openEditModal}
-                    onDelete={handleDelete}
-                  />
-                ))}
-              </TableBody>
-            </Table>
+            <DocTypesTable
+              documentTypes={documentTypes}
+              onEdit={openEditModal}
+              onDelete={handleDelete}
+            />
           </div>
         )}
       </div>

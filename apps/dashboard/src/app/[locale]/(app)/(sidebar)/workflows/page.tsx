@@ -1,13 +1,5 @@
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
@@ -21,10 +13,10 @@ import {
   EdmsStatusBadge,
   formatEdmsLabel,
 } from "@/components/edms/status-badge";
-import { WorkflowActionSheet } from "@/components/edms/workflow-action-sheet";
 import { WorkflowCreateSheet } from "@/components/edms/workflow-create-sheet";
 import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { WorkflowsTable } from "@/components/workflows-table";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { canManageEdmsContent } from "@/lib/edms/rbac";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
@@ -131,76 +123,7 @@ export default async function WorkflowsPage() {
                         No workflow steps found.
                       </div>
                     ) : (
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="px-6">Step</TableHead>
-                            <TableHead>Document</TableHead>
-                            <TableHead>Project</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Assignee</TableHead>
-                            <TableHead className="px-6">Due</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {data.steps.map((step) => (
-                            <TableRow
-                              key={step.id}
-                              className="group cursor-pointer transition-colors hover:bg-accent"
-                            >
-                              <TableCell className="px-6">
-                                <Link
-                                  href={`/workflows/${step.workflowId}`}
-                                  className="block"
-                                >
-                                  <div className="space-y-1">
-                                    <p className="font-medium group-hover:text-primary">
-                                      {step.stepName}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground">
-                                      {step.workflowName} · Step{" "}
-                                      {step.stepNumber} of {step.totalSteps}
-                                    </p>
-                                  </div>
-                                </Link>
-                              </TableCell>
-                              <TableCell>
-                                <div className="space-y-1">
-                                  <p>{step.title}</p>
-                                  <p className="font-mono text-xs text-muted-foreground">
-                                    {step.documentNumber}
-                                  </p>
-                                </div>
-                              </TableCell>
-                              <TableCell>{step.projectName}</TableCell>
-                              <TableCell>
-                                <EdmsStatusBadge status={step.status} />
-                              </TableCell>
-                              <TableCell>
-                                <div className="space-y-1">
-                                  <p>{step.assignedToName}</p>
-                                  <p className="text-xs text-muted-foreground">
-                                    {formatEdmsLabel(step.assignedRole)}
-                                  </p>
-                                </div>
-                              </TableCell>
-                              <TableCell className="px-6">
-                                <div className="flex items-center justify-between gap-3">
-                                  <span className="text-sm text-muted-foreground">
-                                    {step.dueLabel}
-                                  </span>
-                                  <WorkflowActionSheet
-                                    stepId={step.id}
-                                    title={`${step.documentNumber} - ${step.title}`}
-                                    isActionable={step.isActionable}
-                                    projectId={step.projectId}
-                                  />
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
+                      <WorkflowsTable steps={data.steps} />
                     )}
                   </CardContent>
                 </Card>

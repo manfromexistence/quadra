@@ -1,13 +1,5 @@
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
@@ -21,6 +13,7 @@ import { PrintButton } from "@/components/edms/print-button";
 import { EdmsStatusBadge } from "@/components/edms/status-badge";
 import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { TransmittalsTable } from "@/components/transmittals-table";
 import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { canManageEdmsContent } from "@/lib/edms/rbac";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
@@ -165,74 +158,7 @@ export default async function TransmittalsPage() {
                         No transmittals found.
                       </div>
                     ) : (
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="px-6">
-                              Transmittal ID
-                            </TableHead>
-                            <TableHead>Subject & Documents</TableHead>
-                            <TableHead>Recipient</TableHead>
-                            <TableHead>Purpose</TableHead>
-                            <TableHead>Due Date</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="px-6"></TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {data.transmittals.map((item) => (
-                            <TableRow
-                              key={item.id}
-                              className="group transition-colors hover:bg-accent"
-                            >
-                              <TableCell className="px-6">
-                                <div className="space-y-1">
-                                  <p className="font-mono text-xs font-medium">
-                                    {item.transmittalNumber}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    {item.sentLabel.replace("Updated ", "")}
-                                  </p>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <div className="space-y-2">
-                                  <p className="font-medium">{item.subject}</p>
-                                  <div className="flex flex-wrap gap-1">
-                                    {item.documentCodes?.map((code) => (
-                                      <span
-                                        key={code}
-                                        className="inline-flex items-center rounded-full border border-border bg-background px-2 py-0.5 font-mono text-[10px]"
-                                      >
-                                        {code}
-                                      </span>
-                                    ))}
-                                  </div>
-                                </div>
-                              </TableCell>
-                              <TableCell>{item.recipientName}</TableCell>
-                              <TableCell>
-                                <EdmsStatusBadge
-                                  status={item.purpose || "IFR"}
-                                />
-                              </TableCell>
-                              <TableCell className="font-mono text-xs text-muted-foreground">
-                                {item.dueDate || "—"}
-                              </TableCell>
-                              <TableCell className="text-muted-foreground">
-                                {item.status}
-                              </TableCell>
-                              <TableCell className="px-6">
-                                <Button variant="ghost" size="sm" asChild>
-                                  <Link href={`/transmittals/${item.id}`}>
-                                    View
-                                  </Link>
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
+                      <TransmittalsTable transmittals={data.transmittals} />
                     )}
                   </CardContent>
                 </Card>

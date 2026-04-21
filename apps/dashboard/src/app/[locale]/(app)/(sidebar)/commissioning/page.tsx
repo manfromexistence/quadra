@@ -1,16 +1,8 @@
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { EdmsStatusBadge } from "@/components/edms/status-badge";
+import { CommissioningTable } from "@/components/commissioning-table";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getCommissioningChecklists } from "@/lib/edms/commissioning";
@@ -73,53 +65,7 @@ export default async function CommissioningPage() {
                 No commissioning checklists found.
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="px-6">Checklist #</TableHead>
-                    <TableHead>System</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Completed</TableHead>
-                    <TableHead className="px-6"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {checklists.map((checklist) => (
-                    <TableRow
-                      key={checklist.id}
-                      className="group transition-colors hover:bg-accent"
-                    >
-                      <TableCell className="px-6">
-                        <div className="font-mono text-xs font-medium">
-                          {checklist.checklistNumber}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        {checklist.system}
-                      </TableCell>
-                      <TableCell>
-                        <p className="font-medium">{checklist.description}</p>
-                      </TableCell>
-                      <TableCell>
-                        <EdmsStatusBadge status={checklist.status} />
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {checklist.completedAt
-                          ? new Date(checklist.completedAt).toLocaleDateString()
-                          : "—"}
-                      </TableCell>
-                      <TableCell className="px-6">
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link href={`/commissioning/${checklist.id}`}>
-                            Open
-                          </Link>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <CommissioningTable checklists={checklists} />
             )}
           </CardContent>
         </Card>

@@ -1,15 +1,8 @@
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { DailyReportsTable } from "@/components/daily-reports-table";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getDailyReports } from "@/lib/edms/daily-reports";
@@ -72,47 +65,7 @@ export default async function DailyReportsPage() {
                 No daily reports found.
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="px-6">Report Date</TableHead>
-                    <TableHead>Weather</TableHead>
-                    <TableHead>Activities</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead className="px-6"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {reports.map((report) => (
-                    <TableRow
-                      key={report.id}
-                      className="group transition-colors hover:bg-accent"
-                    >
-                      <TableCell className="px-6">
-                        <div className="text-sm font-medium">
-                          {new Date(report.reportDate).toLocaleDateString()}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        {report.weather || "—"}
-                      </TableCell>
-                      <TableCell>
-                        <p className="line-clamp-2 text-sm">
-                          {report.activitiesCompleted || "—"}
-                        </p>
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {new Date(report.createdAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className="px-6">
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link href={`/daily-reports/${report.id}`}>Open</Link>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <DailyReportsTable reports={reports} />
             )}
           </CardContent>
         </Card>

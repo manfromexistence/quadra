@@ -2,18 +2,11 @@
 
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import { AlertCircle, FileText, Send } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { MemosFilters } from "@/components/edms/memos-filters";
+import { MemosTable } from "@/components/memos-table";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getMemos } from "@/lib/edms/correspondence";
@@ -148,76 +141,13 @@ export default function MemosPage() {
           </CardHeader>
 
           <CardContent className="px-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="px-6">Memo ID</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>From</TableHead>
-                  <TableHead>To</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredMemos.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="text-center py-8 text-muted-foreground"
-                    >
-                      No memos found matching your criteria
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredMemos.map((memo) => (
-                    <TableRow
-                      key={memo.id}
-                      className="hover:bg-accent/50 cursor-pointer transition-colors"
-                    >
-                      <TableCell className="px-6">
-                        <Link
-                          href={`/memos/${memo.id}`}
-                          className="font-mono text-xs font-medium hover:text-primary transition-colors"
-                        >
-                          {memo.memoNumber}
-                        </Link>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className="max-w-md font-medium">
-                            {memo.subject}
-                          </div>
-                          {memo.urgent && (
-                            <span className="rounded bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
-                              URGENT
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{memo.from}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{memo.to}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{memo.category}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-mono text-xs text-muted-foreground">
-                          {new Date(memo.date).toLocaleDateString()}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{memo.status}</span>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+            {filteredMemos.length === 0 ? (
+              <div className="px-6 pb-6 text-sm text-muted-foreground">
+                No memos found matching your criteria
+              </div>
+            ) : (
+              <MemosTable memos={filteredMemos} />
+            )}
           </CardContent>
         </Card>
       </div>

@@ -2,19 +2,12 @@
 
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@midday/ui/table";
 import { AlertTriangle, FileText, MapPin, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { SiteTechQueriesFilters } from "@/components/edms/site-tech-queries-filters";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { SiteTechQueriesTable } from "@/components/site-tech-queries-table";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getSiteTechQueries } from "@/lib/edms/queries";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
@@ -150,75 +143,13 @@ export default function SiteTechQueriesPage() {
           </CardHeader>
 
           <CardContent className="px-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="px-6">STQ ID</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Discipline</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Assigned To</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredQueries.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="text-center py-8 text-muted-foreground"
-                    >
-                      No site queries found matching your criteria
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredQueries.map((stq) => (
-                    <TableRow
-                      key={stq.id}
-                      className="hover:bg-accent/50 cursor-pointer transition-colors"
-                    >
-                      <TableCell className="px-6">
-                        <Link
-                          href={`/site-tech-queries/${stq.id}`}
-                          className="font-mono text-xs font-medium hover:text-primary transition-colors"
-                        >
-                          {stq.queryNumber}
-                        </Link>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-md font-medium">
-                          {stq.subject}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs text-muted-foreground">
-                          {stq.location}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="rounded bg-muted px-2 py-1 font-mono text-xs">
-                          {stq.discipline}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs font-medium text-amber-600">
-                          {stq.status}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs font-medium text-destructive">
-                          {stq.priority}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{stq.assignedTo}</span>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+            {filteredQueries.length === 0 ? (
+              <div className="px-6 pb-6 text-sm text-muted-foreground">
+                No site queries found matching your criteria
+              </div>
+            ) : (
+              <SiteTechQueriesTable siteQueries={filteredQueries} />
+            )}
           </CardContent>
         </Card>
       </div>
