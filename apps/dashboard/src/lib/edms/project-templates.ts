@@ -3,15 +3,20 @@ import { db } from "@/db";
 import { projectTemplates } from "@/db/schema/project-templates";
 
 export async function getProjectTemplates(projectId?: string) {
-  return db
-    .select()
-    .from(projectTemplates)
-    .where(
-      projectId
-        ? eq(projectTemplates.projectId, projectId)
-        : eq(projectTemplates.isGlobal, true),
-    )
-    .orderBy(projectTemplates.createdAt);
+  try {
+    return await db
+      .select()
+      .from(projectTemplates)
+      .where(
+        projectId
+          ? eq(projectTemplates.projectId, projectId)
+          : eq(projectTemplates.isGlobal, true),
+      )
+      .orderBy(projectTemplates.createdAt);
+  } catch (error) {
+    console.error("Error fetching project templates:", error);
+    return [];
+  }
 }
 
 export async function getProjectTemplateById(id: string) {

@@ -106,10 +106,6 @@ const items = [
     name: "Audit",
   },
   {
-    path: "/notifications",
-    name: "Notifications",
-  },
-  {
     path: "/reports",
     name: "Reports",
   },
@@ -279,6 +275,10 @@ const items = [
       {
         path: "/warranty",
         name: "Warranty",
+      },
+      {
+        path: "/notifications",
+        name: "Notifications",
       },
     ],
   },
