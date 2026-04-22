@@ -2,10 +2,10 @@ import { Card, CardContent } from "@midday/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@midday/ui/tabs";
 import type { Metadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
+import { getEdmsDashboardData } from "@/lib/edms/dashboard";
 import { getProjectConfigData } from "@/lib/edms/project-config";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 import { HydrateClient } from "@/trpc/server";
@@ -28,13 +28,32 @@ export default async function ProjectSetupPage({
   const sessionUser = await getRequiredDashboardSessionUser();
   const params = await searchParams;
 
-  // For now, we'll use the first project or require projectId in query
-  // In production, you might want to have a project selector
-  const projectId = params.projectId;
+  // Use provided projectId or get first available project
+  let projectId = params.projectId;
 
   if (!projectId) {
-    // Redirect to projects page to select a project
-    redirect("/projects");
+    // Get user's projects and use the first one
+    const dashboardData = await getEdmsDashboardData(sessionUser);
+
+    if (dashboardData.projects.length === 0) {
+      // No projects available, show message
+      return (
+        <ScrollableContent>
+          <div className="flex flex-col gap-6 pt-6">
+            <div className="space-y-2">
+              <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+                Project Setup
+              </h1>
+              <p className="text-sm leading-6 text-muted-foreground md:text-base">
+                No projects available. Please create a project first.
+              </p>
+            </div>
+          </div>
+        </ScrollableContent>
+      );
+    }
+
+    projectId = dashboardData.projects[0].id;
   }
 
   const configData = await getProjectConfigData(sessionUser, projectId);

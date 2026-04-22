@@ -13,6 +13,7 @@ import { useTRPC } from "@/trpc/client";
 type Props = {
   userId: string;
   avatarUrl?: string | null;
+  userName?: string | null;
   onUpload?: (url: string) => void;
   size?: number;
   className?: string;
@@ -20,7 +21,14 @@ type Props = {
 
 export const AvatarUpload = forwardRef<HTMLInputElement, Props>(
   (
-    { userId, avatarUrl: initialAvatarUrl, size = 65, onUpload, className },
+    {
+      userId,
+      avatarUrl: initialAvatarUrl,
+      userName,
+      size = 65,
+      onUpload,
+      className,
+    },
     ref,
   ) => {
     const [avatar, setAvatar] = useState(initialAvatarUrl);
@@ -79,8 +87,12 @@ export const AvatarUpload = forwardRef<HTMLInputElement, Props>(
         ) : (
           <>
             <AvatarImage src={avatar ?? undefined} />
-            <AvatarFallback>
-              <Icons.AccountCircle className="size-5" />
+            <AvatarFallback className="font-medium">
+              {userName ? (
+                userName.charAt(0).toUpperCase()
+              ) : (
+                <Icons.AccountCircle className="size-5" />
+              )}
             </AvatarFallback>
           </>
         )}

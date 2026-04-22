@@ -21,8 +21,10 @@ import {
   Search,
   TrendingUp,
 } from "lucide-react";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { useState } from "react";
 import { ReportModal } from "@/components/edms/report-modal";
+import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { useTRPC } from "@/trpc/client";
 
@@ -206,112 +208,116 @@ export default function ReportsPage() {
 
   return (
     <ScrollableContent>
-      <div className="flex flex-col gap-6 p-6">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-2xl space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-              Reports
-            </h1>
-            <p className="text-sm leading-6 text-muted-foreground md:text-base">
-              Generate and download project reports including design reviews,
-              transmittal logs, progress reports, and compliance matrices.
-            </p>
+      <ErrorBoundary errorComponent={ErrorFallback}>
+        <div className="flex flex-col gap-6 p-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-2xl space-y-2">
+              <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+                Reports
+              </h1>
+              <p className="text-sm leading-6 text-muted-foreground md:text-base">
+                Generate and download project reports including design reviews,
+                transmittal logs, progress reports, and compliance matrices.
+              </p>
+            </div>
+            <div className="relative w-full md:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <Input
+                placeholder="Search reports..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
           </div>
-          <div className="relative w-full md:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input
-              placeholder="Search reports..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredReports.map((report) => (
-            <Card
-              key={report.id}
-              className="group hover:border-primary/50 transition-colors"
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="p-2 rounded-lg bg-muted">
-                    <report.icon className="size-5" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {filteredReports.map((report) => (
+              <Card
+                key={report.id}
+                className="group hover:border-primary/50 transition-colors"
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="p-2 rounded-lg bg-muted">
+                      <report.icon className="size-5" />
+                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {report.tag}
+                    </Badge>
                   </div>
-                  <Badge variant="outline" className="text-xs">
-                    {report.tag}
-                  </Badge>
-                </div>
-                <CardTitle className="text-base mt-3">{report.title}</CardTitle>
-                <CardDescription className="text-xs">
-                  {report.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  onClick={() => handleRunReport(report.id)}
-                  className="w-full"
-                  size="sm"
-                >
-                  <Download className="size-4 mr-2" />
-                  Generate Report
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold tracking-tight">
-            Recent Transmittals
-          </h2>
-          <div className="rounded-md border">
-            <ScrollArea className="h-64">
-              <div className="divide-y">
-                {transmittals.slice(0, 5).map((t: any, i: number) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between px-4 py-3 hover:bg-muted/50"
+                  <CardTitle className="text-base mt-3">
+                    {report.title}
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {report.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    onClick={() => handleRunReport(report.id)}
+                    className="w-full"
+                    size="sm"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded bg-muted">
-                        <FileText className="size-4" />
+                    <Download className="size-4 mr-2" />
+                    Generate Report
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold tracking-tight">
+              Recent Transmittals
+            </h2>
+            <div className="rounded-md border">
+              <ScrollArea className="h-64">
+                <div className="divide-y">
+                  {transmittals.slice(0, 5).map((t: any, i: number) => (
+                    <div
+                      key={i}
+                      className="flex items-center justify-between px-4 py-3 hover:bg-muted/50"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded bg-muted">
+                          <FileText className="size-4" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm">
+                            {t.transmittalNumber}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {t.subject} • Status: {t.status}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium text-sm">
-                          {t.transmittalNumber}
-                        </p>
+                      <div className="text-right">
                         <p className="text-xs text-muted-foreground">
-                          {t.subject} • Status: {t.status}
+                          {t.createdAt
+                            ? new Date(t.createdAt).toLocaleDateString()
+                            : "N/A"}
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground">
-                        {t.createdAt
-                          ? new Date(t.createdAt).toLocaleDateString()
-                          : "N/A"}
-                      </p>
+                  ))}
+                  {transmittals.length === 0 && (
+                    <div className="px-4 py-8 text-center text-muted-foreground text-sm">
+                      No transmittals found
                     </div>
-                  </div>
-                ))}
-                {transmittals.length === 0 && (
-                  <div className="px-4 py-8 text-center text-muted-foreground text-sm">
-                    No transmittals found
-                  </div>
-                )}
-              </div>
-            </ScrollArea>
+                  )}
+                </div>
+              </ScrollArea>
+            </div>
           </div>
         </div>
-      </div>
 
-      <ReportModal
-        report={selectedReport}
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-      />
+        <ReportModal
+          report={selectedReport}
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+        />
+      </ErrorBoundary>
     </ScrollableContent>
   );
 }

@@ -24,7 +24,11 @@ export function UserAvatar() {
           </CardDescription>
         </CardHeader>
 
-        <AvatarUpload userId={user!.id} avatarUrl={user?.avatarUrl} />
+        <AvatarUpload
+          userId={user!.id}
+          avatarUrl={user?.avatarUrl}
+          userName={user?.fullName}
+        />
       </div>
       <CardFooter>An avatar is optional but strongly recommended.</CardFooter>
     </Card>

@@ -527,13 +527,13 @@ export function TransmittalFormWithPreview({
                           <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
                             Title
                           </TableHead>
-                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r-2 border-gray-900 p-2">
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
                             Rev
                           </TableHead>
                           <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
                             Status
                           </TableHead>
-                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 p-2">
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
                             Format
                           </TableHead>
                         </TableRow>
@@ -553,13 +553,13 @@ export function TransmittalFormWithPreview({
                             <TableCell className="text-black border-r border-gray-300 p-2">
                               {doc.title}
                             </TableCell>
-                            <TableCell className="font-mono text-[11px] text-black border-r-2 border-gray-900 p-2">
+                            <TableCell className="font-mono text-[11px] text-black border-r border-gray-300 p-2">
                               {doc.revision || "—"}
                             </TableCell>
                             <TableCell className="font-mono text-[11px] text-black border-r border-gray-300 p-2">
                               {doc.status || "—"}
                             </TableCell>
-                            <TableCell className="font-mono text-[11px] text-black border-r border-gray-300 p-2">
+                            <TableCell className="font-mono text-[11px] text-black p-2">
                               PDF
                             </TableCell>
                           </TableRow>

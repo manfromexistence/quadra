@@ -113,3 +113,23 @@ d @ 3715-ae8f4639901d0ff3.js:9
 I am running the bun run dev on 3001 route so you please test all the sidebar pages - and there you can find all the pages having the data-table by table has some issue so please use invoke windows url powershell command check all pages and fix all of them correctly!!!
 
 Good, now please look admin site header theme toggle should have the same size and border radius as the notification icon next to it. Also, the favicon that you are buried in many pages is not showing correctly as a fixed favicon, and the icon of the favicon is also not showing. Please fix it correctly.And no need to push to GitHub until I say so.
+
+Good, now in our website - please do these:
+1. make vercel as the default theme
+2. the table last column don't have a border on the left for some reason and also the table content should have px-6 padding and also the data table rows should be hoverable and on hover it will show a different color color from our theme colors
+3. in the user avatar please show the user names first letter if no profile picture is available
+4. all the pages under the "Project Management" section should be under the "Project Management" section in the sidebar and all these pages should be just being the setting items and all these pages should have more padding at the top like other pages
+Submittals
+Change Orders
+Inspections
+Extension of Time
+Daily Reports
+Safety Observations
+5. when clicking on project setup its moving to projects pages so please fix that problem - maybe some error or some thing like that /config page its redirecting to /projects so please fix these:
+6. These pages are showing try again error page so in renering there must some problems so please identify them and fix them correctly
+Reports
+Databook
+Project Templates
+meetings
+correspondence
+7. And last but not least make the whole defaut border radius from midday-ui globals css no border to rounded-sm border correctly

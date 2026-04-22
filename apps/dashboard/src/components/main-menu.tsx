@@ -41,6 +41,7 @@ const icons = {
   "/projects": () => <FolderKanban size={20} />,
   "/documents": () => <FileStack size={20} />,
   "/workflows": () => <Workflow size={20} />,
+  "/project-management": () => <Activity size={20} />,
   "/transmittals": () => <Send size={20} />,
   "/transmittals/new": () => <Send size={20} />,
   "/incoming-transmittals": () => <MailOpen size={20} />,
@@ -84,28 +85,34 @@ const items = [
     name: "Workflows",
   },
   {
-    path: "/submittals",
-    name: "Submittals",
-  },
-  {
-    path: "/change-orders",
-    name: "Change Orders",
-  },
-  {
-    path: "/inspections",
-    name: "Inspections",
-  },
-  {
-    path: "/extension-of-time",
-    name: "Extension of Time",
-  },
-  {
-    path: "/daily-reports",
-    name: "Daily Reports",
-  },
-  {
-    path: "/safety-observations",
-    name: "Safety Observations",
+    path: "/project-management",
+    name: "Project Management",
+    children: [
+      {
+        path: "/submittals",
+        name: "Submittals",
+      },
+      {
+        path: "/change-orders",
+        name: "Change Orders",
+      },
+      {
+        path: "/inspections",
+        name: "Inspections",
+      },
+      {
+        path: "/extension-of-time",
+        name: "Extension of Time",
+      },
+      {
+        path: "/daily-reports",
+        name: "Daily Reports",
+      },
+      {
+        path: "/safety-observations",
+        name: "Safety Observations",
+      },
+    ],
   },
   {
     path: "/commissioning",

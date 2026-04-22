@@ -12,6 +12,14 @@ import {
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+// Initialize with vercel preset
+const vercelThemeStyles = getPresetThemeStyles("vercel");
+const initialThemeState: ThemeEditorState = {
+  ...defaultThemeState,
+  preset: "vercel",
+  styles: vercelThemeStyles,
+};
+
 interface ThemeHistoryEntry {
   state: ThemeEditorState;
   timestamp: number;
@@ -38,8 +46,8 @@ interface ThemeEditorStore {
 export const useThemeEditorStore = create<ThemeEditorStore>()(
   persist(
     (set, get) => ({
-      themeState: defaultThemeState,
-      themeCheckpoint: defaultThemeState,
+      themeState: initialThemeState,
+      themeCheckpoint: initialThemeState,
       history: [],
       future: [],
       setThemeState: (newState) => {
@@ -135,8 +143,8 @@ export const useThemeEditorStore = create<ThemeEditorStore>()(
       },
       resetToDefault: () => {
         set({
-          themeState: defaultThemeState,
-          themeCheckpoint: defaultThemeState,
+          themeState: initialThemeState,
+          themeCheckpoint: initialThemeState,
           history: [],
           future: [],
         });

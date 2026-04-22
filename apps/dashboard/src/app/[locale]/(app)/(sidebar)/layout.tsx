@@ -22,9 +22,7 @@ export default async function Layout({
   return (
     <HydrateClient>
       <DashboardLayout>
-        <ScrollableContent>
-          {children}
-        </ScrollableContent>
+        <ScrollableContent>{children}</ScrollableContent>
         <QuickActionsFAB />
       </DashboardLayout>
     </HydrateClient>
