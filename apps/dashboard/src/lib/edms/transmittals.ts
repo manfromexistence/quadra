@@ -11,23 +11,28 @@ import { formatStoredAbsoluteDate } from "./dates";
 import type { DashboardSessionUser } from "./session";
 
 export async function getTransmittals(projectId: string) {
-  const transmittalRows = await db
-    .select({
-      id: transmittals.id,
-      transmittalNumber: transmittals.transmittalNumber,
-      subject: transmittals.subject,
-      status: transmittals.status,
-      sentTo: transmittals.sentTo,
-      purpose: transmittals.purpose,
-      documentCount: transmittals.documentCount,
-      createdAt: transmittals.createdAt,
-    })
-    .from(transmittals)
-    .where(eq(transmittals.projectId, projectId))
-    .orderBy(desc(transmittals.createdAt))
-    .limit(50);
+  try {
+    const transmittalRows = await db
+      .select({
+        id: transmittals.id,
+        transmittalNumber: transmittals.transmittalNumber,
+        subject: transmittals.subject,
+        status: transmittals.status,
+        sentTo: transmittals.sentTo,
+        purpose: transmittals.purpose,
+        documentCount: transmittals.documentCount,
+        createdAt: transmittals.createdAt,
+      })
+      .from(transmittals)
+      .where(eq(transmittals.projectId, projectId))
+      .orderBy(desc(transmittals.createdAt))
+      .limit(50);
 
-  return transmittalRows;
+    return transmittalRows;
+  } catch (error) {
+    console.error("Error fetching transmittals:", error);
+    return [];
+  }
 }
 
 export interface TransmittalProjectOption {

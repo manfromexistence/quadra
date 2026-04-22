@@ -292,21 +292,26 @@ function formatCount(value: number | string | null | undefined) {
 }
 
 export async function getDocuments(projectId: string) {
-  const documentRows = await db
-    .select({
-      id: documents.id,
-      documentNumber: documents.documentNumber,
-      title: documents.title,
-      revision: documents.revision,
-    })
-    .from(documents)
-    .where(eq(documents.projectId, projectId))
-    .orderBy(desc(documents.uploadedAt))
-    .limit(50);
+  try {
+    const documentRows = await db
+      .select({
+        id: documents.id,
+        documentNumber: documents.documentNumber,
+        title: documents.title,
+        revision: documents.revision,
+      })
+      .from(documents)
+      .where(eq(documents.projectId, projectId))
+      .orderBy(desc(documents.uploadedAt))
+      .limit(50);
 
-  return documentRows.map((document) => ({
-    code: document.documentNumber,
-    title: document.title,
-    rev: document.revision || "0",
-  }));
+    return documentRows.map((document) => ({
+      code: document.documentNumber,
+      title: document.title,
+      rev: document.revision || "0",
+    }));
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+    return [];
+  }
 }

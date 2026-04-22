@@ -12,11 +12,16 @@ import { documents } from "@/db/schema/documents";
 
 // Letters
 export async function getLetters(projectId: string) {
-  return db
-    .select()
-    .from(letters)
-    .where(eq(letters.projectId, projectId))
-    .orderBy(letters.date);
+  try {
+    return await db
+      .select()
+      .from(letters)
+      .where(eq(letters.projectId, projectId))
+      .orderBy(letters.date);
+  } catch (error) {
+    console.error("Error fetching letters:", error);
+    return [];
+  }
 }
 
 export async function getLetterById(id: string) {
