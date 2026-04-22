@@ -85,14 +85,6 @@ const items = [
     name: "Workflows",
   },
   {
-    path: "/commissioning",
-    name: "Commissioning",
-  },
-  {
-    path: "/warranty",
-    name: "Warranty",
-  },
-  {
     path: "/bulk-upload",
     name: "Bulk Upload",
   },
@@ -280,6 +272,14 @@ const items = [
         path: "/safety-observations",
         name: "Safety Observations",
       },
+      {
+        path: "/commissioning",
+        name: "Commissioning",
+      },
+      {
+        path: "/warranty",
+        name: "Warranty",
+      },
     ],
   },
   {
@@ -401,7 +401,7 @@ const Item = ({
             className={cn(
               "border border-transparent h-[40px] transition-all duration-200 ease-&lsqb;cubic-bezier(0.4,0,0.2,1)&rsqb; ml-[15px] mr-[15px]",
               isActive &&
-                "bg-[#f7f7f7] dark:bg-[#131313] border-[#e6e6e6] dark:border-[#1d1d1d]",
+              "bg-[#f7f7f7] dark:bg-[#131313] border-[#e6e6e6] dark:border-[#1d1d1d]",
               isExpanded ? "w-[calc(100%-30px)]" : "w-[40px]",
             )}
           />
