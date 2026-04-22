@@ -85,36 +85,6 @@ const items = [
     name: "Workflows",
   },
   {
-    path: "/project-management",
-    name: "Project Management",
-    children: [
-      {
-        path: "/submittals",
-        name: "Submittals",
-      },
-      {
-        path: "/change-orders",
-        name: "Change Orders",
-      },
-      {
-        path: "/inspections",
-        name: "Inspections",
-      },
-      {
-        path: "/extension-of-time",
-        name: "Extension of Time",
-      },
-      {
-        path: "/daily-reports",
-        name: "Daily Reports",
-      },
-      {
-        path: "/safety-observations",
-        name: "Safety Observations",
-      },
-    ],
-  },
-  {
     path: "/commissioning",
     name: "Commissioning",
   },
@@ -286,6 +256,36 @@ const items = [
   //     { path: "/apps?tab=installed", name: "Installed" },
   //   ],
   // },
+  {
+    path: "/project-management",
+    name: "Project Management",
+    children: [
+      {
+        path: "/submittals",
+        name: "Submittals",
+      },
+      {
+        path: "/change-orders",
+        name: "Change Orders",
+      },
+      {
+        path: "/inspections",
+        name: "Inspections",
+      },
+      {
+        path: "/extension-of-time",
+        name: "Extension of Time",
+      },
+      {
+        path: "/daily-reports",
+        name: "Daily Reports",
+      },
+      {
+        path: "/safety-observations",
+        name: "Safety Observations",
+      },
+    ],
+  },
   {
     path: "/settings",
     name: "Settings",

@@ -70,7 +70,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full px-6">
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter..."
@@ -116,7 +116,10 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className="border-r border-border last:border-r-0"
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -138,7 +141,10 @@ export function DataTable<TData, TValue>({
                   className="hover:bg-accent/50 transition-colors"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className="border-r border-border last:border-r-0"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

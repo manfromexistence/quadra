@@ -559,7 +559,7 @@ export function TransmittalFormWithPreview({
                             <TableCell className="font-mono text-[11px] text-black border-r border-gray-300 p-2">
                               {doc.status || "—"}
                             </TableCell>
-                            <TableCell className="font-mono text-[11px] text-black p-2">
+                            <TableCell className="font-mono text-[11px] text-black border-r border-gray-300 p-2">
                               PDF
                             </TableCell>
                           </TableRow>

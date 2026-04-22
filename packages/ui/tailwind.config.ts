@@ -47,10 +47,10 @@ export default {
         },
       },
       borderRadius: {
-        DEFAULT: "var(--radius)",
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        DEFAULT: "0.125rem",
+        lg: "0.125rem",
+        md: "0.125rem",
+        sm: "0.125rem",
       },
       keyframes: {
         shimmer: {
