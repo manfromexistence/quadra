@@ -57,6 +57,7 @@ export interface DashboardDocument {
 
 export interface DashboardWorkflowItem {
   id: string;
+  workflowId: string;
   documentNumber: string;
   title: string;
   projectName: string;
@@ -254,6 +255,7 @@ export async function getEdmsDashboardData(
           : db
               .select({
                 id: workflowSteps.id,
+                workflowId: workflowSteps.workflowId,
                 documentNumber: documents.documentNumber,
                 title: documents.title,
                 projectName: projects.name,
@@ -444,6 +446,7 @@ export async function getEdmsDashboardData(
       })),
       workflowQueue: workflowRows.map((workflow) => ({
         id: String(workflow.id),
+        workflowId: String(workflow.workflowId),
         documentNumber: workflow.documentNumber,
         title: workflow.title,
         projectName: workflow.projectName,

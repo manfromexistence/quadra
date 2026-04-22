@@ -200,6 +200,121 @@ export function ReportModalClient({
           },
         ],
       };
+    } else if (reportId === "overdue") {
+      reportData = {
+        id: "overdue",
+        title: "Overdue & Pending Report",
+        description: "Documents past SLA for review or approval",
+        columns: [
+          { key: "code", label: "Code" },
+          { key: "title", label: "Title" },
+          { key: "recipient", label: "Recipient" },
+          { key: "daysOverdue", label: "Days Overdue" },
+          { key: "status", label: "Status" },
+        ],
+        data: [
+          {
+            code: "CIV-DWG-0100",
+            title: "Foundation Plan - Unit 300",
+            recipient: "Client",
+            daysOverdue: "5",
+            status: "Escalated",
+          },
+          {
+            code: "MEC-SPC-0030",
+            title: "Pump Specification P-201",
+            recipient: "Vendor",
+            daysOverdue: "3",
+            status: "Pending",
+          },
+          {
+            code: "STR-CAL-0025",
+            title: "Tank Foundation Calc T-301",
+            recipient: "PMC",
+            daysOverdue: "7",
+            status: "Escalated",
+          },
+        ],
+      };
+    } else if (reportId === "submission") {
+      reportData = {
+        id: "submission",
+        title: "Submission Status by Discipline",
+        description: "Matrix view of submission health by discipline",
+        columns: [
+          { key: "discipline", label: "Discipline" },
+          { key: "total", label: "Total" },
+          { key: "submitted", label: "Submitted" },
+          { key: "approved", label: "Approved" },
+          { key: "pending", label: "Pending" },
+        ],
+        data: [
+          {
+            discipline: "Civil",
+            total: "45",
+            submitted: "42",
+            approved: "38",
+            pending: "4",
+          },
+          {
+            discipline: "Structural",
+            total: "38",
+            submitted: "35",
+            approved: "30",
+            pending: "5",
+          },
+          {
+            discipline: "Mechanical",
+            total: "52",
+            submitted: "48",
+            approved: "42",
+            pending: "6",
+          },
+          {
+            discipline: "Electrical",
+            total: "41",
+            submitted: "39",
+            approved: "35",
+            pending: "4",
+          },
+        ],
+      };
+    } else if (reportId === "audit") {
+      reportData = {
+        id: "audit",
+        title: "Audit Trail Export",
+        description: "Full system activity log for the period",
+        columns: [
+          { key: "date", label: "Date" },
+          { key: "user", label: "User" },
+          { key: "action", label: "Action" },
+          { key: "entity", label: "Entity" },
+          { key: "details", label: "Details" },
+        ],
+        data: [
+          {
+            date: "2026-04-20",
+            user: "John Doe",
+            action: "Uploaded",
+            entity: "CIV-DWG-0100",
+            details: "Foundation Plan",
+          },
+          {
+            date: "2026-04-19",
+            user: "Jane Smith",
+            action: "Approved",
+            entity: "MEC-SPC-0030",
+            details: "Pump Specification",
+          },
+          {
+            date: "2026-04-18",
+            user: "Bob Johnson",
+            action: "Submitted",
+            entity: "STR-CAL-0025",
+            details: "Foundation Calculation",
+          },
+        ],
+      };
     }
 
     if (reportData) {

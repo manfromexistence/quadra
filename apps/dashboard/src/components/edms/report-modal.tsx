@@ -111,8 +111,8 @@ export function ReportModal({ report, open, onOpenChange }: ReportModalProps) {
           </Button>
         </div>
 
-        <ScrollArea className="flex-1 px-6">
-          <div className="bg-white p-8 text-black pr-4 my-4">
+        <ScrollArea className="flex-1 px-6 h-full">
+          <div className="bg-white p-8 text-black pr-4 my-4 min-h-full">
             <div className="border-b-2 border-black pb-4 mb-6">
               <h2 className="text-3xl font-serif font-normal">
                 {report.title}
@@ -165,14 +165,14 @@ export function ReportModal({ report, open, onOpenChange }: ReportModalProps) {
                     {report.columns.map((col) => (
                       <TableCell key={col.key} className="text-sm">
                         {col.key === "status" ? (
-                          <EdmsStatusBadge status={row[col.key]} />
+                          <EdmsStatusBadge status={row[col.key] || "unknown"} />
                         ) : col.key.includes("code") ||
                           col.key.includes("number") ? (
                           <span className="font-mono text-xs">
-                            {row[col.key]}
+                            {row[col.key] || ""}
                           </span>
                         ) : (
-                          row[col.key]
+                          row[col.key] || ""
                         )}
                       </TableCell>
                     ))}
