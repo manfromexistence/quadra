@@ -26,7 +26,7 @@ export const AvatarImageNext = React.forwardRef<
 >(({ className, onError, onLoad, unoptimized, ...props }, ref) => {
   const [hasError, setHasError] = React.useState(false);
 
-  if (hasError || !props.src) {
+  if (hasError || !props.src || props.src === "") {
     return null;
   }
 
@@ -66,7 +66,7 @@ const AvatarFallback = React.forwardRef<
   <AvatarPrimitive.Fallback
     ref={ref}
     className={cn(
-      "flex h-full w-full items-center justify-center rounded-full bg-accent",
+      "flex h-full w-full items-center justify-center rounded-full bg-muted text-muted-foreground",
       className,
     )}
     {...props}

@@ -8,7 +8,7 @@ import {
   MiddayDesktopLogo,
 } from "@midday/app-store/logos";
 import { isDesktopApp } from "@midday/desktop-client/platform";
-import { Avatar, AvatarFallback, AvatarImageNext } from "@midday/ui/avatar";
+import { AvatarImageNext } from "@midday/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,20 +33,22 @@ export function UserMenu({ onlySignOut }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="rounded-full w-8 h-8 cursor-pointer bg-accent overflow-hidden">
-          <AvatarImageNext
-            src={user?.avatarUrl ?? ""}
-            alt={user?.fullName ?? ""}
-            width={32}
-            height={32}
-            quality={100}
-          />
-          <AvatarFallback>
+        <div className="rounded-full w-8 h-8 cursor-pointer overflow-hidden bg-primary text-primary-foreground flex items-center justify-center font-semibold">
+          {user?.avatarUrl ? (
+            <AvatarImageNext
+              src={user.avatarUrl}
+              alt={user.name ?? ""}
+              width={32}
+              height={32}
+              quality={100}
+              className="rounded-full w-full h-full"
+            />
+          ) : (
             <span className="text-xs">
-              {user?.fullName?.charAt(0)?.toUpperCase()}
+              {user?.name?.charAt(0)?.toUpperCase() || "U"}
             </span>
-          </AvatarFallback>
-        </Avatar>
+          )}
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-[240px]" sideOffset={10} align="end">
         {!onlySignOut && (
@@ -55,7 +57,7 @@ export function UserMenu({ onlySignOut }: Props) {
               <div className="flex justify-between items-center">
                 <div className="flex flex-col">
                   <span className="truncate line-clamp-1 max-w-[155px] block text-xs">
-                    {user?.fullName}
+                    {user?.name}
                   </span>
                   <span className="truncate text-xs text-[#606060] font-normal">
                     {user?.email}

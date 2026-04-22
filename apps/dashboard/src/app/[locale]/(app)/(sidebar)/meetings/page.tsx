@@ -1,81 +1,40 @@
-"use client";
-
 import { Button } from "@midday/ui/button";
 import { Card, CardContent, CardHeader } from "@midday/ui/card";
-import { Calendar, FileText, Users } from "lucide-react";
+import { Calendar, Users } from "lucide-react";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import Link from "next/link";
-import { useState, useTransition } from "react";
 import { MeetingsFilters } from "@/components/edms/meetings-filters";
 import { ErrorFallback } from "@/components/error-fallback";
+import { MeetingsPageActions } from "@/components/meetings-page-actions";
 import { MeetingsTable } from "@/components/meetings-table";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getMinutesOfMeeting } from "@/lib/edms/correspondence";
 import { getRequiredDashboardSessionUser } from "@/lib/edms/session";
 
-export default function MeetingsPage() {
-  const [isPending, startTransition] = useTransition();
-  const [meetings, setMeetings] = useState<any[]>([]);
-  const [projectId, setProjectId] = useState<string | null>(null);
+export const metadata = {
+  title: "Minutes of Meeting | Quadra EDMS",
+};
 
-  startTransition(async () => {
-    const sessionUser = await getRequiredDashboardSessionUser();
-    const pid = await getFirstAccessibleProjectId(sessionUser);
-    setProjectId(pid);
-    if (pid) {
-      const data = await getMinutesOfMeeting(pid);
-      setMeetings(data);
-    }
-  });
+export default async function MeetingsPage() {
+  const sessionUser = await getRequiredDashboardSessionUser();
+  const projectId = await getFirstAccessibleProjectId(sessionUser);
+  const dbMeetings = projectId ? await getMinutesOfMeeting(projectId) : [];
+
+  // Map database results to match Meeting interface
+  const meetings = dbMeetings.map((m: any) => ({
+    id: m.id,
+    momNumber: m.momNumber,
+    title: m.title,
+    meetingType: m.meetingType,
+    meetingDate: m.meetingDate?.toISOString() || "",
+    location: m.location || "",
+    attendees: m.chairperson || "", // Use chairperson as attendees for now
+    status: m.status || "",
+    chairperson: m.chairperson || "",
+  }));
 
   const filteredMeetings = meetings;
-
-  const exportCsv = () => {
-    const rows = filteredMeetings.map((meeting) => ({
-      "MoM ID": meeting.momNumber,
-      Title: meeting.title,
-      Type: meeting.meetingType,
-      Date: meeting.meetingDate
-        ? new Date(meeting.meetingDate).toISOString().split("T")[0]
-        : "",
-      Location: meeting.location || "",
-      Attendees: meeting.attendees || "",
-      Status: meeting.status,
-    }));
-
-    const headers = Object.keys(
-      rows[0] || {
-        "MoM ID": "",
-        Title: "",
-        Type: "",
-        Date: "",
-        Location: "",
-        Attendees: "",
-        Status: "",
-      },
-    );
-
-    const csvContent = [
-      headers.join(","),
-      ...rows.map((row) =>
-        headers
-          .map(
-            (header) =>
-              `"${String(row[header as keyof typeof row] ?? "").replaceAll('"', '""')}"`,
-          )
-          .join(","),
-      ),
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    const href = URL.createObjectURL(blob);
-    link.href = href;
-    link.download = "meetings.csv";
-    link.click();
-    URL.revokeObjectURL(href);
-  };
 
   if (!projectId) {
     return (
@@ -85,18 +44,6 @@ export default function MeetingsPage() {
             <p className="text-muted-foreground">
               No accessible projects found. Please contact your administrator.
             </p>
-          </div>
-        </div>
-      </ScrollableContent>
-    );
-  }
-
-  if (isPending && meetings.length === 0) {
-    return (
-      <ScrollableContent>
-        <div className="flex flex-col gap-6 pt-6">
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Loading...</p>
           </div>
         </div>
       </ScrollableContent>
@@ -121,15 +68,8 @@ export default function MeetingsPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <Button
-                variant="outline"
-                onClick={exportCsv}
-                disabled={isPending}
-              >
-                <FileText className="size-4" />
-                Export CSV
-              </Button>
-              <Button variant="outline" asChild disabled={isPending}>
+              <MeetingsPageActions meetings={filteredMeetings} />
+              <Button variant="outline" asChild>
                 <Link href="/schedule">
                   <Calendar className="size-4" />
                   Schedule Meeting

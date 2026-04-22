@@ -127,7 +127,7 @@ const items = [
   },
   {
     path: "/project-templates",
-    name: "Project Templates",
+    name: "Templates",
   },
   {
     path: "/config",
@@ -258,7 +258,7 @@ const items = [
   // },
   {
     path: "/project-management",
-    name: "Project Management",
+    name: "Management",
     children: [
       {
         path: "/submittals",

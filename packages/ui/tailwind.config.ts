@@ -47,10 +47,10 @@ export default {
         },
       },
       borderRadius: {
-        DEFAULT: "0.125rem",
-        lg: "0.125rem",
-        md: "0.125rem",
-        sm: "0.125rem",
+        DEFAULT: "0.375rem",
+        lg: "0.375rem",
+        md: "0.375rem",
+        sm: "0.375rem",
       },
       keyframes: {
         shimmer: {

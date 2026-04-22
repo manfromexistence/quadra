@@ -23,7 +23,7 @@
     --border: 0.922 0 0;
     --input: 0.922 0 0;
     --ring: 0.708 0 0;
-    --radius: 0.125rem;
+    --radius: 0.375rem;
     /* Chart colors */
     --chart-grid-stroke: #e6e6e6;
     --chart-axis-text: #707070;
@@ -81,7 +81,8 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: oklch(var(--border));
+    border-radius: 0.375rem !important;
   }
   body {
     font-family: var(--font-sans), system-ui, sans-serif;

@@ -416,7 +416,7 @@ export function TransmittalFormWithPreview({
           </CardHeader>
           <CardContent className="bg-muted p-6">
             {/* Transmittal Paper - Force light theme appearance */}
-            <div className="bg-white text-black border border-gray-300 p-8 shadow-sm [&_*]:!text-black dark:bg-white dark:text-black dark:border-gray-300">
+            <div className="bg-white text-black border border-gray-300 p-8 shadow-sm [&_*]:!text-black [&_*]:!rounded-none dark:bg-white dark:text-black dark:border-gray-300">
               {/* Header */}
               <div className="flex items-start justify-between border-b-2 border-gray-900 pb-3 mb-5">
                 <div>
@@ -533,7 +533,7 @@ export function TransmittalFormWithPreview({
                           <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
                             Status
                           </TableHead>
-                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-gray-300 p-2">
+                          <TableHead className="text-[9px] uppercase tracking-wider font-semibold text-gray-900 border-r border-l border-gray-300 p-2">
                             Format
                           </TableHead>
                         </TableRow>
@@ -559,7 +559,7 @@ export function TransmittalFormWithPreview({
                             <TableCell className="font-mono text-[11px] text-black border-r border-gray-300 p-2">
                               {doc.status || "—"}
                             </TableCell>
-                            <TableCell className="font-mono text-[11px] text-black border-r border-gray-300 p-2">
+                            <TableCell className="font-mono text-[11px] text-black border-r border-gray-300 border-l p-2">
                               PDF
                             </TableCell>
                           </TableRow>

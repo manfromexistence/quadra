@@ -109,7 +109,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border px-6">
+      <div className="rounded-md">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -118,7 +118,7 @@ export function DataTable<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id}
-                      className="border-r border-border last:border-r-0"
+                      className="border-r border-border last:border-l"
                     >
                       {header.isPlaceholder
                         ? null
@@ -143,7 +143,7 @@ export function DataTable<TData, TValue>({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="border-r border-border last:border-r-0"
+                      className="border-r border-border last:border-l"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
