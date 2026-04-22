@@ -114,10 +114,6 @@ const items = [
     name: "Theme",
   },
   {
-    path: "/project-templates",
-    name: "Templates",
-  },
-  {
     path: "/transmittals",
     name: "Transmittals",
     children: [
@@ -185,7 +181,10 @@ const items = [
       },
     ],
   },
-
+  // {
+  //   path: "/project-templates",
+  //   name: "Templates",
+  // },
   // {
   //   path: "/vault",
   //   name: "Vault",
