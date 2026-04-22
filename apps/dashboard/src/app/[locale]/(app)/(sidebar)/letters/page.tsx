@@ -1,12 +1,6 @@
-import { Button } from "@midday/ui/button";
-import { Card, CardContent, CardHeader } from "@midday/ui/card";
-import { FileText, Mail, Send } from "lucide-react";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import Link from "next/link";
 import { Suspense } from "react";
-import { LettersFilters } from "@/components/edms/letters-filters";
 import { ErrorFallback } from "@/components/error-fallback";
-import { LettersTable } from "@/components/letters-table";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { getFirstAccessibleProjectId } from "@/lib/edms/access";
 import { getLetters } from "@/lib/edms/correspondence";
@@ -16,7 +10,7 @@ import { LettersPageClient } from "./letters-page-client";
 export default async function LettersPage() {
   const sessionUser = await getRequiredDashboardSessionUser();
   const projectId = await getFirstAccessibleProjectId(sessionUser);
-  
+
   if (!projectId) {
     return (
       <ScrollableContent>
@@ -36,7 +30,11 @@ export default async function LettersPage() {
   return (
     <ScrollableContent>
       <ErrorBoundary errorComponent={ErrorFallback}>
-        <Suspense fallback={<div className="text-sm text-muted-foreground">Loading...</div>}>
+        <Suspense
+          fallback={
+            <div className="text-sm text-muted-foreground">Loading...</div>
+          }
+        >
           <LettersPageClient letters={letters} projectId={projectId} />
         </Suspense>
       </ErrorBoundary>

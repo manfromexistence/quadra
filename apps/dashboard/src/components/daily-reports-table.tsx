@@ -8,10 +8,14 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 
 interface DailyReport {
   id: string;
-  reportDate: string;
-  weather: string;
-  activitiesCompleted: string;
-  createdAt: string;
+  reportDate: Date;
+  weather: string | null;
+  activitiesCompleted: string | null;
+  issues: string | null;
+  projectId: string;
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface DailyReportsTableProps {
@@ -27,7 +31,9 @@ export function DailyReportsTable({ reports }: DailyReportsTableProps) {
       ),
       cell: ({ row }) => (
         <div className="text-sm font-medium">
-          {new Date(row.original.reportDate).toLocaleDateString()}
+          {row.original.reportDate instanceof Date
+            ? row.original.reportDate.toLocaleDateString()
+            : new Date(row.original.reportDate).toLocaleDateString()}
         </div>
       ),
     },

@@ -96,4 +96,40 @@ ReferenceError: useRouter is not defined
 
 On projects-template there is a error message so like that in our reports and /letters page too please put errors caching so in the ui we can get the error about why the page is not loading - and also still when clicking on the project-managment its going the /projects page instead of /config so please fix that too!!!
 
+Good, now please use our wsl turso cli and using some scripts please delete all current data from all tables for now
+
+These pages needs more padding on the top:
+      {
+        path: "/submittals",
+        name: "Submittals",
+      },
+      {
+        path: "/change-orders",
+        name: "Change Orders",
+      },
+      {
+        path: "/inspections",
+        name: "Inspections",
+      },
+      {
+        path: "/extension-of-time",
+        name: "Extension of Time",
+      },
+      {
+        path: "/daily-reports",
+        name: "Daily Reports",
+      },
+      {
+        path: "/safety-observations",
+        name: "Safety Observations",
+      },
+      {
+        path: "/commissioning",
+        name: "Commissioning",
+      },
+      {
+        path: "/warranty",
+        name: "Warranty",
+      },
+
 First, do lint and fix all the errors, then after analyzing all the changes, please create a professional commit and push it to the remote

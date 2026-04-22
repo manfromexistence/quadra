@@ -12,7 +12,10 @@ interface LettersPageClientProps {
   projectId: string;
 }
 
-export function LettersPageClient({ letters, projectId }: LettersPageClientProps) {
+export function LettersPageClient({
+  letters,
+  projectId,
+}: LettersPageClientProps) {
   const filteredLetters = letters;
 
   const exportCsv = () => {
@@ -76,8 +79,8 @@ export function LettersPageClient({ letters, projectId }: LettersPageClientProps
               Letters Register
             </h1>
             <p className="text-sm leading-6 text-muted-foreground md:text-base">
-              Formal correspondence register tracking all incoming and
-              outgoing letters with stakeholders.
+              Formal correspondence register tracking all incoming and outgoing
+              letters with stakeholders.
             </p>
           </div>
         </div>

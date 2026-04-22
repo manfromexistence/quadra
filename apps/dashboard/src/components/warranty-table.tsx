@@ -11,10 +11,14 @@ interface Warranty {
   id: string;
   warrantyNumber: string;
   item: string;
-  warrantyType: string;
+  description: string;
   startDate: string;
   endDate: string;
+  warrantyType: string;
   status: string;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface WarrantyTableProps {

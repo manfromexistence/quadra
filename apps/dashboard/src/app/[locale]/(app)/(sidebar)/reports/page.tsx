@@ -1,29 +1,16 @@
-import { Badge } from "@midday/ui/badge";
-import { Button } from "@midday/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@midday/ui/card";
-import { Input } from "@midday/ui/input";
-import { ScrollArea } from "@midday/ui/scroll-area";
 import {
   BarChart3,
   Clock,
-  Download,
   FileBarChart,
   FilePieChart,
   FileText,
-  Search,
   TrendingUp,
 } from "lucide-react";
 import { getDocuments } from "@/lib/edms/documents";
 import { getTransmittals } from "@/lib/edms/transmittals";
 import { ReportModalClient } from "./report-modal-client";
 
-const REPORT_CATALOG = [
+const _REPORT_CATALOG = [
   {
     id: "mdr",
     icon: FileText,
@@ -94,7 +81,7 @@ export default async function ReportsPage() {
   }
 
   return (
-    <ReportModalClient 
+    <ReportModalClient
       documents={documents}
       transmittals={transmittals}
       error={error}

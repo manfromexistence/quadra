@@ -12,9 +12,13 @@ interface Inspection {
   inspectionNumber: string;
   type: string;
   location: string;
-  scheduledDate: string;
-  inspector: string;
+  scheduledDate: Date;
+  inspector: string | null;
   results: string;
+  deficiencies: string | null;
+  projectId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface InspectionsTableProps {

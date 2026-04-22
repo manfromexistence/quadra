@@ -14,8 +14,15 @@ interface Submittal {
   specificationSection: string;
   revision: string;
   reviewStatus: string;
+  dueDate: string | null;
   submittedAt: string;
-  dueDate: string;
+  submittedBy: string;
+  reviewedAt: string | null;
+  reviewedBy: string | null;
+  comments: string | null;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface SubmittalsTableProps {

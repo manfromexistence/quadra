@@ -35,7 +35,7 @@ export default async function WarrantyPage() {
 
   return (
     <ScrollableContent>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 pt-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="max-w-3xl space-y-3">
             <div className="space-y-2">

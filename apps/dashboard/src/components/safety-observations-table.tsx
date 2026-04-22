@@ -13,8 +13,14 @@ interface SafetyObservation {
   type: string;
   severity: string;
   location: string;
+  description: string;
+  immediateAction: string | null;
   status: string;
+  projectId: string;
+  observedBy: string;
+  assignedTo: string | null;
   createdAt: string;
+  updatedAt: string;
 }
 
 interface SafetyObservationsTableProps {

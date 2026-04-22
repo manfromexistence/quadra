@@ -10,11 +10,15 @@ import { EdmsStatusBadge } from "@/components/edms/status-badge";
 interface ChangeOrder {
   id: string;
   changeOrderNumber: string;
-  reason: string;
-  originalContractValue: number;
+  originalContractValue: number | null;
   changeValue: number;
+  reason: string;
   approvalStatus: string;
-  createdAt: string;
+  approvedBy: string | null;
+  approvedAt: Date | null;
+  projectId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface ChangeOrdersTableProps {

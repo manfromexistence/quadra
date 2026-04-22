@@ -106,6 +106,10 @@ const items = [
     name: "Audit",
   },
   {
+    path: "/technical-queries",
+    name: "Queries",
+  },
+  {
     path: "/reports",
     name: "Reports",
   },
@@ -121,34 +125,34 @@ const items = [
         path: "/transmittals",
         name: "Outgoing",
       },
-      {
-        path: "/incoming-transmittals",
-        name: "Incoming",
-      },
+      // {
+      //   path: "/incoming-transmittals",
+      //   name: "Incoming",
+      // },
       {
         path: "/transmittals/new",
         name: "New Transmittal",
       },
     ],
   },
-  {
-    path: "/technical-queries",
-    name: "Queries",
-    children: [
-      {
-        path: "/technical-queries",
-        name: "Technical Queries",
-      },
-      {
-        path: "/site-tech-queries",
-        name: "Site Tech Queries",
-      },
-      {
-        path: "/rfis",
-        name: "RFIs",
-      },
-    ],
-  },
+  // {
+  //   path: "/technical-queries",
+  //   name: "Queries",
+  //   children: [
+  //     {
+  //       path: "/technical-queries",
+  //       name: "Technical Queries",
+  //     },
+  //     {
+  //       path: "/site-tech-queries",
+  //       name: "Site Tech Queries",
+  //     },
+  //     {
+  //       path: "/rfis",
+  //       name: "RFIs",
+  //     },
+  //   ],
+  // },
   {
     path: "/letters",
     name: "Correspondence",
@@ -161,10 +165,10 @@ const items = [
         path: "/letters/new",
         name: "New Letter",
       },
-      {
-        path: "/memos",
-        name: "Memos",
-      },
+      // {
+      //   path: "/memos",
+      //   name: "Memos",
+      // },
     ],
   },
   {
@@ -400,7 +404,7 @@ const Item = ({
             className={cn(
               "border border-transparent h-[40px] transition-all duration-200 ease-&lsqb;cubic-bezier(0.4,0,0.2,1)&rsqb; ml-[15px] mr-[15px]",
               isActive &&
-              "bg-[#f7f7f7] dark:bg-[#131313] border-[#e6e6e6] dark:border-[#1d1d1d]",
+                "bg-[#f7f7f7] dark:bg-[#131313] border-[#e6e6e6] dark:border-[#1d1d1d]",
               isExpanded ? "w-[calc(100%-30px)]" : "w-[40px]",
             )}
           />
