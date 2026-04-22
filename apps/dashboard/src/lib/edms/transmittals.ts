@@ -20,7 +20,6 @@ export async function getTransmittals(projectId: string) {
         status: transmittals.status,
         sentTo: transmittals.sentTo,
         purpose: transmittals.purpose,
-        documentCount: transmittals.documentCount,
         createdAt: transmittals.createdAt,
       })
       .from(transmittals)
@@ -320,7 +319,7 @@ export async function getTransmittalManagementData(
           : undefined,
         sentLabel: formatDateLabel(transmittal.sentAt ?? transmittal.createdAt),
         recipientName: parseRecipientLabel(transmittal.sentTo, memberRows),
-        documentCount: formatCount(transmittal.documentCount),
+        documentCount: formatCount(transmittal.documentCount ?? 0),
         documentCodes: transmittalDocsMap.get(transmittal.id) || [],
         isActionable:
           transmittal.status === "sent" &&
