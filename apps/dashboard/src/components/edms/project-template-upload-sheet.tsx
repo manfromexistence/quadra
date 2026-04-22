@@ -28,6 +28,7 @@ import {
 } from "@midday/ui/sheet";
 import { Textarea } from "@midday/ui/textarea";
 import { Loader2, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -64,7 +65,7 @@ const uploadTemplateFormSchema = z.object({
   category: z.enum(templateCategories),
   description: z.string().trim().max(500, "Description is too long."),
   file: z.any().refine((file) => file?.size > 0, "File is required."),
-  isGlobal: z.boolean().optional().default(true),
+  isGlobal: z.boolean().default(true),
 });
 
 type UploadTemplateFormValues = z.infer<typeof uploadTemplateFormSchema>;
@@ -84,7 +85,7 @@ export function ProjectTemplateUploadSheet() {
   const router = useRouter();
 
   const form = useForm<UploadTemplateFormValues>({
-    resolver: zodResolver(uploadTemplateFormSchema),
+    resolver: zodResolver(uploadTemplateFormSchema) as any,
     defaultValues,
   });
 
@@ -100,13 +101,15 @@ export function ProjectTemplateUploadSheet() {
         await db.insert(projectTemplates).values({
           id: nanoid(),
           name: values.name,
-          description: values.description || null,
+          type: values.type,
           category: values.category,
-          disciplines: null,
-          documentTypes: null,
-          workflowSteps: null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          description: values.description || null,
+          fileUrl: "temp-url", // TODO: Upload file and get actual URL
+          fileName: values.file.name,
+          fileSize: values.file.size,
+          fileType: values.file.type,
+          uploadedBy: "current-user-id", // TODO: Get actual user ID
+          isGlobal: values.isGlobal,
         });
 
         toast({
@@ -145,7 +148,7 @@ export function ProjectTemplateUploadSheet() {
         </SheetHeader>
 
         <div className="px-6 pb-6">
-          <Form {...form}>
+          <Form {...(form as any)}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="mt-8 space-y-6"

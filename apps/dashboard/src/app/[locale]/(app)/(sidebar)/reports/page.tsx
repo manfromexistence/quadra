@@ -22,11 +22,12 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ReportModal } from "@/components/edms/report-modal";
 import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
-import { useTRPC } from "@/trpc/client";
+import { getDocuments } from "@/lib/edms/documents";
+import { getTransmittals } from "@/lib/edms/transmittals";
 
 const REPORT_CATALOG = [
   {
@@ -80,14 +81,31 @@ const REPORT_CATALOG = [
 ];
 
 export default function ReportsPage() {
-  const trpc = useTRPC();
   const [selectedReport, setSelectedReport] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [documents, setDocuments] = useState<any[]>([]);
+  const [transmittals, setTransmittals] = useState<any[]>([]);
 
   // Fetch real data from database
-  const { data: documents = [] } = trpc.edmsDocuments.list.useQuery();
-  const { data: transmittals = [] } = trpc.transmittals.list.useQuery();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const projectId = "PRJ-AHR-2026";
+        const [docs, trans] = await Promise.all([
+          getDocuments(projectId),
+          getTransmittals(projectId),
+        ]);
+        setDocuments(docs);
+        setTransmittals(trans);
+      } catch (err) {
+        console.error("Failed to fetch data:", err);
+        setError("Failed to load data. Please try again later.");
+      }
+    };
+    fetchData();
+  }, []);
 
   const filteredReports = REPORT_CATALOG.filter((report) =>
     report.title.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -110,16 +128,14 @@ export default function ReportsPage() {
           { key: "author", label: "Author" },
           { key: "date", label: "Date" },
         ],
-        data: documents.slice(0, 10).map((d: any) => ({
-          code: d.documentNumber,
+        data: documents.map((d: any) => ({
+          code: d.code,
           title: d.title,
-          discipline: d.discipline || "N/A",
-          rev: d.revision || "0",
-          status: d.status || "Pending",
-          author: d.uploadedBy || "Unknown",
-          date: d.uploadedAt
-            ? new Date(d.uploadedAt).toISOString().split("T")[0]
-            : "N/A",
+          discipline: "N/A", // TODO: Add discipline to getDocuments function
+          rev: d.rev,
+          status: "Pending", // TODO: Add status to getDocuments function
+          author: "Unknown", // TODO: Add author to getDocuments function
+          date: "N/A", // TODO: Add date to getDocuments function
         })),
       };
     } else if (reportId === "txlog") {
@@ -136,7 +152,7 @@ export default function ReportsPage() {
           { key: "purpose", label: "Purpose" },
           { key: "status", label: "Status" },
         ],
-        data: transmittals.slice(0, 10).map((t: any) => ({
+        data: transmittals.map((t: any) => ({
           id: t.transmittalNumber,
           date: t.createdAt
             ? new Date(t.createdAt).toISOString().split("T")[0]
@@ -210,6 +226,11 @@ export default function ReportsPage() {
     <ScrollableContent>
       <ErrorBoundary errorComponent={ErrorFallback}>
         <div className="flex flex-col gap-6 p-6">
+          {error && (
+            <div className="p-4 rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/10 dark:border-red-900">
+              <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+            </div>
+          )}
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl space-y-2">
               <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
